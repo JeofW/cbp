@@ -183,6 +183,11 @@ public static class SightCases
         public static bool Cast(int id,WoWUnit target)=>Submit(target);
         private static bool Submit(WoWUnit target){if(!SightCases.Accepted)return false;SightCases.Targets.Add(target.Guid);return true;}
     }
+    public static class RecoveryActions
+    {
+        public static bool TryCast(string name,WoWUnit target,bool heal,bool aura,string owner)=>SpellManager.Cast(name,target);
+        public static bool TryCast(int id,WoWUnit target,bool heal,bool aura,string owner)=>SpellManager.Cast(id,target);
+    }
 }
 /* Controlled owner observation. */ namespace Styx{public static class StyxWoW{public static WoWUnit Me=null!;}}
 /* Only setup yields and terminal effects are controlled. */ namespace Singular.Helpers

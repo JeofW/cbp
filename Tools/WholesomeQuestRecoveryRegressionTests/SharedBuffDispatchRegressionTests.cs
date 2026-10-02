@@ -65,6 +65,8 @@ public static class SharedBuffCases
     internal static readonly List<ulong> CastTargets=new();
     internal static System.Action? DuringSetup;
     internal static bool Setup, Accepted=true;
+    internal static bool RecoveryAllowed=true, RecoveryHealth, RecoveryAura;
+    internal static int RecoveryCalls;
     public static void Run()
     {
         var cases=new List<(string,System.Action)>();
@@ -99,6 +101,15 @@ public static class SharedBuffCases
         Add("rejected dispatch does not acquire retry dictionary entry",()=>{Learn("Test");Accepted=false;Tick(Spell.BuffSelf("Test"));Expect();Check(!Spell.DoubleCastPreventionDict.ContainsKey("Test"),"rejected submission acquired retry state");});
         Add("successful named dispatch retains existing retry guard",()=>{Learn("Test");Tick(Spell.BuffSelf("Test"));Tick(Spell.BuffSelf("Test"));Expect(1);});
         Add("missing caller-declared coverage array is rejected",()=>{Learn("Test");Tick(Spell.Buff("Test",false,_=>StyxWoW.Me,_=>true,null!));Expect();});
+        foreach(bool byId in new[]{false,true})
+        {
+            bool id=byId;
+            Add("pending recovery prevents buff native dispatch / "+id,()=>{RecoveryAllowed=false;Tick(id?Spell.BuffSelf(101):Spell.BuffSelf("Test"));Expect();Check(RecoveryCalls==1,"shared admission was bypassed");});
+            Add("buff admission owns an aura recipient / "+id,()=>{Tick(id?Spell.BuffSelf(101):Spell.BuffSelf("Test"));Expect(1);Check(RecoveryCalls==1&&RecoveryAura&&!RecoveryHealth,"buff admission lost aura semantics");});
+            Add("blocked buff falls through without success state / "+id,()=>{RecoveryAllowed=false;bool lower=false;Tick(new PrioritySelector(id?Spell.BuffSelf(101):Spell.BuffSelf("Test"),new TreeSharp.Action(_=>{lower=true;return RunStatus.Success;})));Expect();Check(lower&&!Spell.DoubleCastPreventionDict.ContainsKey("Test"),"rejected recovery starved lower priority or acquired success bookkeeping");});
+            Add("ordinary cast preserves unclassified dispatch mode / "+id,()=>{Tick(id?Spell.Cast(101):Spell.Cast("Test"));Expect(2);Check(RecoveryCalls==1&&!RecoveryAura&&!RecoveryHealth,"ordinary cast bypassed or inherited buff classification");});
+        }
+        Add("expired old prevention does not authorize another pending defensive",()=>{Tick(Spell.BuffSelf("Test"));Spell.DoubleCastPreventionDict.Remove("Test");RecoveryAllowed=false;Tick(Spell.BuffSelf("Test"));Expect(1);Check(RecoveryCalls==2,"legacy timer expiry bypassed pending acknowledgement");});
         int passed=0,assertions=0,unexpected=0;
         foreach(var c in cases)
         {
@@ -109,7 +120,7 @@ public static class SharedBuffCases
         Console.WriteLine($"Shared buff dispatch scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; exact Cast/Buff region and real TreeSharp; controlled observations/dispatch; not all class rotations or game effects.");
         if(assertions+unexpected!=0)throw new InvalidOperationException("Shared buff dispatch failures");
     }
-    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};CastTargets.Clear();Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();Setup=false;DuringSetup=null;Accepted=true;Learn("Test");}
+    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};CastTargets.Clear();Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();Setup=false;DuringSetup=null;Accepted=RecoveryAllowed=true;RecoveryHealth=RecoveryAura=false;RecoveryCalls=0;Learn("Test");}
     private static void Learn(string name)=>SpellManager.Spells[name]=new WoWSpell();
     private static void Aura(WoWUnit unit,string name,int id,ulong caster)=>unit.Auras[name]=new Aura{Name=name,SpellId=id,CreatorGuid=caster};
     private static void Tick(Composite tree){tree.Start(null!);try{int count=0;while(tree.Tick(null!)==RunStatus.Running)if(++count>12)throw new Failure("unbounded decision");}finally{tree.Stop(null!);}}
@@ -141,6 +152,11 @@ public static class SharedBuffCases
         public static bool Cast(string name,WoWUnit target)=>Submit(target);
         public static bool Cast(int id,WoWUnit target)=>Submit(target);
         private static bool Submit(WoWUnit target){if(!SharedBuffCases.Accepted)return false;SharedBuffCases.CastTargets.Add(target.Guid);return true;}
+    }
+    public static class RecoveryActions
+    {
+        public static bool TryCast(string name,WoWUnit target,bool heal,bool aura,string owner){SharedBuffCases.RecoveryCalls++;SharedBuffCases.RecoveryHealth=heal;SharedBuffCases.RecoveryAura=aura;return SharedBuffCases.RecoveryAllowed&&SpellManager.Cast(name,target);}
+        public static bool TryCast(int id,WoWUnit target,bool heal,bool aura,string owner){SharedBuffCases.RecoveryCalls++;SharedBuffCases.RecoveryHealth=heal;SharedBuffCases.RecoveryAura=aura;return SharedBuffCases.RecoveryAllowed&&SpellManager.Cast(id,target);}
     }
 }
 /* Controlled owner observation. */ namespace Styx{public static class StyxWoW{public static WoWUnit Me=null!;}}

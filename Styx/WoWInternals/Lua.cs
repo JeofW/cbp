@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text;
 using GreenMagic;
 using Styx.Helpers;
+using Styx.Logic.Combat;
 using Styx.Patchables;
 using Styx.WoWInternals.WoWObjects;
 
@@ -44,6 +45,8 @@ namespace Styx.WoWInternals
 
         // Shared buffer for Lua return values (reused across calls like HB 3.3.5a)
         private static readonly byte[] _luaBuffer = new byte[4000];
+        private const int ObservedReturnLimit = 64;
+        private const int ObservedStringLimit = 384;
 
         public static List<string> GetReturnValues(string lua)
         {
@@ -59,22 +62,45 @@ namespace Styx.WoWInternals
             return GetReturnValuesCore(lua, scriptName, 0);
         }
 
-        private static List<string> GetReturnValuesCore(string lua, string scriptName, ulong expectedCursorGuid)
+        /// <summary>
+        /// Returns a complete bounded scalar observation. Missing transport,
+        /// unreadable fields and unsupported Lua values remain unavailable.
+        /// </summary>
+        public static List<string> GetObservedReturnValues(string lua)
+        {
+            return GetReturnValuesCore(BuildObservedReturnScript(lua), "CopilotBuddy.Observed.lua", 0, true, lua);
+        }
+
+        private static List<string> GetReturnValuesCore(string lua, string scriptName, ulong expectedCursorGuid,
+            bool requireComplete = false, string? recoveryRequest = null)
         {
             var executor = ObjectManager.Executor;
             if (executor == null)
+            {
+                if (requireComplete) throw new ObservationUnavailableException("lua-return", "The current Lua executor is unavailable.");
                 return new List<string>();
+            }
 
             var wow = ObjectManager.Wow;
             if (wow == null)
+            {
+                if (requireComplete) throw new ObservationUnavailableException("lua-return", "The current Lua memory owner is unavailable.");
                 return new List<string>();
+            }
 
             try
             {
+                IntPtr processHandle = requireComplete ? wow.ProcessHandle : IntPtr.Zero;
+                if (requireComplete && processHandle == IntPtr.Zero)
+                    throw new ObservationUnavailableException("lua-return", "The observed Lua process handle is unavailable.");
                 // Read Lua full state (same offset as HB 3.3.5a)
-                uint fullState = wow.Read<uint>((uint)GlobalOffsets.LuaState);
+                uint fullState = requireComplete ? ReadObservedLuaWord(wow, (uint)GlobalOffsets.LuaState)
+                    : wow.Read<uint>((uint)GlobalOffsets.LuaState);
                 if (fullState == 0)
+                {
+                    if (requireComplete) throw new ObservationUnavailableException("lua-return", "The current Lua state is unavailable.");
                     return new List<string>();
+                }
 
                 byte[] bytes = Encoding.UTF8.GetBytes(lua);
                 byte[] bytes2 = Encoding.UTF8.GetBytes(scriptName);
@@ -92,9 +118,30 @@ namespace Styx.WoWInternals
 
                     lock (executor.AssemblyLock)
                     {
-                        if (_returnBuffer == null)
+                        // Observed calls own their output allocation. A nested
+                        // observation or replaced process cannot reuse its bytes.
+                        using var observedBuffer = requireComplete ? new AllocatedMemory(4000) : null;
+                        if (!requireComplete && _returnBuffer == null)
                             _returnBuffer = new AllocatedMemory(4000);
-                        _returnBuffer.WriteBytes(0, _luaBuffer);
+                        var resultBuffer = observedBuffer ?? _returnBuffer!;
+                        resultBuffer.WriteBytes(0, _luaBuffer);
+                        if (requireComplete)
+                        {
+                            using (wow.TemporaryCacheState(false))
+                            {
+                                if (!ReferenceEquals(ObjectManager.Wow, wow) || !ReferenceEquals(ObjectManager.Executor, executor)
+                                    || wow.ProcessHandle != processHandle
+                                    || ReadObservedLuaWord(wow, (uint)GlobalOffsets.LuaState) != fullState
+                                    || ReadObservedLuaWord(wow, resultBuffer.Address) != 0)
+                                    throw new ObservationUnavailableException("lua-return", "The observed Lua request or output owner changed before dispatch.");
+                                byte[] written = wow.ReadBytes(address, list.Count);
+                                if (written == null || written.Length != list.Count)
+                                    throw new ObservationUnavailableException("lua-return", "The complete Lua request bytes could not be verified.");
+                                for (int index = 0; index < written.Length; index++)
+                                    if (written[index] != list[index])
+                                        throw new ObservationUnavailableException("lua-return", "The observed Lua request bytes differ from the prepared query.");
+                            }
+                        }
                         executor.Clear();
 
                             // HB 3.3.5a exact ASM sequence:
@@ -136,11 +183,21 @@ namespace Styx.WoWInternals
                             executor.AddLine("call {0}", (uint)GlobalOffsets.FrameScript_GetTop);
                             executor.AddLine("add esp, 0x4");
                             executor.AddLine("cmp eax, ebx");
-                            executor.AddLine("jle @FailNoRetValues");
+                            if (requireComplete)
+                            {
+                                executor.AddLine("jl @FailObservedReturnLimit");
+                                executor.AddLine("je @FailNoRetValues");
+                            }
+                            else executor.AddLine("jle @FailNoRetValues");
                             executor.AddLine("sub eax, ebx");
+                            if (requireComplete)
+                            {
+                                executor.AddLine("cmp eax, {0}", ObservedReturnLimit);
+                                executor.AddLine("ja @FailObservedReturnLimit");
+                            }
 
                             // 5. Store count in return buffer
-                            executor.AddLine("mov ecx, {0}", _returnBuffer.Address);
+                            executor.AddLine("mov ecx, {0}", resultBuffer.Address);
                             executor.AddLine("mov [ecx], eax");
                             executor.AddLine("add eax, ebx");   // eax = new top (for loop comparison)
 
@@ -173,6 +230,13 @@ namespace Styx.WoWInternals
                             executor.AddLine("mov eax, -1");
                             executor.AddLine("jmp @Finally");
 
+                            if (requireComplete)
+                            {
+                                executor.AddLine("@FailObservedReturnLimit:");
+                                executor.AddLine("mov eax, -2");
+                                executor.AddLine("jmp @Finally");
+                            }
+
                             // Cleanup: restore Lua stack with lua_settop
                             executor.AddLine("@Finally:");
                             executor.AddLine("pop ebx");        // restore ebx (old top)
@@ -184,20 +248,48 @@ namespace Styx.WoWInternals
                             executor.AddLine("pop eax");        // restore result
                             executor.AddLine("retn");
 
+                            if (requireComplete && (!ReferenceEquals(ObjectManager.Wow, wow)
+                                || !ReferenceEquals(ObjectManager.Executor, executor) || wow.ProcessHandle != processHandle))
+                                throw new ObservationUnavailableException("lua-return", "The observed Lua owner changed before native entry.");
+                            if (!RecoveryActions.BeforeLuaSubmission(recoveryRequest ?? lua))
+                            {
+                                if (requireComplete) throw new ObservationUnavailableException("recovery-action", "The prepared Lua action no longer owns native entry.");
+                                return new List<string>();
+                            }
                             executor.Execute();
 
                         // Read result from executor (disable cache like HB)
-                        using (StyxWoW.Memory.TemporaryCacheState(false))
+                        using ((requireComplete ? wow : StyxWoW.Memory).TemporaryCacheState(false))
                         {
+                            if (requireComplete)
+                            {
+                                if (!ReferenceEquals(ObjectManager.Wow, wow) || !ReferenceEquals(ObjectManager.Executor, executor)
+                                    || wow.ProcessHandle != processHandle
+                                    || ReadObservedLuaWord(wow, (uint)GlobalOffsets.LuaState) != fullState)
+                                    throw new ObservationUnavailableException("lua-return", "The observed Lua reply belongs to a replaced owner.");
+                                int status = unchecked((int)ReadObservedLuaWord(wow, executor.ReturnPointer));
+                                int count = checked((int)ReadObservedLuaWord(wow, resultBuffer.Address));
+                                if (status == -1 && count == 0) return new List<string>();
+                                if (status != 0)
+                                    throw new ObservationUnavailableException("lua-return", "The observed Lua query did not produce a complete result. Status=" + status);
+                                if (count == 0)
+                                    throw new ObservationUnavailableException("lua-return", "The Lua execution status and empty result vector contradict each other.");
+                                var observed = ReadObservedLuaValues(wow, resultBuffer.Address, count);
+                                if (!ReferenceEquals(ObjectManager.Wow, wow) || !ReferenceEquals(ObjectManager.Executor, executor)
+                                    || wow.ProcessHandle != processHandle
+                                    || ReadObservedLuaWord(wow, (uint)GlobalOffsets.LuaState) != fullState)
+                                    throw new ObservationUnavailableException("lua-return", "The Lua owner changed while reading the complete result.");
+                                return observed;
+                            }
                             int luaStatus = executor.Memory.Read<int>(executor.ReturnPointer);
                             if (luaStatus == 0)
                             {
                                 // Success - read return values
-                                int resultCount = _returnBuffer.Read<int>(0);
+                                int resultCount = resultBuffer.Read<int>(0);
                                 var results = new List<string>(resultCount);
                                 for (int i = 0; i < resultCount; i++)
                                 {
-                                    uint strPtr = _returnBuffer.Read<uint>((i + 1) * 4);
+                                    uint strPtr = resultBuffer.Read<uint>((i + 1) * 4);
                                     results.Add(executor.Memory.ReadString(strPtr));
                                 }
                                 return results;
@@ -219,10 +311,85 @@ namespace Styx.WoWInternals
             }
             catch (Exception ex)
             {
-                ObservationUnavailableException.RethrowCancellation(ex);
+                RecoveryActions.RethrowControlFlow(ex);
+                if (requireComplete)
+                {
+                    if (ex is ObservationUnavailableException) throw;
+                    throw new ObservationUnavailableException("lua-return", "The observed Lua transport is unavailable: " + ex.GetType().Name);
+                }
                 Logging.WriteDebug("Exception in GetReturnValues: {0}", ex.Message);
                 return new List<string>();
             }
+        }
+
+        private static uint ReadObservedLuaWord(Memory memory, uint address)
+        {
+            if (address == 0 || address > uint.MaxValue - 3)
+                throw new ObservationUnavailableException("lua-return", "An observed Lua word has no valid address.");
+            try
+            {
+                byte[] bytes = memory.ReadBytes(address, sizeof(uint));
+                if (bytes == null || bytes.Length != sizeof(uint))
+                    throw new ObservationUnavailableException("lua-return", "An observed Lua word could not be read completely.");
+                return BitConverter.ToUInt32(bytes, 0);
+            }
+            catch (Exception error)
+            {
+                RecoveryActions.RethrowControlFlow(error);
+                if (error is ObservationUnavailableException) throw;
+                throw new ObservationUnavailableException("lua-return", "An observed Lua word read failed.");
+            }
+        }
+
+        private static string ReadObservedLuaString(Memory memory, uint address)
+        {
+            if (address == 0)
+                throw new ObservationUnavailableException("lua-return", "The Lua string pointer is unavailable.");
+            try
+            {
+                var result = new List<byte>();
+                while (result.Count <= ObservedStringLimit)
+                {
+                    uint pointer = checked(address + (uint)result.Count);
+                    int pageRemaining = Environment.SystemPageSize - (int)(pointer % (uint)Environment.SystemPageSize);
+                    int count = Math.Min(64, Math.Min(pageRemaining, ObservedStringLimit + 1 - result.Count));
+                    byte[] bytes = memory.ReadBytes(pointer, count);
+                    if (bytes == null || bytes.Length != count)
+                        throw new ObservationUnavailableException("lua-return", "A Lua string could not be read completely.");
+                    foreach (byte value in bytes)
+                    {
+                        if (value == 0) return new UTF8Encoding(false, true).GetString(result.ToArray());
+                        result.Add(value);
+                    }
+                }
+                throw new ObservationUnavailableException("lua-return", "The Lua scalar exceeds its bounded string contract.");
+            }
+            catch (Exception error)
+            {
+                RecoveryActions.RethrowControlFlow(error);
+                if (error is ObservationUnavailableException) throw;
+                throw new ObservationUnavailableException("lua-return", "A Lua scalar could not be decoded completely.");
+            }
+        }
+
+        private static List<string> ReadObservedLuaValues(Memory memory, uint address, int count)
+        {
+            if (address == 0 || count < 0 || count > ObservedReturnLimit)
+                throw new ObservationUnavailableException("lua-return", "The Lua result vector is unavailable or exceeds its limit.");
+            var results = new List<string>(count);
+            for (int index = 0; index < count; index++)
+                results.Add(ReadObservedLuaString(memory, ReadObservedLuaWord(memory, checked(address + (uint)(index + 1) * 4U))));
+            return results;
+        }
+
+        private static string BuildObservedReturnScript(string script)
+        {
+            if (script == null) throw new ArgumentNullException(nameof(script));
+            return "local function observe(...) local n=select('#',...); if n>64 then error('observed return count') end; "
+                + "local t={}; for i=1,n do local v=select(i,...); local k=type(v); "
+                + "if k~='string' and k~='number' and k~='boolean' then error('unavailable observed scalar') end; "
+                + "local s=tostring(v); if #s>384 then error('observed scalar length') end; t[i]=s end; return unpack(t,1,n) end; "
+                + "return observe((function()\n" + script + "\nend)())";
         }
 
         private static void EmitCursorItemGuard(ExecutorRand executor, ulong expectedCursorGuid)

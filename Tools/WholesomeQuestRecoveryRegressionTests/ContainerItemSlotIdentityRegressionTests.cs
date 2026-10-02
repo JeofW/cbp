@@ -87,9 +87,9 @@ internal static class ContainerItemSlotIdentityRegressionTests
                 Check(start>=0,"TryUseContainerItem owner is missing");
                 string region=source.Substring(start,Math.Min(3200,source.Length-start));
                 int revalidate=region.IndexOf("IsContainerLocationCurrent",StringComparison.Ordinal);
-                int luaCall=region.IndexOf("Lua.GetReturnVal<bool>",StringComparison.Ordinal);
-                if(luaCall<0)luaCall=region.IndexOf("Lua.GetReturnVal<int>",StringComparison.Ordinal);
-                Check(revalidate>=0&&luaCall>revalidate,
+                int admission=region.IndexOf("RecoveryActions.BindContainerRequest",StringComparison.Ordinal);
+                int luaCall=region.IndexOf("Lua.GetObservedReturnValues",StringComparison.Ordinal);
+                Check(revalidate>=0&&admission>revalidate&&luaCall>admission,
                     "container GUID slot is not revalidated before Lua submission");
             }),
             ("validated quest-item info Lua builder exists",()=>{

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using CommonBehaviors.Actions;
@@ -6,6 +6,7 @@ using CommonBehaviors.Actions;
 using Singular.Settings;
 
 using Styx;
+using Styx.Logic.Combat;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using TreeSharp;
@@ -144,8 +145,9 @@ namespace Singular.Helpers
                         new Decorator(
                             ret => ret != null,
                             new Sequence(
-                                new Action(ret => Logger.Write(String.Format("Using {0}", ((WoWItem)ret).Name))),
-                                new Action(ret => ((WoWItem)ret).UseContainerItem()),
+                                new Action(ret => RecoveryActions.TryUseConsumable((WoWItem)ret, true, false, "Singular.health-item")
+                                    ? RunStatus.Success : RunStatus.Failure),
+                                new Action(ret => Logger.Write(String.Format("Submitted use of {0}; awaiting recovery acknowledgement.", ((WoWItem)ret).Name))),
                                 Helpers.Common.CreateWaitForLagDuration()))
                         )),
                 new Decorator(
@@ -155,8 +157,9 @@ namespace Singular.Helpers
                         new Decorator(
                             ret => ret != null,
                             new Sequence(
-                                new Action(ret => Logger.Write(String.Format("Using {0}", ((WoWItem)ret).Name))),
-                                new Action(ret => ((WoWItem)ret).UseContainerItem()),
+                                new Action(ret => RecoveryActions.TryUseConsumable((WoWItem)ret, false, true, "Singular.mana-item")
+                                    ? RunStatus.Success : RunStatus.Failure),
+                                new Action(ret => Logger.Write(String.Format("Submitted use of {0}; awaiting recovery acknowledgement.", ((WoWItem)ret).Name))),
                                 Helpers.Common.CreateWaitForLagDuration()))))
                 );
         }

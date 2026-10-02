@@ -63,7 +63,14 @@ namespace Styx
 				{
 					Lua.ProcessEvents();
 				}
-				long luaMilliseconds = stageTimer.ElapsedMilliseconds;
+					long luaMilliseconds = stageTimer.ElapsedMilliseconds;
+
+					// Recovery acknowledgements must progress while the routine's
+					// behavior tree is yielding, using the same current worker fence.
+					TreeRoot.VerifyPulseOwner(owner, workerOwned);
+					stageTimer.Restart();
+					RecoveryActions.Pulse();
+					long recoveryMilliseconds = stageTimer.ElapsedMilliseconds;
 
 				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
@@ -123,15 +130,15 @@ namespace Styx
 				{
 					_lastSlowPulseBreakdownUtc = nowUtc;
 					Logging.WriteDiagnostic(
-						"[Pulse] Slow shared pulse: total={0}ms movement={1} objects={2} lua={3} info={4} loot={5} targeting={6} events={7} plugins={8} routine={9}",
+							"[Pulse] Slow shared pulse: total={0}ms movement={1} objects={2} lua={3} info={4} loot={5} targeting={6} events={7} plugins={8} routine={9} recovery={10}",
 						totalMilliseconds, movementMilliseconds, objectsMilliseconds, luaMilliseconds,
 						infoPanelMilliseconds, lootingMilliseconds, targetingMilliseconds,
-						botEventsMilliseconds, pluginsMilliseconds, routineMilliseconds);
+							botEventsMilliseconds, pluginsMilliseconds, routineMilliseconds, recoveryMilliseconds);
 				}
 			}
 			catch (Exception ex)
 			{
-				ObservationUnavailableException.RethrowCancellation(ex);
+					RecoveryActions.RethrowControlFlow(ex);
 				Logging.WriteException(ex);
 			}
 		}

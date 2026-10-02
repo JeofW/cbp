@@ -649,13 +649,17 @@ namespace Styx.WoWInternals.WoWObjects
                 luaBag, luaSlot, expectedEntry);
             try
             {
-                return Lua.GetReturnVal<int>(script, 0U) == 1;
+                if (!RecoveryActions.BindContainerRequest(expectedGuid, expectedEntry, script)) return false;
+                var reply = Lua.GetObservedReturnValues(script);
+                if (reply == null || reply.Count != 1 || (reply[0] != "0" && reply[0] != "1"))
+                    throw new ObservationUnavailableException("container-use", "The container action has no complete execution reply.");
+                bool submitted = reply[0] == "1";
+                RecoveryActions.ObserveContainerReply(script, submitted);
+                return submitted;
             }
             catch (Exception ex)
             {
-                Logging.WriteDebug(
-                    "UseContainerItem refused {0} ({1}) after slot validation: {2}",
-                    Name, expectedEntry, ex.Message);
+                RecoveryActions.ReportDeferral(ex, "WoWItem.TryUseContainerItem");
                 return false;
             }
         }

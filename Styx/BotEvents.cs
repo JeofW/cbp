@@ -56,7 +56,7 @@ namespace Styx
 				}
 				catch (Exception ex)
 				{
-					ObservationUnavailableException.RethrowCancellation(ex);
+					Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(ex);
 					if (ObservationUnavailableException.Find(ex) is { } unavailable)
 						ObservationFailureDiagnostics.Report(unavailable,
 							action.Method.DeclaringType?.FullName + "." + action.Method.Name);
