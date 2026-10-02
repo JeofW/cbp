@@ -331,9 +331,9 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
     {
         var cases = new List<(int Index, string Scenario)>();
         foreach (int index in new[] { 0, 3, 17 })
-        foreach (string scenario in new[] { "ready", "dispose", "replace-player", "refused-ownership" })
+        foreach (string scenario in new[] { "ready", "dispose", "replace-player", "replace-recipient" })
             cases.Add((index, scenario));
-        cases.Add((0, "bounded-refusal"));
+        cases.Add((0, "bounded-unknown"));
         int passed = 0, assertions = 0, unexpected = 0;
         foreach (var test in cases)
         {
@@ -355,7 +355,7 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
                 Console.Error.WriteLine("ERROR real matching recipient: " + name + ": " + error);
             }
         }
-        Console.WriteLine($"Real matching recipient scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.");
+        Console.WriteLine($"Real matching recipient scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, interaction observation UNKNOWN, no game attached.");
         return (assertions, unexpected);
     }
 
@@ -400,19 +400,23 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
         FieldInfo batchField = typeof(ProfileBatchManager).GetField("_currentBatch", Hidden)!;
         object? oldBatch = batchField.GetValue(null);
         ForcedCodeBehavior? wrapper = null, restarted = null;
-        int attempts = 0, refusals = 0, deferrals = 0;
+        int unknowns = 0, legacyNativeLogs = 0, deferrals = 0;
         Action<LogLevel, string> observe = (_, message) =>
         {
-            if (message.Contains("[Interact] Interacting with object at", StringComparison.Ordinal))
+            if (message.Contains("GossipEvent interaction observation is unavailable", StringComparison.Ordinal))
             {
-                attempts++;
-                // A real host event occurs inside the real interaction method.
-                // Exercise reentrant lifecycle changes without a shadow owner.
-                if (attempts == 1 && scenario == "dispose") wrapper!.Dispose();
-                if (attempts == 1 && scenario == "replace-player")
+                unknowns++;
+                // Exercise a reentrant lifecycle change at the owned caller-side
+                // diagnostic boundary. The strict WoWObject session now rejects
+                // missing native context before its old preparation log exists.
+                if (unknowns == 1 && scenario == "dispose") wrapper!.Dispose();
+                if (unknowns == 1 && scenario == "replace-player")
                     ObjectManager.Me = new LocalPlayer(player.BaseAddress);
+                if (unknowns == 1 && scenario == "replace-recipient")
+                    recipient.ReplaceRegisteredUnitSameAddress();
             }
-            if (message.Contains("[Interact] Invalid executor - cannot interact", StringComparison.Ordinal)) refusals++;
+            if (message.Contains("[Interact] Interacting with object at", StringComparison.Ordinal) ||
+                message.Contains("[Interact] Invalid executor - cannot interact", StringComparison.Ordinal)) legacyNativeLogs++;
             if (message.Contains("GossipEvent is deferring without authoritative", StringComparison.Ordinal)) deferrals++;
         };
         Logging.OnMessageLogged += observe;
@@ -423,42 +427,50 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
             Check(owner.GetType().FullName == "Styx.Bot.Quest_Behaviors.GossipEvent.GossipEvent" &&
                 ReferenceEquals(owner.Element, node.Element) && node.Element.ToString() == element.ToString() && !owner.IsAttributeProblem,
                 "factory/wrapper did not retain the actual generated owner and element");
+            MethodInfo actualTick = owner.GetType().GetMethod("TickBehavior", Hidden)!;
+            Type?[] catchTypes = actualTick.GetMethodBody()!.ExceptionHandlingClauses
+                .Where(clause => clause.Flags == ExceptionHandlingClauseOptions.Clause)
+                .Select(clause => clause.CatchType).ToArray();
+            Check(catchTypes.Count(type => type == typeof(ObservationUnavailableException)) == 1 &&
+                !catchTypes.Any(type => type == typeof(Exception) || type == typeof(OperationCanceledException) ||
+                    type == typeof(ThreadInterruptedException) || type == typeof(Styx.InvalidProcessException) ||
+                    type == typeof(Styx.InvalidExecutorException)),
+                "compiled GossipEvent widened its optional UNKNOWN catch into cancellation/process/executor control flow");
             wrapper.OnStart(); wrapper.OnTick();
             Check(!wrapper.IsDone && Read(owner, "InitialObjectiveCount") == null,
                 "whole-quest owner borrowed a raw counter or finished before interaction");
-            Tick(wrapper);
-            // Failure to reach the boundary is a setup/runtime error, not an
-            // intended behavioral red assertion about an interaction that never ran.
-            if (attempts != 1 || refusals != 1)
-                throw new InvalidOperationException($"Real interaction/refusal boundary not reached: attempts={attempts}, refusals={refusals}, status={TreeRoot.StatusText}");
-            if (scenario == "dispose" || scenario == "replace-player")
+            TickOwnerWithoutEscapedInteractionUnknown(owner);
+            Check(legacyNativeLogs == 0,
+                "strict interaction emitted a native-preparation/refusal log before establishing a current native session");
+            Check(unknowns == 1,
+                "actual GossipEvent caller did not observe exactly one strict UNKNOWN at its owned diagnostic boundary; unknowns=" + unknowns);
+            if (scenario == "dispose" || scenario == "replace-player" || scenario == "replace-recipient")
             {
                 Check((int)Read(owner, "Counter")! == 0 &&
                     (ulong)owner.GetType().GetField("_interactionGuid", Hidden)!.GetValue(owner)! == 0UL &&
-                    (long)owner.GetType().GetField("_gossipOpenStartedUtc", Hidden)!.GetValue(owner)! == -1L,
-                    "interaction return published pending state after disposal or player replacement");
+                    (long)owner.GetType().GetField("_gossipOpenStartedUtc", Hidden)!.GetValue(owner)! == -1L &&
+                    (long)owner.GetType().GetField("_interactionUnknownStartedUtc", Hidden)!.GetValue(owner)! == -1L,
+                    "UNKNOWN caller callback published attempt/menu state after disposal or player replacement");
             }
             else
             {
                 Check(!wrapper.IsDone && (int)Read(owner, "Counter")! == 1 &&
-                    (long)owner.GetType().GetField("_lastSubmissionUtc", Hidden)!.GetValue(owner)! == -1L,
-                    "refused interaction became quest success or a submitted gossip option");
-                if (scenario == "refused-ownership")
-                {
-                    Check((ulong)owner.GetType().GetField("_interactionGuid", Hidden)!.GetValue(owner)! == 0UL,
-                        "known executor refusal granted ownership of a future matching NPC menu");
-                }
-                if (scenario == "bounded-refusal")
+                    (long)owner.GetType().GetField("_lastSubmissionUtc", Hidden)!.GetValue(owner)! == -1L &&
+                    (ulong)owner.GetType().GetField("_interactionGuid", Hidden)!.GetValue(owner)! == 0UL &&
+                    (long)owner.GetType().GetField("_gossipOpenStartedUtc", Hidden)!.GetValue(owner)! == -1L &&
+                    (long)owner.GetType().GetField("_interactionUnknownStartedUtc", Hidden)!.GetValue(owner)! >= 0L,
+                    "UNKNOWN interaction became quest success, a submitted gossip option, or future-menu ownership");
+                if (scenario == "bounded-unknown")
                 {
                     var clock = Stopwatch.StartNew();
                     while (!wrapper.IsDone && clock.Elapsed < TimeSpan.FromSeconds(10))
                     {
-                        wrapper.OnTick(); Tick(wrapper); Thread.Sleep(25);
+                        wrapper.OnTick(); TickWithoutEscapedInteractionUnknown(wrapper); Thread.Sleep(25);
                     }
-                    Check(wrapper.IsDone && attempts == 2 && refusals == 2 && deferrals == 1 &&
+                    Check(wrapper.IsDone && unknowns == 2 && legacyNativeLogs == 0 && deferrals == 1 &&
                         (int)Read(owner, "Counter")! == 2 && !player.QuestLog.GetQuestById(867U).IsCompleted &&
                         !(bool)Invoke(owner.GetType().GetMethod("HasAuthoritativeSuccess", Hidden)!, owner, null)!,
-                        "unchanged quest progress did not end in bounded refusal without quest credit");
+                        "unchanged quest progress did not end in bounded UNKNOWN deferral without quest credit");
                 }
                 else
                 {
@@ -466,15 +478,15 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
                     MethodInfo write = fixtureType.GetMethod("Write", Hidden)!;
                     Invoke(write, fixture, new object[] { descriptor + 640U, 0x00090009U });
                     Invoke(write, fixture, new object[] { descriptor + 644U, 0x00090009U });
-                    wrapper.OnTick(); Tick(wrapper);
-                    Check(!wrapper.IsDone && attempts == 1 && refusals == 1,
-                        "unrelated counts acknowledged or repeated the refused interaction");
+                    wrapper.OnTick(); TickWithoutEscapedInteractionUnknown(wrapper);
+                    Check(!wrapper.IsDone && unknowns == 1 && legacyNativeLogs == 0,
+                        "unrelated counts acknowledged or repeated the bounded UNKNOWN interaction");
                     Invoke(write, fixture, new object[] { descriptor + 636U, (uint)WoWDescriptorQuestFlags.Completed });
-                    Check(wrapper.IsDone && Tick(wrapper) == RunStatus.Success && attempts == 1,
+                    Check(wrapper.IsDone && TickWithoutEscapedInteractionUnknown(wrapper) == RunStatus.Success && unknowns == 1,
                         "authoritative readiness did not stop the existing wrapper");
                     restarted = new ForcedCodeBehavior(node);
                     restarted.OnStart(); restarted.OnTick();
-                    Check(restarted.IsDone && Tick(restarted) == RunStatus.Success && attempts == 1,
+                    Check(restarted.IsDone && TickWithoutEscapedInteractionUnknown(restarted) == RunStatus.Success && unknowns == 1,
                         "fresh wrapper replayed an already-ready quest");
                 }
             }
@@ -504,6 +516,7 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
         private readonly ThreadLocal<Dictionary<IntPtr, byte[]>> cache;
         private readonly Dictionary<ulong, WoWObject> objects;
         private readonly WoWUnit unit;
+        private WoWUnit? replacement;
         private const ulong FixtureGuid = 987654321UL;
         internal AllocatedRecipient(object memoryOwner)
         {
@@ -536,9 +549,18 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
             }
             catch { Dispose(); throw; }
         }
+        internal void ReplaceRegisteredUnitSameAddress()
+        {
+            replacement = new WoWUnit(unit.BaseAddress);
+            objects[FixtureGuid] = replacement;
+            Check(replacement.Guid == FixtureGuid && replacement.Entry == 70001 &&
+                !ReferenceEquals(replacement, unit),
+                "same-address recipient replacement did not retain the controlled identity data");
+        }
         public void Dispose()
         {
-            if (objects.TryGetValue(FixtureGuid, out var current) && ReferenceEquals(current, unit)) objects.Remove(FixtureGuid);
+            if (objects.TryGetValue(FixtureGuid, out var current) &&
+                (ReferenceEquals(current, unit) || ReferenceEquals(current, replacement))) objects.Remove(FixtureGuid);
             uint first = unchecked((uint)storage.ToInt32());
             foreach (IntPtr key in cache.Value!.Keys.Where(key => unchecked((uint)key.ToInt32()) >= first &&
                 unchecked((uint)key.ToInt32()) < first + 16384U).ToArray()) cache.Value.Remove(key);
@@ -553,6 +575,31 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
         branch.Start(context);
         try { return branch.Tick(context); }
         finally { branch.Stop(context); }
+    }
+
+    private static RunStatus TickWithoutEscapedInteractionUnknown(ForcedCodeBehavior wrapper)
+    {
+        try { return Tick(wrapper); }
+        catch (ObservationUnavailableException unavailable)
+        {
+            throw new Failure("GossipEvent let strict interaction UNKNOWN escape its caller boundary: " +
+                unavailable.Observation + ": " + unavailable.Message);
+        }
+    }
+
+    private static RunStatus TickOwnerWithoutEscapedInteractionUnknown(CustomForcedBehavior owner)
+    {
+        try
+        {
+            MethodInfo tick = owner.GetType().GetMethod("TickBehavior", Hidden)
+                ?? throw new InvalidOperationException("Compiled GossipEvent TickBehavior is unavailable");
+            return (RunStatus)Invoke(tick, owner, null)!;
+        }
+        catch (ObservationUnavailableException unavailable)
+        {
+            throw new Failure("GossipEvent let strict interaction UNKNOWN escape its actual TickBehavior caller boundary: " +
+                unavailable.Observation + ": " + unavailable.Message);
+        }
     }
 
     private static object? Read(object owner, string property) => owner.GetType().GetProperty(property, Hidden)!.GetValue(owner);

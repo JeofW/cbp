@@ -467,6 +467,12 @@ namespace Styx.Logic.Pathing
 			_meshNavigator?.Clear();
 		}
 
+		internal static void InvalidatePoiRoute()
+		{
+			Flightor.InvalidateRouteContext();
+			_meshNavigator?.InvalidateRouteContext();
+		}
+
 		public static MoveResult MoveTo(WoWPoint destination)
 		{
 			return MoveTo(destination, "Navigation");

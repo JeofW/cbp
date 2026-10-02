@@ -60,6 +60,9 @@ public class Aura{public string Name;}
 public class LocalPlayer{public ulong Guid=1;public uint MapId=530,FreeNormalBagSlots=20;public bool IsValid=true,IsAlive=true,IsGhost,IsActuallyInCombat,PetInCombat,IsFlying,IsMoving,IsCasting,OnTaxi,IsOnTransport,Food,Drink,MovementKnown=true,AurasKnown=true;public int ChanneledCastingSpellId;public uint Flags;public bool TryGetAllAuras(out List<global::Aura> auras,string consumer){auras=null;if(!AurasKnown)return false;auras=new();if(Food)auras.Add(new global::Aura{Name="Food"});if(Drink)auras.Add(new global::Aura{Name="Drink"});return true;}public bool TryGetMovementState(out uint flags,out ulong transport){flags=Flags;transport=IsOnTransport?1UL:0UL;return MovementKnown;}}
 }
 public class Actor:Styx.WoWInternals.WoWObjects.LocalPlayer{}
+/* Controlled rest observation leaf; no unknown aura coverage is converted to absence. */ namespace Styx.Logic.Common {
+public static class Rest {public static bool TryObserveActivity(Styx.WoWInternals.WoWObjects.LocalPlayer actor,out bool food,out bool drink){food=drink=false;if(actor==null||!actor.AurasKnown)return false;food=actor.Food;drink=actor.Drink;return true;}}
+}
 public static class StyxWoW{public static Actor Me=new();public static bool IsInWorld=true;public static AreaManager AreaManager=new();}
 public class AreaManager{public Area CurrentGrindArea=new();}
 public class Area{public int Calls;public bool TryAdvanceCurrentHotspot(out int previous,out int next){Calls++;previous=0;next=1;return true;}}

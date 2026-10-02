@@ -1314,9 +1314,7 @@ namespace WholesomeAQ
                 // Consumables cannot start in water or an unknown liquid observation.
                 // Release only the routine rest pause so movement/air recovery is not
                 // held behind a thirty-second wait for an impossible food/drink aura.
-                bool canRestHere = !StyxWoW.Me.Dead && !StyxWoW.Me.IsGhost
-                    && !StyxWoW.Me.IsOnTransport && !StyxWoW.Me.IsFlying
-                    && !LiquidEnvironment.IsPlayerInLiquid(StyxWoW.Me);
+                bool canRestHere = CanRestAtObservedLocation(StyxWoW.Me);
                 bool hasPendingLoot = false, hasImmediateThreat = false;
                 bool restWorkKnown = canRestHere && TryObserveRestWork(out hasPendingLoot, out hasImmediateThreat);
                 if (!canRestHere || !restWorkKnown)
@@ -1543,6 +1541,10 @@ namespace WholesomeAQ
             if (!current.IsIdentityComplete)
                 return false;
 
+            // Preserve the submitted reward's session owner before a raw-log
+            // departure replaces the generated profile and its behavior object.
+            QuestTurnInCompletion.ObservePending(current);
+
             _lastReadyQuestSnapshot = current;
             _lastReadyQuestIds = new HashSet<int>(current.ReadyQuestIds.Select(id => (int)id));
             if (previous == null || previousReady == null || !previous.HasSameOwner(current))
@@ -1586,12 +1588,7 @@ namespace WholesomeAQ
             out bool food, out bool drink,
             [System.Runtime.CompilerServices.CallerMemberName] string consumer = "")
         {
-            food = drink = false;
-            if (actor == null || !actor.TryGetAllAuras(out var auras, "WholesomeAutoQuest." + consumer))
-                return false;
-            food = auras.Any(aura => aura.Name == "Food");
-            drink = auras.Any(aura => aura.Name == "Drink");
-            return true;
+            return Styx.Logic.Common.Rest.TryObserveActivity(actor, out food, out drink);
         }
 
         private bool TryObserveActivityRest(Styx.WoWInternals.WoWObjects.LocalPlayer actor,
@@ -1611,6 +1608,22 @@ namespace WholesomeAQ
             return false;
         }
 
+        private static bool CanRestAtObservedLocation(Styx.WoWInternals.WoWObjects.LocalPlayer actor)
+        {
+            // UNKNOWN denies this optional rest action; it does not assert dry
+            // terrain or abort the quest root. Explicit cancellation and native
+            // process/executor loss are deliberately not caught here.
+            try
+            {
+                var memory = ObjectManager.Wow;
+                return actor != null && ReferenceEquals(StyxWoW.Me, actor)
+                    && !actor.Dead && !actor.IsGhost && !actor.IsOnTransport && !actor.IsFlying
+                    && !LiquidEnvironment.IsPlayerInLiquid(actor)
+                    && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(ObjectManager.Wow, memory);
+            }
+            catch (ObservationUnavailableException) { return false; }
+        }
+
         private void RetryRestConsumables(Styx.WoWInternals.WoWObjects.LocalPlayer actor, object memory)
         {
             uint address = actor?.BaseAddress ?? 0;
@@ -1618,7 +1631,7 @@ namespace WholesomeAQ
                 && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(ObjectManager.Wow, memory)
                 && actor.BaseAddress == address && actor.IsValid && actor.IsAlive && !actor.IsGhost
                 && !actor.Combat && !actor.IsOnTransport && !actor.IsFlying
-                && !LiquidEnvironment.IsPlayerInLiquid(actor)
+                && CanRestAtObservedLocation(actor)
                 && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(ObjectManager.Wow, memory);
             if (!Current()) { _restingPaused = false; return; }
             if (!TryObserveRestAuras(actor, out bool food, out bool drink) || !Current()) return;
@@ -1680,9 +1693,8 @@ namespace WholesomeAQ
                 return;
 
             bool completed = key.Stage == QuestRecoveryStage.Pickup && StyxWoW.Me.QuestLog.ContainsQuest(key.QuestId);
-            if (!completed && key.Stage == QuestRecoveryStage.TurnIn &&
-                StyxWoW.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedIds))
-                completed = completedIds.Contains(key.QuestId);
+            if (!completed && key.Stage == QuestRecoveryStage.TurnIn)
+                completed = HasConfirmedTurnIn(owner, key.QuestId);
             if (!completed || !_attemptOwnership.TryComplete(owner, $"{key.Stage} stage completed.", out var success))
                 return;
 
@@ -1702,13 +1714,13 @@ namespace WholesomeAQ
             {
                 behaviorDone = behavior.IsDone;
             }
-            catch
+            catch (Exception error)
             {
+                Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(error);
                 return;
             }
             bool accepted = StyxWoW.Me.QuestLog.ContainsQuest(key.QuestId);
-            bool authoritativeCompleted = StyxWoW.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedIds) &&
-                completedIds.Contains(key.QuestId);
+            bool authoritativeCompleted = key.Stage == QuestRecoveryStage.TurnIn && HasConfirmedTurnIn(behavior, key.QuestId);
             if (!IsCompletedOwnedStage(behavior, key, accepted, authoritativeCompleted, behaviorDone) ||
                 !_attemptOwnership.TryComplete(behavior, $"{key.Stage} behavior completed.", out var success))
                 return;
@@ -1716,6 +1728,19 @@ namespace WholesomeAQ
             QuestRecoveryManager.Instance.Report(success, QuestRecoveryRuntime.Capture());
             _scheduler?.ReleaseActivation(behavior);
             RequestRefresh($"Quest {key.QuestId} {key.Stage} completed; queuing one scheduler rebuild.");
+        }
+
+        private static bool HasConfirmedTurnIn(object owner, uint questId)
+        {
+            if (owner is not ForcedQuestTurnIn turnIn || turnIn.QuestId != questId) return false;
+            var confirmation = QuestTurnInCompletion.Find(questId);
+            if (confirmation != null) return confirmation.IsConfirmedFor(owner);
+            // Permanent history remains valid for ordinary quests completed
+            // outside an owned reward operation. It cannot replace a current
+            // daily/repeatable receipt or another behavior's pending operation.
+            return QuestTurnInCompletion.RequiresCompletedHistory(questId)
+                && StyxWoW.Me?.QuestLog.TryGetAuthoritativeCompletedQuests(out var ids) == true
+                && ids.Contains(questId);
         }
 
         internal static bool IsCompletedOwnedStage(

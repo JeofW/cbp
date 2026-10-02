@@ -48,11 +48,13 @@ using TreeSharp;using Styx;using Styx.Logic.POI;using Styx.Logic.Pathing;using S
 public static class PoiTravelCases {
  sealed class Failure(string why):Exception(why){}
  public static LocalPlayer Actor;public static WoWUnit Subject;public static BotPoi Poi;
- public static string Stage;public static System.Action Callback;public static readonly List<WoWPoint> Moves=new();public static int Logs;
+ public static string Stage;public static System.Action Callback;public static readonly List<WoWPoint> Moves=new(),Approaches=new();public static int Logs;
+ static IEnumerable<WoWPoint> Dispatched=>Moves.Concat(Approaches);
+ static RunStatus ExpectedStatus(PoiType type)=>type is PoiType.QuestPickUp or PoiType.QuestTurnIn or PoiType.Sell or PoiType.Buy or PoiType.Repair or PoiType.Mail or PoiType.Train or PoiType.Fly or PoiType.InnKeeper?RunStatus.Running:RunStatus.Success;
  static void Check(bool value,string why){if(!value)throw new Failure(why);}
  public static void Event(string stage){if(Stage==stage){var action=Callback;Stage=null;Callback=null;action?.Invoke();}}
  static void Reset(){
-  Stage=null;Callback=null;Moves.Clear();Logs=0;
+  Stage=null;Callback=null;Moves.Clear();Approaches.Clear();Logs=0;
   Actor=new LocalPlayer{Guid=1,LocationValue=new WoWPoint(10,10,10)};ObjectManager.Me=Actor;WoWMovement.ActiveMover=Actor;
   Subject=new WoWUnit{Guid=2,LocationValue=new WoWPoint(200,10,10)};
   Poi=new BotPoi{Type=PoiType.Loot,Guid=2,Entry=70,ObjectValue=Subject,LocationValue=Subject.LocationValue};BotPoi.Current=Poi;
@@ -85,7 +87,7 @@ public static class PoiTravelCases {
  public static void Run(){
   var cases=new List<(string,System.Action)>();void Add(string name,System.Action body)=>cases.Add((name,()=>{Reset();body();}));
   foreach(PoiType type in new[]{PoiType.Loot,PoiType.Skin,PoiType.Harvest,PoiType.Kill,PoiType.Quest,PoiType.QuestPickUp,PoiType.QuestTurnIn,PoiType.Sell,PoiType.Buy,PoiType.Repair,PoiType.Mail,PoiType.Train,PoiType.Fly,PoiType.Hotspot}){
-   var kind=type;Add("healthy "+kind,()=>{Poi.Type=kind;Subject.IsAlive=kind!=PoiType.Loot&&kind!=PoiType.Skin;Check(Tick(new ActionMoveToPoi())==RunStatus.Success&&Moves.SequenceEqual(new[]{Subject.LocationValue}),"healthy travel dispatch changed");});
+   var kind=type;Add("healthy "+kind,()=>{Poi.Type=kind;Subject.IsAlive=kind!=PoiType.Loot&&kind!=PoiType.Skin;Check(Tick(new ActionMoveToPoi())==ExpectedStatus(kind)&&Dispatched.SequenceEqual(new[]{Subject.LocationValue}),"healthy travel dispatch changed or acquired unobserved arrival");});
   }
   Add("coordinate destination without observed NPC",()=>{Poi.ObjectValue=null;Check(Tick(new ActionMoveToPoi())==RunStatus.Success&&Moves.SequenceEqual(new[]{Poi.LocationValue}),"coordinate approach requires an already loaded NPC");});
   Add("game-object destination",()=>{Poi.ObjectValue=new WoWObject{Guid=2,LocationValue=Poi.LocationValue};Check(Tick(new ActionMoveToPoi())==RunStatus.Success&&Moves.SequenceEqual(new[]{Poi.LocationValue}),"game-object destination changed");});
@@ -108,30 +110,39 @@ public static class PoiTravelCases {
    });
   }
   foreach(string mode in new[]{"actor","map","provider","poi","destination"}){string change=mode;Add("moving cached route after "+change,()=>{
-   Subject.IsMoving=true;var owner=new ActionMoveToPoi();Check(Tick(owner)==RunStatus.Success,"initial moving travel failed");Moves.Clear();
+   Subject.IsMoving=true;var owner=new ActionMoveToPoi();Check(Tick(owner)==RunStatus.Success,"initial moving travel failed");Moves.Clear();Approaches.Clear();
    if(change=="actor"){ObjectManager.Me=new LocalPlayer{Guid=1,LocationValue=Actor.LocationValue};WoWMovement.ActiveMover=ObjectManager.Me;Actor=ObjectManager.Me;}
    else if(change=="poi"){Poi=new BotPoi{Type=PoiType.QuestPickUp,Guid=2,Entry=70,ObjectValue=Subject};BotPoi.Current=Poi;}
    else if(change!="destination")Change(change);
    Subject.LocationValue=new WoWPoint(500,10,40);Poi.LocationValue=Subject.LocationValue;
-   Check(Tick(owner)==RunStatus.Success&&Moves.SequenceEqual(new[]{Subject.LocationValue}),"new context inherited a stale moving-unit destination");
+   Check(Tick(owner)==ExpectedStatus(Poi.Type)&&Dispatched.SequenceEqual(new[]{Subject.LocationValue}),"new context inherited a stale moving-unit destination");
   });}
   Add("stable destination suppresses duplicate log only",()=>{var owner=new ActionMoveToPoi();Tick(owner);Tick(owner);Check(Moves.Count==2&&Logs==1,"log suppression changed movement or logs");});
   foreach(string mode in new[]{"flying","swimming","mounted"}){string travel=mode;Add("existing travel mode "+travel,()=>{Actor.IsFlying=travel=="flying";Actor.IsSwimming=travel=="swimming";Actor.Mounted=travel=="mounted";Check(Tick(new ActionMoveToPoi())==RunStatus.Success&&Moves.Count==1,"legitimate flight/water/mount mode blocked");});}
+  foreach(var example in new[]{("inside doorway",new WoWPoint(200,10,10)),("deep interior",new WoWPoint(230,15,10)),("upper floor",new WoWPoint(200,10,30)),("lower floor",new WoWPoint(200,10,-10)),("roof separation",new WoWPoint(205,18,15)),("cave interior",new WoWPoint(240,30,5))}){
+   var sample=example;Add("indoor destination requires exterior approach/"+sample.Item1,()=>{
+    Poi.Type=PoiType.QuestPickUp;Actor.Mounted=true;Actor.IsFlying=true;
+    Subject.IsOutdoors=false;Subject.LocationValue=sample.Item2;Poi.LocationValue=sample.Item2;
+    Tick(new ActionMoveToPoi());
+    Check(!Moves.Contains(sample.Item2),"known indoor target coordinate was sent directly to Flightor; no exterior/landing/ground handoff exists");
+    Check(Approaches.SequenceEqual(new[]{sample.Item2}),"indoor target did not acquire the shared approach owner");
+   });
+  }
   int passed=0,assertions=0,unexpected=0;
   foreach(var item in cases){try{item.Item2();passed++;Console.WriteLine("PASS POI travel: "+item.Item1);}catch(Failure e){assertions++;Console.Error.WriteLine("FAIL POI travel: "+item.Item1+": "+e.Message);}catch(Exception e){unexpected++;Console.Error.WriteLine("ERROR POI travel: "+item.Item1+": "+e);}}
-  Console.WriteLine($"POI travel ownership scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; complete action/base and real TreeSharp; controlled world/void Flightor dispatch; no arrival, route-result or native acceptance.");
+  Console.WriteLine($"POI travel ownership scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; complete action/base and real TreeSharp; controlled world/Flightor/approach leaves; no arrival, route-result or native acceptance. Actual ground transition integration is covered by IndoorApproachRegressionTests.");
   if(assertions+unexpected!=0)throw new InvalidOperationException("POI travel regression");
  }
 }
 /* Controlled world objects inside the compiled probe. */ namespace Styx.WoWInternals.WoWObjects {
- public class WoWObject {public ulong Guid=2;public uint Entry=70;public bool IsValid=true;public WoWPoint LocationValue;public virtual WoWPoint Location{get{var observed=LocationValue;PoiTravelCases.Event("location");return observed;}}public WoWUnit ToUnit()=>this as WoWUnit;}
+ public class WoWObject {public ulong Guid=2;public uint Entry=70;public bool IsValid=true,IsOutdoors=true;public WoWPoint LocationValue;public virtual WoWPoint Location{get{var observed=LocationValue;PoiTravelCases.Event("location");return observed;}}public WoWUnit ToUnit()=>this as WoWUnit;}
  public class WoWUnit:WoWObject {public bool IsAlive=true,IsMoving;}
  public class LocalPlayer:WoWUnit {public uint MapId;public bool OnTaxi,IsOnTransport,IsCasting,IsFlying,IsSwimming,Mounted,Combat,IsGhost;public int ChanneledCastingSpellId;}
 }
 /* Controlled runtime observations. */ namespace Styx.WoWInternals {public static class ObjectManager{public static LocalPlayer Me;}public static class WoWMovement{public static WoWUnit ActiveMover;}}
 /* Controlled runtime observations. */ namespace Styx {public static class StyxWoW{public static LocalPlayer Me=>ObjectManager.Me;}}
 /* Controlled current work and callback observations. */ namespace Styx.Logic.POI {
- public enum PoiType {None,Loot,Skin,Harvest,Kill,Quest,QuestPickUp,QuestTurnIn,Sell,Buy,Mail,Repair,Train,Fly,Hotspot}
+ public enum PoiType {None,Loot,Skin,Harvest,Kill,Quest,QuestPickUp,QuestTurnIn,Sell,Buy,Mail,Repair,Train,Fly,Hotspot,InnKeeper}
  public class BotPoi {
   public static BotPoi Current;public PoiType Type;public ulong Guid;public uint Entry;public WoWObject ObjectValue;public WoWPoint LocationValue;
   public WoWObject AsObject{get{var observed=ObjectValue;PoiTravelCases.Event("object");return observed;}}
@@ -142,6 +153,16 @@ public static class PoiTravelCases {
 /* Controlled external dispatch only. */ namespace Styx.Logic.Pathing {
  public static class Navigator{public static object NavigationProvider;public static MoveResult MoveTo(WoWPoint point)=>throw new InvalidOperationException("unexpected base navigator");public static RunStatus GetRunStatusFromMoveResult(MoveResult result)=>RunStatus.Success;}
  public static class Flightor{public static void MoveTo(WoWPoint point){PoiTravelCases.Moves.Add(point);PoiTravelCases.Event("move");}}
+ // This fixture verifies the complete action's admission boundary. Geometry,
+ // landing and observation acknowledgement execute in the separately linked
+ // IndoorApproachRegressionTests; this leaf never supplies Ready on dispatch.
+ public enum GroundTransitionPurpose{Interaction,Combat}
+ public enum GroundTransitionState{Pending,Ready,Unavailable,Revoked}
+ public sealed class GroundTransition{
+  public GroundTransition(GroundTransitionPurpose purpose){}
+  public GroundTransitionState Tick(WoWPoint destination,WoWObject subject,Func<bool> admitted){if(!admitted())return GroundTransitionState.Revoked;PoiTravelCases.Approaches.Add(destination);PoiTravelCases.Event("move");return admitted()?GroundTransitionState.Pending:GroundTransitionState.Revoked;}
+  public void Cancel(){}
+ }
 }
 """;
 }

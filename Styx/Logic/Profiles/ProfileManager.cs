@@ -37,6 +37,9 @@ namespace Styx.Logic.Profiles
 
 		public static string XmlLocation { get; private set; }
 
+		// Ownership checks must not invoke CurrentProfile's load/Stop side effects.
+		internal static Profile? CurrentProfileSnapshot => _currentProfile;
+
 		public static Profile? CurrentOuterProfile
 		{
 			get { return _currentOuterProfile; }

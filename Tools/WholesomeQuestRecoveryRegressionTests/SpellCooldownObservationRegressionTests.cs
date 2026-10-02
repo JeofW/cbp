@@ -103,10 +103,15 @@ public static class TreeRoot {
 public sealed class ExecutorRand {
  public readonly object AssemblyLock=new object();public readonly ReadMemory Memory=new ReadMemory();public IntPtr ReturnPointer=>IntPtr.Zero;
  public static string Mode;public static Action OnExecute;public static int Executions;public void Clear(){}public void AddLine(string text,params object[] values){}
- public void Execute(){Executions++;var next=OnExecute;OnExecute=null;next?.Invoke();var stop=new OperationCanceledException("controlled native cancellation");if(Mode=="cancel")throw stop;if(Mode=="wrapped-cancel")throw new TargetInvocationException(stop);if(Mode=="failure")throw new InvalidOperationException("unavailable native read");}
+ public void Execute(){Executions++;var next=OnExecute;OnExecute=null;next?.Invoke();var stop=new OperationCanceledException("controlled native cancellation");if(Mode=="cancel")throw stop;if(Mode=="wrapped-cancel")throw new TargetInvocationException(stop);if(Mode=="failure")throw new InvalidOperationException("unavailable native read");if(Mode=="fatal-executor")throw new Styx.InvalidExecutorException("controlled executor loss");if(Mode=="fatal-process")throw new TargetInvocationException(new Styx.InvalidProcessException("controlled process loss"));}
 }
 public sealed class ReadMemory {public T Read<T>(IntPtr pointer)=>(T)(object)(ExecutorRand.Mode=="active"?1:0);}
 public static class Logging {public static void WriteDebug(string text,params object[] values){}public static void WriteException(Exception error){}}
+public static class RecoveryActions {
+ public static bool Allow=true;public static int Entries,ObservedSpell;public static ulong ObservedTarget;public static Exception Failure;
+ public static bool BeforeSpellSubmission(int spellId,ulong target){Entries++;ObservedSpell=spellId;ObservedTarget=target;if(Failure!=null)throw Failure;return Allow;}
+ public static void RethrowControlFlow(Exception error){Styx.Helpers.ObservationUnavailableException.RethrowCancellation(error);while(error is TargetInvocationException e&&e.InnerException!=null)error=e.InnerException;if(error is Styx.InvalidExecutorException||error is Styx.InvalidProcessException)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error).Throw();}
+}
 public static class Lua {
  public static List<string> Values;public static string Mode;public static int Reads;public static Func<string,string,List<string>> StockObservation;public static Action OnRead;
  public static List<string> GetReturnValues(string script){Reads++;var values=Mode==null?Values:StockObservation(script,Mode);var callback=OnRead;OnRead=null;callback?.Invoke();return values;}
@@ -136,6 +141,7 @@ public static class CooldownCases {
  private static void Check(bool condition,string reason){if(!condition)throw new Failure(reason);}
  private static WoWSpell Reset(string mode="ready"){
   var spell=new WoWSpell{Id=++id};SpellManager.Reset(spell);Lua.Mode=mode;Lua.Values=null;Lua.Reads=0;Lua.OnRead=null;ObjectManager.Executor=new ExecutorRand();ObjectManager.Wow=new object();ExecutorRand.Mode=null;ExecutorRand.OnExecute=null;ExecutorRand.Executions=0;
+  RecoveryActions.Allow=true;RecoveryActions.Entries=RecoveryActions.ObservedSpell=0;RecoveryActions.ObservedTarget=0;RecoveryActions.Failure=null;
   StyxWoW.Me=new Actor();TreeRoot.Current=new object();TreeRoot.RunIdentity=new object();TreeRoot.IsRunning=true;TreeRoot.CurrentThreadIsBotThread=false;Environment.TickCount64=1000000;
   RewardRecordedBridge.Observe=Lua.GetReturnValues;return spell;
  }
@@ -208,6 +214,10 @@ public static class CooldownCases {
   Case("positive sub-millisecond legacy cooldown cannot become zero",()=>{var spell=Reset(null);Lua.Values=new(){"ok","0.0005"};Check(LegacySpellManager.GetSpellCooldown(spell.Name)==1,"integer conversion declared a positive cooldown ready");});
   Case("unrepresentable legacy cooldown remains unavailable",()=>{var spell=Reset(null);Lua.Values=new(){"ok","2147483.648"};Unknown(spell,"legacy");});
   Case("maximum representable legacy cooldown remains exact",()=>{var spell=Reset(null);Lua.Values=new(){"ok","2147483.647"};Check(LegacySpellManager.GetSpellCooldown(spell.Name)==int.MaxValue,"valid maximum cooldown changed");});
+  Case("native entry requires recovery ownership",()=>{var spell=Reset();RecoveryActions.Allow=false;Check(!SpellManager.Dispatch(spell)&&ExecutorRand.Executions==0,"denied action crossed native entry");Check(RecoveryActions.Entries==1&&RecoveryActions.ObservedSpell==spell.Id&&RecoveryActions.ObservedTarget==1,"actual native owner skipped or changed the admission identity");RecoveryActions.Allow=true;Check(SpellManager.Admit(spell),"unsubmitted action acquired a native submission hold");});
+  Case("native entry marker precedes execution exactly once",()=>{var spell=Reset();ExecutorRand.OnExecute=()=>Check(RecoveryActions.Entries==1,"native action executed before its in-flight marker");Check(SpellManager.Dispatch(spell)&&RecoveryActions.Entries==1&&ExecutorRand.Executions==1,"healthy native admission changed");});
+  foreach(bool wrapped in new[]{false,true})Case("recovery marker cancellation prevents dispatch / "+wrapped,()=>{var spell=Reset();var signal=new OperationCanceledException("marker cancellation");RecoveryActions.Failure=wrapped?new TargetInvocationException(signal):signal;Exception caught=null;try{SpellManager.Dispatch(spell);}catch(Exception error){caught=error;}Check(ReferenceEquals(caught,signal)&&ExecutorRand.Executions==0,"marker cancellation was swallowed or native call continued");});
+  foreach(string mode in new[]{"fatal-executor","fatal-process"})Case("native fatal ownership propagates / "+mode,()=>{var spell=Reset();ExecutorRand.Mode=mode;Exception caught=null;try{SpellManager.Dispatch(spell);}catch(Exception error){caught=error;}Check(mode=="fatal-executor"?caught is Styx.InvalidExecutorException:caught is Styx.InvalidProcessException,"fatal ownership failure became an ordinary rejected action");});
   Console.WriteLine($"Spell cooldown observation cases: {passed}/{total}; assertions={assertions}; unexpected={unexpected}; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.");
   if(assertions+unexpected!=0)throw new InvalidOperationException("Spell cooldown observation regression");
  }

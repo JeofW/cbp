@@ -60,6 +60,7 @@ namespace WholesomeAQ
         public bool HasCompleteQuestLog { get; init; } = true;
         public bool HasAuthoritativeCompletions { get; init; }
         public IReadOnlyCollection<uint> CompletedQuestIds { get; init; } = Array.Empty<uint>();
+        public IReadOnlyCollection<uint> PendingCompletionQuestIds { get; init; } = Array.Empty<uint>();
         public IReadOnlyList<QuestSchedulerAcceptedQuest> AcceptedQuests { get; init; } = Array.Empty<QuestSchedulerAcceptedQuest>();
         public int QuestLogCapacity { get; init; } = 25;
         public IReadOnlyDictionary<int, long> CarriedItemCounts { get; init; }
@@ -247,6 +248,9 @@ namespace WholesomeAQ
             QuestRecoveryContext context = QuestRecoveryRuntime.Capture(
                 accepted.SelectMany(quest => quest.ObjectiveCounts).ToArray());
 
+            QuestTurnInCompletion.SetRepeatableQuestIds(db.Quests.Where(quest =>
+                (quest.SpecialFlags & 1) != 0 || (quest.Flags & (0x1000 | 0x8000)) != 0).Select(quest => (uint)quest.Id));
+            var pendingCompletions = QuestTurnInCompletion.ObservePending(observation);
             bool authoritative = me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completed);
             DateTime observedUtc = DateTime.UtcNow;
             var nearbyGivers = CaptureNearbyQuestGivers(db, me, observedUtc, out string giverObservationStatus);
@@ -298,6 +302,7 @@ namespace WholesomeAQ
                 HasCompleteQuestLog = observation.IsComplete,
                 HasAuthoritativeCompletions = authoritative,
                 CompletedQuestIds = authoritative ? completed : Array.Empty<uint>(),
+                PendingCompletionQuestIds = pendingCompletions,
                 AcceptedQuests = accepted,
                 CarriedItemCounts = inventoryObservation.ItemCounts,
                 InventoryObservationStatus = inventoryObservation.Status
@@ -640,6 +645,11 @@ namespace WholesomeAQ
                 foreach (QuestEntry quest in db.Quests.OrderBy(quest => quest.QuestLevel).ThenBy(quest => quest.Id))
                 {
                     uint questId = (uint)quest.Id;
+                    if (snapshot.PendingCompletionQuestIds?.Contains(questId) == true)
+                    {
+                        diagnostic?.Reject(quest.Id, "pending-completion-confirmation");
+                        continue;
+                    }
                     if (accepted.ContainsKey(questId) || completed.Contains(questId))
                     {
                         diagnostic?.Reject(quest.Id, accepted.ContainsKey(questId) ? "already-accepted" : "already-rewarded");

@@ -149,6 +149,37 @@ namespace Styx.WoWInternals
             }
         }
 
+        // Strict observation for callers that must distinguish an empty bag
+        // from a failed read. Exceptions retain their original control flow.
+        internal static BagStructure ReadStructure(uint address)
+        {
+            var memory = ObjectManager.Wow ?? throw new InvalidOperationException("Memory owner unavailable.");
+            int size = System.Runtime.InteropServices.Marshal.SizeOf<BagStructure>();
+            var bytes = memory.ReadBytes(address, size);
+            if (bytes == null || bytes.Length != size || !ReferenceEquals(memory, ObjectManager.Wow))
+                throw new InvalidOperationException("Bag structure observation is incomplete.");
+            return System.Runtime.InteropServices.MemoryMarshal.Read<BagStructure>(bytes);
+        }
+
+        internal ulong[] ReadItemGuids()
+        {
+            if (Slots > 150 || _bagStructure.ItemsBaseAddress == 0)
+                throw new InvalidOperationException("Bag slot observation is unavailable.");
+            var memory = ObjectManager.Wow ?? throw new InvalidOperationException("Memory owner unavailable.");
+            var result = new ulong[Slots];
+            if (result.Length != 0)
+            {
+                int count = checked((int)Slots * 8);
+                var bytes = memory.ReadBytes(_bagStructure.ItemsBaseAddress + FirstSlotIndex * 8U, count);
+                if (bytes == null || bytes.Length != count)
+                    throw new InvalidOperationException("Bag item GUID read was incomplete.");
+                Buffer.BlockCopy(bytes, 0, result, 0, count);
+            }
+            if (!ReferenceEquals(memory, ObjectManager.Wow))
+                throw new InvalidOperationException("Memory owner replaced during bag read.");
+            return result;
+        }
+
         /// <summary>
         /// Gets all items in the bag
         /// </summary>

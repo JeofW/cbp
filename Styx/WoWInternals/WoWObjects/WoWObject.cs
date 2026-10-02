@@ -263,34 +263,7 @@ namespace Styx.WoWInternals.WoWObjects
         /// </summary>
         public virtual bool IsOutdoors
         {
-            get
-            {
-                if (BaseAddress == 0U)
-                    return false;
-
-                ExecutorRand? executor = ObjectManager.Executor;
-                Memory? wow = ObjectManager.Wow;
-                if (executor == null || wow == null)
-                    return false;
-
-                try
-                {
-                    lock (executor.AssemblyLock)
-                    {
-                        executor.Clear();
-                        executor.AddLine("mov ecx, {0}", BaseAddress);
-                        executor.AddLine("call {0}", (uint)GlobalOffsets.IsOutdoors); // 0x71B7F0, 3.3.5a IsOutdoors
-                        executor.AddLine("retn");
-                        executor.Execute();
-                        return wow.Read<byte>(executor.ReturnPointer) != 0;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logging.WriteException(ex);
-                    return false;
-                }
-            }
+            get => World.WorldQueryObservation.ReadOutdoors(this);
         }
 
         public virtual bool IsIndoors => !IsOutdoors;
@@ -379,9 +352,14 @@ namespace Styx.WoWInternals.WoWObjects
             TryInteractCore(ignoreTimer);
         }
 
-        // This receipt covers local executor completion only. A false receipt
-        // after an exception does not prove that the client made no request.
-        protected bool TryInteractCore(bool ignoreTimer)
+        // This receipt covers local executor return only. Native/session loss
+        // propagates; an exception after entry leaves the world result unknown.
+        protected bool TryInteractCore(bool ignoreTimer) => TryInteractCore(ignoreTimer, null);
+
+        internal bool TryInteractOwned(Func<bool> ownerCurrent, bool ignoreTimer = false)
+            => TryInteractCore(ignoreTimer, ownerCurrent ?? throw new ArgumentNullException(nameof(ownerCurrent)));
+
+        private bool TryInteractCore(bool ignoreTimer, Func<bool>? ownerCurrent)
         {
             if (BaseAddress == 0U)
                 return false;
@@ -389,46 +367,13 @@ namespace Styx.WoWInternals.WoWObjects
             if (!ignoreTimer && !_interactTimer.IsFinished)
                 return false;
                 
-            _interactTimer.Reset();
-            StyxWoW.ResetAfk();
-            
-            Logging.WriteDebug("[Interact] Interacting with object at 0x{0:X}", BaseAddress);
-            
-            ExecutorRand? executor = ObjectManager.Executor;
-            if (executor == null)
+            return Styx.WoWInternals.World.WorldQueryObservation.SubmitInteraction(this, InteractVtableOffset,
+                ownerCurrent, () =>
             {
-                Logging.WriteDebug("[Interact] Invalid executor - cannot interact");
-                return false;
-            }
-            
-            bool completed = false;
-            try
-            {
-                lock (executor.AssemblyLock)
-                {
-                    executor.Clear();
-                    // mov ecx, BaseAddress (this pointer)
-                    executor.AddLine("mov ecx, {0}", BaseAddress);
-                    // mov eax, [ecx] (get vtable pointer)
-                    executor.AddLine("mov eax, [ecx]");
-                    // add eax, 176 (offset to Interact in vtable - index 44)
-                    executor.AddLine("add eax, {0}", InteractVtableOffset);
-                    // mov eax, [eax] (get function pointer)
-                    executor.AddLine("mov eax, [eax]");
-                    // call eax (call Interact)
-                    executor.AddLine("call eax");
-                    executor.AddLine("retn");
-                    executor.Execute();
-                    completed = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logging.WriteException(ex);
-            }
-            
-            Logging.WriteDebug("[Interact] Done interacting with object at 0x{0:X}", BaseAddress);
-            return completed;
+                _interactTimer.Reset();
+                StyxWoW.ResetAfk();
+                Logging.WriteDebug("[Interact] Interacting with object at 0x{0:X}", BaseAddress);
+            });
         }
         
         #endregion

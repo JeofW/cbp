@@ -2,7 +2,7 @@ name: Audit integrated regression baseline
 on:
   push:
     branches: ['master', 'audit/next-*']
-    paths: ['**.cs', '**.csproj', 'Tools/EvidenceAudit/**', 'Tools/W42TestAggregation/**', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/**', 'Tools/QuestLogObservationRegressionTests/Directory.Build.targets', 'Tools/WholesomeQuestRecoveryRegressionTests/Directory.Build.targets', '.github/workflows/audit-integrated.yml', '.github/workflows/audit-w42-normalized.yml']
+    paths: ['**.cs', '**.csproj', 'Tools/EvidenceAudit/**', 'Tools/W42TestAggregation/**', 'Tools/MountedCombatRegressionTests/**', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/**', 'Tools/QuestLogObservationRegressionTests/Directory.Build.targets', 'Tools/WholesomeQuestRecoveryRegressionTests/Directory.Build.targets', '.github/workflows/audit-integrated.yml', '.github/workflows/audit-w42-normalized.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -75,8 +75,23 @@ jobs:
             @{project='WholesomeSaleRegressionTests'; suite='WholesomeSale'},
             @{project='QuestLogObservationRegressionTests'; suite='QuestLogObservationRegressionTests'},
             @{project='QuestCompletionOwnerRegressionTests'; suite='QuestCompletionOwnerRegressionTests'},
-            @{project='QuestObservationBoundaryRegressionTests'; suite='QuestObservationBoundaryRegressionTests'}
+            @{project='QuestObservationBoundaryRegressionTests'; suite='QuestObservationBoundaryRegressionTests'},
+            @{project='NavigationOwnerRegressionTests'; suite='NavigationOwnerRegressionTests'},
+            @{project='GroundOwnerRegressionTests'; suite='GroundOwnerRegressionTests'},
+            @{project='FlightOwnerRegressionTests'; suite='FlightOwnerRegressionTests'},
+            @{project='ObjectReacquisitionRegressionTests'; suite='ObjectReacquisitionRegressionTests'},
+            @{project='RestObservationRegressionTests'; suite='RestObservationRegressionTests'},
+            @{project='GroundTransitionRegressionTests'; suite='GroundTransitionRegressionTests'},
+            @{project='GroundApproachRegressionTests'; suite='GroundApproachRegressionTests'},
+            @{project='WorldQueryRegressionTests'; suite='WorldQueryRegressionTests'},
+            @{project='IndoorApproachRegressionTests'; suite='IndoorApproachRegressionTests'},
+            @{project='MountedCombatRegressionTests'; suite='MountedCombatRegressionTests'},
+            @{project='MountedGroundIntegrationRegressionTests'; suite='MountedGroundIntegrationRegressionTests'},
+            @{project='GroundDismountRecoveryRegressionTests'; suite='GroundDismountRecoveryRegressionTests'},
+            @{project='CombatPoiTransitionRegressionTests'; suite='CombatPoiTransitionRegressionTests'}
           )
+          $expectedSuites = @($projects.suite) + @('Singular', 'Analyzers')
+          if (@($expectedSuites | Select-Object -Unique).Count -ne $expectedSuites.Count) { throw 'Duplicate validation suite' }
           foreach ($entry in $projects) {
             $name = $entry.project
             $suite = $entry.suite
@@ -128,7 +143,9 @@ jobs:
           $hashes = @(Get-ChildItem $out -File -Recurse | ForEach-Object { @{path=[IO.Path]::GetRelativePath($out,$_.FullName); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
           $hashes | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'files-sha256.json')
           $results | ConvertTo-Json -Depth 8 | Write-Host
-          if ($results.Count -ne 17 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
+          if (@(Compare-Object ($expectedSuites | Sort-Object) ($results.suite | Sort-Object)).Count -ne 0 -or
+              $results.Count -ne $expectedSuites.Count -or
+              @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
       - name: Retain complete regression results (public artifact)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

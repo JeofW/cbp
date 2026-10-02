@@ -43,6 +43,9 @@ internal static class QuestRouteReplay
         foreach (var item in cases)
         {
             string id = item.GetProperty("case_id").GetString()!;
+            string? startAuthority = item.TryGetProperty("start_authority", out var startSource) ? startSource.GetString() : null;
+            string? endAuthority = item.TryGetProperty("end_authority", out var endSource) ? endSource.GetString() : null;
+            string? coordinateKind = item.TryGetProperty("coordinate_kind", out var kind) ? kind.GetString() : null;
             uint map = item.GetProperty("map_id").GetUInt32();
             Vector3 start = Point(item.GetProperty("start")), end = Point(item.GetProperty("end"));
             for (int scenario = 0; scenario < 3; scenario++)
@@ -81,6 +84,7 @@ internal static class QuestRouteReplay
                     if (scenario == 0 && repeat == 0) (full ? accepted : incomplete).Add(id);
                     records.Add(new { case_id = id, quest_id = item.GetProperty("quest_id").GetUInt32(),
                         leg = item.GetProperty("leg").GetString(), input_kind = scope, repeat, map_id = selectedMap,
+                        start_authority = startAuthority, end_authority = endAuthority, coordinate_kind = coordinateKind,
                         requested_start = Coordinates(start), requested_end = Coordinates(target),
                         points = points.Select(Coordinates).ToArray(), status = path.Status.Value,
                         succeeded = path.Succeeded, partial = path.IsPartialPath, resource_limited = resourceLimited,
@@ -113,7 +117,10 @@ internal static class QuestRouteReplay
 
     private sealed class QueryPlayer : LocalPlayer
     {
-        internal QueryPlayer() : base(0) { }
+        // Map reads require a nonzero observation owner. This address is only
+        // an identity token: all queried globals come from the explicit cache,
+        // and this offline player never reads a client object at that address.
+        internal QueryPlayer() : base(0x10000) { }
         internal HostPoint Position;
         public override HostPoint Location => Position;
         public override bool IsAlive => true;

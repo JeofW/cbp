@@ -17,6 +17,7 @@ using Styx.Common;
 using Styx.Helpers;
 using Styx.Logic;
 using Styx.Logic.BehaviorTree;
+using Styx.Logic.Combat;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
 using Styx.Logic.Profiles;
@@ -47,7 +48,7 @@ public class QuestBot : BotBase
         {
             (Composite)LevelBot.CreateDeathBehavior(),
             LevelBot.CreateCombatBehavior(),
-            LevelBot.CreateLootBehavior(),
+            new QuestLootHandoff(LevelBot.CreateLootBehavior()),
             QuestBot.CreateTargetingBehavior(),
             (Composite)new Decorator(
                 context => ShouldRunServiceBehavior(
@@ -183,10 +184,10 @@ public class QuestBot : BotBase
         return (Composite)new Decorator(isMoving,
             (Composite)new Decorator(
                 context => !ShouldSuppressOpportunisticTargeting(
-                    BotPoi.Current.Type, StyxWoW.Me.Mounted),
+                    BotPoi.Current.Type, MountedCombatTransition.IsMountedOrFlying(StyxWoW.Me)),
             (Composite)new Decorator(notInCombat,
             (Composite)new DecoratorNeedToFindTarget(
-                new OwnedTargetHandoff(() => StyxWoW.Me != null && !StyxWoW.Me.Mounted
+                new OwnedTargetHandoff(() => StyxWoW.Me != null && !MountedCombatTransition.IsMountedOrFlying(StyxWoW.Me)
                     && !StyxWoW.Me.Combat && !ShouldSuppressOpportunisticTargeting(BotPoi.Current.Type),
                     clearNavigation: true)))));
     }

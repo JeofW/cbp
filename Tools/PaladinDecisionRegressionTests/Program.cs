@@ -56,7 +56,7 @@ foreach (var factory in factories)
     Case(factory.Name + " emergency shield remains available without a flag", () =>
     { Spells("Divine Shield"); StyxWoW.Me.HealthPercent = 10; Run(factory.Make); Expect("Divine Shield"); });
     Case(factory.Name + " Forbearance veto remains intact", () =>
-    { Spells("Divine Shield"); StyxWoW.Me.HealthPercent = 10; StyxWoW.Me.Auras.Add("Forbearance", new Aura()); Run(factory.Make); Expect("movement"); });
+    { Spells("Divine Shield"); StyxWoW.Me.HealthPercent = 10; StyxWoW.Me.Auras.Add("Forbearance", new Aura { Name="Forbearance", SpellId=25771 }); Run(factory.Make); Expect("movement"); });
     Case(factory.Name + " combat composition is not registered as a healing behavior", () =>
         Check(!factory.Make.Method.GetCustomAttributes<BehaviorAttribute>().Any(a => a.Type == BehaviorType.Heal),
             "offensive factory advertises Heal and competes with the dedicated healing owner"));

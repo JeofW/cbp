@@ -1,0 +1,232 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Styx.Helpers;
+using Styx.WoWInternals.World;
+using Tripper.Navigation;
+
+namespace Styx.Logic.Pathing;
+
+/// <summary>Observed geometry only. An approach is permission to attempt a route, never arrival.</summary>
+internal readonly record struct GroundSurface(WoWPoint Position, AreaType Area);
+internal readonly record struct GroundRay(bool Hit, WoWPoint Point);
+
+/// <summary>A bounded diagnostic copy of an actual query, never route or arrival authority.</summary>
+public readonly record struct GroundApproachRayObservation(string Source, WoWPoint Start, WoWPoint End,
+    uint Flags, bool? Hit, WoWPoint? Point);
+
+internal sealed class GroundPath
+{
+    internal readonly bool Complete;
+    internal readonly string Status;
+    internal readonly IReadOnlyList<WoWPoint> Points;
+    internal readonly IReadOnlyList<AreaType> Areas;
+    internal GroundPath(bool complete, string status, IEnumerable<WoWPoint> points, IEnumerable<AreaType> areas)
+    {
+        Complete = complete; Status = status;
+        Points = Array.AsReadOnly(points.ToArray()); Areas = Array.AsReadOnly(areas.ToArray());
+    }
+}
+
+internal sealed record GroundApproachPlan(WoWPoint Landing, WoWPoint AirWaypoint, AreaType Area,
+    GroundPath? OnwardPath, bool OpenColumn, string Source);
+
+/// <summary>
+/// Collision and mesh queries have separate authority. Implementations throw
+/// ObservationUnavailableException for missing/short/stale observations; a null
+/// surface or a failed path is an observed query result, not a substitute value.
+/// </summary>
+internal interface IGroundApproachQueries
+{
+    GroundRay[] Trace(WorldLine[] lines, GameWorld.CGWorldFrameHitFlags flags);
+    GroundSurface? Snap(WoWPoint point);
+    GroundPath Path(WoWPoint from, WoWPoint to);
+    bool Forbidden(WoWPoint point, float radius);
+}
+
+/// <summary>
+/// Incrementally searches actual mesh legs and collision-supported landing
+/// regions. Radial coordinates are query inputs only; they never identify an
+/// entrance. The ground navigator must still traverse and observe the doorway.
+/// </summary>
+internal sealed class GroundApproachSearch
+{
+    // Probe budget only: a finite airborne destination is not a ground-height
+    // observation. Every hit still needs matching mesh, footprint and clearance
+    // proof, and movement still needs observed landing before mount removal.
+    private const float LocalSupportProbeDepth = 512f;
+    private readonly WoWPoint _origin, _destination;
+    private readonly float _radius, _height;
+    private readonly bool _requireOnward, _allowCoveredBelowActor;
+    private readonly IGroundApproachQueries _queries;
+    private readonly Func<bool> _current;
+    private IEnumerator<(WoWPoint Point, string Source)>? _seeds;
+    private readonly HashSet<(int X, int Y, int Z)> _visited = new();
+    internal int Attempts { get; private set; }
+    internal bool Exhausted { get; private set; }
+    internal string LastReason { get; private set; } = "search-not-started";
+    internal GroundPath? LastPath { get; private set; }
+    internal GroundApproachPlan? Plan { get; private set; }
+
+    internal GroundApproachSearch(WoWPoint origin, WoWPoint destination, float radius, float height,
+        bool requireOnward, bool allowCoveredBelowActor, IGroundApproachQueries queries, Func<bool> current)
+    {
+        if (!Finite(origin) || !Finite(destination) || !float.IsFinite(radius) || radius <= 0 || radius > 8
+            || !float.IsFinite(height) || height <= 0 || height > 24)
+            throw Unknown("invalid actor/destination/body observation");
+        _origin = origin; _destination = destination; _radius = Math.Max(.6f, radius);
+        _height = Math.Max(1.5f, height); _requireOnward = requireOnward;
+        _allowCoveredBelowActor = allowCoveredBelowActor; _queries = queries; _current = current;
+    }
+
+    internal GroundApproachPlan? Step(int candidateBudget = 4)
+    {
+        RequireCurrent();
+        if (Plan != null || Exhausted) return Plan;
+        _seeds ??= Seeds().GetEnumerator();
+        for (int n = 0; n < Math.Clamp(candidateBudget, 1, 8);)
+        {
+            RequireCurrent();
+            if (Attempts >= 384 || !_seeds.MoveNext()) { Exhausted = true; LastReason = "no-proven-landing-and-onward-route"; break; }
+            var seed = _seeds.Current;
+            if (!_visited.Add(((int)MathF.Round(seed.Point.X * 2), (int)MathF.Round(seed.Point.Y * 2), (int)MathF.Round(seed.Point.Z)))) continue;
+            Attempts++; n++;
+            var landing = Project(seed.Point);
+            RequireCurrent();
+            if (landing == null) continue;
+            var plan = Validate(landing.Value, seed.Source);
+            RequireCurrent();
+            if (plan == null) continue;
+            Plan = plan;
+            LastReason = "supported-approach-and-static-mesh-leg; traversal-unobserved";
+            return Plan;
+        }
+        return null;
+    }
+
+    internal bool Revalidate(GroundApproachPlan plan)
+    {
+        RequireCurrent();
+        var surface = _queries.Snap(plan.Landing);
+        RequireCurrent();
+        return surface != null && surface.Value.Position.DistanceSqr(plan.Landing) <= .25f
+            && Validate(surface.Value, plan.Source) != null && _current();
+    }
+
+    private IEnumerable<(WoWPoint Point, string Source)> Seeds()
+    {
+        // Combat can land near its current position without asserting that a
+        // hostile target is reachable. Interaction requires the onward mesh leg.
+        if (!_requireOnward) yield return (_origin, "actor-column");
+        GroundSurface? originGround = Project(_origin);
+        RequireCurrent();
+        if (_requireOnward && originGround != null)
+        {
+            GroundPath path = LastPath = _queries.Path(originGround.Value.Position, _destination);
+            RequireCurrent();
+            if (Usable(path, originGround.Value.Position, _destination))
+            {
+                // Work outward from the interior end along an actual full path.
+                // A roof hit or another floor is rejected again by projection,
+                // exact mesh endpoints and positive support/clearance queries.
+                for (int i = path.Points.Count - 1; i >= 0; i--)
+                {
+                    yield return (path.Points[i], "complete-ground-path");
+                    if (i == 0) continue;
+                    WoWPoint near = path.Points[i], far = path.Points[i - 1];
+                    int samples = Math.Min(64, (int)Math.Ceiling(near.Distance(far) / 3f));
+                    for (int j = 1; j < samples; j++)
+                        yield return (Interpolate(near, far, (float)j / samples), "complete-ground-path-segment");
+                }
+            }
+        }
+        yield return (_destination, "destination-column");
+        double heading = Math.Atan2(_origin.Y - _destination.Y, _origin.X - _destination.X);
+        foreach (float radius in new[] { 4f, 8f, 16f, 32f, 64f, 96f })
+            for (int i = 0; i < 16; i++)
+            {
+                double angle = heading + i * Math.PI / 8;
+                yield return (_destination.Add(radius * (float)Math.Cos(angle), radius * (float)Math.Sin(angle), 0), "bounded-support-search");
+            }
+        yield return (_origin, "actor-column-fallback");
+    }
+
+    private GroundSurface? Project(WoWPoint seed)
+    {
+        RequireCurrent();
+        bool coveredActorColumn = _allowCoveredBelowActor && !_requireOnward
+            && _origin.Distance2DSqr(seed) <= .5625f;
+        var from = coveredActorColumn
+            ? new WoWPoint(seed.X, seed.Y, _origin.Z)
+            : new WoWPoint(seed.X, seed.Y, Math.Max(_origin.Z + 2, seed.Z + 100));
+        var to = new WoWPoint(seed.X, seed.Y,
+            Math.Min(Math.Min(_destination.Z, seed.Z) - 40, _origin.Z - LocalSupportProbeDepth));
+        GroundRay ray = Trace(new[] { new WorldLine(from, to) }, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures)[0];
+        if (!ray.Hit || !OnVertical(from, to, ray.Point)) { LastReason = "no-solid-support-in-observed-column"; return null; }
+        var surface = _queries.Snap(ray.Point);
+        RequireCurrent();
+        if (surface == null || !Finite(surface.Value.Position) || surface.Value.Position.Distance2DSqr(ray.Point) > .5625f
+            || Math.Abs(surface.Value.Position.Z - ray.Point.Z) > .65f || !LandingArea(surface.Value.Area))
+        { LastReason = "support-has-no-matching-safe-mesh-surface"; return null; }
+        return surface;
+    }
+
+    private GroundApproachPlan? Validate(GroundSurface surface, string source)
+    {
+        RequireCurrent();
+        WoWPoint p = surface.Position;
+        if (!LandingArea(surface.Area) || _queries.Forbidden(p, _radius)) { LastReason = "landing-area-forbidden"; return null; }
+        RequireCurrent();
+        var footprint = new[] { p, p.Add(_radius, 0, 0), p.Add(-_radius, 0, 0), p.Add(0, _radius, 0), p.Add(0, -_radius, 0) };
+        var groundLines = footprint.Select(q => new WorldLine(q.Add(0, 0, .75f), q.Add(0, 0, -1.25f))).ToArray();
+        GroundRay[] support = Trace(groundLines, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures);
+        for (int i = 0; i < support.Length; i++)
+            if (!support[i].Hit || !OnVertical(groundLines[i].Start, groundLines[i].End, support[i].Point)
+                || Math.Abs(support[i].Point.Z - p.Z) > .55f || _queries.Forbidden(support[i].Point, .1f))
+            { LastReason = "landing-footprint-not-supported"; return null; }
+        RequireCurrent();
+        if (Trace(groundLines, GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2).Any(r => r.Hit))
+        { LastReason = "landing-footprint-intersects-liquid"; return null; }
+        float approachHeight = Math.Max(4, _height + 1);
+        var openColumn = new[] { new WorldLine(p.Add(0, 0, .25f), p.Add(0, 0, Math.Max(250, _origin.Z - p.Z + 20))) };
+        bool open = !Trace(openColumn, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures)[0].Hit;
+        bool belowActor = _allowCoveredBelowActor && _origin.Distance2DSqr(p) <= .5625f && _origin.Z >= p.Z;
+        if (!open && !belowActor) { LastReason = "landing-column-covered"; return null; }
+        if (!open) approachHeight = Math.Max(.75f, Math.Min(approachHeight, _origin.Z - p.Z));
+        var clearance = footprint.Select(q => new WorldLine(q.Add(0, 0, .25f), q.Add(0, 0, Math.Max(_height, approachHeight + _height)))).ToArray();
+        if (Trace(clearance, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures).Any(r => r.Hit))
+        { LastReason = "landing-body-clearance-blocked"; return null; }
+        GroundPath? onward = null;
+        if (_requireOnward)
+        {
+            onward = LastPath = _queries.Path(p, _destination);
+            RequireCurrent();
+            if (!Usable(onward, p, _destination)) { LastReason = "onward-mesh-incomplete-or-wrong-floor"; return null; }
+        }
+        RequireCurrent();
+        return new GroundApproachPlan(p, p.Add(0, 0, approachHeight), surface.Area, onward, open, source);
+    }
+
+    internal static bool Usable(GroundPath path, WoWPoint from, WoWPoint to) => path.Complete
+        && path.Points.Count >= 2 && path.Points.All(Finite) && path.Areas.Count != 0
+        && path.Areas.All(a => LandingArea(a) || a == AreaType.KnownBuilding || a == AreaType.Gate || a == AreaType.Elevator)
+        && path.Points[0].Distance2DSqr(from) <= .5625f && Math.Abs(path.Points[0].Z - from.Z) <= .65f
+        && path.Points[^1].Distance2DSqr(to) <= 2.25f && Math.Abs(path.Points[^1].Z - to.Z) <= .9f;
+
+    private GroundRay[] Trace(WorldLine[] lines, GameWorld.CGWorldFrameHitFlags flags)
+    {
+        RequireCurrent();
+        GroundRay[] result = _queries.Trace(lines, flags);
+        RequireCurrent();
+        if (result == null || result.Length != lines.Length || result.Any(r => r.Hit && !Finite(r.Point)))
+            throw Unknown("incomplete collision observation");
+        return result;
+    }
+    private void RequireCurrent() { if (!_current()) throw Unknown("ground approach owner changed"); }
+    private static ObservationUnavailableException Unknown(string reason) => new("ground-approach", reason);
+    internal static bool Finite(WoWPoint p) => float.IsFinite(p.X) && float.IsFinite(p.Y) && float.IsFinite(p.Z);
+    private static bool LandingArea(AreaType a) => a is AreaType.Ground or AreaType.Road or AreaType.Horde or AreaType.Alliance;
+    private static bool OnVertical(WoWPoint from, WoWPoint to, WoWPoint point) => Finite(point)
+        && point.Distance2DSqr(from) <= .01f && point.Z <= from.Z + .01f && point.Z >= to.Z - .01f;
+    private static WoWPoint Interpolate(WoWPoint a, WoWPoint b, float t) => new(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t, a.Z + (b.Z - a.Z) * t);
+}

@@ -13,6 +13,7 @@ using Styx.Combat.CombatRoutine;
 using Styx.Helpers;
 using Styx.Logic;
 using Styx.Logic.BehaviorTree;
+using Styx.Logic.Combat;
 using Styx.WoWInternals.WoWObjects;
 using TreeSharp;
 
@@ -319,11 +320,11 @@ namespace Singular
                     _pullBuffsBehavior);
             }
 
-            _combatBehavior = new LockSelector(
-                _combatBehavior);
+            _combatBehavior = MountedCombatTransition.GuardAction(new LockSelector(
+                _combatBehavior));
 
-            _pullBehavior = new LockSelector(
-                _pullBehavior);
+            _pullBehavior = MountedCombatTransition.GuardAction(new LockSelector(
+                _pullBehavior));
             return true;
         }
 

@@ -1,5 +1,6 @@
 """A release cannot borrow another commit's green results or omit runtime data."""
 import importlib.util
+import copy
 from pathlib import Path
 import subprocess
 import tempfile
@@ -63,6 +64,74 @@ class ReleaseEvidenceTests(unittest.TestCase):
     def test_zero_stages_do_not_prove_a_release(self):
         with self.assertRaisesRegex(ValueError, 'successful'):
             self.gate(summary={'base': 'a' * 40, 'source_stable': True, 'failed': [], 'stages': 0})
+
+    def test_complete_local_gate_rejects_focused_green_even_with_matching_sha(self):
+        owner = self.owner()
+        summary = {'base': 'a' * 40, 'source_stable': True, 'failed': [], 'stages': 2}
+        rows = [{'stage': 'QuestRecoveryRegressionTests-build', 'exit': 0},
+                {'stage': 'QuestRecoveryRegressionTests-run', 'exit': 0}]
+        with self.assertRaisesRegex(ValueError, 'population'):
+            if hasattr(owner, 'validate_complete_local_results'):
+                owner.validate_complete_local_results(['QuestRecoveryRegressionTests'], summary, rows)
+            else:
+                # Reproduce the real existing release entry, rather than count
+                # a missing new helper as a behavioral failure.
+                self.gate(summary=summary)
+
+    def test_complete_local_gate_validates_each_result_not_only_summary(self):
+        owner = self.owner()
+        projects = ['QuestRecoveryRegressionTests', 'QuestObservationBoundaryRegressionTests']
+        rows = [{'stage': name, 'exit': 0} for name in ['Host',
+            'QuestRecoveryRegressionTests-build', 'QuestRecoveryRegressionTests-run',
+            'SingularCompatibility', 'ObservationBoundary-extract',
+            'QuestObservationBoundaryRegressionTests-build', 'QuestObservationBoundaryRegressionTests-run', 'Analyzers']]
+        summary = {'source_stable': True, 'failed': [], 'stages': len(rows)}
+        owner.validate_complete_local_results(projects, summary, rows)
+        for label, change in [
+            ('failed-but-summary-green', lambda r, s: r[-1].update(exit=1)),
+            ('null-result', lambda r, s: r[-1].update(exit=None)),
+            ('boolean-exit', lambda r, s: r[-1].update(exit=False)),
+            ('missing-stage', lambda r, s: r.pop()),
+            ('duplicate-stage', lambda r, s: r.append(dict(r[-1]))),
+            ('invented-stage', lambda r, s: r[-1].update(stage='Unrelated-run')),
+            ('wrong-count', lambda r, s: s.update(stages=34)),
+            ('run-before-build', lambda r, s: r.__setitem__(slice(1, 3), list(reversed(r[1:3])))),
+            ('extraction-after-run', lambda r, s: r.append(r.pop(4))),
+        ]:
+            with self.subTest(label=label):
+                altered_rows, altered_summary = copy.deepcopy(rows), dict(summary)
+                change(altered_rows, altered_summary)
+                with self.assertRaises(ValueError):
+                    owner.validate_complete_local_results(projects, altered_summary, altered_rows)
+
+    def test_pinned_extraction_may_be_reused_without_inventing_an_extraction_run(self):
+        owner = self.owner()
+        projects = ['QuestRecoveryRegressionTests', 'QuestObservationBoundaryRegressionTests']
+        rows = [{'stage': name, 'exit': 0} for name in ['Host',
+            'QuestRecoveryRegressionTests-build', 'QuestRecoveryRegressionTests-run', 'SingularCompatibility',
+            'QuestObservationBoundaryRegressionTests-build', 'QuestObservationBoundaryRegressionTests-run', 'Analyzers']]
+        owner.validate_complete_local_results(projects,
+            {'source_stable': True, 'failed': [], 'stages': len(rows)}, rows)
+
+    def test_integrated_project_population_is_read_from_the_candidate_workflow(self):
+        owner = self.owner()
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            workflow = root / '.github/workflows/audit-integrated.yml'
+            workflow.parent.mkdir(parents=True)
+            for name in ['QuestRecoveryRegressionTests', 'AnotherRealRegressionTests']:
+                project = root / f'Tools/{name}/{name}.csproj'
+                project.parent.mkdir(parents=True)
+                project.write_text('<Project/>', encoding='utf-8')
+            text = "@{project='QuestRecoveryRegressionTests'; suite='QuestRecoveryRegressionTests'},\n@{project='AnotherRealRegressionTests'; suite='AnotherReal'}"
+            workflow.write_text(text, encoding='utf-8')
+            self.assertEqual(owner.integrated_projects(root), ['QuestRecoveryRegressionTests', 'AnotherRealRegressionTests'])
+            workflow.write_text(text + "\n" + text, encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'duplicate'):
+                owner.integrated_projects(root)
+            workflow.write_text(text.replace('AnotherRealRegressionTests', 'MissingRegressionTests'), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'project'):
+                owner.integrated_projects(root)
 
     def test_runtime_json_change_is_included_in_source_fingerprint(self):
         owner = self.owner()

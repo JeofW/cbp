@@ -67,6 +67,96 @@ def validate_release_gate(candidate: str, identity: dict, summary: dict,
         raise ValueError('Accepted source inputs differ from the release candidate inputs')
 
 
+def integrated_projects(repo: Path) -> list[str]:
+    """Read the actual retained project population, not an old stage count."""
+    workflow = (repo / '.github/workflows/audit-integrated.yml').read_text(encoding='utf-8-sig')
+    projects = re.findall(r"@\{project='([A-Za-z0-9]+)';\s*suite='[^']+'\}", workflow)
+    if not projects:
+        raise ValueError('Integrated workflow project population is unavailable')
+    if len(set(projects)) != len(projects):
+        raise ValueError('Integrated workflow contains a duplicate project')
+    for project in projects:
+        if not (repo / f'Tools/{project}/{project}.csproj').is_file():
+            raise ValueError('Registered regression project is missing: ' + project)
+    return projects
+
+
+def validate_complete_local_results(projects: list[str], summary: dict, results: list[dict]) -> None:
+    """A matching SHA and focused green do not establish complete acceptance."""
+    if not projects or len(set(projects)) != len(projects):
+        raise ValueError('Complete local project population is empty or duplicated')
+    expected = {'Host', 'Analyzers', 'SingularCompatibility'}
+    expected.update(project + suffix for project in projects for suffix in ('-build', '-run'))
+    if not isinstance(results, list) or any(not isinstance(row, dict) for row in results):
+        raise ValueError('Complete local result population is unavailable')
+    names = [row.get('stage') for row in results]
+    optional = {'ObservationBoundary-extract'} if 'QuestObservationBoundaryRegressionTests' in projects else set()
+    if (any(not isinstance(name, str) for name in names) or len(set(names)) != len(names)
+            or set(names) - optional != expected or set(names) - expected - optional):
+        raise ValueError('Complete local result population differs from the candidate workflow')
+    if (type(summary.get('stages')) is not int or summary['stages'] != len(results)
+            or summary.get('source_stable') is not True or summary.get('failed') != []):
+        raise ValueError('Complete local stage count or successful source stability is inconsistent')
+    if any(type(row.get('exit')) is not int or row['exit'] != 0 for row in results):
+        raise ValueError('A complete local stage failed or has no authoritative exit code')
+    order = {name: index for index, name in enumerate(names)}
+    if names[0] != 'Host' or names[-1] != 'Analyzers':
+        raise ValueError('Complete local host/analyzer execution order is inconsistent')
+    if any(order[project + '-build'] >= order[project + '-run'] for project in projects):
+        raise ValueError('A local regression ran before its current source was built')
+    if ('QuestRecoveryRegressionTests' not in projects
+            or order['SingularCompatibility'] <= order['QuestRecoveryRegressionTests-run']):
+        raise ValueError('Actual compiled Singular compatibility execution is missing or out of order')
+    if ('ObservationBoundary-extract' in order
+            and order['ObservationBoundary-extract'] >= order['QuestObservationBoundaryRegressionTests-build']):
+        raise ValueError('Pinned observation owners were extracted after their compilation')
+
+
+def verify_complete_local_gate(repo: Path, gate: Path, candidate: str) -> dict:
+    """Verify the population and log bytes before packaging an exact candidate."""
+    def load(name: str):
+        return json.loads((gate / name).read_text(encoding='utf-8-sig'))
+
+    identity, summary = load('source-identity.json'), load('summary.json')
+    before, after, results = load('source-before.json'), load('source-after.json'), load('results.json')
+    current = source_identity(repo)
+    if current != identity:
+        # The legacy runner includes source_hashes in its identity receipt.
+        if any(current[key] != identity.get(key) for key in current):
+            raise ValueError('Current source identity differs from the complete local receipt')
+    validate_release_gate(candidate, identity, summary, before, after, source_inputs(repo))
+    projects = integrated_projects(repo)
+    validate_complete_local_results(projects, summary, results)
+    hashes = {}
+    for row in results:
+        stage = row['stage']
+        command = row.get('command')
+        if not isinstance(command, list) or not command or any(not isinstance(value, str) for value in command):
+            raise ValueError('Stage command receipt is unavailable: ' + stage)
+        if stage == 'Host' or stage.endswith('-build'):
+            project = 'CopilotBuddy.csproj' if stage == 'Host' else f'Tools/{stage[:-6]}/{stage[:-6]}.csproj'
+            if not all(value in command for value in ('build', project, '-p:Platform=x86', '-p:PlatformTarget=x86')):
+                raise ValueError('Stage did not build its registered Windows x86 project: ' + stage)
+        elif stage.endswith('-run') or stage == 'SingularCompatibility':
+            project = 'QuestRecoveryRegressionTests' if stage == 'SingularCompatibility' else stage[:-4]
+            if len(command) < 2 or Path(command[1]).name != project + '.dll':
+                raise ValueError('Stage did not execute its registered regression binary: ' + stage)
+            if stage == 'SingularCompatibility' and '--routine-compatibility' not in command:
+                raise ValueError('Singular compatibility mode was not executed')
+        for suffix, field in (('.log', 'log_sha256'), ('.stderr.log', 'stderr_sha256')):
+            filename = stage + suffix
+            path = gate / filename
+            if path.is_symlink() or not path.resolve().is_relative_to(gate.resolve()):
+                raise ValueError('Stage log escapes its retained gate: ' + filename)
+            actual = file_sha256(path)
+            if actual != row.get(field):
+                raise ValueError('Stage log changed after execution: ' + filename)
+            hashes[filename] = actual
+    return {'source_commit': candidate, 'registered_projects': projects, 'actual_stages': len(results),
+            'complete_result_population_verified': True, 'stage_log_sha256': hashes,
+            'results_sha256': file_sha256(gate / 'results.json'), 'game_attached': False}
+
+
 def write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('x', encoding='utf-8') as stream:

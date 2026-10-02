@@ -34,7 +34,7 @@ internal static class AuraCollectionReadValidityRegressionTests
         var fastSize = Parse("GreenMagic/FastSize.cs").DescendantNodes().OfType<ClassDeclarationSyntax>()
             .Single(c => c.Identifier.ValueText == "FastSize");
         var unit = Parse("Styx/WoWInternals/WoWObjects/WoWUnit.cs");
-        var unitNames = new HashSet<string> { "IsPlausibleAuraCount", "GetAllAuras", "UnavailableAuraObservation" };
+        var unitNames = new HashSet<string> { "IsPlausibleAuraCount", "GetAllAuras", "GetRawAuras", "AuraMetadataFailure", "UnavailableAuraObservation" };
         var unitMethods = unit.DescendantNodes().OfType<MethodDeclarationSyntax>().Where(m => unitNames.Contains(m.Identifier.ValueText)).ToArray();
         if (!unitMethods.Any(m => m.Identifier.ValueText == "GetAllAuras") || !unitMethods.Any(m => m.Identifier.ValueText == "IsPlausibleAuraCount"))
             throw new InvalidOperationException("Actual collection owner required");
@@ -43,16 +43,17 @@ internal static class AuraCollectionReadValidityRegressionTests
         var auraProperties = new HashSet<string> { "SpellId", "CreatorGuid", "Flags", "Duration", "EndTime", "IsActive", "HasNoDuration", "TimeLeft", "Spell", "Name", "MetadataFailure" };
         string auraMembers = string.Join("\n", aura.Members.Where(m =>
             m is StructDeclarationSyntax || m is EnumDeclarationSyntax || m is FieldDeclarationSyntax ||
-            m is ConstructorDeclarationSyntax c && c.ParameterList.Parameters.Count == 1 ||
+            m is ConstructorDeclarationSyntax c && c.ParameterList.Parameters.Count is 1 or 2 ||
             m is PropertyDeclarationSyntax p && auraProperties.Contains(p.Identifier.ValueText)).Select(m => m.ToString()));
-        var supportNames = new HashSet<string> { "SelectNormalBlessing", "SupportAuras", "MatchesBlessing" };
+        var supportNames = new HashSet<string> { "SelectNormalBlessing", "SupportCoverageAuras", "MatchesBlessing", "SupportedAuraName", "HasSupportedAura" };
         string support = string.Join("\n", Parse("runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs")
             .DescendantNodes().OfType<MethodDeclarationSyntax>().Where(m => supportNames.Contains(m.Identifier.ValueText)).Select(m => m.ToString()));
         string source = Prefix + fastSize + "\npublic sealed class Memory {\n" +
             string.Join("\n", fields.Select(f => f.ToString())) + MemoryLeaves +
             string.Join("\n", memoryMethods.Select(m => m.ToString())) + "}\n" +
             "public sealed class WoWAura {\n" + auraMembers + "}\n" +
-            "public class WoWUnit {public uint BaseAddress=Transfer.Base;public bool IsValid=true;\n" +
+            "public class WoWUnit {public uint BaseAddress=Transfer.Base;public ulong Guid=22;public bool IsValid=true;\n" +
+            "private (WoWSpell Spell,string Failure) ResolveAuraMetadata(int id){var spell=WoWSpell.ObserveFromId(id,out string failure);return (spell,failure);}\n" +
             string.Join("\n", unitMethods.Select(m => m.ToString())) + "}\n" +
             "public static class SupportProbe {\n" + SupportLeaves + support + "}\n" + Cases;
         string trusted = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string
@@ -115,7 +116,7 @@ public sealed class WoWPlayer:WoWUnit {
  public ulong Guid=22;public WoWClass Class=WoWClass.Paladin;public bool IsMe,IsInParty,IsInRaid;public int MaxMana=100;
  public bool HasAura(string name)=>false; // No role/form override in these manual-Might cases.
 }
-public sealed class WoWAuraCollection:List<WoWAura> {public WoWAuraCollection(int capacity):base(capacity){}}
+public sealed class WoWAuraCollection:List<WoWAura> {public WoWAuraCollection(){} public WoWAuraCollection(int capacity):base(capacity){}}
 public sealed class WoWSpell {
  public string Name;public static WoWSpell ObserveFromId(int id,out string failure){bool known=World.Names.TryGetValue(id,out var name);failure=known?"":"controlled-metadata-unavailable";return known?new WoWSpell{Name=name}:null;}
 }
@@ -154,7 +155,7 @@ public static class AuraCollectionCases {
   Transfer.Blocks[Transfer.Pointer]=BitConverter.GetBytes(Transfer.DynamicData);Transfer.Blocks[Transfer.DynamicCount]=BitConverter.GetBytes(count);
   var data=new byte[24*Math.Max(0,count)];
   for(int i=0;i<count;i++){
-   int start=i*24,id=7000+i;World.Names[id]=i==0?"Blessing of Kings":i==1?"Battle Shout":"Other"+i;
+   int start=i*24,id=i==0?20217:i==1?6673:7000+i;World.Names[id]=i==0?"Blessing of Kings":i==1?"Battle Shout":"Other"+i;
    Array.Copy(BitConverter.GetBytes(9UL),0,data,start,8);Array.Copy(BitConverter.GetBytes(id),0,data,start+8,4);
    data[start+12]=0x31;data[start+13]=80;data[start+14]=1;
    Array.Copy(BitConverter.GetBytes(10000U),0,data,start+16,4);Array.Copy(BitConverter.GetBytes(6000U),0,data,start+20,4);
@@ -189,7 +190,7 @@ public static class AuraCollectionCases {
    Case("missing-object-and-metadata/"+mode,()=>{
     Reset();if(mode=="missing-memory")ObjectManager.Wow=null;if(mode=="zero-base")World.Target.BaseAddress=0;
     if(mode=="unknown-spell"){
-     World.Names.Remove(7001);
+     World.Names.Remove(6673);
      Check(Rejected(()=>World.Target.GetAllAuras()),"unresolved active spell metadata became a complete partial collection");
     }else Check(World.Target.GetAllAuras().Count==0,"existing missing-object disposition changed");
    });
@@ -198,30 +199,30 @@ public static class AuraCollectionCases {
   foreach(bool dynamic in new[]{false,true})foreach(int slot in new[]{0,1})foreach(byte flags in new byte[]{0x31,0x81})
    Case("active-metadata-loss/"+dynamic+"/"+slot+"/"+flags,()=>{
     Reset(dynamic);var data=Transfer.Blocks[dynamic?Transfer.DynamicData:Transfer.StaticData];
-    data[slot*24+12]=flags;World.Names.Remove(7000+slot);
+    data[slot*24+12]=flags;World.Names.Remove(slot==0?20217:6673);
     Check(Rejected(()=>World.Target.GetAllAuras()),"known active record vanished when its metadata lookup failed");
    });
   foreach(bool dynamic in new[]{false,true})
    Case("actual-blessing-consumer-missing-metadata/"+dynamic,()=>{
-    Reset(dynamic);World.Names.Remove(7001);
-    Check(Rejected(()=>SupportProbe.Select(World.Target)),"missing Shout metadata incorrectly authorized Might");
+    Reset(dynamic);World.Names.Remove(6673);
+    Check(SupportProbe.Select(World.Target)==null,"exact Shout ID coverage disappeared with its metadata");
    });
   foreach(bool dynamic in new[]{false,true})foreach(string mode in new[]{"inactive","empty"})
    Case("nonactive-metadata-filter/"+dynamic+"/"+mode,()=>{
-    Reset(dynamic);World.Names.Remove(7001);var data=Transfer.Blocks[dynamic?Transfer.DynamicData:Transfer.StaticData];
+    Reset(dynamic);World.Names.Remove(6673);var data=Transfer.Blocks[dynamic?Transfer.DynamicData:Transfer.StaticData];
     if(mode=="inactive")data[24+12]=0x80;else Array.Clear(data,24,24);
     Check(World.Target.GetAllAuras().Count==1,"inactive unknown or genuinely empty slot changed existing collection filtering");
    });
   foreach(bool dynamic in new[]{false,true})
    Case("metadata-recovery-without-reset/"+dynamic,()=>{
-    Reset(dynamic);World.Names.Remove(7001);
+    Reset(dynamic);World.Names.Remove(6673);
     Check(Rejected(()=>World.Target.GetAllAuras()),"missing metadata was accepted");
-    World.Names[7001]="Battle Shout";
+    World.Names[6673]="Battle Shout";
     Check(World.Target.GetAllAuras().Count==2&&SupportProbe.Select(World.Target)==null,"recovered metadata remained unavailable or lost Shout coverage");
    });
   foreach(string condition in new[]{"non-world","invalid-unit"})
    Case("unknown-metadata-object-disposition/"+condition,()=>{
-    Reset();World.Names.Remove(7001);if(condition=="non-world")StyxWoW.IsInGame=false;else World.Target.IsValid=false;
+    Reset();World.Names.Remove(6673);if(condition=="non-world")StyxWoW.IsInGame=false;else World.Target.IsValid=false;
     Check(World.Target.GetAllAuras().Count==0,"unavailable object returned a partial apparently usable collection");
    });
   foreach(bool dynamic in new[]{false,true})foreach(int count in new[]{-2,256,int.MaxValue})

@@ -1,3 +1,13 @@
+# Current: recovery action acknowledgement after deployed PR94 — 2 October 2026
+
+Recover Git, receipts and installed hashes before repeating any work. PR91 collision, PR92 spell observations, PR93 item observations and PR94 scalar observations are completed history. Last verified master/production is PR94 `2d123d63eec35b675822571396a067e68cb7d281`, with434payload hashes,2015protected files and13deployed runtime components compiled. Its manifest is `ReleaseData/Deployment-PR94-2d123d63-20261002.json`.
+
+Continue `D:/Dev/CB-ActionFlight-20261002`, branch `audit/next-action-flight-20261002`. The original potion fixture is preserved in967737d6; PR94 reconciliation is9a1a5dd69b35765a0c71ddb3913e4b80793d6be6. Read `docs/audit/2026-10-02/recovery-action-acknowledgement/REPORT.md`, its worktree progress ledger and `D:/Dev/CopilotBuddy-Evidence/action-flight-20261002`. The integrated focused gate passed17groups; final source/whole-suite/closure/hosted/PR/package identity must be recovered from actual current receipts. The release now needs14components including DrinkPotions. Its extra production-byte comparison is held after two provider refusals; preserve that deployment gate and the unchanged PR94 installation.
+
+Do not claim live acknowledgement or replay older fixes. Continue full validation/publication of the current scope, then the retained quest10161 progress/travel/combat, food/drink, death and quarantine incidents. The exact4335execution population and0formal full-execution promotions remain unchanged.
+
+## Preserved previous checkpoint
+
 # Current: preserved collision recovery after deployed PR90 — 2 October 2026
 
 Master/origin and the installed target were independently verified at PR90 merge `c2f70e4c74a4c524f2e1075e51d571c4153a370a`. Read `D:/Dev/CopilotBuddy-Evidence/aura-liveness-20261002/DEPLOYMENT_VERIFIED.json`: 434 payload hashes, 2,012 protected files and all 13 deployed components compiled. The aura repair is merged and deployed; live acceptance and exact historical metadata lookup-stage diagnosis remain open. PR86–90 and the earlier dataset work are history to verify, not replay.

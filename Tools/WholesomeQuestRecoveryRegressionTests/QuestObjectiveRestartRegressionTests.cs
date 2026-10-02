@@ -34,6 +34,8 @@ internal static class QuestObjectiveRestartRegressionTests
         Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public bool TryInteract(){Interact();return true;}public void Interact(){ObjectiveRestartCases.Interactions++;}public bool IsAlive{get;set;}=true;");
         Replace("public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>null;", "public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>ObjectiveRestartCases.FindQuest(id);");
         Replace("public static void Face(ulong id){}", "public static void Face(ulong id){var f=ObjectiveRestartCases.OnFace;ObjectiveRestartCases.OnFace=null;f?.Invoke();}");
+        // Exact registry lookup and backing identity are supplied by the shared
+        // observation boundary for every current GossipEvent consumer.
 
         string temp = Path.Combine(Path.GetTempPath(), "cb-objective-restart-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);

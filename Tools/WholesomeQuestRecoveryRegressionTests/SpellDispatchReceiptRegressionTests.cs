@@ -133,6 +133,11 @@ public static class World
     public static bool Ready, Covered, PendingMatches;
     public static int Resets, Sleeps, GlobalCooldownReads, Exceptions, PendingReads, Clicks;
 }
+public static class RecoveryActions
+{
+    public static bool BeforeSpellSubmission(int id,ulong target)=>true;
+    public static void RethrowControlFlow(Exception error)=>Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(error);
+}
 public sealed class ExecutorRand
 {
     public object AssemblyLock = new object();

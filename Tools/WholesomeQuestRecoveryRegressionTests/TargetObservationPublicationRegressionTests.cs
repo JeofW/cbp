@@ -40,6 +40,7 @@ internal static class TargetObservationPublicationRegressionTests
             var compiler = Activator.CreateInstance(compilerType, new object[] { folder })!;
             foreach (string path in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator))
                 compilerType.GetMethod("AddReference", flags)!.Invoke(compiler, new object[] { path });
+            compilerType.GetMethod("AddReference", flags)!.Invoke(compiler, new object[] { typeof(Styx.StyxWoW).Assembly.Location });
             var result = (CompilerResults)compilerType.GetMethod("Compile", flags)!.Invoke(compiler, null)!;
             var errors = result.Errors.Cast<CompilerError>().Where(error => !error.IsWarning).ToArray();
             if (errors.Length != 0) throw new InvalidOperationException("Actual targeting owner compilation: " + string.Join(";", errors.Select(error => error.ToString())));
@@ -59,7 +60,7 @@ internal static class TargetObservationPublicationRegressionTests
     }
     private const string Prefix = """
 #nullable disable
-using System;using System.Linq;using System.Collections.Generic;using System.Reflection;using System.Threading;using Styx.Helpers;
+using System;using System.Linq;using System.Collections.Generic;using System.Reflection;using System.Threading;using Styx;using Styx.Helpers;using Styx.Logic.Combat;
 public delegate void TargetListUpdateFinishedDelegate(List<string> targets);
 public delegate void IncludeTargetsFilterDelegate(List<WoWObject> incoming,HashSet<WoWObject> outgoing);
 public delegate void RemoveTargetsFilterDelegate(List<WoWObject> units);
@@ -104,6 +105,9 @@ public static class Cases {
  cases.Add(("reentrant readers cannot consume an in-flight old publication",()=>{Reset();bool seen=false;OnRemove=()=>{Unknown(()=>owner.FirstUnit);seen=true;};owner.Pulse();Check(seen&&owner.TargetList.Count==2,"publication was not isolated across reentrant filter observations");}));
  foreach(string phase in new[]{"remove","include","weigh"})foreach(bool wrapped in new[]{false,true})foreach(bool interrupted in new[]{false,true}){
   string stage=phase;bool reflection=wrapped,stop=interrupted;cases.Add(($"{stage} preserves stop wrapped={reflection} interruption={stop}",()=>{Reset();Exception signal=stop?new ThreadInterruptedException("controlled stop"):new OperationCanceledException("controlled cancel");Phase=stage;Fault=reflection?new TargetInvocationException(signal):signal;Exception observed=null;try{owner.Pulse();}catch(Exception error){observed=error;}Check(ReferenceEquals(observed,signal),"reflection/targeting swallowed or replaced cancellation");Unknown(()=>owner.TargetList);}));
+ }
+ foreach(string phase in new[]{"remove","include","weigh"})foreach(bool wrapped in new[]{false,true})foreach(bool executor in new[]{false,true}){
+  string stage=phase;bool reflection=wrapped,closedExecutor=executor;cases.Add(($"{stage} preserves fatal native context wrapped={reflection} executor={closedExecutor}",()=>{Reset();Exception signal=closedExecutor?new InvalidExecutorException("closed executor"):new InvalidProcessException("closed process");Phase=stage;Fault=reflection?new TargetInvocationException(signal):signal;Exception observed=null;try{owner.Pulse();}catch(Exception error){observed=error;}Check(ReferenceEquals(observed,signal),"targeting swallowed/replaced fatal native context");Unknown(()=>owner.TargetList);}));
  }
  int passed=0,failed=0;foreach(var test in cases){try{test.Item2();passed++;}catch(Exception error){failed++;Console.Error.WriteLine("FAIL target observation: "+test.Item1+": "+error.Message);}}
  Console.WriteLine($"Target observation publication: {passed}/{cases.Count}; failed={failed}; actual filters/publication/readers; controlled frame/world leaves; no native dispatch.");if(failed!=0)throw new InvalidOperationException("Target observation publication regressions");

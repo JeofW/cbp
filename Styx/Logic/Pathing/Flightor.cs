@@ -13,6 +13,7 @@ using Styx.Logic;
 using Styx.Logic.Combat;
 using Styx.Logic.Pathing.FlightorNavigation;
 using Styx.Logic.POI;
+using Styx.Logic.Profiles;
 using Styx.WoWInternals;
 using Styx.WoWInternals.World;
 using Styx.WoWInternals.WoWObjects;
@@ -42,18 +43,29 @@ namespace Styx.Logic.Pathing
         private static LocalPlayer _antiStuckPlayer;
         private static WoWUnit _antiStuckOwner;
         private static ulong _antiStuckPlayerGuid, _antiStuckOwnerGuid;
-        private static uint _antiStuckMap;
+        private static uint _antiStuckMap, _antiStuckPlayerAddress, _antiStuckOwnerAddress;
         private static bool _antiStuckAlive, _antiStuckGhost;
+        private static BotPoi _antiStuckPoi;
+        private static long _antiStuckPoiGeneration;
+        private static Func<bool>? _antiStuckRouteLease;
+        private static object _antiStuckProfile, _antiStuckProvider, _antiStuckInput, _antiStuckRequestOwner, _antiStuckMemory, _antiStuckExecutor;
 
         // PolyNav path state
         private static FlightPath _flightPath;
         private static LocalPlayer _pathPlayer;
         private static WoWUnit _pathMover;
         private static ulong _pathPlayerGuid, _pathMoverGuid;
-        private static uint _pathMap;
+        private static uint _pathMap, _pathPlayerAddress, _pathMoverAddress;
         private static bool _pathAlive, _pathGhost;
+        private static BotPoi _pathPoi;
+        private static long _pathPoiGeneration;
+        private static Func<bool>? _pathRouteLease;
+        private static object _pathProfile, _pathProvider, _pathInput, _flightRequestOwner, _pathMemory, _pathExecutor;
         private static PolyNav _polyNav;
         private static uint? _polyNavMapId;
+        private static WoWPoint _lastFlightWaypoint = WoWPoint.Empty;
+        internal static object RequestIdentity => _flightRequestOwner;
+        internal static WoWPoint LastFlightWaypoint => _lastFlightWaypoint;
 
         // HB 6.2.3 woWPoint_4/5: cached outdoor takeoff spot and its associated destination.
         // When the bot can't fly from its current location, it navigates to _takeoffSpot first.
@@ -65,6 +77,58 @@ namespace Styx.Logic.Pathing
         static Flightor()
         {
             BotEvents.OnBotStop += args => Clear();
+            BotEvents.OnPulse += (sender, args) => InvalidateRouteContext();
+        }
+
+        // Detach managed state before stopping input. Only the still-current
+        // actor/controller/provider may receive cleanup for the obsolete route.
+        internal static void InvalidateRouteContext()
+        {
+            bool ContextChanged(BotPoi poi, long generation, Func<bool>? routeLease, object profile, object provider) =>
+                !ReferenceEquals(BotPoi.Current, poi) || (routeLease != null ? !routeLease() : BotPoi.CurrentGeneration != generation)
+                || !ReferenceEquals(ProfileManager.CurrentProfileSnapshot, profile)
+                || !ReferenceEquals(Navigator.NavigationProvider, provider) || poi.IsWorldSubjectBlacklisted;
+            var input = Navigator.PlayerMover;
+            bool stopFlight = false, stopRecovery = false;
+            if (_pathPlayer != null && (!ReferenceEquals(ObjectManager.Wow, _pathMemory) || !ReferenceEquals(ObjectManager.Executor, _pathExecutor)
+                || _pathPlayer.BaseAddress != _pathPlayerAddress || _pathMover.BaseAddress != _pathMoverAddress
+                || ContextChanged(_pathPoi, _pathPoiGeneration, _pathRouteLease, _pathProfile, _pathProvider)
+                || !ReferenceEquals(StyxWoW.Me, _pathPlayer) || !ReferenceEquals(WoWMovement.ActiveMover, _pathMover)
+                || !ReferenceEquals(input, _pathInput) || _pathPlayer.Guid != _pathPlayerGuid || _pathPlayer.MapId != _pathMap
+                || _pathPlayer.IsAlive != _pathAlive || _pathPlayer.IsGhost != _pathGhost))
+            {
+                stopFlight = _flightPath != null && ReferenceEquals(ObjectManager.Wow, _pathMemory) && ReferenceEquals(ObjectManager.Executor, _pathExecutor)
+                    && _pathPlayer.BaseAddress == _pathPlayerAddress && _pathMover.BaseAddress == _pathMoverAddress && ReferenceEquals(StyxWoW.Me, _pathPlayer)
+                    && _pathPlayer.Guid == _pathPlayerGuid && _pathPlayer.MapId == _pathMap
+                    && ReferenceEquals(WoWMovement.ActiveMover, _pathMover) && _pathMover.Guid == _pathMoverGuid
+                    && ReferenceEquals(input, _pathInput) && ReferenceEquals(Navigator.NavigationProvider, _pathProvider);
+                _flightRequestOwner = new object();
+                _pathPlayer = null;
+                _flightPath = null;
+                _pathRouteLease = null;
+                _lastDestination = WoWPoint.Empty;
+                _takeoffSpot = _takeoffDestination = WoWPoint.Empty;
+            }
+            if (_antiStuckPlayer != null && (!ReferenceEquals(ObjectManager.Wow, _antiStuckMemory) || !ReferenceEquals(ObjectManager.Executor, _antiStuckExecutor)
+                || _antiStuckPlayer.BaseAddress != _antiStuckPlayerAddress || _antiStuckOwner.BaseAddress != _antiStuckOwnerAddress
+                || ContextChanged(_antiStuckPoi, _antiStuckPoiGeneration, _antiStuckRouteLease, _antiStuckProfile, _antiStuckProvider)
+                || !ReferenceEquals(StyxWoW.Me, _antiStuckPlayer) || !ReferenceEquals(WoWMovement.ActiveMover, _antiStuckOwner)
+                || !ReferenceEquals(input, _antiStuckInput) || _antiStuckPlayer.Guid != _antiStuckPlayerGuid
+                || _antiStuckPlayer.MapId != _antiStuckMap || _antiStuckPlayer.IsAlive != _antiStuckAlive || _antiStuckPlayer.IsGhost != _antiStuckGhost))
+            {
+                stopRecovery = ReferenceEquals(ObjectManager.Wow, _antiStuckMemory) && ReferenceEquals(ObjectManager.Executor, _antiStuckExecutor)
+                    && _antiStuckPlayer.BaseAddress == _antiStuckPlayerAddress && _antiStuckOwner.BaseAddress == _antiStuckOwnerAddress
+                    && ReferenceEquals(StyxWoW.Me, _antiStuckPlayer) && _antiStuckPlayer.Guid == _antiStuckPlayerGuid
+                    && _antiStuckPlayer.MapId == _antiStuckMap && ReferenceEquals(WoWMovement.ActiveMover, _antiStuckOwner)
+                    && _antiStuckOwner.Guid == _antiStuckOwnerGuid && ReferenceEquals(input, _antiStuckInput)
+                    && ReferenceEquals(Navigator.NavigationProvider, _antiStuckProvider);
+                _antiStuckRequestOwner = new object();
+                _antiStuckPlayer = null;
+                _antiStuckRouteLease = null;
+                _asAscended = _asStrafedLeft = _asStrafedRight = false;
+                _antiStuckStartPos = WoWPoint.Empty;
+            }
+            if (stopFlight || stopRecovery) input.MoveStop();
         }
 
         /// <summary>
@@ -156,7 +220,10 @@ namespace Styx.Logic.Pathing
 
         private static bool ShouldWalk(WoWPoint destination)
         {
-            if (StyxWoW.Me.HasAura("Sea Legs")) return false;
+            if (BotPoi.Current.Type == PoiType.Loot && BotPoi.Current.AsObject is WoWGameObject subject
+                && !StyxWoW.Me.IsFlying && !StyxWoW.Me.MovementInfo.IsFlying)
+                return !PreferFlightForGroundInteraction(destination, subject.InteractRange);
+            if (HasSeaLegs(StyxWoW.Me)) return false;
             if (MountHelper.Mounted)             return false;
             // Raw WoW mount flag covers ground mounts and the CanFly-flag timing window
             // right after casting a flying mount (SMSG_MOVE_SET_CAN_FLY may not yet be
@@ -187,6 +254,55 @@ namespace Styx.Logic.Pathing
                 && Navigator.CanNavigateWithin(StyxWoW.Me.Location, destination, 5f);
         }
 
+        internal static bool PreferFlightForGroundInteraction(WoWPoint destination, float interactionRange)
+        {
+            var actor = StyxWoW.Me;
+            if (actor == null || !CanFly || Navigator.IsInNoFlyZone || Navigator.IsRidingElevator) return false;
+            WoWPoint origin = actor.Location;
+            double distance = origin.Distance(destination);
+            if (!double.IsFinite(distance) || distance <= Math.Max(20.0, interactionRange * 3.0)) return false;
+            // Compare the available mesh route, not only the straight-line
+            // separation. An incomplete/unavailable route supplies no shortcut;
+            // its straight-line lower bound remains the conservative estimate.
+            var route = Navigator.GeneratePath(origin, destination);
+            double groundDistance = distance;
+            if (route.Length > 0 && route[route.Length - 1].Distance(destination) <= 5f)
+            {
+                double length = origin.Distance(route[0]);
+                for (int i = 1; i < route.Length; i++) length += route[i - 1].Distance(route[i]);
+                length += route[route.Length - 1].Distance(destination);
+                if (double.IsFinite(length)) groundDistance = Math.Max(distance, length);
+            }
+            var spell = MountHelper.FlyingMount;
+            if (spell == null) return false;
+            double castSeconds = MountHelper.Mounted ? 0 : spell.CastTime / 1000.0;
+            return IsFlightTravelCheaper(distance, groundDistance, actor.MovementInfo.RunSpeed,
+                7.0 * FlySpeedMultiplier, castSeconds);
+        }
+
+        internal static bool IsFlightTravelCheaper(double distance, double groundDistance,
+            double groundSpeed, double flightSpeed, double mountCastSeconds)
+        {
+            if (!double.IsFinite(distance) || !double.IsFinite(groundDistance) || !double.IsFinite(groundSpeed)
+                || !double.IsFinite(flightSpeed) || !double.IsFinite(mountCastSeconds)
+                || distance < 0 || groundDistance < distance || groundSpeed <= 0 || flightSpeed <= 0 || mountCastSeconds < 0) return false;
+            // Estimates, not arrival receipts: budget the normal 40-yard flight
+            // height in both directions, takeoff, landing and dismount latency.
+            double flightSeconds = (distance + 80.0) / flightSpeed + mountCastSeconds + 6.0;
+            return flightSeconds + 1.0 < groundDistance / groundSpeed;
+        }
+
+        // Sea Legs is Vashj'ir scaffolding from the later HB port. The shipped
+        // original12340 Spell.dbc has no such row/mechanic. Do not make an
+        // unrelated unresolved aura's name a prerequisite for ordinary travel.
+        private static bool HasSeaLegs(LocalPlayer player) => false;
+
+        // Complete exact-name families from the same original Spell.dbc. Raw
+        // IDs require complete readable aura records, but no unrelated metadata.
+        private static bool HasTravelFormAura(LocalPlayer player)
+            => player.GetRawAuras().Any(a => a.SpellId == 33943 || a.SpellId == 33950
+                || a.SpellId == 40120 || a.SpellId == 40123 || a.SpellId == 1066 || a.SpellId == 1446);
+
         /// <summary>
         /// Move to destination using flying mount
         /// </summary>
@@ -196,7 +312,32 @@ namespace Styx.Logic.Pathing
         /// Move to destination with minimum height
         /// </summary>
         public static void MoveTo(WoWPoint destination, float minHeight)
+            => MoveToCore(destination, minHeight, false, null);
+
+        // Ground interaction already compared route/mount/landing costs. Keep
+        // that decision through this request while retaining the caller's owner
+        // across waits; all flight capability/collision/takeoff gates still run.
+        internal static void MoveToGroundInteraction(WoWPoint destination, Func<bool> admitted)
+            => MoveToCore(destination, 40f, true, admitted);
+
+        internal static void MoveToOwnedExterior(WoWPoint destination, Func<bool> admitted, System.Action<object> registered,
+            Func<bool>? routeLease = null)
         {
+            if (admitted()) MoveToCore(destination, 4f, true, admitted, registered, true, routeLease);
+        }
+
+        private static void MoveToCore(WoWPoint destination, float minHeight, bool preferFlight, Func<bool> admitted,
+            System.Action<object> registered = null, bool flightOnly = false, Func<bool>? routeLease = null)
+        {
+            object requestOwner = _flightRequestOwner = new object();
+            registered?.Invoke(requestOwner);
+            var memory = ObjectManager.Wow;
+            var executor = ObjectManager.Executor;
+            var poi = BotPoi.Current;
+            long poiGeneration = BotPoi.CurrentGeneration;
+            var profile = ProfileManager.CurrentProfileSnapshot;
+            var provider = Navigator.NavigationProvider;
+            var playerMover = Navigator.PlayerMover;
             LocalPlayer me = StyxWoW.Me;
             if (me == null)
             {
@@ -208,15 +349,26 @@ namespace Styx.Logic.Pathing
             bool alive = me.IsAlive, ghost = me.IsGhost;
             WoWUnit inputOwner = WoWMovement.ActiveMover;
             ulong inputGuid = inputOwner?.Guid ?? 0;
+            uint playerAddress = me.BaseAddress, inputAddress = inputOwner?.BaseAddress ?? 0;
+            bool PoiCurrent() => ReferenceEquals(BotPoi.Current, poi) && !poi.IsWorldSubjectBlacklisted
+                && (routeLease != null ? routeLease() : BotPoi.CurrentGeneration == poiGeneration)
+                && ReferenceEquals(BotPoi.Current, poi);
             bool CanContinue()
             {
-                bool valid = playerGuid != 0 && inputGuid != 0 && ReferenceEquals(StyxWoW.Me, me)
+                bool OwnsContext() => memory != null && ReferenceEquals(ObjectManager.Wow, memory) && ReferenceEquals(ObjectManager.Executor, executor)
+                    && playerAddress != 0 && inputAddress != 0 && me.BaseAddress == playerAddress && inputOwner.BaseAddress == inputAddress
+                    && playerGuid != 0 && inputGuid != 0 && ReferenceEquals(StyxWoW.Me, me)
                     && me.Guid == playerGuid && me.IsValid && me.MapId == map
                     && me.IsAlive == alive && me.IsGhost == ghost && inputOwner.IsValid && inputOwner.Guid == inputGuid
-                    && ReferenceEquals(WoWMovement.ActiveMover, inputOwner);
+                    && ReferenceEquals(WoWMovement.ActiveMover, inputOwner)
+                    && ReferenceEquals(_flightRequestOwner, requestOwner)
+                    && PoiCurrent()
+                    && ReferenceEquals(ProfileManager.CurrentProfileSnapshot, profile)
+                    && ReferenceEquals(Navigator.NavigationProvider, provider) && ReferenceEquals(Navigator.PlayerMover, playerMover);
+                bool valid = OwnsContext() && (admitted == null || admitted()) && OwnsContext();
                 // Even if the same wrapper returns later, an observed ownership
                 // gap invalidates the earlier route and takeoff observations.
-                if (!valid) _pathPlayer = null;
+                if (!valid && ReferenceEquals(_flightRequestOwner, requestOwner)) _pathPlayer = null;
                 return valid;
             }
             if (!CanContinue()) return;
@@ -224,13 +376,23 @@ namespace Styx.Logic.Pathing
             // A destination alone cannot identify a route across actor, control,
             // map or life-state changes. Keep the map-keyed PolyNav geometry,
             // but discard the old traversal and takeoff observations.
-            if (!ReferenceEquals(_pathPlayer, me) || _pathPlayerGuid != playerGuid
+            bool pathPoiChanged = !ReferenceEquals(_pathPoi, poi)
+                || (routeLease == null
+                    ? _pathRouteLease != null || _pathPoiGeneration != poiGeneration
+                    : !ReferenceEquals(_pathRouteLease, routeLease));
+            if (!ReferenceEquals(_pathMemory, memory) || !ReferenceEquals(_pathExecutor, executor)
+                || _pathPlayerAddress != playerAddress || _pathMoverAddress != inputAddress
+                || !ReferenceEquals(_pathPlayer, me) || _pathPlayerGuid != playerGuid
                 || !ReferenceEquals(_pathMover, inputOwner) || _pathMoverGuid != inputGuid
-                || _pathMap != map || _pathAlive != alive || _pathGhost != ghost)
+                || _pathMap != map || _pathAlive != alive || _pathGhost != ghost
+                || pathPoiChanged
+                || !ReferenceEquals(_pathProfile, profile) || !ReferenceEquals(_pathProvider, provider) || !ReferenceEquals(_pathInput, playerMover))
             {
                 _flightPath = null;
                 _lastDestination = WoWPoint.Empty;
                 _takeoffSpot = _takeoffDestination = WoWPoint.Empty;
+                _pathMemory = memory; _pathExecutor = executor;
+                _pathPlayerAddress = playerAddress; _pathMoverAddress = inputAddress;
                 _pathPlayer = me;
                 _pathPlayerGuid = playerGuid;
                 _pathMover = inputOwner;
@@ -238,20 +400,26 @@ namespace Styx.Logic.Pathing
                 _pathMap = map;
                 _pathAlive = alive;
                 _pathGhost = ghost;
+                _pathPoi = poi;
+                _pathPoiGeneration = poiGeneration;
+                _pathRouteLease = routeLease;
+                _pathProfile = profile;
+                _pathProvider = provider;
+                _pathInput = playerMover;
             }
 
             // P6.10: Refuse to fly in no-fly zones (Dalaran, indoor dungeons)
             // Force ground navigation instead of trying to mount a flying mount
-            if (Navigator.IsInNoFlyZone)
+            if (Navigator.IsInNoFlyZone && (!flightOnly || !me.IsFlying))
             {
-                if (CanContinue()) Navigator.MoveTo(destination);
+                if (!flightOnly && CanContinue()) Navigator.MoveTo(destination);
                 return;
             }
 
             // Don't attempt flying while riding an elevator
             if (Navigator.IsRidingElevator)
             {
-                if (CanContinue()) Navigator.MoveTo(destination);
+                if (!flightOnly && CanContinue()) Navigator.MoveTo(destination);
                 return;
             }
 
@@ -261,10 +429,10 @@ namespace Styx.Logic.Pathing
             // destination instead of freezing. This matches HB behavior exactly.
 
             WoWPoint myLocation = me.Location;
-            bool hasSeaLegs = me.HasAura("Sea Legs");
+            bool hasSeaLegs = HasSeaLegs(me);
 
             // Ground nav is faster than mounting and flying: prefer walking (HB smethod_9)
-            if (ShouldWalk(destination))
+            if (!preferFlight && ShouldWalk(destination))
             {
                 if (!CanContinue()) return;
                 // In no-fly zones (e.g. Eastern Kingdoms in WotLK), attempt a ground mount
@@ -290,7 +458,7 @@ namespace Styx.Logic.Pathing
                 // Don't attempt flying-mount logic here — just do ground navigation.
                 if (!CanFly)
                 {
-                    if (CanContinue()) Navigator.MoveTo(destination);
+                    if (!flightOnly && CanContinue()) Navigator.MoveTo(destination);
                     return;
                 }
 
@@ -373,7 +541,7 @@ namespace Styx.Logic.Pathing
                 {
                     if (!CanContinue()) return;
                     // Swimming - move up first
-                    if (me.IsSwimming && !me.HasAura("Sea Legs") &&
+                    if (me.IsSwimming && !HasSeaLegs(me) &&
                         !GameWorld.TraceLine(traceLinePos, myLocation, GameWorld.CGWorldFrameHitFlags.HitTestLiquid))
                     {
                         float neededFacing = WoWMathHelper.CalculateNeededFacing(myLocation, destination);
@@ -381,7 +549,7 @@ namespace Styx.Logic.Pathing
                         if (CanContinue()) Navigator.PlayerMover.MoveTowards(p);
                     }
                     // Druid flight form while swimming — HB 4.3.4 exact port.
-                    else if (!me.HasAura("Sea Legs") &&
+                    else if (!HasSeaLegs(me) &&
                              me.IsSwimming &&
                              me.Class == WoWClass.Druid &&
                              (SpellManager.HasSpell("Flight Form") || SpellManager.HasSpell("Swift Flight Form")))
@@ -418,7 +586,7 @@ namespace Styx.Logic.Pathing
                     //    fall back to ground navigation as HB originally intended.
                     //    !StyxWoW.Me.Mounted guard: prevents ground nav during the CanFly-flag
                     //    timing window right after mounting (same pattern as RemoveLootFilter).
-                    if (CanContinue() && ((!CanFly && !me.Mounted) || me.Combat) && CanContinue())
+                    if (!flightOnly && CanContinue() && ((!CanFly && !me.Mounted) || me.Combat) && CanContinue())
                         Navigator.MoveTo(destination);
                 }
             }
@@ -429,7 +597,7 @@ namespace Styx.Logic.Pathing
 
                 // Crusader Aura for paladins
                 if (myLocation.Distance(destination) > 100.0 && me.IsAlive &&
-                    SpellManager.CanCast("Crusader Aura") && !me.HasAura("Crusader Aura"))
+                    SpellManager.CanCast("Crusader Aura") && !me.HasAura(32223))
                 {
                     if (CanContinue()) SpellManager.Cast("Crusader Aura");
                 }
@@ -471,7 +639,11 @@ namespace Styx.Logic.Pathing
                 var myPos2D = new Vector2(myLocation.X, myLocation.Y);
                 var dest2D  = new Vector2(destination.X, destination.Y);
                 if (_flightPath == null)
-                    _flightPath = BuildPath(myPos2D, dest2D);
+                {
+                    var generatedPath = BuildPath(myPos2D, dest2D);
+                    if (!CanContinue()) return;
+                    _flightPath = generatedPath;
+                }
                 if (!CanContinue()) return;
 
                 // Step 5: Advance ONE waypoint per pulse (WoD: single dequeue, not while-loop)
@@ -502,7 +674,10 @@ namespace Styx.Logic.Pathing
                 {
                     // Only re-issue CTM if not already moving to the exact same point
                     if (!activeMover.IsMoving || ctm.ClickPos != flightPoint || !ctm.IsClickMoving)
+                    {
+                        _lastFlightWaypoint = flightPoint;
                         Navigator.PlayerMover.MoveTowards(flightPoint);
+                    }
                     if (!CanContinue()) return;
 
                     // Second ascent check after issuing movement command
@@ -521,7 +696,7 @@ namespace Styx.Logic.Pathing
                 }
                 else
                 {
-                    DoAntiStuck();
+                    DoAntiStuck(routeLease);
                 }
                 return;
             }
@@ -623,7 +798,7 @@ namespace Styx.Logic.Pathing
                 float angle = (float)Math.Asin(Math.Min(1f, heightDiff / distance));
                 pitch = traceLinePos.Z > destination.Z ? -angle : angle;
             }
-            else if (!me.HasAura("Sea Legs"))
+            else if (!HasSeaLegs(me))
             {
                 if (GameWorld.TraceLine(traceLinePos, traceLinePos.Add(0.0f, 0.0f, -minHeight),
                     GameWorld.CGWorldFrameHitFlags.HitTestGround | GameWorld.CGWorldFrameHitFlags.HitTestLiquid))
@@ -637,7 +812,7 @@ namespace Styx.Logic.Pathing
                     // Very high — descend if far from destination, not Dalaran, not blocked by Outland terrain
                         // WoD: uses StyxWoW.Me.Rotation (current facing) for the Outland forward trace,
                         // not the heading to destination. Tests if path ahead is blocked.
-                        if (!me.HasAura("Sea Legs") && me.ZoneId != 3540U && myLocation.Distance2D(destination) > 300f &&
+                        if (!HasSeaLegs(me) && me.ZoneId != 3540U && myLocation.Distance2D(destination) > 300f &&
                             (me.MapId != 530U || !GameWorld.TraceLine(traceLinePos,
                                 GetPointInDirection(traceLinePos, 300f, me.Rotation, 0f),
                             GameWorld.CGWorldFrameHitFlags.HitTestWMO | GameWorld.CGWorldFrameHitFlags.HitTestGround)))
@@ -771,27 +946,50 @@ namespace Styx.Logic.Pathing
         /// </summary>
         public static void Clear()
         {
+            DetachRouteState(true);
+            // Preserve explicit public/bot-stop cleanup semantics.
+            WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
+            WoWMovement.MoveStop();
+        }
+
+        internal static bool ReleaseOwned(object expected, Func<bool> ownsInput, System.Action<object> registered)
+        {
+            if (!ReferenceEquals(_flightRequestOwner, expected) || !ownsInput()
+                || !ReferenceEquals(_flightRequestOwner, expected)) return false;
+            DetachRouteState(false);
+            var released = _flightRequestOwner;
+            registered(released);
+            // Every input callback can publish a replacement route. Managed
+            // state is detached first and no later cleanup touches a successor.
+            bool Current() => ReferenceEquals(_flightRequestOwner, released) && ownsInput()
+                && ReferenceEquals(_flightRequestOwner, released);
+            if (Current()) WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
+            if (Current()) WoWMovement.MoveStop();
+            return Current();
+        }
+
+        private static void DetachRouteState(bool discardMapGeometry)
+        {
+            _flightRequestOwner = new object();
+            _antiStuckRequestOwner = new object();
             _prevDestination    = WoWPoint.Empty;
             _antiStuckStartPos  = WoWPoint.Empty;
             _antiStuckCheckPos  = WoWPoint.Empty;
             _asAscended = _asStrafedLeft = _asStrafedRight = false;
             _antiStuckPlayer = null;
             _antiStuckOwner = null;
+            _antiStuckRouteLease = null;
             _antiStuckPlayerGuid = _antiStuckOwnerGuid = 0;
             _flightPath   = null;
             _pathPlayer = null;
             _pathMover = null;
+            _pathRouteLease = null;
             _pathPlayerGuid = _pathMoverGuid = 0;
-            _polyNav      = null;
-            _polyNavMapId = null;
+            if (discardMapGeometry) { _polyNav = null; _polyNavMapId = null; }
             _lastDestination = _prevDestination = WoWPoint.Zero;
+            _lastFlightWaypoint = WoWPoint.Empty;
             _takeoffSpot        = WoWPoint.Empty;
             _takeoffDestination = WoWPoint.Empty;
-            // Always release the Descend key explicitly via MoveStop(Descend) — bypasses the
-            // early-return guard in MoveStop() that can skip NativeMove when ActiveInputControl.Flags
-            // reads stale (race between our NativeMove write and the game's flag update).
-            WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
-            WoWMovement.MoveStop();
         }
 
         /// <summary>
@@ -839,7 +1037,7 @@ namespace Styx.Logic.Pathing
                 {
                     // Less than 3m moved over 500ms — stuck
                     Logging.Write(Colors.Red, "[Flightor] We are stuck! ({0})", loc);
-                    DoAntiStuck();
+                    DoAntiStuck(_pathRouteLease);
                     return true;
                 }
 
@@ -864,30 +1062,60 @@ namespace Styx.Logic.Pathing
         /// Steps: JumpAscend → StrafeLeft → StrafeRight → Backwards → reset.
         /// Each call advances one step; state resets when the bot moves > 10m.
         /// </summary>
-        public static void DoAntiStuck()
+        public static void DoAntiStuck() => DoAntiStuck(null);
+
+        private static void DoAntiStuck(Func<bool>? routeLease)
         {
+            object requestOwner = _antiStuckRequestOwner = new object();
+            var memory = ObjectManager.Wow;
+            var executor = ObjectManager.Executor;
+            var poi = BotPoi.Current;
+            long poiGeneration = BotPoi.CurrentGeneration;
+            var profile = ProfileManager.CurrentProfileSnapshot;
+            var provider = Navigator.NavigationProvider;
             LocalPlayer player = StyxWoW.Me;
+            var playerMover = Navigator.PlayerMover;
             WoWUnit mover = WoWMovement.ActiveMover;
             ulong playerGuid = player?.Guid ?? 0, moverGuid = mover?.Guid ?? 0;
             uint map = player?.MapId ?? 0;
+            uint playerAddress = player?.BaseAddress ?? 0, moverAddress = mover?.BaseAddress ?? 0;
             bool alive = player?.IsAlive ?? false, ghost = player?.IsGhost ?? false;
+            bool PoiCurrent() => ReferenceEquals(BotPoi.Current, poi) && !poi.IsWorldSubjectBlacklisted
+                && (routeLease != null ? routeLease() : BotPoi.CurrentGeneration == poiGeneration)
+                && ReferenceEquals(BotPoi.Current, poi);
             bool CanContinue()
             {
-                bool valid = playerGuid != 0 && moverGuid != 0 && ReferenceEquals(StyxWoW.Me, player)
+                bool valid = memory != null && ReferenceEquals(ObjectManager.Wow, memory) && ReferenceEquals(ObjectManager.Executor, executor)
+                    && playerAddress != 0 && moverAddress != 0 && player.BaseAddress == playerAddress && mover.BaseAddress == moverAddress
+                    && playerGuid != 0 && moverGuid != 0 && ReferenceEquals(StyxWoW.Me, player)
                     && player.Guid == playerGuid && player.IsValid && player.MapId == map
                     && player.IsAlive == alive && player.IsGhost == ghost && mover.IsValid && mover.Guid == moverGuid
-                    && ReferenceEquals(WoWMovement.ActiveMover, mover);
-                if (!valid) _antiStuckPlayer = null;
+                    && ReferenceEquals(WoWMovement.ActiveMover, mover)
+                    && ReferenceEquals(_antiStuckRequestOwner, requestOwner)
+                    && PoiCurrent()
+                    && ReferenceEquals(ProfileManager.CurrentProfileSnapshot, profile)
+                    && ReferenceEquals(Navigator.NavigationProvider, provider) && ReferenceEquals(Navigator.PlayerMover, playerMover);
+                if (!valid && ReferenceEquals(_antiStuckRequestOwner, requestOwner)) _antiStuckPlayer = null;
                 return valid;
             }
             if (!CanContinue()) return;
-            if (!ReferenceEquals(_antiStuckPlayer, player) || _antiStuckPlayerGuid != playerGuid
+            bool antiStuckPoiChanged = !ReferenceEquals(_antiStuckPoi, poi)
+                || (routeLease == null
+                    ? _antiStuckRouteLease != null || _antiStuckPoiGeneration != poiGeneration
+                    : !ReferenceEquals(_antiStuckRouteLease, routeLease));
+            if (!ReferenceEquals(_antiStuckMemory, memory) || !ReferenceEquals(_antiStuckExecutor, executor)
+                || _antiStuckPlayerAddress != playerAddress || _antiStuckOwnerAddress != moverAddress
+                || !ReferenceEquals(_antiStuckPlayer, player) || _antiStuckPlayerGuid != playerGuid
                 || !ReferenceEquals(_antiStuckOwner, mover) || _antiStuckOwnerGuid != moverGuid || _antiStuckMap != map
-                || _antiStuckAlive != alive || _antiStuckGhost != ghost)
+                || _antiStuckAlive != alive || _antiStuckGhost != ghost
+                || antiStuckPoiChanged
+                || !ReferenceEquals(_antiStuckProfile, profile) || !ReferenceEquals(_antiStuckProvider, provider) || !ReferenceEquals(_antiStuckInput, playerMover))
             {
                 _asAscended = _asStrafedLeft = _asStrafedRight = false;
                 _antiStuckStartPos = WoWPoint.Empty;
             }
+            _antiStuckMemory = memory; _antiStuckExecutor = executor;
+            _antiStuckPlayerAddress = playerAddress; _antiStuckOwnerAddress = moverAddress;
             _antiStuckPlayer = player;
             _antiStuckPlayerGuid = playerGuid;
             _antiStuckOwner = mover;
@@ -895,6 +1123,12 @@ namespace Styx.Logic.Pathing
             _antiStuckMap = map;
             _antiStuckAlive = alive;
             _antiStuckGhost = ghost;
+            _antiStuckPoi = poi;
+            _antiStuckPoiGeneration = poiGeneration;
+            _antiStuckRouteLease = routeLease;
+            _antiStuckProfile = profile;
+            _antiStuckProvider = provider;
+            _antiStuckInput = playerMover;
 
             WoWPoint loc = mover.Location;
             if (!CanContinue()) return;
@@ -983,7 +1217,7 @@ namespace Styx.Logic.Pathing
                     LocalPlayer me = StyxWoW.Me;
 
                     // Sea Legs handling (Vashj'ir) - not in WotLK but keep for future
-                    if (me.HasAura("Sea Legs"))
+                    if (HasSeaLegs(me))
                     {
                         if (!me.IsOutdoors)
                             return null;
@@ -1120,14 +1354,14 @@ namespace Styx.Logic.Pathing
                     if (me == null) return false;
 
                     // Sea Legs: aquatic mounts, aquatic form, ghost — all count as "mounted".
-                    if (me.HasAura("Sea Legs"))
+                    if (HasSeaLegs(me))
                     {
-                        if (me.HasAura("Aquatic Form") || me.IsGhost)
+                        if ((me.HasAura(1066) || me.HasAura(1446)) || me.IsGhost)
                             return true;
 
                         foreach (var mount in Styx.Logic.MountHelper.UnderwaterMounts)
                         {
-                            if (me.Auras.Values.Any(a => a.SpellId == mount.CreatureSpellId))
+                            if (me.HasAura(unchecked((int)mount.CreatureSpellId)))
                                 return true;
                         }
                     }
@@ -1149,7 +1383,7 @@ namespace Styx.Logic.Pathing
                     WoWSpell flyingMount = FlyingMount;
                     return me.Mounted &&
                            flyingMount != null &&
-                           me.Auras.Values.Any(a => a.SpellId == flyingMount.Id);
+                           me.HasAura(flyingMount.Id);
                 }
             }
 
@@ -1237,7 +1471,7 @@ namespace Styx.Logic.Pathing
                     StyxWoW.SleepForLagDuration();
                 }
                 if (!Mounted || !CanRemoveFlight()) return false;
-                bool inForm = me.HasAura("Swift Flight Form") || me.HasAura("Flight Form") || me.HasAura("Aquatic Form");
+                bool inForm = HasTravelFormAura(me);
                 if (!Mounted || !CanRemoveFlight()) return false;
                 Lua.DoString(inForm ? "CancelShapeshiftForm()" : "Dismount()");
                 if (inForm)

@@ -1,3 +1,13 @@
+# Current: recovery action acknowledgement after deployed PR94 — 2 October 2026
+
+Recover real disk/Git/GitHub/production first. PR91–94 are already integrated; last verified installed/master source is `2d123d63eec35b675822571396a067e68cb7d281`. Production has434verified payload files,2015protected files and13compiled components. Preserve its manifest and all historical repairs.
+
+Resume `D:/Dev/CB-ActionFlight-20261002` on `audit/next-action-flight-20261002` from its actual current state. Read `docs/audit/2026-10-02/recovery-action-acknowledgement/REPORT.md`, the action-flight progress ledger and external source-bound receipts. Shared recovery reservations, native-entry hooks, strict Lua observations, original event/consumption/effect acknowledgement and Singular/plugin callers have a green17-group integrated focused checkpoint. Recover final candidate/whole-suite/closure/hosted/package states instead of recreating these files. Compile/stage14runtime components including DrinkPotions. The extra production plugin comparison was provider-blocked twice; keep its receipt and do not infer deployment or overwrite unverified user files.
+
+Continue the full validation and delivery gates, record live-only acknowledgement limits, then reassess quest10161 authoritative progress, travel selection, post-combat ownership, rest, death and quarantine. Preserve all4335execution rows, original-build12340 evidence and the distinction between current source and installed source. No PR or green subsystem ends the wider audit.
+
+## Preserved previous checkpoint
+
 # Current: preserved collision recovery after deployed PR90 — 2 October 2026
 
 Recover live disk/Git/GitHub/production first. PR90 merge `c2f70e4c74a4c524f2e1075e51d571c4153a370a` was installed with 434 verified payload files, 2,012 protected files and 13 compiled deployed components; verify `D:/Dev/CopilotBuddy-Evidence/aura-liveness-20261002/DEPLOYMENT_VERIFIED.json` instead of repeating it. Exact historical aura metadata failure and live acceptance remain open.

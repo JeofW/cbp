@@ -28,15 +28,15 @@ internal static class AuraConsumerDeferralRegressionTests
         {
             ("complete non-resting coverage admits an actual active work sample", f =>
                 Check(f.Sample().IsActiveWork, "controlled live owner was not active")),
-            ("unknown 61988 suspends actual work sampling without throwing", f =>
+            ("unrelated missing 61988 metadata preserves actual work sampling", f =>
             {
                 f.Aura(61988);
-                Check(!f.Sample().IsActiveWork, "UNKNOWN rest coverage charged active quest time");
+                Check(f.Sample().IsActiveWork, "unrelated metadata prevented supported rest absence observation");
             }),
-            ("unknown 56817 suspends actual work sampling without throwing", f =>
+            ("unrelated missing 56817 metadata preserves actual work sampling", f =>
             {
                 f.Aura(56817);
-                Check(!f.Sample().IsActiveWork, "second UNKNOWN aura authorized active work");
+                Check(f.Sample().IsActiveWork, "second unrelated metadata row suspended active work");
             }),
             ("unknown coverage cannot produce failure or death attribution", f =>
             {
@@ -48,7 +48,7 @@ internal static class AuraConsumerDeferralRegressionTests
                     Key = f.Key, AttemptGeneration = 17, IsActiveWork = true, CombatOwnedByQuest = true,
                     ObjectiveCounts = before.ObjectiveCounts });
                 progress.Sample(before);
-                f.Aura(61988);
+                f.Unavailable();
                 for (int step = 0; step < 600; step++)
                 {
                     clock.Advance(TimeSpan.FromSeconds(2));
@@ -60,7 +60,7 @@ internal static class AuraConsumerDeferralRegressionTests
             }),
             ("coverage hydration resumes sampling without stale inactive time", f =>
             {
-                f.Aura(61988); Check(!f.Sample().IsActiveWork, "unknown sample was active");
+                f.Unavailable(); Check(!f.Sample().IsActiveWork, "unknown sample was active");
                 f.Aura(0); Check(f.Sample().IsActiveWork, "later known coverage remained poisoned");
             }),
             ("nonthrowing API distinguishes unknown from a known empty collection", f =>
@@ -122,6 +122,15 @@ internal static class AuraConsumerDeferralRegressionTests
         private Dictionary<IntPtr, byte[]> Cache() => ((ThreadLocal<Dictionary<IntPtr, byte[]>>)typeof(Memory)
             .GetField("_cache", Hidden)!.GetValue(ObjectManager.Wow)!).Value!;
         internal void Aura(uint id) => Call(driver.GetType().GetMethod("Aura", Hidden)!, driver, new object?[] { id });
+        internal void Unavailable()
+        {
+            uint start = ObjectManager.Me!.BaseAddress;
+            foreach (var (offset, value) in new[] { (3536, -1), (3156, 1), (3160, 1) })
+            {
+                var ptr = new IntPtr(unchecked((int)(start + (uint)offset)));
+                Marshal.WriteInt32(ptr, value); Cache().Remove(ptr);
+            }
+        }
         internal QuestWorkSample Sample()
         {
             try { return (QuestWorkSample)Call(typeof(WholesomeAutoQuest).GetMethod("CreateLiveWorkSample", Hidden)!,

@@ -2,6 +2,7 @@ using Styx;
 using Styx.Helpers;
 using Styx.Logic;
 using Styx.Logic.BehaviorTree;
+using Styx.Logic.Combat;
 using Styx.Logic.Pathing;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
@@ -11,10 +12,10 @@ namespace Levelbot.Actions.Combat
 {
     public class ActionSetTarget : TreeSharp.Action
     {
+        private readonly MountedCombatTransition _transition = new();
+
         protected override RunStatus Run(object context)
         {
-            Navigator.Clear();
-
             LocalPlayer me = StyxWoW.Me;
             if (me == null)
                 return RunStatus.Failure;
@@ -29,7 +30,37 @@ namespace Levelbot.Actions.Combat
             WoWUnit firstUnit = Targeting.Instance.FirstUnit;
             if (firstUnit != null)
             {
-                firstUnit.Target();
+                var targeting = Targeting.Instance;
+                ulong actorGuid = me.Guid, targetGuid = firstUnit.Guid;
+                uint actorAddress = me.BaseAddress, targetAddress = firstUnit.BaseAddress, map = me.MapId;
+                var poi = Styx.Logic.POI.BotPoi.Current;
+                long poiWorkGeneration = Styx.Logic.POI.BotPoi.CurrentWorkGeneration;
+                var poiType = poi.Type;
+                ulong poiGuid = poi.Guid;
+                uint poiEntry = poi.Entry;
+                bool Current(bool requireDisplayed) => actorGuid != 0 && targetGuid != 0 && actorAddress != 0 && targetAddress != 0
+                    && ReferenceEquals(StyxWoW.Me, me) && me.IsValid && me.IsAlive && me.Guid == actorGuid
+                    && me.BaseAddress == actorAddress && me.MapId == map
+                    && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(targeting.FirstUnit, firstUnit)
+                    && firstUnit.IsValid && firstUnit.IsAlive && firstUnit.Guid == targetGuid && firstUnit.BaseAddress == targetAddress
+                    && (!requireDisplayed || ReferenceEquals(me.CurrentTarget, firstUnit) && me.CurrentTargetGuid == targetGuid)
+                    && ReferenceEquals(Styx.Logic.POI.BotPoi.Current, poi) && Styx.Logic.POI.BotPoi.CurrentWorkGeneration == poiWorkGeneration
+                    && poi.Type == poiType && poi.Guid == poiGuid && poi.Entry == poiEntry;
+
+                if (!Current(false)) return RunStatus.Failure;
+                if (!ReferenceEquals(me.CurrentTarget, firstUnit) || me.CurrentTargetGuid != targetGuid)
+                    firstUnit.Target();
+                if (!Current(true)) return RunStatus.Failure;
+
+                GroundTransitionState transition = _transition.TickExplicit(firstUnit, () => Current(true));
+                if (transition is GroundTransitionState.Pending or GroundTransitionState.Unavailable)
+                    return RunStatus.Running;
+                if (transition != GroundTransitionState.Ready || !Current(true))
+                    return RunStatus.Failure;
+                var lease = MountedCombatTransition.CaptureActionLease(firstUnit, () => Current(true));
+                if (lease?.Current != true) return RunStatus.Failure;
+                Navigator.Clear();
+                if (lease.Current != true) return RunStatus.Failure;
 
                 try
                 {
@@ -59,14 +90,13 @@ namespace Levelbot.Actions.Combat
                 }
             }
 
-            // Dismount for combat if mounted
-            if (ObjectManager.Me != null && ObjectManager.Me.Mounted)
-            {
-                Logging.WriteDebug("Dismounting for combat.");
-                Mount.Dismount("Combat");
-            }
-
             return RunStatus.Success;
+        }
+
+        public override void Stop(object context)
+        {
+            _transition.Cancel();
+            base.Stop(context);
         }
     }
 }

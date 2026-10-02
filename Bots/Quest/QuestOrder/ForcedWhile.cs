@@ -28,6 +28,8 @@ public class ForcedWhile : ForcedBehavior
 
     public WhileNode WhileNode { get; private set; }
 
+    internal QuestOrder ActiveOrder => this.whileComposite?.ActiveOrder;
+
     protected override Composite CreateBehavior()
     {
         return (Composite)(this.whileComposite ?? (this.whileComposite = new WhileComposite(this.WhileNode)));
@@ -47,6 +49,8 @@ public class ForcedWhile : ForcedBehavior
         public WhileComposite(WhileNode node) => this.whileNode = node;
 
         public bool IsDone { get; private set; }
+
+        internal QuestOrder ActiveOrder => this.behaviorExecutor?.Order;
 
         protected override IEnumerable<RunStatus> Execute(object context)
         {

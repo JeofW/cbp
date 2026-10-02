@@ -11,6 +11,8 @@ namespace Styx.WoWInternals.WoWObjects
 
         private readonly WoWCache.WoWCache.InfoBlock _infoBlock;
         private readonly WoWCache.WoWCache.ItemCacheEntry _cacheEntry;
+        private readonly Memory? _memory;
+        private readonly IntPtr _process;
         private string? _name;
         private string? _description;
 
@@ -20,6 +22,8 @@ namespace Styx.WoWInternals.WoWObjects
 
         private ItemInfo(WoWCache.WoWCache.InfoBlock block)
         {
+            _memory = ObjectManager.Wow;
+            _process = _memory?.ProcessHandle ?? IntPtr.Zero;
             _infoBlock = block;
             Id = block.Id;
             _cacheEntry = block.Item;
@@ -31,12 +35,28 @@ namespace Styx.WoWInternals.WoWObjects
 
         public static ItemInfo? FromId(uint itemId)
         {
+            var memory = ObjectManager.Wow;
+            if (memory == null || itemId == 0) return null;
+            IntPtr process = memory.ProcessHandle;
             var cache = StyxWoW.Cache[CacheDb.Item];
             var infoBlock = cache?.GetInfoBlockById(itemId);
-            if (infoBlock == null)
+            if (infoBlock == null || !ReferenceEquals(memory, ObjectManager.Wow))
                 return null;
-            
-            return new ItemInfo(infoBlock);
+
+            var info = new ItemInfo(infoBlock);
+            if (memory.ProcessHandle == IntPtr.Zero)
+                throw new InvalidOperationException("Process handle is not open");
+            if (!ReferenceEquals(memory, ObjectManager.Wow) || memory.ProcessHandle != process)
+                return null;
+            // Memory.Read<T> returns default(T) when the complete byte transfer
+            // fails. The original fixed arrays are always materialized by a
+            // successful marshal; default arrays must not become class-mask zero
+            // or permanently cached metadata on the owning WoWItem.
+            var row = info._cacheEntry;
+            if (row.SpellId?.Length != 5 || row.SpellTriggerId?.Length != 5 || row.SpellCharges?.Length != 5
+                || row.SpellCooldown?.Length != 5 || row.SpellCategory?.Length != 5 || row.SpellCategoryCooldown?.Length != 5)
+                return null;
+            return info;
         }
 
         #endregion
@@ -108,12 +128,51 @@ namespace Styx.WoWInternals.WoWObjects
         {
             get
             {
-                if (_name == null && _cacheEntry.NamePtr != 0)
+                var memory = _memory;
+                if (memory == null || _process == IntPtr.Zero || !ReferenceEquals(memory, ObjectManager.Wow))
+                    return string.Empty;
+                if (memory.ProcessHandle == IntPtr.Zero)
+                    throw new Styx.InvalidProcessException("The item name observation lost its process.");
+                if (memory.ProcessHandle != _process) return string.Empty;
+                if (_name != null) return _name;
+                uint pointer = _cacheEntry.NamePtr;
+                if (pointer == 0 || pointer > uint.MaxValue - 511) return string.Empty;
+                try
                 {
-                    var wow = ObjectManager.Wow;
-                    _name = wow?.Read<string>(_cacheEntry.NamePtr) ?? string.Empty;
+                    // A readable terminated prefix is the name. Failed and
+                    // unterminated reads stay retryable on this same item row;
+                    // zero-filled failed ReadString buffers are not metadata.
+                    var bytes = new List<byte>();
+                    using (memory.TemporaryCacheState(false))
+                    {
+                        for (uint offset = 0; offset < 512;)
+                        {
+                            uint current = pointer + offset;
+                            int pageRemaining = Environment.SystemPageSize - (int)(current % (uint)Environment.SystemPageSize);
+                            int count = Math.Min(Math.Min(64, pageRemaining), (int)(512 - offset));
+                            byte[] part = memory.ReadBytes(current, count);
+                            if (!ReferenceEquals(memory, ObjectManager.Wow) || memory.ProcessHandle != _process
+                                || part == null || part.Length != count) return string.Empty;
+                            foreach (byte value in part)
+                            {
+                                if (value == 0)
+                                {
+                                    _name = new System.Text.UTF8Encoding(false, true).GetString(bytes.ToArray());
+                                    return _name;
+                                }
+                                bytes.Add(value);
+                            }
+                            offset += (uint)count;
+                        }
+                    }
                 }
-                return _name ?? string.Empty;
+                catch (Exception error)
+                {
+                    Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(error);
+                    if (memory.ProcessHandle == IntPtr.Zero)
+                        throw new Styx.InvalidProcessException("The item name observation lost its process.", error);
+                }
+                return string.Empty;
             }
         }
         public string Description

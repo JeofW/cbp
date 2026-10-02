@@ -181,12 +181,7 @@ public class ForcedQuestPickUp : ForcedBehavior
 
     protected override Composite CreateBehavior()
     {
-        return (Composite)new DecoratorIsNotPoiType((IEnumerable<PoiType>)new PoiType[3]
-        {
-            PoiType.Harvest,
-            PoiType.Skin,
-            PoiType.Loot
-        }, (Composite)new PrioritySelector(new Composite[4]
+        return (Composite)new Decorator(_ => QuestLootHandoff.CanRunMandatory(this), (Composite)new PrioritySelector(new Composite[4]
         {
             (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => new BotPoi(new PickUpNode(this.GiverLocation, this.GiverId, this.GiverName, this.GiverType, this.QuestId, this.QuestName))))),
             (Composite)new Decorator((CanRunDecoratorDelegate)(context =>
@@ -202,14 +197,14 @@ public class ForcedQuestPickUp : ForcedBehavior
                     (Composite)new WaitContinue(2, (CanRunDecoratorDelegate)(context => false), (Composite)new ActionAlwaysSucceed())
                 }))
             })),
-            (Composite)new Decorator((CanRunDecoratorDelegate)(context => this.GiverType != QuestObjectType.Item && (!(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestPickUp.Me.Location.DistanceSqr(BotPoi.Current.Location) > 6.25 : !BotPoi.Current.AsObject.WithinInteractRange)), (Composite)new ActionMoveToPoi()),
-            (Composite)new Decorator((CanRunDecoratorDelegate)(context => this.GiverType != QuestObjectType.Item && BotPoi.Current.AsObject != (WoWObject)null && BotPoi.Current.AsObject.WithinInteractRange), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[11]
+            (Composite)new Decorator((CanRunDecoratorDelegate)(context => this.GiverType != QuestObjectType.Item && (!(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestPickUp.Me.Location.DistanceSqr(BotPoi.Current.Location) > 6.25 : !GroundTransition.CanInteractWith(BotPoi.Current.AsObject))), (Composite)new ActionMoveToPoi()),
+            (Composite)new Decorator((CanRunDecoratorDelegate)(context => this.GiverType != QuestObjectType.Item && GroundTransition.CanInteractWith(BotPoi.Current.AsObject)), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[11]
             {
                 // HB 4.3.4: 10 elements in sequence
                 (Composite)new ActionMoveStop(),
                 (Composite)new TreeSharp.Action((ActionDelegate)(context => this.CloseFrames(context))),
                 (Composite)new DecoratorContinue((CanRunDecoratorDelegate)(context => context is WoWUnit), (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => ((WoWUnit)context).Target()))),
-                (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => this.InteractWithQuestGiver((WoWObject)context))),
+                (Composite)new TreeSharp.Action((ActionDelegate)(context => this.InteractWithQuestGiver((WoWObject)context))),
                 (Composite)new ActionSleep(1500),
                 // DEBUG: log frame visibility after interact + sleep
                 (Composite)new TreeSharp.Action((ActionDelegate)(context =>
@@ -253,11 +248,17 @@ public class ForcedQuestPickUp : ForcedBehavior
         return RunStatus.Success;
     }
 
-    private void InteractWithQuestGiver(WoWObject giver)
+    private RunStatus InteractWithQuestGiver(WoWObject giver)
     {
+        bool Current() => BotPoi.Current.Type == PoiType.QuestPickUp && BotPoi.Current.Entry == GiverId
+            && ReferenceEquals(BotPoi.Current.AsObject, giver);
+        if (!GroundTransition.CanInteractWith(giver, Current)) return RunStatus.Failure;
         _shownTitleUniquelyResolved = false;
         BeginInteractionCycle();
-        giver.Interact();
+        if (!GroundTransition.TryInteractWith(giver, Current)) return RunStatus.Failure;
+        // This advances only to the existing frame-observation stage. An
+        // interaction request is not Pickup or reward acknowledgement.
+        return RunStatus.Success;
     }
 
     private void BeginInteractionCycle()
@@ -416,6 +417,14 @@ public class ForcedQuestPickUp : ForcedBehavior
         if (!QuestFrame.Instance.IsVisible)
             return RunStatus.Success;
 
+        uint pendingShownId = QuestFrame.Instance.CurrentShownQuestId;
+        var pendingReward = pendingShownId != 0 ? QuestTurnInCompletion.Find(pendingShownId) : null;
+        if (pendingReward != null && pendingReward.BlocksPickup)
+        {
+            pendingReward.Observe();
+            if (pendingReward.BlocksPickup) return RunStatus.Running;
+        }
+
         // Safety: prevent infinite retries within one interaction cycle
         if (_handleQuestFrameAttempts++ > 15)
         {
@@ -519,9 +528,7 @@ public class ForcedQuestPickUp : ForcedBehavior
         if (executionPlan.Complete)
         {
             Logging.WriteDebug("[QuestPickUp] Authoritatively completed quest {0} — completing turn-in.", shownQuestId);
-            QuestFrame.Instance.CompleteQuest();
-            StyxWoW.Sleep(500);
-            return RunStatus.Running;
+            return CompleteObservedQuest(shownQuestId);
         }
 
         // No actionable button — frame might be transitioning. Close and let outer loop re-interact.
@@ -530,6 +537,42 @@ public class ForcedQuestPickUp : ForcedBehavior
         StyxWoW.Sleep(500);
         _handleQuestFrameAttempts = 0;
         return RunStatus.Success;
+    }
+
+    private RunStatus CompleteObservedQuest(uint questId)
+    {
+        // This is the other reward path: an already accepted quest shown by the
+        // same NPC while acquiring a different quest. It owns the shown quest,
+        // never the requested pickup or the NPC's generic availability flag.
+        if (questId == 0 || !QuestFrame.Instance.IsVisible || QuestFrame.Instance.CurrentShownQuestId != questId)
+            return RunStatus.Running;
+        var actor = ObjectManager.Me;
+        var memory = ObjectManager.Wow;
+        var run = TreeRoot.RunIdentity;
+        if (actor == null || actor.QuestLog.GetQuestById(questId)?.IsCompleted != true)
+            return RunStatus.Running;
+        QuestTurnInCompletion record = QuestTurnInCompletion.Find(questId);
+        if (record != null && record.WasSubmitted)
+        {
+            var state = record.Observe();
+            if (state == QuestTurnInCompletionState.Confirmed) return RunStatus.Success;
+            if (state != QuestTurnInCompletionState.Rejected) return RunStatus.Running;
+        }
+        object profile = Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot;
+        record = QuestTurnInCompletion.Prepare(questId, this);
+        if (record == null || !record.Submit(this)) return RunStatus.Running;
+        if (!TreeRoot.IsRunning || !ReferenceEquals(ObjectManager.Me, actor) ||
+            !ReferenceEquals(ObjectManager.Wow, memory) || !ReferenceEquals(TreeRoot.RunIdentity, run) ||
+            !ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot, profile) ||
+            !QuestFrame.Instance.IsVisible || QuestFrame.Instance.CurrentShownQuestId != questId ||
+            (record != null && !record.CanDispatch(this)))
+        {
+            record?.Cancel(this);
+            return RunStatus.Failure;
+        }
+        QuestFrame.Instance.CompleteQuest();
+        StyxWoW.Sleep(500);
+        return RunStatus.Running;
     }
 
     private void ResetMismatchTracking()

@@ -28,7 +28,7 @@ internal static class AuraCountSafetyRegressionTests
             ("corrupt extreme count fails closed",()=>Check(!Call(guard,int.MaxValue),"extreme count was accepted for allocation")),
             ("guard executes after dynamic count resolution and before array allocation",()=>{
                 string source=File.ReadAllText(Path.Combine(Root(),"Styx","WoWInternals","WoWObjects","WoWUnit.cs"));
-                int method=source.IndexOf("public unsafe WoWAuraCollection GetAllAuras()",StringComparison.Ordinal);
+                int method=source.IndexOf("public unsafe WoWAuraCollection GetRawAuras()",StringComparison.Ordinal);
                 int dynamicRead=source.IndexOf("auraCount = wow.Read<int>(BaseAddress + 3156);",method,StringComparison.Ordinal);
                 // Both spellings resolve the dynamic count; the assertion below
                 // still requires the same bounded guard before array allocation.

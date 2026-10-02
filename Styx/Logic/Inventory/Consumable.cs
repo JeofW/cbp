@@ -11,6 +11,84 @@ namespace Styx.Logic.Inventory
     /// </summary>
     public static class Consumable
     {
+        public sealed class SelectionObservation
+        {
+            public WoWItem Item { get; internal set; }
+            public bool IsComplete { get; internal set; }
+            public string Reason { get; internal set; }
+            public string Details { get; internal set; } = "";
+        }
+
+        public static SelectionObservation ObserveBestFood(bool includeSpecialtyItems) => ObserveBest(false, includeSpecialtyItems);
+        public static SelectionObservation ObserveBestDrink(bool includeSpecialtyItems) => ObserveBest(true, includeSpecialtyItems);
+        public static SelectionObservation ObserveNamedRestItem(bool drinking, string name) => ObserveBest(drinking, true, name);
+
+        private static SelectionObservation ObserveBest(bool drinking, bool includeSpecialtyItems, string configuredName = null)
+        {
+            var player = ObjectManager.Me;
+            if (player == null)
+                return new SelectionObservation { Reason = "actor-unavailable" };
+            bool complete = player.TryGetBagItems(out var items, out string reason);
+            var details = new List<string>();
+            int playerClass = (int)player.Class;
+            if (playerClass <= 0 || playerClass > 31)
+                return new SelectionObservation { Reason = "actor-class-unavailable" };
+            int playerLevel = player.Level;
+            if (playerLevel <= 0)
+                return new SelectionObservation { Reason = "actor-level-unavailable" };
+            WoWItem best = null;
+            int bestLevel = -1;
+            uint bestStack = 0;
+            foreach (var item in items)
+            {
+                if (item == null || !item.IsValid)
+                { complete = false; reason = "item-object-unavailable"; continue; }
+                if (!item.TryGetStackCount(out uint stack))
+                { complete = false; reason = "item-stack-unavailable"; continue; }
+                void Describe(string decision)
+                {
+                    if (details.Count < 12) details.Add("item=" + item.Entry + ",stack=" + stack + "," + decision);
+                }
+                if (stack == 0) { Describe("empty-stack"); continue; }
+                var info = item.ItemInfo;
+                if (info == null)
+                { complete = false; reason = "item-info-unavailable"; Describe(reason); continue; }
+                if (configuredName != null)
+                {
+                    // A generic object label (for example Object_123) is not a
+                    // complete item-cache name and cannot prove named absence.
+                    string observedName = info.Name;
+                    if (string.IsNullOrEmpty(observedName))
+                    { complete = false; reason = "item-name-unavailable"; Describe(reason); continue; }
+                    if (!string.Equals(configuredName, observedName, System.StringComparison.OrdinalIgnoreCase)) continue;
+                }
+                if ((int)info.ItemClass != (int)WoWItemClass.Consumable) continue;
+                if (info.RequiredLevel > playerLevel) { Describe("required-level=" + info.RequiredLevel); continue; }
+                if ((info.AllowedClasses & (1 << (playerClass - 1))) == 0) { Describe("class-mask=" + info.AllowedClasses); continue; }
+                var spells = item.ItemSpells;
+                bool recognized = false, specialty = false, unknown = false;
+                foreach (var spell in spells)
+                {
+                    var actual = spell?.ActualSpell;
+                    if (actual == null) { unknown = true; continue; }
+                    string name = actual.Name;
+                    recognized |= name == "Refreshment" || (drinking ? name == "Drink" || name == "Starfire Espresso" : name == "Food");
+                    specialty |= name != "Food" && name != "Drink" && name != "Refreshment";
+                }
+                if (unknown) { complete = false; reason = "item-spell-metadata-unavailable"; Describe(reason); }
+                if (!recognized) { Describe("no-recognized-" + (drinking ? "drink" : "food") + "-effect"); continue; }
+                if (!includeSpecialtyItems && (specialty || unknown)) { Describe("specialty-filter"); continue; }
+                Describe("eligible,required-level=" + info.RequiredLevel);
+                if (best == null || info.RequiredLevel > bestLevel || (info.RequiredLevel == bestLevel && stack > bestStack))
+                { best = item; bestLevel = info.RequiredLevel; bestStack = stack; }
+            }
+            if (!ReferenceEquals(player, ObjectManager.Me))
+                return new SelectionObservation { Reason = "actor-replaced" };
+            return new SelectionObservation { Item = best, IsComplete = complete,
+                Reason = best != null ? "candidate-selected" : complete ? "no-usable-consumable" : reason,
+                Details = string.Join(";", details) };
+        }
+
         /// <summary>
         /// Gets all food items in the player's bags.
         /// </summary>
@@ -51,34 +129,7 @@ namespace Styx.Logic.Inventory
         /// </summary>
         /// <param name="includeSpecialtyItems">Include items with special effects.</param>
         public static WoWItem GetBestFood(bool includeSpecialtyItems)
-        {
-            var player = ObjectManager.Me;
-            if (player == null) return null;
-            var food = GetFood();
-            if (food.Count == 0)
-                return null;
-
-            WoWItem bestItem = null;
-            int playerLevel = player.Level;
-
-            foreach (var item in food)
-            {
-                if (item.ItemInfo.RequiredLevel > playerLevel)
-                    continue;
-                if (!includeSpecialtyItems && !item.ItemSpells.All(IsBasicFoodOrDrink))
-                    continue;
-
-                if (bestItem == null ||
-                    item.ItemInfo.RequiredLevel > bestItem.ItemInfo.RequiredLevel ||
-                    (item.ItemInfo.RequiredLevel == bestItem.ItemInfo.RequiredLevel &&
-                     item.StackCount > bestItem.StackCount))
-                {
-                    bestItem = item;
-                }
-            }
-
-            return ReferenceEquals(player, ObjectManager.Me) ? bestItem : null;
-        }
+        => ObserveBestFood(includeSpecialtyItems).Item;
 
         /// <summary>
         /// Gets the best drink item.
@@ -87,34 +138,7 @@ namespace Styx.Logic.Inventory
         /// </summary>
         /// <param name="includeSpecialtyItems">Include items with special effects.</param>
         public static WoWItem GetBestDrink(bool includeSpecialtyItems)
-        {
-            var player = ObjectManager.Me;
-            if (player == null) return null;
-            var drinks = GetDrinks();
-            if (drinks.Count == 0)
-                return null;
-
-            WoWItem bestItem = null;
-            int playerLevel = player.Level;
-
-            foreach (var item in drinks)
-            {
-                if (item.ItemInfo.RequiredLevel > playerLevel)
-                    continue;
-                if (!includeSpecialtyItems && !item.ItemSpells.All(IsBasicFoodOrDrink))
-                    continue;
-
-                if (bestItem == null ||
-                    item.ItemInfo.RequiredLevel > bestItem.ItemInfo.RequiredLevel ||
-                    (item.ItemInfo.RequiredLevel == bestItem.ItemInfo.RequiredLevel &&
-                     item.StackCount > bestItem.StackCount))
-                {
-                    bestItem = item;
-                }
-            }
-
-            return ReferenceEquals(player, ObjectManager.Me) ? bestItem : null;
-        }
+        => ObserveBestDrink(includeSpecialtyItems).Item;
 
         /// <summary>
         /// Checks if an item is food.

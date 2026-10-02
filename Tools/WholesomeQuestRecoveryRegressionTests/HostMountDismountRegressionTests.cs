@@ -23,13 +23,19 @@ internal static class HostMountDismountRegressionTests
         var syntax = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(directory.FullName, "Styx/Logic/Mount.cs"))).GetRoot();
         var owner = syntax.DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c => c.Identifier.ValueText == "Mount");
         var methods = owner.Members.OfType<MethodDeclarationSyntax>().Where(m => m.Identifier.ValueText is
-            "Dismount" or "ClearShapeshift" or "RaiseOnDismount" or "CanRemoveMount").ToArray();
+            "Dismount" or "ClearShapeshift" or "TryDismountOwned" or "BuildGroundDismountLua" or "RaiseOnDismount" or "CanRemoveMount").ToArray();
+        var constants = owner.Members.OfType<FieldDeclarationSyntax>().Where(field => field.Declaration.Variables.Any(variable => variable.Identifier.ValueText is
+            "GroundDismountReceipt" or "GroundDismountPendingReceipt" or "GroundDismountLeaseSeconds")).ToArray();
         if (methods.Count(m => m.Identifier.ValueText == "Dismount") != 2 ||
             methods.Count(m => m.Identifier.ValueText == "ClearShapeshift") != 1 ||
-            methods.Count(m => m.Identifier.ValueText == "RaiseOnDismount") != 1)
+            methods.Count(m => m.Identifier.ValueText == "TryDismountOwned") != 1 ||
+            methods.Count(m => m.Identifier.ValueText == "BuildGroundDismountLua") != 1 ||
+            methods.Count(m => m.Identifier.ValueText == "RaiseOnDismount") != 1 ||
+            methods.Count(m => m.Identifier.ValueText == "CanRemoveMount") != 2 || constants.Length != 3)
             throw new InvalidOperationException("Complete public removal and event owners required.");
         string source = Prefix + "\npublic static class Mount { private static LocalPlayer Me => World.Player;\n" +
             "public static event EventHandler<EventArgs> OnDismount;\n" +
+            string.Join("\n", constants.Select(field => field.ToString())) + "\n" +
             string.Join("\n", methods.Select(m => m.ToString())) + "}\n" + Cases;
         var trusted = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string
             ?? throw new InvalidOperationException("Runtime references required.");
@@ -50,17 +56,38 @@ internal static class HostMountDismountRegressionTests
 
     private const string Prefix = """
 #nullable disable
-using System;using System.Collections.Generic;using System.Linq;
+using System;using System.Collections.Generic;using System.Linq;using System.Runtime.ExceptionServices;using System.Threading;
 public enum ShapeshiftForm { Normal,Cat,TravelForm,AquaticForm,FlightForm,EpicFlightForm }
 public sealed class LocalPlayer {
  public ulong Guid=123;public bool IsValid=true,IsAlive=true,Mounted=true,Available=true;
- public uint Flags;public ulong Transport;public ShapeshiftForm Shapeshift;
+ public uint Flags,UnitFlags;public ulong Transport;public ShapeshiftForm Shapeshift;
  public bool TryGetMovementState(out uint flags,out ulong transport){flags=Flags;transport=Transport;return Available;}
+}
+public sealed class ObservationUnavailableException:Exception {public ObservationUnavailableException(string observation,string reason):base(observation+": "+reason){}}
+public sealed class InvalidProcessException:Exception {public InvalidProcessException(string reason):base(reason){}}
+public sealed class InvalidExecutorException:Exception {public InvalidExecutorException(string reason):base(reason){}}
+public static class GroundDismountDispatchContext {public static string Owner=>null;}
+public static class RecoveryActions {
+ public static void RethrowControlFlow(Exception error){while(error is System.Reflection.TargetInvocationException{InnerException:not null} wrapped)error=wrapped.InnerException;if(error is OperationCanceledException or ThreadInterruptedException or InvalidProcessException or InvalidExecutorException)ExceptionDispatchInfo.Capture(error).Throw();}
+ public static void ReportDeferral(Exception error,string owner){RethrowControlFlow(error);World.Deferrals++;}
+}
+public static class WorldQueryObservation {
+ public readonly record struct GroundUnitState(uint MountDisplayId,ShapeshiftForm Form,uint Flags){
+  public bool Mounted=>MountDisplayId!=0||Form is ShapeshiftForm.FlightForm or ShapeshiftForm.EpicFlightForm;
+  public bool OnTaxi=>(Flags&0x100000u)!=0;public bool Rooted=>(Flags&0x8000u)!=0;public bool Stunned=>(Flags&0x40000u)!=0;
+ }
+ public static Func<bool> CaptureLocalOwner(LocalPlayer player){ulong guid=player?.Guid??0;return ()=>player!=null&&guid!=0&&ReferenceEquals(World.Player,player)&&player.Guid==guid&&player.IsValid;}
+ public static GroundUnitState ReadGroundUnitState(LocalPlayer player){
+  if(World.QueryError!=null)throw World.QueryError;
+  if(player==null||!ReferenceEquals(World.Player,player))throw new ObservationUnavailableException("ground-unit-state","controlled actor changed");
+  return new GroundUnitState(player.Mounted?1u:0u,player.Shapeshift,player.UnitFlags);
+ }
 }
 public static class World {
  public static LocalPlayer Player;public static readonly List<string> Commands=new List<string>();
  public static System.Action AfterLog,AfterStop;
- public static void Reset(){Player=new LocalPlayer();Commands.Clear();AfterLog=null;AfterStop=null;}
+ public static Exception QueryError,LuaError;public static int Deferrals;
+ public static void Reset(){Player=new LocalPlayer();Commands.Clear();AfterLog=null;AfterStop=null;QueryError=LuaError=null;Deferrals=0;}
  public static void Record(string command){Commands.Add(command+":"+(Player?.Guid??0));}
 }
 public static class Logging {
@@ -68,7 +95,17 @@ public static class Logging {
  public static void WriteException(Exception error){throw new InvalidOperationException("Unexpected event failure",error);}
 }
 public static class WoWMovement {public static void MoveStop(){World.Record("stop");World.AfterStop?.Invoke();}}
-public static class Lua {public static void DoString(string code){World.Record(code);}}
+public static class Lua {
+ public static void DoString(string code){World.Record(code);}
+ public static List<string> GetObservedReturnValues(string code,Func<bool> admitted){
+  if(World.LuaError!=null)throw World.LuaError;
+  if(!admitted())throw new ObservationUnavailableException("mount-dismount","controlled native admission changed");
+  string action=code.Contains("CancelShapeshiftForm()",StringComparison.Ordinal)?"CancelShapeshiftForm()":"Dismount()";
+  World.Record(action);
+  if(!admitted())throw new ObservationUnavailableException("mount-dismount","controlled native owner changed after submission");
+  return new List<string>{"cb-ground-dismount-submitted"};
+ }
+}
 """;
 
     private const string Cases = """
@@ -98,6 +135,29 @@ public static class HostMountCases {
  public static void Run(){
   Mount.OnDismount+=(_,_)=>World.Record("event");
   var tests=new List<(string Name,System.Action Body)>();
+  foreach(bool withReason in new[]{false,true})foreach(string boundary in new[]{"ground","lua"}){
+   bool reason=withReason;string source=boundary;
+   tests.Add(($"legacy public wrapper defers strict UNKNOWN/{reason}/{source}",()=>{
+    World.Reset();var actor=World.Player;var signal=new ObservationUnavailableException(source,"controlled unavailable");
+    if(source=="ground")World.QueryError=signal;else World.LuaError=signal;
+    Exception observed=null;bool callerContinued=false;try{Invoke(reason);callerContinued=true;}catch(Exception error){observed=error;}
+    Check(callerContinued&&observed==null&&World.Deferrals==1,"legacy caller received UNKNOWN instead of non-destructive deferral");
+    Check(!Removed&&!World.Commands.Any(c=>c.StartsWith("event:"))&&ReferenceEquals(World.Player,actor)&&actor.Mounted,
+     "deferral fabricated removal/event or changed actor ownership");
+   }));
+  }
+  tests.Add(("strict owned API still exposes UNKNOWN without a false receipt",()=>{
+   World.Reset();var signal=new ObservationUnavailableException("ground","controlled unavailable");World.QueryError=signal;
+   Exception observed=null;bool submitted=false;try{submitted=Mount.TryDismountOwned("strict",()=>true,null);}catch(Exception error){observed=error;}
+   Check(ReferenceEquals(observed,signal)&&!submitted&&World.Deferrals==0&&World.Commands.Count==0,"strict owned UNKNOWN contract was weakened");
+  }));
+  foreach(Exception signal in new Exception[]{new OperationCanceledException("cancel"),new ThreadInterruptedException("stop"),new InvalidProcessException("lost process"),new InvalidExecutorException("lost executor")})foreach(bool wrapped in new[]{false,true}){
+   var expected=signal;bool wrap=wrapped;tests.Add(($"public compatibility preserves {expected.GetType().Name}/{wrap}",()=>{
+    World.Reset();World.QueryError=wrap?new System.Reflection.TargetInvocationException(expected):expected;
+    Exception observed=null;try{Mount.Dismount();}catch(Exception error){observed=error;}
+    Check(ReferenceEquals(observed,expected)&&World.Deferrals==0&&World.Commands.Count==0,"compatibility deferral swallowed/replaced real control loss");
+   }));
+  }
   foreach(bool withReason in new[]{false,true}){
    bool reason=withReason;string prefix=reason?"reason/":"parameterless/";
    foreach(var selected in new[]{ShapeshiftForm.Normal,ShapeshiftForm.FlightForm,ShapeshiftForm.EpicFlightForm}){

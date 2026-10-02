@@ -33,9 +33,9 @@ internal static class HunterTrapDispatchRegressionTests
             throw new InvalidOperationException("The complete existing Hunter overload set is required");
         var spell = CSharpSyntaxTree.ParseText(Load("runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs")).GetRoot();
         var spellMethods = spell.DescendantNodes().OfType<MethodDeclarationSyntax>().Where(m =>
-            m.Identifier.ValueText is "MeleeRangeFor" or "CanCastNamedSpell" || m.Identifier.ValueText == "Cast"
+            m.Identifier.ValueText is "MeleeRangeFor" or "CanCastNamedSpell" || m.Identifier.ValueText is "Cast" or "CastWithRecovery"
             && m.ParameterList.Parameters.FirstOrDefault()?.Type?.ToString() == "string").ToArray();
-        if (spellMethods.Length != 7) throw new InvalidOperationException("Complete named cast overload/admission region required");
+        if (spellMethods.Length != 8) throw new InvalidOperationException("Complete named cast overload/admission/recovery region required");
         var manager = CSharpSyntaxTree.ParseText(Load("Styx/Logic/Combat/SpellManager.cs")).GetRoot();
         var names = new HashSet<string> { "HasSpell", "GetSpellByName", "Cast", "CastSpellById", "TryCastSpellById",
             "CaptureSpellObservation", "PrepareCooldownContext", "TrackDeadline" };
@@ -152,6 +152,12 @@ public sealed class ExecutorRand
     }
 }
 public static class ObjectManager { public static ExecutorRand? Executor; public static object Wow=new object(); }
+public static class RecoveryActions
+{
+    public static bool TryCast(string name,WoWUnit target,bool heal,bool aura,string owner)=>SpellManager.Cast(name,target);
+    public static bool BeforeSpellSubmission(int id,ulong target)=>true;
+    public static void RethrowControlFlow(Exception error)=>Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(error);
+}
 public static class TreeRoot
 {
     public static object Current=new object(),RunIdentity=new object();

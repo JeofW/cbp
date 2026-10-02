@@ -30,7 +30,6 @@ internal static class ContainerLua51BoundaryRegressionTests
         }
         Replace("public bool TryUseContainerItem()=>true;", methods);
         Replace("public bool IsMoving{get;set;}", "public ContainerInventory Inventory=new();public WoWContainer GetBagAtIndex(uint index)=>null;public bool IsMoving{get;set;}");
-        Replace("public static List<WoWObject>? Objects{get;set;}=new();", "public static List<WoWObject>? Objects{get;set;}=new();public static T? GetObjectByGuid<T>(ulong id)where T:WoWObject=>Objects?.OfType<T>().FirstOrDefault(o=>o.Guid==id);");
         string guard = Methods(File.ReadAllText(Path.Combine(root, "runtime-snapshot/Plugins/MrItemRemover2/Methods.cs")), "IsQuestItem");
         string directory = Path.Combine(Path.GetTempPath(), "cb-container-lua-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -42,8 +41,11 @@ internal static class ContainerLua51BoundaryRegressionTests
             File.WriteAllText(Path.Combine(directory, "ParseBridge.cs"),
                 "using System;using System.Globalization;public static class ContainerParseBridge {" +
                 Methods(luaSource, "ParseLuaValue", "IsLuaIntegerType", "ParseInteger") + "}");
+            File.WriteAllText(Path.Combine(directory, "ObservedWrapper.cs"),
+                "using System;public static class ObservedWrapper {" + Methods(luaSource,"BuildObservedReturnScript")
+                + "public static string Wrap(string script)=>BuildObservedReturnScript(script);}");
             File.Copy(Path.Combine(root, "runtime-snapshot/Quest Behaviors/UseItemOn.cs"), Path.Combine(directory, "UseItemOn.cs"));
-            File.WriteAllText(Path.Combine(directory, "Boundary.cs"), boundary + Extra +
+            File.WriteAllText(Path.Combine(directory, "Boundary.cs"), "using Styx.Helpers;\n" + boundary + Extra +
                 "public sealed class QuestProtectionProbe { private void Dlog(string f,params object[] a){} public bool Protect(WoWItem item)=>IsQuestItem(item);" + guard + "}");
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { directory })!;
@@ -62,7 +64,7 @@ internal static class ContainerLua51BoundaryRegressionTests
         FieldInfo observe = bridge.GetField("Observe")!;
         MethodInfo invoke = probe.GetType("ContainerConsumer", true)!.GetMethod("Invoke")!;
         int passed = 0, assertions = 0, unexpected = 0, total = 0;
-        void Scenario(string operation, string mode, string fault, string expected, int mutations)
+        void Scenario(string operation, string mode, string fault, string expected, int mutations, int expectedRequests = 1)
         {
             total++;
             string label = operation + "/" + mode + "/" + fault;
@@ -78,7 +80,9 @@ internal static class ContainerLua51BoundaryRegressionTests
                     return observed.Values;
                 }));
                 string actual = (string)invoke.Invoke(null, new object[] { operation })!;
-                Check(requests == 1 && observed != null, "actual consumer did not issue one Lua request");
+                Check(requests == expectedRequests, "actual consumer issued an unexpected number of Lua requests");
+                if(expectedRequests==0){Check(observed==null&&mutations==0&&actual==expected,"denied native action produced a result or mutation");passed++;Console.WriteLine("PASS container Lua51: "+label);return;}
+                Check(observed != null, "actual consumer did not issue one Lua request");
                 Check(observed!.Load == 0 && (fault.StartsWith("error", StringComparison.Ordinal) ? observed.Call != 0 : observed.Call == 0), "unexpected Lua error: " + observed.Error);
                 Check(observed.Clicks == mutations, "mutation count=" + observed.Clicks + " expected=" + mutations);
                 Check(actual == expected, "result=" + actual + " expected=" + expected + "; values=" + string.Join("|", observed.Values));
@@ -94,6 +98,22 @@ internal static class ContainerLua51BoundaryRegressionTests
             Scenario(operation, "wrong-source", "actual", operation == "use" ? "False" : "0/0", 0);
             foreach (string fault in new[] { "return", "return nil", "return true", "return 'garbage'", "error('transport')" })
                 Scenario(operation, "ordinary", fault, operation == "use" ? "False" : "0/0", 0);
+        }
+        Scenario("denied-use", "ordinary", "actual", "False", 0, 0);
+        Scenario("guard-refusal", "wrong-source", "actual", "False/1", 0);
+        Scenario("uncertain-use", "ordinary", "return", "False/0", 0);
+        Scenario("submitted-use", "ordinary", "actual", "True/0", 1);
+        foreach(bool wrapped in new[]{false,true})
+        {
+            total++;
+            var signal=new OperationCanceledException("controlled container cancellation");
+            int requests=0;Exception? caught=null;
+            observe.SetValue(null,new Func<string,List<string>>(_=>{requests++;if(wrapped)throw new TargetInvocationException(signal);throw signal;}));
+            try { invoke.Invoke(null,new object[]{"use"}); }
+            catch(TargetInvocationException error){caught=error.InnerException;}
+            finally {observe.SetValue(null,null);}
+            if(ReferenceEquals(caught,signal)&&requests==1){passed++;Console.WriteLine("PASS container Lua51: cancellation wrapped="+wrapped);}
+            else {assertions++;Console.Error.WriteLine("FAIL container Lua51: cancellation was swallowed or changed wrapped="+wrapped);}
         }
         foreach (var c in new[] {
             (Mode:"ordinary", Info:"True/False/0/False", Protect:"False"),
@@ -143,6 +163,7 @@ internal static class ContainerLua51BoundaryRegressionTests
     {
         public static T GetReturnVal<T>(string script,uint index)=>RewardRecordedBridge.GetReturnVal<T>(script,index);
         public static List<string> GetReturnValues(string script)=>RewardRecordedBridge.GetReturnValues(script);
+        public static List<string> GetObservedReturnValues(string script)=>RewardRecordedBridge.GetReturnValues(ObservedWrapper.Wrap(script));
         public static T ParseLuaValue<T>(string value)=>ContainerParseBridge.ParseLuaValue<T>(value);
     }
 }
@@ -151,12 +172,21 @@ internal static class ContainerLua51BoundaryRegressionTests
     public sealed class MerchantFrame {public static MerchantFrame Instance=new();public bool IsVisible=>false;}
 }
 public static class Logging {public static void WriteDebug(string f,params object[] a){}}
+public static class RecoveryActions
+{
+    public static bool Allow=true;public static int KnownRefusals;
+    public static bool BindContainerRequest(ulong guid,uint entry,string script)=>Allow;
+    public static void ObserveContainerReply(string script,bool executed){if(!executed)KnownRefusals++;}
+    public static void RethrowControlFlow(Exception error)=>Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(error);
+    public static void ReportDeferral(Exception error,string owner)=>Styx.Logic.Combat.RecoveryActions.ReportDeferral(error,owner);
+}
 public static class ContainerConsumer
 {
     private const BindingFlags H=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.Static;
     public static string Invoke(string operation)
     {
         typeof(QuestItemSelectionCases).GetMethod("Reset",H)!.Invoke(null,null);
+        RecoveryActions.Allow=operation!="denied-use";RecoveryActions.KnownRefusals=0;
         var owner=(Script)typeof(QuestItemSelectionCases).GetField("owner",H)!.GetValue(null)!;
         typeof(Script).GetField("_isDisposed",H)!.SetValue(owner,false);
         typeof(Script).GetField("_submissionRefusalUtc",H)!.SetValue(owner,-1L);
@@ -164,6 +194,8 @@ public static class ContainerConsumer
         GC.SuppressFinalize(owner);
         var item=new WoWItem{Guid=17,Entry=12345};ObjectManager.Me!.CarriedItems!.Add(item);
         if(operation=="use")return item.TryUseContainerItem().ToString();
+        if(operation=="denied-use")return item.TryUseContainerItem().ToString();
+        if(operation=="guard-refusal"||operation=="uncertain-use"||operation=="submitted-use")return item.TryUseContainerItem()+"/"+RecoveryActions.KnownRefusals;
         if(operation=="info")
         {
             bool ok=item.TryGetContainerItemQuestInfo(out bool quest,out int id,out bool active);

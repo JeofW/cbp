@@ -28,7 +28,9 @@ namespace Styx.WoWInternals.WoWObjects
         /// <summary>
         /// Attempts the ordinary throttled unit interaction. True means that the
         /// local executor completed; it does not attribute a menu or acknowledge
-        /// a server response. False may follow a partially executed request.
+        /// a server response. False means the local throttle or invalid base
+        /// rejected entry. Native/session failures propagate; their outcome may
+        /// remain unknown after a partially executed request.
         /// </summary>
         public bool TryInteract()
         {
@@ -55,23 +57,10 @@ namespace Styx.WoWInternals.WoWObjects
             { 76, WoWUnitReaction.Hostile }
         };
 
-        private static readonly Dictionary<uint, WoWUnitReaction> ReactionCache = new Dictionary<uint, WoWUnitReaction>();
-
         #endregion
 
-        #region Instance Reaction Caches (per unit)
-
-        /// <summary>
-        /// Instance-level cache for reactions by entry ID.
-        /// </summary>
-        private readonly Dictionary<uint, WoWUnitReaction> _reactionCacheByEntry = new Dictionary<uint, WoWUnitReaction>();
-
-        /// <summary>
-        /// Instance-level cache for reactions by GUID (for units without entry).
-        /// </summary>
-        private readonly Dictionary<ulong, WoWUnitReaction> _reactionCacheByGuid = new Dictionary<ulong, WoWUnitReaction>();
-
-        #endregion
+        // One native pair per receiver, owned by a nonzero client frame.
+        private ReactionObservation? _reactionObservation;
 
         #region Display Flags & Dynamic Flags
 
@@ -508,7 +497,11 @@ namespace Styx.WoWInternals.WoWObjects
                 transportGuid = BitConverter.ToUInt64(transportBytes, 0);
                 return true;
             }
-            catch { return false; }
+            catch (Exception error)
+            {
+                RecoveryActions.RethrowControlFlow(error);
+                return false;
+            }
         }
 
         public bool IsFalling
@@ -1441,6 +1434,9 @@ namespace Styx.WoWInternals.WoWObjects
 
         public WoWUnitReaction GetReactionTowards(WoWUnit otherUnit)
         {
+            if (otherUnit == null || !IsValid || !otherUnit.IsValid || Guid == 0 || otherUnit.Guid == 0 ||
+                BaseAddress == 0 || otherUnit.BaseAddress == 0 || ObjectManager.Me == null || !ObjectManager.Me.IsValid)
+                throw new ObservationUnavailableException("reaction", "reaction participant unavailable");
             // Same unit = friendly
             if (this == otherUnit)
                 return WoWUnitReaction.Friendly;
@@ -1455,14 +1451,6 @@ namespace Styx.WoWInternals.WoWObjects
 
             if (StyxWoW.Me.IsHorde && HordeReactionsByEntry.ContainsKey(entry))
                 return HordeReactionsByEntry[entry];
-
-            // Check instance cache by entry first, then by GUID
-            if (entry != 0 && _reactionCacheByEntry.ContainsKey(entry))
-                return _reactionCacheByEntry[entry];
-
-            ulong guid = otherUnit.Guid;
-            if (_reactionCacheByGuid.ContainsKey(guid))
-                return _reactionCacheByGuid[guid];
 
             // Player-controlled units: special duel/pvp handling
             if (PlayerControlled && otherUnit.PlayerControlled)
@@ -1501,60 +1489,131 @@ namespace Styx.WoWInternals.WoWObjects
                 }
             }
 
-            // Call the native GetReactionTowards function
-            WoWUnitReaction reaction = GetReactionTowardsNative(otherUnit);
-
-            // Cache the result
-            if (entry != 0)
-                _reactionCacheByEntry[entry] = reaction;
-            else
-                _reactionCacheByGuid[guid] = reaction;
-
-            return reaction;
+            return GetReactionTowardsNative(otherUnit);
         }
 
-        /// <summary>
-        /// Calls the native GetReactionTowards function via ASM injection.
-        /// </summary>
+        private sealed class ReactionObservation
+        {
+            internal Memory Memory = null!;
+            internal ExecutorRand Executor = null!;
+            internal WoWUnit Actor = null!, Receiver = null!, Other = null!;
+            internal IntPtr Process;
+            internal ulong ActorGuid, ReceiverGuid, OtherGuid;
+            internal uint ActorAddress, ReceiverAddress, OtherAddress, Frame;
+            internal WoWUnitReaction Value;
+            internal string? Failure;
+        }
+
+        private ReactionObservation ReactionCapture(WoWUnit other)
+        {
+            var memory = ObjectManager.Wow;
+            var executor = ObjectManager.Executor;
+            var actor = ObjectManager.Me;
+            if (memory == null || executor == null || actor == null || !ReferenceEquals(executor.Memory, memory))
+                throw new ObservationUnavailableException("reaction", "native reaction context unavailable");
+            if (memory.ProcessHandle == IntPtr.Zero)
+                throw new InvalidProcessException("Reaction process handle is not open");
+            if (!executor.IsOpen || !executor.IsInitialized)
+                throw new InvalidExecutorException("Reaction executor is not available");
+            var observation = new ReactionObservation
+            {
+                Memory = memory, Executor = executor, Actor = actor, Receiver = this, Other = other,
+                Process = memory.ProcessHandle,
+                ActorGuid = actor.Guid, ActorAddress = actor.BaseAddress,
+                ReceiverGuid = Guid, ReceiverAddress = BaseAddress,
+                OtherGuid = other.Guid, OtherAddress = other.BaseAddress,
+                Frame = executor.FrameCount
+            };
+            ReactionRequireCurrent(observation);
+            return observation;
+        }
+
+        private static void ReactionRequireCurrent(ReactionObservation observation)
+        {
+            if (observation.Memory.ProcessHandle == IntPtr.Zero)
+                throw new InvalidProcessException("Reaction process handle is not open");
+            if (!observation.Executor.IsOpen || !observation.Executor.IsInitialized)
+                throw new InvalidExecutorException("Reaction executor is not available");
+            if (!ReferenceEquals(ObjectManager.Wow, observation.Memory) ||
+                !ReferenceEquals(ObjectManager.Executor, observation.Executor) ||
+                !ReferenceEquals(observation.Executor.Memory, observation.Memory) ||
+                !ReferenceEquals(ObjectManager.Me, observation.Actor) ||
+                observation.Memory.ProcessHandle != observation.Process ||
+                !observation.Actor.IsValid || observation.Actor.Guid != observation.ActorGuid ||
+                observation.ActorGuid == 0 || observation.Actor.BaseAddress != observation.ActorAddress || observation.ActorAddress == 0 ||
+                !observation.Receiver.IsValid || observation.Receiver.Guid != observation.ReceiverGuid ||
+                observation.ReceiverGuid == 0 || observation.Receiver.BaseAddress != observation.ReceiverAddress || observation.ReceiverAddress == 0 ||
+                !observation.Other.IsValid || observation.Other.Guid != observation.OtherGuid ||
+                observation.OtherGuid == 0 || observation.Other.BaseAddress != observation.OtherAddress || observation.OtherAddress == 0)
+                throw new ObservationUnavailableException("reaction", "reaction participant or context changed");
+        }
+
+        private static bool ReactionSameEpoch(ReactionObservation cached, ReactionObservation current)
+        {
+            return current.Frame != 0 && current.Frame == cached.Frame &&
+                ReferenceEquals(cached.Memory, current.Memory) && ReferenceEquals(cached.Executor, current.Executor) &&
+                ReferenceEquals(cached.Actor, current.Actor) && ReferenceEquals(cached.Receiver, current.Receiver) &&
+                ReferenceEquals(cached.Other, current.Other) && cached.Process == current.Process &&
+                cached.ActorGuid == current.ActorGuid && cached.ActorAddress == current.ActorAddress &&
+                cached.ReceiverGuid == current.ReceiverGuid && cached.ReceiverAddress == current.ReceiverAddress &&
+                cached.OtherGuid == current.OtherGuid && cached.OtherAddress == current.OtherAddress;
+        }
+
+        /// <summary>Observe the original native reaction without fabricating Neutral on failure.</summary>
         private WoWUnitReaction GetReactionTowardsNative(WoWUnit otherUnit)
         {
-            ExecutorRand? executor = ObjectManager.Executor;
-            if (executor == null)
-                return WoWUnitReaction.Neutral;
-
-            try
+            var observation = ReactionCapture(otherUnit);
+            var executor = observation.Executor;
+            lock (executor.AssemblyLock)
             {
-                lock (executor.AssemblyLock)
+                ReactionRequireCurrent(observation);
+                observation.Frame = executor.FrameCount;
+                if (_reactionObservation != null && ReactionSameEpoch(_reactionObservation, observation))
+                {
+                    if (_reactionObservation.Failure != null)
+                        throw new ObservationUnavailableException("reaction", _reactionObservation.Failure);
+                    return _reactionObservation.Value;
+                }
+                _reactionObservation = null;
+                try
                 {
                     executor.Clear();
-                    executor.AddLine($"push {otherUnit.BaseAddress}");
-                    executor.AddLine($"mov ecx, {BaseAddress}");
+                    executor.AddLine($"push {observation.OtherAddress}");
+                    executor.AddLine($"mov ecx, {observation.ReceiverAddress}");
                     executor.AddLine($"call {7492032}");
                     executor.AddLine("retn");
+                    ReactionRequireCurrent(observation);
                     executor.Execute();
+                    ReactionRequireCurrent(observation);
+                    // Execute may advance the frame. Keep the return buffer under the ASM lock.
+                    observation.Frame = executor.FrameCount;
+                    uint returnPointer = executor.ReturnPointer;
+                    if (returnPointer == 0)
+                        throw new ObservationUnavailableException("reaction", "native reaction return pointer unavailable");
+                    byte[] bytes;
+                    using (observation.Memory.TemporaryCacheState(false))
+                        bytes = observation.Memory.ReadBytes(returnPointer, sizeof(uint));
+                    ReactionRequireCurrent(observation);
+                    if (executor.FrameCount != observation.Frame || executor.ReturnPointer != returnPointer || bytes == null || bytes.Length != sizeof(uint))
+                        throw new ObservationUnavailableException("reaction", "native reaction result incomplete or changed");
+                    uint value = BitConverter.ToUInt32(bytes, 0);
+                    if (value > (uint)WoWUnitReaction.Exalted)
+                        throw new ObservationUnavailableException("reaction", "native reaction result outside original reaction range");
+                    observation.Value = (WoWUnitReaction)value;
+                    if (observation.Frame != 0) _reactionObservation = observation;
+                    return observation.Value;
                 }
-
-                Memory? memory = executor.Memory;
-                if (memory == null)
-                    return WoWUnitReaction.Neutral;
-
-                using (StyxWoW.Memory.TemporaryCacheState(false))
+                catch (Exception error)
                 {
-                    return (WoWUnitReaction)memory.Read<uint>(executor.ReturnPointer);
+                    RecoveryActions.RethrowControlFlow(error);
+                    ReactionRequireCurrent(observation);
+                    observation.Frame = executor.FrameCount;
+                    observation.Failure = error is InjectionSEHException seh
+                        ? $"native reaction VEH 0x{seh.ExceptionCode:X8}"
+                        : error is ObservationUnavailableException unavailable ? unavailable.Message : "native reaction observation failed";
+                    if (observation.Frame != 0) _reactionObservation = observation;
+                    throw new ObservationUnavailableException("reaction", observation.Failure);
                 }
-            }
-            catch (InjectionSEHException seh)
-            {
-                // access violation inside injected code happens occasionally when the target
-                // process is unstable; treat as neutral instead of spewing a full stack trace
-                Logging.WriteDebug($"GetReactionTowardsNative VEH exception 0x{seh.ExceptionCode:X8} for {Name} vs {otherUnit.Name}");
-                return WoWUnitReaction.Neutral;
-            }
-            catch (Exception ex)
-            {
-                Logging.WriteDebug($"GetReactionTowardsException: {Name} vs {otherUnit.Name}");
-                Logging.WriteException(ex);
-                return WoWUnitReaction.Neutral;
             }
         }
 
@@ -2117,12 +2176,29 @@ namespace Styx.WoWInternals.WoWObjects
         [Obsolete("Caching of buffs has been removed. Use the 'Auras' property instead.")]
         public Dictionary<string, WoWAura> GetBuffs(bool forceRefresh) => GetAurasDictionary();
 
-        public WoWAura? GetAuraByName(string name) => GetAllAuras().FirstOrDefault(a => a.Name == name);
+        public WoWAura? GetAuraByName(string name)
+        {
+            string? unavailable = null;
+            foreach (var aura in GetRawAuras())
+            {
+                var spell = aura.Spell;
+                if (spell != null && !string.IsNullOrEmpty(spell.Name))
+                {
+                    if (spell.Name == name) return aura;
+                }
+                else if (aura.IsActive)
+                    unavailable ??= AuraMetadataFailure(aura);
+            }
+            // Known positive evidence is useful even when another active ID has
+            // no client row. A negative name query still needs complete coverage.
+            if (unavailable != null) UnavailableAuraObservation(unavailable);
+            return null;
+        }
 
         /// <summary>
         /// Gets an aura by its spell ID.
         /// </summary>
-        public WoWAura? GetAuraById(int id) => GetAllAuras().FirstOrDefault(a => a.SpellId == id);
+        public WoWAura? GetAuraById(int id) => GetRawAuras().FirstOrDefault(a => a.SpellId == id);
 
         /// <summary>
         /// Checks if the unit has an aura with the specified spell ID.
@@ -2148,11 +2224,81 @@ namespace Styx.WoWInternals.WoWObjects
         internal static bool IsPlausibleAuraCount(int auraCount) =>
             auraCount >= 0 && auraCount <= 255;
 
-        public unsafe WoWAuraCollection GetAllAuras()
+        public WoWAuraCollection GetAllAuras()
+        {
+            var collection = new WoWAuraCollection();
+            foreach (var aura in GetRawAuras())
+            {
+                if (aura.Spell != null) collection.Add(aura);
+                else if (aura.IsActive) return UnavailableAuraObservation(AuraMetadataFailure(aura));
+            }
+            return collection;
+        }
+
+        private string AuraMetadataFailure(WoWAura aura) =>
+            $"Could not resolve metadata for active aura {aura.SpellId}. actor=0x{BaseAddress:X8} lookup={aura.MetadataFailure}";
+
+        private readonly object _auraMetadataGate = new();
+        private AuraMetadataEpoch? _auraMetadataEpoch;
+
+        private sealed class AuraMetadataEpoch
+        {
+            internal required Memory Memory;
+            internal required ExecutorRand Executor;
+            internal required WoWDb.DbTable? Table;
+            internal uint Address, Frame;
+            internal ulong Guid;
+            internal readonly Dictionary<int, (WoWSpell? Spell, string Failure)> Values = new();
+        }
+
+        private (WoWSpell? Spell, string Failure) ResolveAuraMetadata(int id)
+        {
+            var memory = ObjectManager.Wow;
+            var executor = ObjectManager.Executor;
+            // No executor / zero frame is not a lifetime. In particular, an
+            // offline or transitioning actor must retry later hydrated metadata.
+            uint frame = executor?.FrameCount ?? 0;
+            var table = StyxWoW.Db[Styx.Patchables.ClientDb.Spell];
+            uint address = BaseAddress;
+            ulong guid = Guid;
+            lock (_auraMetadataGate)
+            {
+                var epoch = _auraMetadataEpoch;
+                bool bounded = memory != null && executor != null && frame != 0 && address != 0 && guid != 0
+                    && ReferenceEquals(executor.Memory, memory);
+                if (!bounded) _auraMetadataEpoch = epoch = null;
+                else if (epoch == null || !ReferenceEquals(epoch.Memory, memory)
+                    || !ReferenceEquals(epoch.Executor, executor) || !ReferenceEquals(epoch.Table, table)
+                    || epoch.Frame != frame || epoch.Address != address || epoch.Guid != guid)
+                {
+                    _auraMetadataEpoch = epoch = new AuraMetadataEpoch
+                    { Memory = memory!, Executor = executor!, Table = table, Frame = frame, Address = address, Guid = guid };
+                }
+                if (epoch != null && epoch.Values.TryGetValue(id, out var cached)) return cached;
+                var spell = WoWSpell.ObserveFromId(id, out string failure);
+                // Never publish a lookup across a replaced owner or frame.
+                if (epoch != null && ReferenceEquals(memory, ObjectManager.Wow)
+                    && ReferenceEquals(executor, ObjectManager.Executor) && BaseAddress == address && Guid == guid
+                    && executor!.FrameCount == frame && ReferenceEquals(table, StyxWoW.Db[Styx.Patchables.ClientDb.Spell])
+                    && epoch.Values.Count < 255)
+                    epoch.Values[id] = (spell, failure);
+                return (spell, failure);
+            }
+        }
+
+        /// <summary>
+        /// Observes complete raw aura records without requiring client Spell rows.
+        /// IDs, creators, flags, stacks and duration are raw facts; name/mechanic
+        /// absence still requires metadata coverage. The records are read afresh.
+        /// </summary>
+        public unsafe WoWAuraCollection GetRawAuras()
         {
             Memory? wow = ObjectManager.Wow;
             if (wow == null || BaseAddress == 0)
                 return new WoWAuraCollection(0);
+
+            uint actorAddress = BaseAddress;
+            ulong actorGuid = Guid;
 
             uint auraBase = BaseAddress + 3152;
             var countBytes = wow.ReadBytes(BaseAddress + 3536, 4);
@@ -2189,18 +2335,15 @@ namespace Styx.WoWInternals.WoWObjects
                     return UnavailableAuraObservation("Could not completely observe the client aura records.");
             }
 
+            if (!ReferenceEquals(wow, ObjectManager.Wow) || actorAddress != BaseAddress || actorGuid != Guid)
+                return UnavailableAuraObservation("Actor/world ownership changed during raw aura observation.");
+
             WoWAuraCollection collection = new WoWAuraCollection(auraCount);
+            Func<int, (WoWSpell? Spell, string Failure)> resolver = ResolveAuraMetadata;
             for (uint i = 0; i < auraCount; i++)
             {
-                WoWAura aura = new WoWAura(auraInfos[i]);
-                if (aura.Spell != null)
-                    collection.Add(aura);
-                else if (aura.SpellId != 0 && aura.IsActive)
-                    // Flags prove that an effect exists even when its localized
-                    // metadata is unavailable. Dropping it would falsely authorize
-                    // absent-buff or safe-dispel decisions from a partial collection.
-                    return UnavailableAuraObservation(
-                        $"Could not resolve metadata for active aura {aura.SpellId}. actor=0x{BaseAddress:X8} lookup={aura.MetadataFailure}");
+                if (auraInfos[i].SpellId != 0)
+                    collection.Add(new WoWAura(auraInfos[i], resolver));
             }
 
             return collection;
@@ -2212,10 +2355,18 @@ namespace Styx.WoWInternals.WoWObjects
         /// Cancellation and unrelated failures retain their semantics.
         /// </summary>
         public bool TryGetAllAuras(out WoWAuraCollection? collection, [CallerMemberName] string consumer = "")
+            => TryObserveAuras(false, out collection, consumer);
+
+        /// <summary>Complete raw ID coverage; unavailable bytes remain UNKNOWN.</summary>
+        public bool TryGetRawAuras(out WoWAuraCollection? collection, [CallerMemberName] string consumer = "")
+            => TryObserveAuras(true, out collection, consumer);
+
+        private bool TryObserveAuras(bool raw, out WoWAuraCollection? collection, string consumer)
         {
             collection = null;
             var memory = ObjectManager.Wow;
             uint address = BaseAddress;
+            ulong guid = Guid;
             if (memory == null || address == 0 || !StyxWoW.IsInGame || !IsValid)
             {
                 ObservationFailureDiagnostics.Report(new ObservationUnavailableException("auras",
@@ -2224,8 +2375,8 @@ namespace Styx.WoWInternals.WoWObjects
             }
             try
             {
-                var observed = GetAllAuras();
-                if (!ReferenceEquals(memory, ObjectManager.Wow) || address != BaseAddress
+                var observed = raw ? GetRawAuras() : GetAllAuras();
+                if (!ReferenceEquals(memory, ObjectManager.Wow) || address != BaseAddress || guid != Guid
                     || !StyxWoW.IsInGame || !IsValid)
                 {
                     ObservationFailureDiagnostics.Report(new ObservationUnavailableException("auras",

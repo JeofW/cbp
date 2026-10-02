@@ -387,6 +387,12 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite Cast(string name, SimpleBooleanDelegate checkMovement, UnitSelectionDelegate onUnit, SimpleBooleanDelegate requirements)
         {
+            return CastWithRecovery(name, checkMovement, onUnit, requirements, false, false);
+        }
+
+        private static Composite CastWithRecovery(string name, SimpleBooleanDelegate checkMovement,
+            UnitSelectionDelegate onUnit, SimpleBooleanDelegate requirements, bool healing, bool aura)
+        {
             WoWUnit owner = null, selected = null;
             ulong ownerGuid = 0, selectedGuid = 0;
             bool OwnsActor() => ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
@@ -440,7 +446,7 @@ namespace Singular.Helpers
                                 !CanCastNamedSpell(name, target, checkMovement, requirements, ret, IsCurrent) ||
                                 retainedSelection(ret) == null || !IsCurrent())
                                 return RunStatus.Failure;
-                            return SpellManager.Cast(name, target) && IsCurrent()
+                            return RecoveryActions.TryCast(name, target, healing, aura, "Singular.Cast") && IsCurrent()
                                 ? RunStatus.Success
                                 : RunStatus.Failure;
 
@@ -532,6 +538,12 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite Cast(int spellId, UnitSelectionDelegate onUnit, SimpleBooleanDelegate requirements)
         {
+            return CastWithRecovery(spellId, onUnit, requirements, false, false);
+        }
+
+        private static Composite CastWithRecovery(int spellId, UnitSelectionDelegate onUnit,
+            SimpleBooleanDelegate requirements, bool healing, bool aura)
+        {
             WoWUnit owner = null, selected = null;
             ulong ownerGuid = 0, selectedGuid = 0;
             bool OwnsActor() => ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
@@ -578,7 +590,7 @@ namespace Singular.Helpers
                                 !Unit.IsCombatActionSafe(spellId, target) ||
                                 !SpellManager.CanCast(spellId, target, true) || retainedSelection(ret) == null || !IsCurrent())
                                 return RunStatus.Failure;
-                            return SpellManager.Cast(spellId, target) && IsCurrent()
+                            return RecoveryActions.TryCast(spellId, target, healing, aura, "Singular.CastId") && IsCurrent()
                                 ? RunStatus.Success
                                 : RunStatus.Failure;
                         }))
@@ -739,7 +751,7 @@ namespace Singular.Helpers
                            && !string.IsNullOrWhiteSpace(name) && uncoveredUnit(ret) != null,
                     new Sequence(
                 // new Action(ctx => _lastBuffCast = name),
-                        Cast(name, uncoveredUnit, requirements),
+                        CastWithRecovery(name, ret => true, uncoveredUnit, requirements, false, true),
                         // WotLK QC fix: instant-cast buffs (Aspect of the Viper/Dragonhawk, etc.)
                         // skip the WaitContinue below and were never added to the dict, so the bot
                         // spammed CastSpellById every pulse (~5x/600ms in the wild). Mark the spell
@@ -872,7 +884,7 @@ namespace Singular.Helpers
             };
             return new Decorator(ret => spellId > 0 && onUnit != null && requirements != null
                 && uncoveredUnit(ret) != null,
-                Cast(spellId, uncoveredUnit, requirements));
+                CastWithRecovery(spellId, uncoveredUnit, requirements, false, true));
         }
 
         #endregion
@@ -1019,8 +1031,8 @@ namespace Singular.Helpers
                         expectedSpellId = selectedSpell?.Id ?? 0;
                         return IsCurrent() ? RunStatus.Success : RunStatus.Failure;
                     }),
-                    Cast(name, checkMovement, ret => IsCurrent() ? recipient : null,
-                        ret => IsCurrent() && requirements(ret) && IsCurrent()),
+                    CastWithRecovery(name, checkMovement, ret => IsCurrent() ? recipient : null,
+                        ret => IsCurrent() && requirements(ret) && IsCurrent(), true, false),
                     // A local Cast receipt is not a native cast-instance receipt.
                     // Observe the expected spell, without adopting a different cast.
                     new WaitContinue(

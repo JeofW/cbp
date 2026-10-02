@@ -25,6 +25,19 @@ internal static class SharedPulseObservationRegressionTests
             {
                 f.Pulse(); Check(f.Healing == 1 && f.Events == 1, "healthy real pulse did not reach downstream owners");
             }),
+            ("shared pulse retires missing-actor recovery ownership without a routine tick", f =>
+            {
+                using var recovery = new RecoverySeed();
+                f.Pulse();
+                Check(recovery.Retired && f.Healing == 1 && f.Events == 1,
+                    "shared recovery maintenance was skipped or blocked independent observations");
+            }),
+            ("routine-only shared pulse still retires missing-actor recovery ownership", f =>
+            {
+                using var recovery = new RecoverySeed();
+                WoWPulsator.Pulse((PulseFlags)0U);
+                Check(recovery.Retired, "routine-only pulse skipped independent recovery maintenance");
+            }),
             ("unavailable targeting cannot starve independent death/event checks", f =>
             {
                 f.Target.Callback = () => throw new ObservationUnavailableException("auras", "active aura 61988 unavailable");
@@ -67,6 +80,18 @@ internal static class SharedPulseObservationRegressionTests
                 else f.Checkers.Insert(0, stop);
                 try { f.Pulse(); } catch (OperationCanceledException) { } catch (ThreadInterruptedException) { }
                 Check(f.Events == 0, "explicit Stop allowed a later event side effect");
+            }));
+        }
+        foreach (bool wrapped in new[] { false, true })
+        foreach (bool process in new[] { false, true })
+        {
+            bool reflection=wrapped, processLost=process;
+            cases.Add(($"fatal ownership loss from event checker propagates wrapped={reflection} process={processLost}",f=>
+            {
+                Exception signal=processLost?new InvalidProcessException("controlled process loss"):new InvalidExecutorException("controlled executor loss");
+                f.Checkers.Insert(0,()=>{if(reflection)throw new TargetInvocationException(signal);throw signal;});
+                Exception? caught=null;try{f.Pulse();}catch(Exception error){caught=error;}
+                Check(ReferenceEquals(caught,signal)&&f.Events==0,"shared pulse swallowed fatal ownership loss or continued later work");
             }));
         }
         foreach (bool wrapped in new[] { false, true })
@@ -133,6 +158,26 @@ internal static class SharedPulseObservationRegressionTests
         }
     }
     private sealed class ProbeTarget : Targeting { internal Action? Callback; public override void Pulse() => Callback?.Invoke(); }
+    private sealed class RecoverySeed : IDisposable
+    {
+        private readonly FieldInfo contextField = typeof(RecoveryActions).GetField("_context", Hidden)!;
+        private readonly object? previous;
+        private readonly object context;
+        private readonly FieldInfo state = typeof(Styx.Logic.BehaviorTree.TreeRoot).GetField("<State>k__BackingField", Hidden)!;
+        private readonly object? previousState;
+        private readonly Styx.WoWInternals.WoWObjects.LocalPlayer previousActor;
+        internal RecoverySeed()
+        {
+            previous=contextField.GetValue(null);previousState=state.GetValue(null);
+            previousActor=Styx.WoWInternals.ObjectManager.Me;
+            context=RuntimeHelpers.GetUninitializedObject(contextField.FieldType);
+            contextField.SetValue(null,context);
+            state.SetValue(null,Styx.Logic.BehaviorTree.TreeRootState.Running);
+            Styx.WoWInternals.ObjectManager.Me=null;
+        }
+        internal bool Retired=>!ReferenceEquals(contextField.GetValue(null),context);
+        public void Dispose(){Styx.WoWInternals.ObjectManager.Me=previousActor;contextField.SetValue(null,previous);state.SetValue(null,previousState);}
+    }
     private sealed class ProbeHeal : HealTargeting { internal Action? Callback; public override void Pulse() => Callback?.Invoke(); }
     private static void Check(bool condition, string message) { if (!condition) throw new Failure(message); }
 }

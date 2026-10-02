@@ -82,6 +82,8 @@ namespace WholesomeAQ
         private static string BasePickupRejection(QuestEntry quest, QuestSchedulerSnapshot snapshot, int minimumLevel,
             QuestStrategyPack strategyPack = null)
         {
+            if (snapshot.PendingCompletionQuestIds?.Contains((uint)quest.Id) == true)
+                return "pending-completion-confirmation";
             if (snapshot.PlayerLevel < quest.MinLevel) return "below-min-level";
             string requirementRejection = DeclaredRequirementRejection(quest, snapshot);
             if (requirementRejection != null) return requirementRejection;

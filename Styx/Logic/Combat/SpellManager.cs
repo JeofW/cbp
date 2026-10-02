@@ -978,6 +978,7 @@ namespace Styx.Logic.Combat
 					executor.AddLine("add esp, 0x20");         // cdecl cleanup: 8 * 4 = 32 = 0x20
 					executor.AddLine("retn");
 					observation.RequireCurrent();
+					if (!RecoveryActions.BeforeSpellSubmission(spellId, targetGuid)) return false;
 					executor.Execute();
 				}
 
@@ -998,7 +999,7 @@ namespace Styx.Logic.Combat
 			}
 			catch (Exception ex)
 			{
-				ObservationUnavailableException.RethrowCancellation(ex);
+				RecoveryActions.RethrowControlFlow(ex);
 				Logging.WriteException(ex);
 				return false;
 			}

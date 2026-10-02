@@ -71,6 +71,7 @@ namespace Styx.Logic.Combat
         
         private readonly AuraInfo _data;
         private WoWSpell? _spell;
+        private readonly Func<int, (WoWSpell? Spell, string Failure)>? _metadataResolver;
         
         #endregion
         
@@ -82,6 +83,12 @@ namespace Styx.Logic.Combat
         internal WoWAura(AuraInfo data)
         {
             _data = data;
+        }
+
+        internal WoWAura(AuraInfo data, Func<int, (WoWSpell? Spell, string Failure)> metadataResolver)
+        {
+            _data = data;
+            _metadataResolver = metadataResolver;
         }
         
         /// <summary>
@@ -230,8 +237,17 @@ namespace Styx.Logic.Combat
             {
                 if (_spell == null && SpellId > 0)
                 {
-                    _spell = WoWSpell.ObserveFromId(SpellId, out string failure);
-                    MetadataFailure = failure;
+                    if (_metadataResolver != null)
+                    {
+                        var observed = _metadataResolver(SpellId);
+                        _spell = observed.Spell;
+                        MetadataFailure = observed.Failure;
+                    }
+                    else
+                    {
+                        _spell = WoWSpell.ObserveFromId(SpellId, out string failure);
+                        MetadataFailure = failure;
+                    }
                 }
                 return _spell;
             }

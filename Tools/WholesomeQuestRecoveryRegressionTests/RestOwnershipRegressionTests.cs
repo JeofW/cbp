@@ -39,8 +39,8 @@ internal static class RestOwnershipRegressionTests
                 var observationChain = ObservationCalls(auraOwner).ToArray();
                 Check(!observationChain.Any(call => call.Name == "get_IsResting" && call.DeclaringType == typeof(WoWPlayer)),
                     "a shared observation helper restored the area/rested-XP flag");
-                Check(observationChain.Any(call => call.Name == "TryGetAllAuras" && call.DeclaringType == typeof(WoWUnit)),
-                    "the compiled activity/rest owner must reach the real complete-coverage aura observation API");
+                Check(observationChain.Any(call => call.Name == "TryObserveActivity" && call.DeclaringType == typeof(Styx.Logic.Common.Rest)),
+                    "the compiled activity/rest owner must reach the supported-rest complete raw coverage API");
             }));
         }
         cases.Add(("active owned pickup remains eligible", () => Check(Active(false, false), "ordinary owned work must be active")));

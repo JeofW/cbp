@@ -37,7 +37,8 @@ namespace Singular.ClassSpecific.Paladin
         {
             var me = StyxWoW.Me;
             return me != null && me.IsValid && me.IsAlive && !me.Mounted && !me.IsOnTransport
-                && !me.IsCasting && !me.IsChanneling && !me.HasAura("Food") && !me.HasAura("Drink");
+                && !me.IsCasting && !me.IsChanneling
+                && Styx.Logic.Common.Rest.TryObserveActivity(me, out bool food, out bool drink) && !food && !drink;
         }
 
         private static bool IsSupportRecipient(WoWPlayer player) =>
@@ -62,6 +63,107 @@ namespace Singular.ClassSpecific.Paladin
 
         private static WoWAura[] SupportAuras(WoWPlayer player) =>
             player.GetAllAuras().Where(a => a != null && a.IsActive).ToArray();
+
+        // Exact name families from the original enUS build-12340 Spell.dbc. This
+        // is a closed coverage contract for these policies, not a generic claim
+        // about missing server metadata. See docs/audit/2026-10-02/paladin-observation.
+        internal static string SupportedAuraName(WoWAura aura)
+        {
+            switch (aura.SpellId)
+            {
+                case 20217: case 56525: case 58054:
+                    return "Blessing of Kings";
+                case 19740: case 19834: case 19835: case 19836: case 19837:
+                case 19838: case 25291: case 27140: case 48931: case 48932:
+                case 56520:
+                    return "Blessing of Might";
+                case 19742: case 19850: case 19852: case 19853: case 19854:
+                case 25290: case 27142: case 48935: case 48936: case 56521:
+                    return "Blessing of Wisdom";
+                case 20911: case 57319: case 57320: case 57321: case 67480:
+                    return "Blessing of Sanctuary";
+                case 25898: case 43223:
+                    return "Greater Blessing of Kings";
+                case 25782: case 25916: case 27141: case 29381: case 33564:
+                case 43940: case 48933: case 48934:
+                    return "Greater Blessing of Might";
+                case 25894: case 25918: case 27143: case 48937: case 48938:
+                    return "Greater Blessing of Wisdom";
+                case 25899:
+                    return "Greater Blessing of Sanctuary";
+                case 2048: case 5242: case 6192: case 6673: case 9128:
+                case 11549: case 11550: case 11551: case 24438: case 25101:
+                case 25289: case 26043: case 26099: case 27578: case 30635:
+                case 30833: case 30931: case 31403: case 32064: case 38232:
+                case 42247: case 46763: case 47436: case 49724: case 59614:
+                case 64062: case 70750:
+                    return "Battle Shout";
+                case 24858: case 48369: case 53506: case 62795:
+                    return "Moonkin Form";
+                case 5420: case 33891: case 34123: case 48371: case 53691:
+                case 65139:
+                    return "Tree of Life";
+                case 465: case 643: case 1032: case 8258: case 10290:
+                case 10291: case 10292: case 10293: case 17232: case 27149:
+                case 41452: case 48941: case 48942: case 52442: case 57740:
+                case 58944:
+                    return "Devotion Aura";
+                case 7294: case 8990: case 10298: case 10299: case 10300:
+                case 10301: case 13008: case 27150: case 54043:
+                    return "Retribution Aura";
+                case 19746:
+                    return "Concentration Aura";
+                case 19876: case 19895: case 19896: case 27151: case 48943:
+                    return "Shadow Resistance Aura";
+                case 19888: case 19897: case 19898: case 27152: case 48945:
+                    return "Frost Resistance Aura";
+                case 19891: case 19899: case 19900: case 27153: case 48947:
+                    return "Fire Resistance Aura";
+                case 32223:
+                    return "Crusader Aura";
+                case 20375: case 20424: case 29385: case 33127: case 41469:
+                case 42058: case 57769: case 57770: case 66004: case 68020:
+                case 68021: case 68022: case 69403:
+                    return "Seal of Command";
+                case 53736: case 53739:
+                    return "Seal of Corruption";
+                case 20164:
+                    return "Seal of Justice";
+                case 20165: case 20167:
+                    return "Seal of Light";
+                case 20154: case 21084: case 25742:
+                    return "Seal of Righteousness";
+                case 31801: case 42463:
+                    return "Seal of Vengeance";
+                case 20166: case 20168:
+                    return "Seal of Wisdom";
+                case 20186: case 20268: case 53408:
+                    return "Judgement of Wisdom";
+                case 20185: case 20267: case 20271: case 28775: case 57774:
+                    return "Judgement of Light";
+                case 14267:
+                    return "Horde Flag";
+                case 14268:
+                    return "Alliance Flag";
+                case 642: case 13874: case 29382: case 33581: case 40733:
+                case 41367: case 54322: case 63148: case 66010: case 67251:
+                case 71550:
+                    return "Divine Shield";
+                case 498: case 13007: case 27778: case 27779:
+                    return "Divine Protection";
+                case 31884: case 43430: case 50837: case 66011:
+                    return "Avenging Wrath";
+                case 54428:
+                    return "Divine Plea";
+                default: return null;
+            }
+        }
+
+        private static WoWAura[] SupportCoverageAuras(WoWUnit player) =>
+            player.GetRawAuras().Where(a => a != null && a.IsActive).ToArray();
+
+        internal static bool HasSupportedAura(WoWUnit player, string name) =>
+            SupportCoverageAuras(player).Any(a => SupportedAuraName(a) == name);
 
         private enum PallyPowerReadStatus
         {
@@ -143,8 +245,9 @@ namespace Singular.ClassSpecific.Paladin
             {
                 values = Lua.GetReturnValues(query);
             }
-            catch
+            catch (Exception error)
             {
+                RecoveryActions.RethrowControlFlow(error);
                 return new PallyPowerAssignment { Status = PallyPowerReadStatus.Uncertain };
             }
 
@@ -174,7 +277,7 @@ namespace Singular.ClassSpecific.Paladin
         }
 
         private static bool MatchesBlessing(WoWAura aura, string name) =>
-            aura.Name == name || aura.Name == "Greater " + name;
+            SupportedAuraName(aura) == name || SupportedAuraName(aura) == "Greater " + name;
 
         private static string SelectBlessing(WoWPlayer player)
         {
@@ -185,10 +288,10 @@ namespace Singular.ClassSpecific.Paladin
         private static string SelectNormalBlessing(WoWPlayer player)
         {
             if (!CanMaintainSupport() || !IsCurrentRecipient(player, true)) return null;
-            var auras = SupportAuras(player).Where(a => a.TimeLeft > TimeSpan.Zero).ToArray();
+            var auras = SupportCoverageAuras(player).Where(a => a.TimeLeft > TimeSpan.Zero).ToArray();
             var paladinSettings = SingularSettings.Instance.Paladin;
             var setting = paladinSettings.Blessings;
-            bool battleShout = auras.Any(a => a.Name == "Battle Shout");
+            bool battleShout = auras.Any(a => SupportedAuraName(a) == "Battle Shout");
             string[] order;
             bool assignmentControlled = false;
             if (setting != PaladinBlessings.Auto)
@@ -216,7 +319,7 @@ namespace Singular.ClassSpecific.Paladin
                 if (!assignmentControlled)
                 {
                     bool caster = player.Class == WoWClass.Mage || player.Class == WoWClass.Priest
-                        || player.Class == WoWClass.Warlock || player.HasAura("Moonkin Form") || player.HasAura("Tree of Life")
+                        || player.Class == WoWClass.Warlock || HasSupportedAura(player, "Moonkin Form") || HasSupportedAura(player, "Tree of Life")
                         || player.IsMe && TalentManager.CurrentSpec == TalentSpec.HolyPaladin;
                     // Ret is a known damage role only for our own character. Do not
                     // invent a teammate's spec/tank assignment from its class alone.
@@ -230,15 +333,17 @@ namespace Singular.ClassSpecific.Paladin
                             : new[] { "Blessing of Kings", "Blessing of Might", "Blessing of Wisdom" };
 
                     // Preserve a unique, useful contribution rather than fighting an
-                    // existing assignment on every pulse. Expired or duplicated buffs
-                    // do not freeze selection. Explicit settings and a verified
+                    // existing assignment on every pulse. For known duplicate
+                    // creators, one stable GUID winner retains the contribution
+                    // while the others fill missing coverage. Explicit settings and a verified
                     // PallyPower assignment bypass this Auto contribution rule.
-                    foreach (string retained in new[] { "Blessing of Kings", "Blessing of Might" })
+                    foreach (string retained in new[] { "Blessing of Kings", "Blessing of Might", "Blessing of Wisdom" })
                     {
                         if (retained == "Blessing of Might" && (caster || battleShout)) continue;
+                        if (retained == "Blessing of Wisdom" && player.MaxMana <= 0) continue;
                         var owners = auras.Where(a => MatchesBlessing(a, retained)).ToArray();
                         if (owners.Any(a => a.CreatorGuid == StyxWoW.Me.Guid)
-                            && !owners.Any(a => a.CreatorGuid != 0 && a.CreatorGuid != StyxWoW.Me.Guid))
+                            && !owners.Any(a => a.CreatorGuid > StyxWoW.Me.Guid))
                             return null;
                     }
                 }
@@ -276,19 +381,16 @@ namespace Singular.ClassSpecific.Paladin
             // Greater blessings can reach other group members of the selected
             // class. Do not silently replace an assignment or borrow coverage
             // from an unobservable member. The normal action remains available.
-            var roster = me.IsInRaid ? me.RaidMembers : me.IsInParty ? me.PartyMembers : Enumerable.Empty<WoWPlayer>();
-            if (roster == null) return normal;
-            var members = roster.Take(41).ToArray();
-            if (members.Length > 40 || members.Any(p => p == null || p.Guid == 0)) return normal;
+            if (!Styx.Logic.GroupObservation.TryGetMembers(me, out var members, out _)) return normal;
             var seen = new HashSet<ulong>();
             foreach (var member in new[] { me }.Cast<WoWPlayer>().Concat(members))
             {
                 if (member.Class != player.Class || !seen.Add(member.Guid)) continue;
                 if (!IsSupportRecipient(member)) return normal;
-                var auras = SupportAuras(member).Where(a => a.TimeLeft > TimeSpan.Zero).ToArray();
+                var auras = SupportCoverageAuras(member).Where(a => a.TimeLeft > TimeSpan.Zero).ToArray();
                 if (auras.Any(a => a.CreatorGuid == me.Guid
-                    && (a.Name.StartsWith("Blessing of ", StringComparison.Ordinal)
-                        || a.Name.StartsWith("Greater Blessing of ", StringComparison.Ordinal))
+                    && ((SupportedAuraName(a) ?? "").StartsWith("Blessing of ", StringComparison.Ordinal)
+                        || (SupportedAuraName(a) ?? "").StartsWith("Greater Blessing of ", StringComparison.Ordinal))
                     && !MatchesBlessing(a, normal)))
                     return normal;
                 // Evaluate only the underlying single-target policy here, not
@@ -352,12 +454,21 @@ namespace Singular.ClassSpecific.Paladin
             return null;
         }
 
-        private static Composite CreateSupportBehavior(Func<SupportAction> choose, params string[] spellNames)
+        private static Composite CreateSupportBehavior(Func<SupportAction> choose, params string[] spellNames) =>
+            CreateSupportBehavior(true, choose, spellNames);
+
+        private static Composite CreateSupportBehavior(bool aura, Func<SupportAction> choose, params string[] spellNames)
         {
             return new Throttle(2, new PrioritySelector(_ => choose(),
-                spellNames.Select(name => Spell.Cast(name,
-                    context => ValidSupportAction(context, name) ? ((SupportAction)context).Target : null,
-                    context => ValidSupportAction(context, name))).ToArray()));
+                spellNames.Select(name => aura
+                    // The revalidated selector owns the complete supported-family
+                    // coverage check; Buff still owns pending TryCast acknowledgement.
+                    ? Spell.Buff(name, false,
+                        context => ValidSupportAction(context, name) ? ((SupportAction)context).Target : null,
+                        context => ValidSupportAction(context, name), new string[0])
+                    : Spell.Cast(name,
+                        context => ValidSupportAction(context, name) ? ((SupportAction)context).Target : null,
+                        context => ValidSupportAction(context, name))).ToArray()));
         }
 
         private static bool ValidSupportAction(object context, string spell)
@@ -407,7 +518,7 @@ namespace Singular.ClassSpecific.Paladin
                         order = new[] { "Retribution Aura", "Devotion Aura", "Concentration Aura" };
                 }
             }
-            var auras = SupportAuras(player);
+            var auras = SupportCoverageAuras(player);
             if (setting == PaladinAura.Auto && !assignmentControlled)
             {
                 // Preserve a useful contribution even when a preferred aura briefly
@@ -415,7 +526,7 @@ namespace Singular.ClassSpecific.Paladin
                 // keeps every Paladin from switching away at the same time.
                 foreach (string name in order)
                 {
-                    var coverage = auras.Where(a => a.Name == name).ToArray();
+                    var coverage = auras.Where(a => SupportedAuraName(a) == name).ToArray();
                     if (coverage.Any(a => a.CreatorGuid == player.Guid)
                         && !coverage.Any(a => a.CreatorGuid != 0 && a.CreatorGuid < player.Guid))
                         return null;
@@ -423,7 +534,7 @@ namespace Singular.ClassSpecific.Paladin
             }
             foreach (string name in order)
             {
-                var coverage = auras.Where(a => a.Name == name).ToArray();
+                var coverage = auras.Where(a => SupportedAuraName(a) == name).ToArray();
                 bool external = coverage.Any(a => a.CreatorGuid != 0 && a.CreatorGuid != player.Guid);
                 if (coverage.Any(a => a.CreatorGuid == player.Guid) && !external) return null;
                 if (coverage.Length != 0) continue;
@@ -475,7 +586,7 @@ namespace Singular.ClassSpecific.Paladin
             return purify ? "Purify" : cleanse ? "Cleanse" : null;
         }
 
-        public static Composite CreatePaladinDispelBehavior() => CreateSupportBehavior(
+        public static Composite CreatePaladinDispelBehavior() => CreateSupportBehavior(false,
             () => FindSupportAction(SingularSettings.Instance.Paladin.DispelParty, SelectDispel), "Purify", "Cleanse");
     }
 }

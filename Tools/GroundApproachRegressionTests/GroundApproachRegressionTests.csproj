@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Styx/Logic/Pathing/GroundApproachGeometry.cs" Link="Production/GroundApproachGeometry.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundApproachQueries.cs" Link="Production/GroundApproachQueries.cs" />
+  </ItemGroup>
+</Project>

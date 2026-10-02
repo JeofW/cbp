@@ -26,7 +26,7 @@ internal static class AquaticShorelineAdmissionRegressionTests
         {
             var delta = offset;
             cases.Add(($"dry cache cannot cross an unobserved shoreline at {delta}", f => {
-                f.Prime(); f.Move(delta); Check(LiquidEnvironment.IsPlayerInLiquid(f.Player), "another position borrowed the old dry probe"); }));
+                f.Prime(); f.Move(delta); Check(LiquidEnvironment.IsPlayerInLiquid(f.Player, allowQuery:false), "another position borrowed the old dry probe"); }));
             foreach (bool drink in new[] { false, true })
             {
                 bool d = drink;
@@ -40,7 +40,7 @@ internal static class AquaticShorelineAdmissionRegressionTests
             f.Move(new WoWPoint(.125f,0,0)); Check(LiquidEnvironment.IsPlayerInLiquid(f.Player)
                 && GetLiquid<WoWPoint>("_lastProbeLocation") == original, "safe wet-cache reuse was unnecessarily removed"); }));
         cases.Add(("far movement already invalidates dry permission", f => {
-            f.Prime(); f.Move(new WoWPoint(3,0,0)); Check(LiquidEnvironment.IsPlayerInLiquid(f.Player), "far dry cache remained authoritative"); }));
+            f.Prime(); f.Move(new WoWPoint(3,0,0)); Check(LiquidEnvironment.IsPlayerInLiquid(f.Player, allowQuery:false), "far dry cache remained authoritative"); }));
         foreach (bool drink in new[] { false, true })
         {
             bool d = drink;
@@ -90,6 +90,9 @@ internal static class AquaticShorelineAdmissionRegressionTests
         {
             var timer=(WaitTimer)typeof(CoreRest).GetField(drink ? "_drinkTimer" : "_feedTimer",Static)!.GetValue(null)!;
             var before=timer.StartTime;
+            Strict(() => Check(CoreRest.GetAdmissionDenial(Player, requireStationary:true, allowQueries:false)
+                == "liquid-or-dry-observation-unavailable",
+                "moved dry cache did not deny prepared rest at the liquid boundary"));
             if (drink) CoreRest.DrinkImmediate(); else CoreRest.FeedImmediate();
             Check(timer.StartTime==before && !(drink ? CoreRest.NoDrink : CoreRest.NoFood), "unobserved position consumed retry or asserted missing inventory");
         }
@@ -109,11 +112,47 @@ internal static class AquaticShorelineAdmissionRegressionTests
             if (state=="swimming") Call("Swim",true);
             if (state=="vertical") Move(new WoWPoint(0,0,-4));
             if (state=="dead") Player.GetType().GetField("Alive",Hidden)!.SetValue(Player,false);
-            if (state=="mounted") Player.GetType().GetField("Riding",Hidden)!.SetValue(Player,true);
+            if (state=="mounted")
+            {
+                Player.GetType().GetField("Riding",Hidden)!.SetValue(Player,true);
+                Call("SetGroundMounted",true);
+            }
             if (state=="missing") ObjectManager.Me=null;
-            CoreRest.Feed();
+            if (state=="unknown" || state=="vertical")
+            {
+                Strict(() => Check(CoreRest.GetAdmissionDenial(Player, requireStationary:true, allowQueries:false)
+                    == "liquid-or-dry-observation-unavailable",
+                    "legacy prepared rest did not retain UNKNOWN liquid denial"));
+                CoreRest.Feed();
+            }
+            else if (state=="dry")
+                StrictFeedThroughMissingInventory(drink);
+            else
+                Strict(CoreRest.Feed);
             Check((drink ? CoreRest.NoDrink : CoreRest.NoFood)==(state=="dry"), "legacy Feed did not honor environment/lifetime admission");
         }
+        private void StrictFeedThroughMissingInventory(bool drink)
+        {
+            string original = drink ? LevelbotSettings.Instance.DrinkName : LevelbotSettings.Instance.FoodName;
+            string expected = "No " + original + " in bags.";
+            int observed = 0;
+            Action<LogLevel,string> stop = (_,text) =>
+            {
+                if (!text.Contains(expected) || observed++ != 0) return;
+                if (drink) LevelbotSettings.Instance.DrinkName = original + "-observed";
+                else LevelbotSettings.Instance.FoodName = original + "-observed";
+            };
+            Logging.OnMessageLogged += stop;
+            try { Strict(CoreRest.Feed); }
+            finally
+            {
+                Logging.OnMessageLogged -= stop;
+                if (drink) LevelbotSettings.Instance.DrinkName = original;
+                else LevelbotSettings.Instance.FoodName = original;
+            }
+            Check(observed == 1, "dry legacy Feed did not reach its complete missing-inventory observation");
+        }
+        private void Strict(Action action) => Call("WithStrictRestObservation",action);
         public void Dispose()
         {
             settingsField.SetValue(null,oldSettings);

@@ -55,6 +55,8 @@ public delegate bool SimpleBooleanDelegate(object context);
 public static class Spell {
 """;
     private const string CastLeaf = """
+ private static Composite CastWithRecovery(string name,SimpleBooleanDelegate movement,UnitSelectionDelegate select,SimpleBooleanDelegate requirements,bool heal,bool aura)
+ {HealCases.RecoveryHeal=heal;HealCases.RecoveryAura=aura;return new Decorator(_=>HealCases.RecoveryAllowed,Cast(name,movement,select,requirements));}
  public static Composite Cast(string name,SimpleBooleanDelegate movement,UnitSelectionDelegate select,SimpleBooleanDelegate requirements)=>new Action(context=>{
   var player=StyxWoW.Me;
   if(player==null||select==null||requirements==null||movement==null||!requirements(context))return RunStatus.Failure;
@@ -70,11 +72,11 @@ public static class Spell {
 public static class HealCases {
  private sealed class Failure(string reason):Exception(reason){}
  public static int Submitted,Selections,SubmittedSpellId;public static WoWUnit SubmittedRecipient;
- public static bool CastAccepted,Instant,Needed;public static System.Action OnSubmit,OnSelect,OnRequirements,OnMovement;
+ public static bool CastAccepted,Instant,Needed,RecoveryHeal,RecoveryAura,RecoveryAllowed;public static System.Action OnSubmit,OnSelect,OnRequirements,OnMovement;
  public static List<WoWUnit> Stopped=new();private static LocalPlayer owner;private static WoWUnit recipient;
  private static readonly object Context=new();
  private static void Check(bool value,string reason){if(!value)throw new Failure(reason);}
- private static void Reset(){owner=new LocalPlayer{Guid=1};StyxWoW.Me=owner;recipient=new WoWUnit{Guid=2};SpellManager.Spells.Clear();SpellManager.Spells.Add("Heal",new WoWSpell());Submitted=Selections=0;SubmittedSpellId=101;SubmittedRecipient=null;CastAccepted=Needed=true;Instant=false;Stopped.Clear();OnSubmit=OnSelect=OnRequirements=OnMovement=null;}
+ private static void Reset(){owner=new LocalPlayer{Guid=1};StyxWoW.Me=owner;recipient=new WoWUnit{Guid=2};SpellManager.Spells.Clear();SpellManager.Spells.Add("Heal",new WoWSpell());Submitted=Selections=0;SubmittedSpellId=101;SubmittedRecipient=null;CastAccepted=Needed=RecoveryAllowed=true;Instant=RecoveryHeal=RecoveryAura=false;Stopped.Clear();OnSubmit=OnSelect=OnRequirements=OnMovement=null;}
  private static Composite Build(int variant){
   UnitSelectionDelegate selected=c=>{Selections++;OnSelect?.Invoke();return recipient;};
   SimpleBooleanDelegate needed=c=>{Check(ReferenceEquals(c,Context),"caller context was replaced");OnRequirements?.Invoke();return Needed;};
@@ -87,6 +89,8 @@ public static class HealCases {
   void Case(string name,System.Action body){total++;Reset();try{body();passed++;Console.WriteLine("PASS heal continuation: "+name);}catch(Failure error){assertions++;Console.Error.WriteLine("FAIL heal continuation: "+name+": "+error.Message);}catch(Exception error){unexpected++;Console.Error.WriteLine("ERROR heal continuation: "+name+": "+error);}}
   foreach(int index in Enumerable.Range(0,5)){
    int variant=index;
+   Case("overload "+variant+" uses the recovery heal admission",()=>{var tree=Build(variant);try{Begin(tree);Check(RecoveryHeal&&!RecoveryAura,"Heal factory bypassed its shared recovery mode");}finally{tree.Stop(Context);}});
+   Case("overload "+variant+" conflicting recovery falls through",()=>{RecoveryAllowed=false;var tree=Build(variant);try{Check(Begin(tree)==RunStatus.Failure&&Submitted==0&&Stopped.Count==0,"pending recovery did not block the heal submission");}finally{tree.Stop(Context);}});
    Case("overload "+variant+" waits for its cast then completes",()=>{var tree=Build(variant);try{Check(Begin(tree)==RunStatus.Running&&Submitted==1,"cast did not enter an owned wait");owner.IsCasting=false;Check(Step(tree)==RunStatus.Success&&Stopped.Count==0,"normal completion changed");}finally{tree.Stop(Context);}});
    Case("overload "+variant+" rejects failed submission without waiting",()=>{CastAccepted=false;var tree=Build(variant);try{Check(Begin(tree)==RunStatus.Failure&&Submitted==0&&Stopped.Count==0,"failed cast entered the wait");}finally{tree.Stop(Context);}});
    Case("overload "+variant+" instant cast returns without cancelling",()=>{Instant=true;SpellManager.Spells["Heal"].CastTime=0;var tree=Build(variant);try{Check(Begin(tree)==RunStatus.Success&&Submitted==1&&Stopped.Count==0,"instant cast stalled or cancelled");}finally{tree.Stop(Context);}});

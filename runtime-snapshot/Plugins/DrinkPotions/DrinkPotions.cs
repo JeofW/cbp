@@ -1,4 +1,4 @@
-﻿// Apoc (Penguin) helped Kickazz006 develop this plugin
+// Apoc (Penguin) helped Kickazz006 develop this plugin
 // This Plugin drinks HP/Mana pots when low
 using System;
 using System.Collections.Generic;
@@ -88,47 +88,48 @@ namespace DrinkPotions
         
         public override void Pulse()
         {
-            DateTime nowUtc = DateTime.UtcNow;
-            if (!PotionUsePolicy.ShouldEvaluate(nowUtc, _nextEvaluationUtc))
-                return;
-            // ItemSpells enumeration crosses the game-memory boundary and is expensive.
-            // Two seconds is responsive enough for an emergency potion without stalling movement pulses.
-            _nextEvaluationUtc = nowUtc.AddSeconds(2);
-
-            if (PotionUsePolicy.ShouldSuppressAutomaticUse(BotManager.Current != null ? BotManager.Current.Name : null,
-                                                           Me.CurrentMap.IsInstance))
+            try
             {
-                return;
-            }
+                DateTime nowUtc = DateTime.UtcNow;
+                if (!PotionUsePolicy.ShouldEvaluate(nowUtc, _nextEvaluationUtc)) return;
+                _nextEvaluationUtc = nowUtc.AddSeconds(2);
 
-            if (!Me.Combat || Me.Dead || Me.IsGhost || Me.IsOnTransport || Me.OnTaxi || Me.Stunned || (Me.Mounted && Me.IsFlying)) // Chillax
-            { 
-                return; 
-            }
+                var actor = Me;
+                ulong actorGuid = actor == null ? 0UL : actor.Guid;
+                bool Current() => actorGuid != 0 && ReferenceEquals(Me, actor)
+                    && actor.IsValid && actor.IsAlive && actor.Guid == actorGuid;
+                if (!Current()) return;
+                if (PotionUsePolicy.ShouldSuppressAutomaticUse(BotManager.Current != null ? BotManager.Current.Name : null,
+                                                               actor.CurrentMap.IsInstance)) return;
+                if (!Current() || !actor.Combat || actor.Dead || actor.IsGhost || actor.IsOnTransport
+                    || actor.OnTaxi || actor.Stunned || (actor.Mounted && actor.IsFlying)) return;
 
-            if (Me.Combat) // Pay Attn!
-            {
-                if (PotionUsePolicy.ShouldUsePotion(Me.HealthPercent, HealPotPercent)) // HP
+                if (PotionUsePolicy.ShouldUsePotion(actor.HealthPercent, HealPotPercent))
                 {
-                    WoWItem UseHealPot = HealingPotions();
-                    if (UseHealPot != null)
+                    WoWItem candidate = HealingPotions();
+                    if (!Current()) return;
+                    if (candidate != null && RecoveryActions.TryUseConsumable(candidate, true, false, "DrinkPotions.health"))
                     {
-                        UseHealPot.UseContainerItem();
-                        Logging.Write(Color.Yellow, "Used " + UseHealPot.Name + "!");
+                        Logging.Write(Color.Yellow, "Submitted use of " + candidate.Name + "; awaiting recovery acknowledgement.");
+                        return;
                     }
                 }
-                if (PotionUsePolicy.ShouldUsePotion(Me.ManaPercent, ManaPotPercent)) // Mana
+                if (!Current()) return;
+                if (PotionUsePolicy.ShouldUsePotion(actor.ManaPercent, ManaPotPercent))
                 {
-                    WoWItem UseManaPot = ManaPotions();
-                    if (UseManaPot != null)
+                    WoWItem candidate = ManaPotions();
+                    if (!Current()) return;
+                    if (candidate != null && RecoveryActions.TryUseConsumable(candidate, false, true, "DrinkPotions.mana"))
                     {
-                        UseManaPot.UseContainerItem();
-                        Logging.Write(Color.Yellow, "Used " + UseManaPot.Name + "!");
+                        Logging.Write(Color.Yellow, "Submitted use of " + candidate.Name + "; awaiting recovery acknowledgement.");
                     }
                 }
             }
-
-        }   
+            catch (Exception error)
+            {
+                RecoveryActions.ReportDeferral(error, "DrinkPotions.Pulse");
+            }
+        }
     }
      
 }

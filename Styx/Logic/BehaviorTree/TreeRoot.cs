@@ -93,7 +93,9 @@ namespace Styx.Logic.BehaviorTree
 
 		// Observation owners may outlive a Stop/Start pair with the same bot.
 		// The worker object distinguishes those runs without another mutable counter.
-		internal static object? RunIdentity => _workerThread;
+		// Opaque read-only lifetime token for runtime-compiled routines. Holding it
+		// grants no execution permission; callers must still verify current state.
+		public static object? RunIdentity => _workerThread;
 
 		internal static void VerifyPulseOwner(BotBase? observedBot, bool ownedByCurrentThread)
 		{

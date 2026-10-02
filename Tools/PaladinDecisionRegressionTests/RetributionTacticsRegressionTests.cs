@@ -82,7 +82,7 @@ internal static class RetributionTacticsRegressionTests
     }
     private static void Setup(int count=1,int level=80) { Fixture.Reset(count,level); Fixture.ApplyEffects=true; }
     private static void Ready(params string[] names) { Fixture.Known.UnionWith(names); Fixture.Ready.UnionWith(names); }
-    private static void Aura(string name) => StyxWoW.Me.Auras[name]=new Aura{Name=name,CreatorGuid=StyxWoW.Me.Guid};
+    private static void Aura(string name) => StyxWoW.Me.Auras[name]=new Aura{Name=name,SpellId=name=="Forbearance"?25771:0,CreatorGuid=StyxWoW.Me.Guid};
     private static void TargetAura(string name,ulong owner,int seconds=20) => StyxWoW.Me.CurrentTarget!.Auras[name]=new Aura{Name=name,CreatorGuid=owner,TimeLeft=TimeSpan.FromSeconds(seconds)};
     private static void Tick(Composite root) { root.Start(null!); try { Check(root.Tick(null!)!=RunStatus.Running,"unexpected blocking decision"); Check(Fixture.Exceptions.Count==0,"swallowed exception"); } finally { root.Stop(null!); } }
     private static void Expect(string name) => Check(Fixture.Selected==name,$"expected {name}, got {Fixture.Selected}; {string.Join(',',Fixture.Trace)}");

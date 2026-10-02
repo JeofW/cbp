@@ -4,6 +4,7 @@ using System.Runtime.ExceptionServices;
 using Bots.Quest.Actions;
 using Bots.Quest.QuestOrder;
 using CommonBehaviors.Actions;
+using Styx.Logic.Combat;
 using Styx.Logic.POI;
 using Styx.Logic.Profiles.Quest;
 using Styx.WoWInternals;
@@ -226,15 +227,13 @@ public sealed class PublishedQuestRoot : PrioritySelector
         if (me == null) return int.MaxValue;
         if (me.Dead || me.IsGhost) return 0;
         var poi = BotPoi.Current?.Type ?? PoiType.None;
-        // Preemption also stops navigation. A combat flag must not manufacture
-        // the stationary condition that forces an otherwise healthy rider off.
-        if (me.Mounted)
-        {
-            if (Styx.Logic.Mount.ShouldDismount(BotPoi.Current.Location)) return 1;
-        }
-        else if (me.Combat || poi == PoiType.Kill) return 1;
+        // Preemption hands committed/protective mounted work to the shared
+        // ground-transition owner. Healthy incidental aggro retains its bounded
+        // escape policy; this method never requests an airborne dismount.
+        if (MountedCombatTransition.RequiresProtectiveHandoff(BotPoi.Current.Location)) return 1;
+        if (!MountedCombatTransition.IsMountedOrFlying(me) && (me.Combat || poi == PoiType.Kill)) return 1;
         var pet = me.Pet;
-        if (!me.Mounted && pet != null && pet.IsAlive && pet.Combat) return 1;
+        if (!MountedCombatTransition.IsMountedOrFlying(me) && pet != null && pet.IsAlive && pet.Combat) return 1;
         if (poi == PoiType.Loot || poi == PoiType.Skin || poi == PoiType.Harvest) return 2;
         if (!exclusive && (poi == PoiType.Sell || poi == PoiType.Repair ||
             poi == PoiType.Buy || poi == PoiType.Mail || poi == PoiType.Train || poi == PoiType.Fly)) return 4;

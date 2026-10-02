@@ -23,13 +23,23 @@ internal static class LegacyRestContinuationRegressionTests
     internal static void Run()
     {
         var cases = new List<(string Name, Action<Fixture> Body)>();
+        cases.Add(("unrelated missing aura metadata cannot poison legacy rest", f =>
+        {
+            f.UnknownAura(); f.Feed();
+            Check(CoreRest.NoFood && CoreRest.NoDrink, "complete empty inventory control was hidden by unrelated aura metadata");
+        }));
+        cases.Add(("unreadable inventory is not absent configured food", f =>
+        {
+            f.UnknownInventory(); f.Feed();
+            Check(!CoreRest.NoFood && !CoreRest.NoDrink, "unavailable inventory became an absence claim");
+        }));
         foreach (bool legacy in new[] { false, true })
         {
             bool oldEvent = legacy;
             foreach (bool start in new[] { false, true })
             {
                 bool atStart = start;
-                foreach (string change in new[] { "water", "shoreline", "dead", "mounted", "missing", "wrapper", "memory", "address", "settings" })
+                foreach (string change in new[] { "water", "shoreline", "dead", "mounted", "missing", "wrapper", "memory", "address", "settings", "run" })
                 {
                     string state = change;
                     cases.Add(($"{(legacy ? "legacy" : "new")} log/{(start ? "start" : "food")}: {state} revokes continuation", f =>
@@ -55,7 +65,7 @@ internal static class LegacyRestContinuationRegressionTests
                         Exception? observed = null;
                         f.WithHook(oldEvent, atStart, () => throw expected, () =>
                         {
-                            try { CoreRest.Feed(); } catch (Exception error) { observed = error; }
+                            try { f.FeedRaw(); } catch (Exception error) { observed = error; }
                         });
                         Check(ReferenceEquals(observed, expected), "logger error was swallowed, substituted or wrapped");
                         Check(!CoreRest.NoDrink, "throwing callback was followed by another inventory branch");
@@ -93,6 +103,8 @@ internal static class LegacyRestContinuationRegressionTests
         private readonly KeyValuePair<ulong, WoWObject>[] oldRegistry;
         private readonly object registryLock;
         private readonly object? oldLegacyOwner;
+        private readonly FieldInfo worker = typeof(Styx.Logic.BehaviorTree.TreeRoot).GetField("_workerThread", Hidden)!;
+        private readonly object? oldWorker;
         private readonly FieldInfo? legacyOwner = typeof(CoreRest).GetField("_legacyFeedOwner", Hidden);
         internal Fixture()
         {
@@ -102,6 +114,7 @@ internal static class LegacyRestContinuationRegressionTests
             oldSettings = settings.GetValue(null);
             settings.SetValue(null, RuntimeHelpers.GetUninitializedObject(typeof(CharacterSettings)));
             oldLegacyOwner = legacyOwner?.GetValue(null);
+            oldWorker = worker.GetValue(null);
             registry = (Dictionary<ulong, WoWObject>)typeof(ObjectManager).GetField("_objectList", Hidden)!.GetValue(null)!;
             registryLock = typeof(ObjectManager).GetField("_updateLock", Hidden)!.GetValue(null)!;
             lock (registryLock) { oldRegistry = registry.ToArray(); registry[player.Guid] = player; }
@@ -143,21 +156,52 @@ internal static class LegacyRestContinuationRegressionTests
             switch (state)
             {
                 case "water": Call("Swim", true); break;
-                case "shoreline": player.GetType().GetField("Position", Hidden)!.SetValue(player, player.Location.Add(.125f, 0, 0)); break;
+                case "shoreline":
+                    player.GetType().GetField("Position", Hidden)!.SetValue(player, player.Location.Add(.125f, 0, 0));
+                    Check(CoreRest.GetAdmissionDenial(player, requireStationary:true, allowQueries:false)
+                        == "liquid-or-dry-observation-unavailable",
+                        "moved dry cache remained prepared rest permission");
+                    Call("ObserveWetHere");
+                    break;
                 case "dead": player.GetType().GetField("Alive", Hidden)!.SetValue(player, false); break;
-                case "mounted": player.GetType().GetField("Riding", Hidden)!.SetValue(player, true); break;
+                case "mounted":
+                    player.GetType().GetField("Riding", Hidden)!.SetValue(player, true);
+                    Call("SetGroundMounted", true);
+                    break;
                 case "missing": ObjectManager.Me = null; break;
                 case "wrapper": ObjectManager.Me = new LocalPlayer(player.BaseAddress); break;
                 case "memory": typeof(ObjectManager).GetProperty("Wow", Hidden)!.SetValue(null, null); break;
                 case "address": typeof(WoWObject).GetMethod("UpdateBaseAddress", Hidden)!.Invoke(player, new object[] { player.BaseAddress + 16384 }); break;
                 case "settings": LevelbotSettings.Instance.DrinkName = "Replacement-drink"; break;
+                case "run": worker.SetValue(null, new Thread(() => { })); break;
             }
         }
         internal void Feed()
         {
             Exception? escaped = null;
-            try { CoreRest.Feed(); } catch (Exception error) { escaped = error; }
+            try { FeedRaw(); } catch (Exception error) { escaped = error; }
             Check(escaped == null, "Feed escaped after the controlled state change: " + escaped);
+        }
+        internal void FeedRaw()
+        {
+            int observedDrink = 0;
+            Action<LogLevel, string> stop = (_, text) =>
+            {
+                bool terminalObservation = text.Contains("No Rest-test-drink in bags.")
+                    || text.Contains("Rest drink deferred: status=UNKNOWN");
+                if (!terminalObservation || observedDrink++ != 0) return;
+                LevelbotSettings.Instance.DrinkName = "Rest-test-drink-observed";
+            };
+            Logging.OnMessageLogged += stop;
+            try { Call("WithStrictRestObservation", (Action)CoreRest.Feed); }
+            finally { Logging.OnMessageLogged -= stop; }
+        }
+        internal void UnknownInventory() => Call("Cache", player.BaseAddress + 6384U, new byte[17]);
+        internal void UnknownAura()
+        {
+            Call("Cache", player.BaseAddress + 3536U, BitConverter.GetBytes(1));
+            var raw = new byte[24]; BitConverter.GetBytes(61988).CopyTo(raw, 8); raw[12] = 1;
+            System.Runtime.InteropServices.Marshal.Copy(raw, 0, new IntPtr(unchecked((int)(player.BaseAddress + 3152U))), raw.Length);
         }
         private void Call(string method, params object[] arguments)
         {
@@ -169,6 +213,7 @@ internal static class LegacyRestContinuationRegressionTests
             lock (registryLock) { registry.Clear(); foreach (var entry in oldRegistry) registry.Add(entry.Key, entry.Value); }
             settings.SetValue(null, oldSettings);
             legacyOwner?.SetValue(null, oldLegacyOwner);
+            worker.SetValue(null, oldWorker);
             world.Dispose();
         }
     }
