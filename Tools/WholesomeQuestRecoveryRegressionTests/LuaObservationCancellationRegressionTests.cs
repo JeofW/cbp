@@ -28,7 +28,20 @@ internal static class LuaObservationCancellationRegressionTests
             .Where(value => value.Declaration.Variables.Any(field => field.Identifier.ValueText is "_returnBuffer" or "_luaBuffer" or "ObservedReturnLimit" or "ObservedStringLimit")))
             + string.Join("\n", syntax.DescendantNodes().OfType<MethodDeclarationSyntax>()
                 .Where(value => methods.Contains(value.Identifier.ValueText)).Select(value => value.ToFullString()));
-        string source = Prefix + "public static class Lua {\n" + owner + "\npublic static void Reset(){_returnBuffer?.Dispose();_returnBuffer=null;}\n}\n" + Cases + "\n}";
+        var mountSyntax = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root.FullName, "Styx/Logic/Mount.cs"))).GetRoot();
+        string mount = string.Join("\n", mountSyntax.DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Where(m => m.Identifier.ValueText is "TryDismountOwned" or "CanRemoveMount" or "BuildGroundDismountLua"))
+            + string.Join("\n", mountSyntax.DescendantNodes().OfType<FieldDeclarationSyntax>()
+                .Where(f => f.Declaration.Variables.Any(v => v.Identifier.ValueText.StartsWith("GroundDismount"))));
+        bool guarded = syntax.DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Any(m => m.Identifier.ValueText == "GetObservedReturnValues" && m.ParameterList.Parameters.Count > 1);
+        string guardedBridge = "public static List<string> Owned(string script,Func<bool> admitted)=>"
+            + (guarded ? "GetObservedReturnValues(script,admitted)" : "GetObservedReturnValues(script)") + ";";
+        string source = Prefix + "public static class Lua {\n" + owner + guardedBridge
+            + "\npublic static void Reset(){_returnBuffer?.Dispose();_returnBuffer=null;}\n}\n"
+            + "public static class Mount {private static LocalPlayer Me=>ObjectManager.Me;"
+            + mount + "public static bool Safe()=>CanRemoveMount(Me,Me.Guid);public static void RaiseOnDismount(string reason){Faults.DismountEvents++;}}\n"
+            + Cases + "\n}";
         string directory = Path.Combine(Path.GetTempPath(), "cb-lua-cancellation-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         try
@@ -57,7 +70,8 @@ public static class Faults {
  public static string Stage;public static Exception Signal;public static bool Fired;public static int Executes;
  public static uint NextAddress,ResultAddress;public static bool Strict,ChangedWorld,ChangedHandle,BadClear,BadArgument;
  public static int Status,Count;public static readonly Dictionary<uint,byte[]> Storage=new();
- public static void At(string stage){if(Stage!=stage)return;Stage=null;Fired=true;ExceptionDispatchInfo.Capture(Signal).Throw();}
+ public static string CallbackStage,ReturnText;public static Action Callback,DescriptorAction;public static bool Admitted;public static int DismountEvents;
+ public static void At(string stage){if(CallbackStage==stage){CallbackStage=null;var action=Callback;Callback=null;action?.Invoke();}if(Stage!=stage)return;Stage=null;Fired=true;ExceptionDispatchInfo.Capture(Signal).Throw();}
 }
 public sealed class AllocationScope:IDisposable {
  public void Dispose()=>Faults.At("cache-dispose");
@@ -69,7 +83,7 @@ public sealed class Memory {
   if(pointer==8192){Faults.At("status");return BitConverter.GetBytes(Faults.Status);}
   if(pointer==Faults.ResultAddress){Faults.At(Faults.Executes==0?"result-clear":"count");return BitConverter.GetBytes(Faults.Executes==0?(Faults.BadClear?7:0):Faults.Count);}
   if(pointer>Faults.ResultAddress&&pointer<Faults.ResultAddress+260){Faults.At("pointer");return BitConverter.GetBytes(32768U);}
-  if(pointer>=32768&&pointer<33792){Faults.At("string");var data=new byte[count];if(pointer==32768){data[0]=49;data[1]=55;}return data;}
+  if(pointer>=32768&&pointer<33792){Faults.At("string");var data=new byte[count];var encoded=Encoding.UTF8.GetBytes(Faults.ReturnText??"17");int offset=(int)pointer-32768;for(int n=0;n<count&&offset+n<encoded.Length;n++)data[n]=encoded[offset+n];return data;}
   Faults.At("argument-verification");if(!Faults.Storage.TryGetValue(pointer,out var value))return null;
   var reply=value.Take(count).ToArray();if(Faults.BadArgument&&reply.Length>0)reply[0]^=1;return reply;
  }
@@ -83,6 +97,7 @@ public static class RecoveryActions {
  public static bool Allow=true;public static int Entries;public static string LastScript;
  public static bool BeforeLuaSubmission(string script){Entries++;LastScript=script;Faults.At("recovery-marker");return Allow;}
  public static void RethrowControlFlow(Exception error)=>Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(error);
+ public static void ReportDeferral(Exception error,string owner)=>Styx.Logic.Combat.RecoveryActions.ReportDeferral(error,owner);
 }
 public sealed class ExecutorRand {
  public readonly object AssemblyLock=new object();public readonly Memory Memory=new Memory();public uint ReturnPointer=>8192;
@@ -97,16 +112,36 @@ public sealed class AllocatedMemory:IDisposable {
  public T Read<T>(int offset){Faults.At(offset==0?"count":"pointer");return typeof(T)==typeof(int)?(T)(object)2:(T)(object)32768U;}
  public void Dispose(){if(!result)Faults.At("argument-dispose");else if(Faults.Strict)Faults.At("observed-result-dispose");}
 }
-public static class ObjectManager {public static ExecutorRand Executor=new ExecutorRand();public static Memory Wow=new Memory();}
+public static class ObjectManager {public static ExecutorRand Executor=new ExecutorRand();public static Memory Wow=Executor.Memory;public static LocalPlayer Me=new();}
 public static class StyxWoW {public static Memory Memory=>ObjectManager.Wow;}
-public static class Logging {public static void WriteDebug(string text,params object[] values){}}
+public static class Logging {public static void WriteDebug(string text,params object[] values)=>Faults.At("log");}
+public enum ShapeshiftForm {Normal,FlightForm,EpicFlightForm}
+public sealed class LocalPlayer{
+ public ulong Guid=1;public uint BaseAddress=4096,MapId=530;public bool IsValid=true,IsAlive=true,MovementKnown=true;
+ public uint MovementFlags;public ulong Transport;public WorldQueryObservation.GroundUnitState GroundState=new(100,ShapeshiftForm.Normal,0);
+ public bool TryGetMovementState(out uint flags,out ulong transport){flags=MovementFlags;transport=Transport;return MovementKnown;}
+}
+public static class WoWMovement{public static void MoveStop()=>Faults.At("stop");}
+public static class GroundDismountDispatchContext{public static string Owner="0123456789abcdef0123456789abcdef";}
+public static class WorldQueryObservation{
+ public static Func<bool> CaptureLocalOwner(LocalPlayer actor){
+  ulong guid=actor.Guid;uint address=actor.BaseAddress,map=actor.MapId;var memory=ObjectManager.Wow;var executor=ObjectManager.Executor;
+  return ()=>ReferenceEquals(ObjectManager.Me,actor)&&actor.Guid==guid&&actor.BaseAddress==address&&actor.MapId==map
+   &&ReferenceEquals(ObjectManager.Wow,memory)&&ReferenceEquals(ObjectManager.Executor,executor);
+ }
+ public readonly record struct GroundUnitState(uint MountDisplayId,ShapeshiftForm Form,uint Flags){
+  public bool Mounted=>MountDisplayId!=0||Form is ShapeshiftForm.FlightForm or ShapeshiftForm.EpicFlightForm;
+  public bool OnTaxi=>(Flags&1)!=0;public bool Rooted=>(Flags&2)!=0;public bool Stunned=>(Flags&4)!=0;
+ }
+ public static GroundUnitState ReadGroundUnitState(LocalPlayer actor){var state=actor.GroundState;Faults.At("ground-state");var action=Faults.DescriptorAction;Faults.DescriptorAction=null;action?.Invoke();return state;}
+}
 """;
 
     private const string Cases = """
 public static class Cases {
  private sealed class Failure(string text):Exception(text){}
  private static void Check(bool condition,string text){if(!condition)throw new Failure(text);}
- private static void Reset(){Faults.Stage=null;Faults.Signal=null;Faults.Fired=false;Faults.Executes=0;Faults.Strict=false;Lua.Reset();Faults.NextAddress=16384;Faults.ResultAddress=0;Faults.ChangedWorld=Faults.ChangedHandle=Faults.BadClear=Faults.BadArgument=false;Faults.Status=0;Faults.Count=2;Faults.Storage.Clear();ObjectManager.Executor=new ExecutorRand();ObjectManager.Wow=new Memory();RecoveryActions.Allow=true;RecoveryActions.Entries=0;RecoveryActions.LastScript=null;}
+ private static void Reset(){Faults.Stage=null;Faults.Signal=null;Faults.Fired=false;Faults.Executes=0;Faults.Strict=false;Faults.CallbackStage=null;Faults.Callback=null;Faults.DescriptorAction=null;Faults.ReturnText=null;Faults.Admitted=true;Faults.DismountEvents=0;Lua.Reset();Faults.NextAddress=16384;Faults.ResultAddress=0;Faults.ChangedWorld=Faults.ChangedHandle=Faults.BadClear=Faults.BadArgument=false;Faults.Status=0;Faults.Count=2;Faults.Storage.Clear();ObjectManager.Executor=new ExecutorRand();ObjectManager.Wow=ObjectManager.Executor.Memory;ObjectManager.Me=new();RecoveryActions.Allow=true;RecoveryActions.Entries=0;RecoveryActions.LastScript=null;}
  public static void Run(){
   int cases=0,passed=0,failed=0,unexpected=0;
   void Case(string name,Action work){cases++;Reset();try{work();passed++;}catch(Failure error){failed++;Console.WriteLine("FAIL Lua cancellation: "+name+": "+error.Message);}catch(Exception error){unexpected++;Console.WriteLine("ERROR Lua cancellation: "+name+": "+error);}finally{Reset();}}
@@ -140,7 +175,45 @@ public static class Cases {
   foreach(bool strict in new[]{false,true})Case("denied recovery entry prevents Lua submission / "+strict,()=>{Faults.Strict=strict;RecoveryActions.Allow=false;bool unavailable=false;var values=new List<string>();try{values=strict?Lua.GetObservedReturnValues("return 17,17"):Lua.GetReturnValues("return 17,17");}catch(ObservationUnavailableException){unavailable=true;}Check(RecoveryActions.Entries==1&&Faults.Executes==0&&(strict?unavailable:values.Count==0),"denied recovery request crossed native Lua entry");});
   Case("observed wrapper retains original submission identity",()=>{Faults.Strict=true;_=Lua.GetObservedReturnValues("return 17,17");Check(RecoveryActions.Entries==1&&RecoveryActions.LastScript=="return 17,17","wrapper changed the admitted container request identity");});
   foreach(bool wrapped in new[]{false,true})foreach(bool process in new[]{false,true})foreach(string stage in new[]{"execute","state","status","count","pointer","string"})Case("observed fatal native ownership / "+stage+" / "+process+" / "+wrapped,()=>{Faults.Strict=true;Exception signal=process?new Styx.InvalidProcessException("process lost"):new Styx.InvalidExecutorException("executor lost");Faults.Stage=stage;Faults.Signal=wrapped?new TargetInvocationException(signal):signal;Exception caught=null;try{_=Lua.GetObservedReturnValues("return 17,17");}catch(Exception error){caught=error;}Check(ReferenceEquals(caught,signal),"fatal ownership loss became optional observation");});
-  Console.WriteLine($"Lua observation cancellation cases: {passed}/{cases}; assertions={failed}; unexpected={unexpected}; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.");
+  foreach(string stage in new[]{"clear","emit","recovery-marker","late-state"})Case("owned actual Lua rejects late caller revocation/"+stage,()=>{
+   Faults.Strict=true;Faults.CallbackStage=stage;Faults.Callback=()=>Faults.Admitted=false;bool unavailable=false;
+   if(stage=="late-state"){Faults.CallbackStage="recovery-marker";Faults.Callback=()=>{Faults.CallbackStage="state";Faults.Callback=()=>Faults.Admitted=false;};}
+   try{_=Lua.Owned("return 17,17",()=>Faults.Admitted);}catch(ObservationUnavailableException){unavailable=true;}
+   Check(unavailable&&Faults.Executes==0,"late caller revocation entered the prepared Lua command");
+  });
+  foreach(string stage in new[]{"log","stop","clear","emit","recovery-marker","late-state"})foreach(string change in new[]{"admission","airborne","falling","transport","actor","guid","base","map","mount","movement-unknown"}){
+   string s=stage,c=change;Case("actual Mount-to-Lua final entry/"+s+"/"+c,()=>{
+    Faults.Strict=true;Faults.Count=1;Faults.ReturnText="cb-ground-dismount-submitted";int receipts=0;
+    Faults.CallbackStage=s;Faults.Callback=()=>{switch(c){
+     case "admission":Faults.Admitted=false;break;case "airborne":ObjectManager.Me.MovementFlags=0x02000000;break;
+     case "falling":ObjectManager.Me.MovementFlags=0x1000;break;case "transport":ObjectManager.Me.Transport=7;break;
+     case "actor":ObjectManager.Me=new(){Guid=2};break;case "guid":ObjectManager.Me.Guid=2;break;
+     case "base":ObjectManager.Me.BaseAddress+=8;break;case "map":ObjectManager.Me.MapId=1;break;
+     case "mount":ObjectManager.Me.GroundState=new(200,ShapeshiftForm.Normal,0);break;
+     case "movement-unknown":ObjectManager.Me.MovementKnown=false;break;
+    }};
+    if(s=="late-state"){var mutate=Faults.Callback;Faults.CallbackStage="recovery-marker";Faults.Callback=()=>{Faults.CallbackStage="state";Faults.Callback=mutate;};}
+    try{_=Mount.TryDismountOwned("test",()=>Faults.Admitted,()=>receipts++);}catch(ObservationUnavailableException){}
+    Check(Faults.CallbackStage==null&&Faults.Executes==0&&receipts==0&&Faults.DismountEvents==0,
+     "changed mount owner entered native Lua or reserved submission: entries="+Faults.Executes+" receipts="+receipts);
+   });
+  }
+  Case("actual mount support guard rechecks movement after descriptor reads",()=>{
+   Faults.DescriptorAction=()=>ObjectManager.Me.MovementFlags=0x02000000;
+   Check(!Mount.Safe(),"movement became airborne during later descriptors but remained permission to dismount");
+  });
+  foreach(string result in new[]{"cb-ground-dismount-submitted","cb-ground-dismount-pending"})Case("actual dismount strict local receipt/"+result,()=>{
+   Faults.Strict=true;Faults.Count=1;Faults.ReturnText=result;int receipts=0;
+   Check(Mount.TryDismountOwned("test",()=>true,()=>receipts++)&&Faults.Executes==1&&receipts==1
+    &&Faults.DismountEvents==(result.EndsWith("submitted")?1:0),"strict submission/pending marker changed its event/reservation behavior");
+   Check(ObjectManager.Me.GroundState.Mounted,"fixture fabricated client unmount acknowledgement");
+  });
+  foreach(string result in new[]{"", "other", "cb-ground-dismount-submitted-extra"})Case("actual dismount unknown receipt/"+result,()=>{
+   Faults.Strict=true;Faults.Count=1;Faults.ReturnText=result;int receipts=0;bool unavailable=false;
+   try{_=Mount.TryDismountOwned("test",()=>true,()=>receipts++);}catch(ObservationUnavailableException){unavailable=true;}
+   Check(unavailable&&Faults.Executes==1&&receipts==0&&Faults.DismountEvents==0,"incomplete reply became a managed reservation/acknowledgement");
+  });
+  Console.WriteLine($"Lua observation cancellation cases: {passed}/{cases}; assertions={failed}; unexpected={unexpected}; complete transport, conversion and Mount owners; controlled allocation/memory/executor leaves; no native game execution or unmount acknowledgement.");
   if(failed+unexpected!=0)throw new InvalidOperationException("Lua observation cancellation regression");
  }
 }

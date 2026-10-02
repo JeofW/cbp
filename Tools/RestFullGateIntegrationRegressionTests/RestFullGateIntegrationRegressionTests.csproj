@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <UseAppHost>false</UseAppHost>
+    <PlatformTarget>x86</PlatformTarget>
+    <Platforms>x86</Platforms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="QuestPublicationBoundary.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/AquaticObservationRegressionTests.cs" Link="AquaticObservationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/AquaticShorelineAdmissionRegressionTests.cs" Link="AquaticShorelineAdmissionRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/LegacyRestContinuationRegressionTests.cs" Link="LegacyRestContinuationRegressionTests.cs" />
+    <Reference Include="CopilotBuddy"><HintPath>../../bin/x86/Release/net10.0-windows7.0/CopilotBuddy.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

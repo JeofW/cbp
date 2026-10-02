@@ -101,6 +101,9 @@ public static class SharedBuffCases
         Add("rejected dispatch does not acquire retry dictionary entry",()=>{Learn("Test");Accepted=false;Tick(Spell.BuffSelf("Test"));Expect();Check(!Spell.DoubleCastPreventionDict.ContainsKey("Test"),"rejected submission acquired retry state");});
         Add("successful named dispatch retains existing retry guard",()=>{Learn("Test");Tick(Spell.BuffSelf("Test"));Tick(Spell.BuffSelf("Test"));Expect(1);});
         Add("missing caller-declared coverage array is rejected",()=>{Learn("Test");Tick(Spell.Buff("Test",false,_=>StyxWoW.Me,_=>true,null!));Expect();});
+        Add("explicit supported coverage still requests aura recovery",()=>{Tick(Spell.Buff("Test",false,_=>StyxWoW.Me,_=>true,Array.Empty<string>()));Expect(1);Check(RecoveryCalls==1&&RecoveryAura&&!RecoveryHealth,"supported coverage bypassed TryCast aura ownership");});
+        Add("pending supported-family buff cannot repeat native dispatch",()=>{RecoveryAllowed=false;Tick(Spell.Buff("Test",false,_=>StyxWoW.Me,_=>true,Array.Empty<string>()));Expect();Check(RecoveryCalls==1,"pending supported buff bypassed recovery");});
+        Add("supported coverage is revalidated after yielded setup",()=>{bool uncovered=true;Setup=true;DuringSetup=()=>uncovered=false;Tick(Spell.Buff("Test",false,_=>uncovered?StyxWoW.Me:null,_=>uncovered,Array.Empty<string>()));Expect();Check(RecoveryCalls==0,"stale supported coverage reached recovery");});
         foreach(bool byId in new[]{false,true})
         {
             bool id=byId;

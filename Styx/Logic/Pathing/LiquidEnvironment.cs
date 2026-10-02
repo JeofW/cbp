@@ -27,7 +27,7 @@ namespace Styx.Logic.Pathing
             return isSwimming || liquidBetweenEyeAndFeet;
         }
 
-        public static bool IsPlayerInLiquid(LocalPlayer player)
+        public static bool IsPlayerInLiquid(LocalPlayer player, bool allowQuery = true)
         {
             var memory = ObjectManager.Wow;
             uint address = player?.BaseAddress ?? 0U;
@@ -64,6 +64,9 @@ namespace Styx.Logic.Pathing
                 && (_lastProbeResult || location == _lastProbeLocation))
                 return _lastProbeResult;
 
+            // Prepared native actions may inspect the current cached observation,
+            // but cannot replace their instructions with a fresh trace.
+            if (!allowQuery) return true;
             bool liquidBetweenEyeAndFeet = GameWorld.TraceLine(
                 location.Add(0f, 0f, 2.132f), location,
                 GameWorld.CGWorldFrameHitFlags.HitTestLiquid);

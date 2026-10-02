@@ -71,9 +71,23 @@ namespace Styx.WoWInternals
             return GetReturnValuesCore(BuildObservedReturnScript(lua), "CopilotBuddy.Observed.lua", 0, true, lua);
         }
 
-        private static List<string> GetReturnValuesCore(string lua, string scriptName, ulong expectedCursorGuid,
-            bool requireComplete = false, string? recoveryRequest = null)
+        /// <summary>
+        /// A complete observation with caller-owned native entry. The predicate
+        /// must be pure memory/state observation: executing Lua or preparing a
+        /// native command from it would replace this request's assembly buffer.
+        /// Returned values are not an acknowledgement of a world/server effect.
+        /// </summary>
+        internal static List<string> GetObservedReturnValues(string lua, Func<bool> admitted)
         {
+            ArgumentNullException.ThrowIfNull(admitted);
+            return GetReturnValuesCore(BuildObservedReturnScript(lua), "CopilotBuddy.Observed.lua", 0, true, lua, admitted);
+        }
+
+        private static List<string> GetReturnValuesCore(string lua, string scriptName, ulong expectedCursorGuid,
+            bool requireComplete = false, string? recoveryRequest = null, Func<bool>? admitted = null)
+        {
+            if (admitted != null && !admitted())
+                throw new ObservationUnavailableException("lua-return", "The caller no longer owns this Lua request.");
             var executor = ObjectManager.Executor;
             if (executor == null)
             {
@@ -256,6 +270,21 @@ namespace Styx.WoWInternals
                                 if (requireComplete) throw new ObservationUnavailableException("recovery-action", "The prepared Lua action no longer owns native entry.");
                                 return new List<string>();
                             }
+                            if (admitted != null && !admitted())
+                                throw new ObservationUnavailableException("lua-return", "The caller no longer owns prepared Lua native entry.");
+                            if (requireComplete)
+                            {
+                                using (wow.TemporaryCacheState(false))
+                                    if (!ReferenceEquals(ObjectManager.Wow, wow) || !ReferenceEquals(ObjectManager.Executor, executor)
+                                        || wow.ProcessHandle != processHandle
+                                        || ReadObservedLuaWord(wow, (uint)GlobalOffsets.LuaState) != fullState)
+                                        throw new ObservationUnavailableException("lua-return", "The observed Lua owner changed during final admission.");
+                            }
+                            // The final state read is itself an external memory
+                            // boundary. Its callbacks cannot leave an earlier
+                            // caller admission valid for a replaced actor/work.
+                            if (admitted != null && !admitted())
+                                throw new ObservationUnavailableException("lua-return", "The caller changed during the final Lua-state observation.");
                             executor.Execute();
 
                         // Read result from executor (disable cache like HB)

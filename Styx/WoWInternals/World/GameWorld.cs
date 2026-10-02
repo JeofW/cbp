@@ -117,53 +117,7 @@ namespace Styx.WoWInternals.World
         /// </summary>
         private static bool TraceLine(WoWPoint from, WoWPoint to, float distance, CGWorldFrameHitFlags flags, out WoWPoint hitPoint)
         {
-            hitPoint = WoWPoint.Zero;
-            
-            GreenMagic.ExecutorRand? executor = ObjectManager.Executor;
-            if (executor == null)
-                return true; // Assume hit if no executor
-            
-            lock (executor.AssemblyLock)
-            {
-                using (var memory = new Styx.Helpers.AllocatedMemory(40))
-                {
-                    memory.AllocateOfChunk("From", 12);
-                    memory.AllocateOfChunk("To", 12);
-                    memory.AllocateOfChunk("Distance", 4);
-                    memory.AllocateOfChunk("IntersectionPoint", 12);
-                    
-                    memory.Write("From", from);
-                    memory.Write("To", to);
-                    memory.Write("Distance", distance);
-                    
-                    try
-                    {
-                        executor.Clear();
-                        executor.AddLine("push 0");
-                        executor.AddLine("push {0}", (uint)flags);
-                        executor.AddLine("push {0}", memory["Distance"]);
-                        executor.AddLine("push {0}", memory["IntersectionPoint"]);
-                        executor.AddLine("push {0}", memory["To"]);
-                        executor.AddLine("push {0}", memory["From"]);
-                        executor.AddLine("call {0}", Styx.Offsets.GlobalOffsets.CGWorldFrame_Intersect);
-                        executor.AddLine("add esp, 0x18");
-                        executor.AddLine("retn");
-                        executor.Execute();
-                        
-                        using (StyxWoW.Memory.TemporaryCacheState(false))
-                        {
-                            hitPoint = memory.Read<WoWPoint>("IntersectionPoint");
-                            byte result = executor.Memory.Read<byte>(executor.ReturnPointer);
-                            return result != 0;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Styx.Helpers.Logging.WriteDebug("Exception in TraceLine: {0}", ex.Message);
-                        return true; // Assume hit on error
-                    }
-                }
-            }
+            return WorldQueryObservation.TraceLine(from, to, distance, flags, out hitPoint);
         }
 
         /// <summary>
@@ -243,86 +197,7 @@ namespace Styx.WoWInternals.World
 
         public static unsafe void MassTraceLine(WorldLine[] lines, CGWorldFrameHitFlags[] flags, out bool[] hitResults, out WoWPoint[] hitPoints)
         {
-            if (flags.Length != lines.Length)
-                throw new ArgumentException("flags.Length is not the same as lines.Length!");
-
-            GreenMagic.ExecutorRand? executor = ObjectManager.Executor;
-            if (executor == null)
-            {
-                // Fallback: managed loop if no executor available
-                TraceLineHitFlags[] mappedFallback = new TraceLineHitFlags[flags.Length];
-                for (int i = 0; i < flags.Length; i++)
-                    mappedFallback[i] = MapFlags(flags[i]);
-
-                MassTraceLine(lines, mappedFallback, out hitResults, out hitPoints);
-                return;
-            }
-
-            lock (executor.AssemblyLock)
-            {
-                // Chaque entrée InputData = 4 (flags) + 12 (to) + 12 (from) = 28 bytes
-                using (var memory = new AllocatedMemory(lines.Length + (lines.Length * 12) + (lines.Length * 28) + 4))
-                {
-                    memory.AllocateOfChunk("HitResults", lines.Length);
-                    memory.AllocateOfChunk("HitPoints", lines.Length * 12);
-                    memory.AllocateOfChunk("InputData", lines.Length * 28);
-                    memory.AllocateOfChunk("Distance", 4);
-
-                    for (int i = 0; i < lines.Length; i++)
-                    {
-                        int offset = i * 28;
-                        memory.Write("InputData", offset, (uint)flags[i]);
-                        memory.Write("InputData", offset + 4, lines[i].End);
-                        memory.Write("InputData", offset + 16, lines[i].Start);
-                    }
-
-                    uint distanceBits = BitConverter.ToUInt32(BitConverter.GetBytes(1f), 0);
-
-                    executor.Clear();
-                    executor.AddLine("mov ebx, 0");
-                    executor.AddLine("mov esi, {0}", memory["HitPoints"]);
-                    executor.AddLine("mov edi, {0}", memory["InputData"]);
-                    executor.AddLine("@loop:");
-                    executor.AddLine("mov eax, {0}", memory["Distance"]);
-                    executor.AddLine("mov edx, {0}", distanceBits);
-                    executor.AddLine("mov [eax], edx");
-                    executor.AddLine("push 0");
-                    executor.AddLine("mov eax, edi");
-                    executor.AddLine("mov eax, [eax]");
-                    executor.AddLine("push eax");
-                    executor.AddLine("push {0}", memory["Distance"]);
-                    executor.AddLine("push esi");
-                    executor.AddLine("mov eax, edi");
-                    executor.AddLine("add eax, 4");
-                    executor.AddLine("push eax");
-                    executor.AddLine("add eax, 12");
-                    executor.AddLine("push eax");
-                    executor.AddLine("call {0}", Styx.Offsets.GlobalOffsets.CGWorldFrame_Intersect);
-                    executor.AddLine("add esp, 0x18");
-                    executor.AddLine("mov edx, {0}", memory["HitResults"]);
-                    executor.AddLine("add edx, ebx");
-                    executor.AddLine("mov [edx], al");
-                    executor.AddLine("inc ebx");
-                    executor.AddLine("add esi, 12");
-                    executor.AddLine("add edi, 28");
-                    executor.AddLine("cmp ebx, {0}", lines.Length);
-                    executor.AddLine("jl @loop");
-                    executor.AddLine("retn");
-                    executor.Execute();
-
-                    hitResults = new bool[lines.Length];
-                    fixed (bool* resultPtr = hitResults)
-                    {
-                        executor.Memory.ReadBytes(memory["HitResults"], resultPtr, lines.Length);
-                    }
-
-                    hitPoints = new WoWPoint[lines.Length];
-                    fixed (WoWPoint* pointPtr = hitPoints)
-                    {
-                        executor.Memory.ReadBytes(memory["HitPoints"], pointPtr, lines.Length * 12);
-                    }
-                }
-            }
+            WorldQueryObservation.TraceLines(lines, flags, out hitResults, out hitPoints);
         }
     }
 }

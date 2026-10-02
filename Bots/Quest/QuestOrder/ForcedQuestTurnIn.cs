@@ -16,6 +16,7 @@ using Styx.Logic.Inventory.Frames.Quest;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
 using Styx.Logic.Profiles.Quest;
+using Styx.Logic.Questing;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using System;
@@ -31,6 +32,7 @@ public class ForcedQuestTurnIn : ForcedBehavior
     private readonly Frame QuestTitleButton = new Frame("QuestTitleButton1");
     private static readonly Frame QuestFrameCompleteButton = new Frame("QuestFrameCompleteButton");
     private int completeQuestAttempts;
+    private QuestTurnInCompletion completion;
 
     // Preserve the original constructor for compiled/reflection callers.
     public ForcedQuestTurnIn(uint questId, string questName, uint npcId, string npcName, WoWPoint location)
@@ -56,7 +58,16 @@ public class ForcedQuestTurnIn : ForcedBehavior
         this.TurnInType = turnInType;
     }
 
-    public override bool IsDone => !ObjectManager.Me.QuestLog.ContainsQuest(this.QuestId);
+    public override bool IsDone
+    {
+        get
+        {
+            completion ??= QuestTurnInCompletion.Find(QuestId);
+            if (completion != null)
+                return completion.Observe() == QuestTurnInCompletionState.Confirmed;
+            return !ObjectManager.Me.QuestLog.ContainsQuest(QuestId);
+        }
+    }
 
     public uint QuestId { get; private set; }
 
@@ -81,6 +92,14 @@ public class ForcedQuestTurnIn : ForcedBehavior
         TreeRoot.GoalText = goalText;
     }
 
+    public override void Dispose()
+    {
+        // A generated profile can be replaced precisely because the quest left
+        // the log. Its submitted reward still belongs to the current session.
+        if (completion != null && !completion.WasSubmitted) completion.Cancel(this);
+        base.Dispose();
+    }
+
     private string GetGoalText()
     {
         Styx.Logic.Questing.Quest quest = Styx.Logic.Questing.Quest.FromId(this.QuestId);
@@ -92,17 +111,22 @@ public class ForcedQuestTurnIn : ForcedBehavior
     protected override Composite CreateBehavior()
     {
         // HB 4.3.4 behavior tree structure with 9 elements in the interaction sequence
-        return (Composite)new DecoratorIsNotPoiType((IEnumerable<PoiType>)new PoiType[4]
-        {
-            PoiType.Harvest,
-            PoiType.Skin,
-            PoiType.Loot,
-            PoiType.Kill
-        }, (Composite)new PrioritySelector((ContextChangeHandler)(context => (object)null), new Composite[3]
+        return new PrioritySelector(
+            new Decorator(_ =>
+            {
+                completion ??= QuestTurnInCompletion.Find(QuestId);
+                return completion != null && completion.BlocksPickup
+                    && completion.Observe() != QuestTurnInCompletionState.Confirmed;
+            }, new TreeSharp.Action(_ =>
+            {
+                completion.Observe();
+                return completion.BlocksPickup ? RunStatus.Running : RunStatus.Failure;
+            })),
+            (Composite)new Decorator(_ => QuestLootHandoff.CanRunMandatory(this) && BotPoi.Current.Type != PoiType.Kill, (Composite)new PrioritySelector((ContextChangeHandler)(context => (object)null), new Composite[3]
         {
             (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => new BotPoi(new TurnInNode(this.Location, this.NpcId, this.NpcName, this.TurnInType, this.QuestId, this.QuestName))))),
-            (Composite)new Decorator((CanRunDecoratorDelegate)(context => !(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestTurnIn.Me.Location.DistanceSqr(BotPoi.Current.Location) > 16.0 : !BotPoi.Current.AsObject.WithinInteractRange), (Composite)new ActionMoveToPoi()),
-            (Composite)new Decorator((CanRunDecoratorDelegate)(context => BotPoi.Current.AsObject != (WoWObject)null && BotPoi.Current.AsObject.WithinInteractRange), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[9]
+            (Composite)new Decorator((CanRunDecoratorDelegate)(context => !(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestTurnIn.Me.Location.DistanceSqr(BotPoi.Current.Location) > 16.0 : !GroundTransition.CanInteractWith(BotPoi.Current.AsObject)), (Composite)new ActionMoveToPoi()),
+            (Composite)new Decorator((CanRunDecoratorDelegate)(context => GroundTransition.CanInteractWith(BotPoi.Current.AsObject)), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[9]
             {
                 // 1. Stop moving
                 (Composite)new ActionMoveStop(),
@@ -142,7 +166,7 @@ public class ForcedQuestTurnIn : ForcedBehavior
                 // 9. Clear POI
                 (Composite)new ActionClearPoi("Quest Completed #2")
             }))
-        }));
+        })));
     }
 
     private bool ShouldSetPoi(object context)
@@ -193,14 +217,17 @@ public class ForcedQuestTurnIn : ForcedBehavior
             return RunStatus.Success;
         }
         WoWObject woWobject = (WoWObject)context;
-        if (!woWobject.WithinInteractRange)
+        bool Current() => BotPoi.Current.Type == PoiType.QuestTurnIn && BotPoi.Current.Entry == NpcId
+            && ReferenceEquals(BotPoi.Current.AsObject, woWobject);
+        if (!GroundTransition.CanInteractWith(woWobject, Current))
         {
-            Logging.WriteDebug("[InteractWithNpc] Not in range, returning Failure");
+            Logging.WriteDebug("[InteractWithNpc] Ground approach is no longer ready, returning Failure");
             return RunStatus.Failure;
         }
         Logging.WriteDebug("[InteractWithNpc] Interacting...");
+        if (!GroundTransition.CanInteractWith(woWobject, Current)) return RunStatus.Failure;
         InteractionCycleId++;
-        woWobject.Interact();
+        if (!GroundTransition.TryInteractWith(woWobject, Current)) return RunStatus.Failure;
         StyxWoW.Sleep(300);
         return RunStatus.Running; 
     }
@@ -268,6 +295,14 @@ public class ForcedQuestTurnIn : ForcedBehavior
 
     private RunStatus CompleteQuest(object context)
     {
+        completion ??= QuestTurnInCompletion.Find(QuestId);
+        if (completion != null && completion.WasSubmitted)
+        {
+            var state = completion.Observe();
+            if (state == QuestTurnInCompletionState.Confirmed) return RunStatus.Success;
+            if (state == QuestTurnInCompletionState.Rejected) completion = null;
+            else return RunStatus.Running;
+        }
         bool qfVisible = QuestFrame.Instance.IsVisible;
         uint shownId = QuestFrame.Instance.CurrentShownQuestId;
         Logging.WriteDebug("[CompleteQuest] QuestFrame.IsVisible: {0}, CurrentShownQuestId: {1}, Expected: {2}", 
@@ -283,6 +318,19 @@ public class ForcedQuestTurnIn : ForcedBehavior
                 return RunStatus.Failure;
             }
             Logging.WriteDebug("[CompleteQuest] CompleteQuest attempt {0}/5", this.completeQuestAttempts);
+            object profile = Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot;
+            completion = QuestTurnInCompletion.Prepare(QuestId, this);
+            if (completion == null || !completion.Submit(this)) return RunStatus.Running;
+            // Preparing history and publishing diagnostics can yield to another
+            // actor/frame. A visible foreign or unidentified dialog is not ours.
+            if (!ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot, profile) ||
+                !QuestFrame.Instance.IsVisible || QuestFrame.Instance.CurrentShownQuestId != QuestId ||
+                (completion != null && !completion.CanDispatch(this)))
+            {
+                completion?.Cancel(this);
+                completion = null;
+                return RunStatus.Failure;
+            }
             QuestFrame.Instance.CompleteQuest();
             StyxWoW.Sleep(500);
             Logging.WriteDebug("[CompleteQuest] After CompleteQuest - QuestFrame.IsVisible: {0}", QuestFrame.Instance.IsVisible);

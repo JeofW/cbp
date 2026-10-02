@@ -6,6 +6,7 @@ using Styx.Logic;
 using Styx.Logic.Combat;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
+using Styx.Logic.Profiles;
 using Styx.WoWInternals;
 using Styx.WoWInternals.World;
 using Styx.WoWInternals.WoWObjects;
@@ -28,6 +29,8 @@ public sealed class GroundLootApproach : TreeSharp.Action
     private WoWGameObject? _subject;
     private BotPoi? _poi;
     private object? _provider;
+    private object? _profile;
+    private long _poiGeneration;
     private ulong _actorGuid, _moverGuid, _guid;
     private uint _map, _entry;
     private PoiType _type;
@@ -60,12 +63,24 @@ public sealed class GroundLootApproach : TreeSharp.Action
     {
         var poi = BotPoi.Current;
         var direct = _directSubject?.Invoke();
-        if (!ReferenceEquals(poi, _poi) || _directSubject != null && !ReferenceEquals(direct, _subject))
+        var actor = ObjectManager.Me;
+        var mover = WoWMovement.ActiveMover;
+        var subject = _directSubject == null ? poi?.AsObject as WoWGameObject : direct;
+        var provider = Navigator.NavigationProvider;
+        var profile = ProfileManager.CurrentProfileSnapshot;
+        long generation = BotPoi.CurrentGeneration;
+        if (!ReferenceEquals(poi, _poi) || generation != _poiGeneration
+            || !ReferenceEquals(actor, _actor) || actor?.Guid != _actorGuid || actor?.MapId != _map
+            || !ReferenceEquals(mover, _mover) || mover?.Guid != _moverGuid
+            || !ReferenceEquals(provider, _provider) || !ReferenceEquals(profile, _profile)
+            || !ReferenceEquals(subject, _subject) || subject?.Guid != _guid || subject?.Entry != _entry
+            || subject != null && !subject.Location.Equals(_destination)
+            || poi?.Type != _type || _directSubject == null && (poi?.Guid != _guid || poi?.Entry != _entry))
         {
             ReleaseDescent();
-            _poi = poi; _actor = ObjectManager.Me; _mover = WoWMovement.ActiveMover;
-            _subject = _directSubject == null ? poi?.AsObject as WoWGameObject : direct;
-            _provider = Navigator.NavigationProvider;
+            _poi = poi; _actor = actor; _mover = mover;
+            _subject = subject;
+            _provider = provider; _profile = profile; _poiGeneration = generation;
             _actorGuid = _actor?.Guid ?? 0; _moverGuid = _mover?.Guid ?? 0;
             _guid = _directSubject == null ? poi?.Guid ?? 0 : direct?.Guid ?? 0;
             _entry = _directSubject == null ? poi?.Entry ?? 0 : direct?.Entry ?? 0;
@@ -83,6 +98,7 @@ public sealed class GroundLootApproach : TreeSharp.Action
         && _mover != null && _moverGuid == _actorGuid && _mover.IsValid && _mover.Guid == _moverGuid
         && ReferenceEquals(WoWMovement.ActiveMover, _mover) && ReferenceEquals(_mover, _actor)
         && ReferenceEquals(Navigator.NavigationProvider, _provider)
+        && ReferenceEquals(ProfileManager.CurrentProfileSnapshot, _profile) && BotPoi.CurrentGeneration == _poiGeneration
         && _poi != null && ReferenceEquals(BotPoi.Current, _poi) && _poi.Type == _type
         && (_directSubject == null ? _poi.Guid == _guid && _poi.Entry == _entry
             && (_type == PoiType.Loot || _type == PoiType.Harvest) && ReferenceEquals(_poi.AsObject, _subject)
@@ -149,7 +165,7 @@ public sealed class GroundLootApproach : TreeSharp.Action
                         return Pending("travelling", "awaiting-next-bounded-flight-request");
                     _lastMoveUtc = now;
                     _navigationResult = "Flightor-dispatched-not-arrival";
-                    Flightor.MoveTo(_destination);
+                    Flightor.MoveToGroundInteraction(_destination, Current);
                     return Current() ? Pending("travelling", "approaching-live-object-before-vertical-landing") : RunStatus.Success;
                 }
                 var from = actor.Location.Add(0, 0, 1);
@@ -181,6 +197,24 @@ public sealed class GroundLootApproach : TreeSharp.Action
             if (!Current()) return RunStatus.Success;
             if (actor.MovementInfo.IsDescending)
                 return Pending("landing", "awaiting-descent-stop-acknowledgement");
+            // A successor object starts a new travel leg. Keep mount/travel
+            // selection outside the final interaction corridor; landing and
+            // observed dismount below still own all interaction permission.
+            if (!target.WithinInteractRange && distance > Math.Max(20.0, range * 3.0))
+            {
+                if ((now - _lastMoveUtc).TotalMilliseconds < 250)
+                    return Pending("travelling", "awaiting-next-bounded-travel-request");
+                bool fly = Flightor.PreferFlightForGroundInteraction(_destination, range);
+                if (!Current()) return RunStatus.Success;
+                _lastMoveUtc = now;
+                if (fly)
+                {
+                    _navigationResult = "Flightor-dispatched-not-arrival";
+                    Flightor.MoveToGroundInteraction(_destination, Current);
+                }
+                else _navigationResult = "ground:" + Navigator.MoveTo(_destination);
+                return Current() ? Pending("travelling", fly ? "eligible-flight-cost-below-ground-route" : "ground-route-before-final-approach") : RunStatus.Success;
+            }
             if (HasMountOrFlightForm(actor))
             {
                 if ((now - _lastDismountUtc).TotalSeconds >= 2)

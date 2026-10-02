@@ -230,6 +230,12 @@ internal static class QuestLiveObjectiveRegressionTests
         IntPtr storage = Marshal.AllocHGlobal(4096);
         var objects = (Dictionary<ulong, WoWObject>)typeof(ObjectManager).GetField("_objectList", Hidden)!.GetValue(null)!;
         var saved = new Dictionary<ulong, WoWObject>(objects);
+        // This scheduler fixture controls reaction as an input and has no native
+        // executor. Use the existing explicit reaction override table, scoped
+        // and restored below; never fabricate the removed entry-only native
+        // cache or bypass the strict native reaction owner's identity checks.
+        var reactions = (Dictionary<uint, WoWUnitReaction>)typeof(WoWUnit).GetField("HardcodedReactions", Hidden)!.GetValue(null)!;
+        bool hadReaction = reactions.TryGetValue(TargetId, out var previousReaction);
         try
         {
             Marshal.Copy(new byte[4096], 0, storage, 4096);
@@ -242,7 +248,6 @@ internal static class QuestLiveObjectiveRegressionTests
             void Word(int offset, uint value) => Marshal.WriteInt32(storage, offset, unchecked((int)value));
             Word(8, address + 3072); Word(0x14, 3); Word(48, (uint)UnitGuid); Word(3072, (uint)UnitGuid); Word(3072 + 12, TargetId);
             var unit = new LoadedUnit(address);
-            var reactions = (Dictionary<uint, WoWUnitReaction>)typeof(WoWUnit).GetField("_reactionCacheByEntry", Hidden)!.GetValue(world.Player)!;
             reactions[(uint)TargetId] = WoWUnitReaction.Hostile;
             objects.Clear(); objects[UnitGuid] = unit;
             Check(world.Player.Guid == Player && world.Player.MapId == 1 && unit.Entry == TargetId && unit.Attackable && unit.CanSelect,
@@ -250,7 +255,12 @@ internal static class QuestLiveObjectiveRegressionTests
             Check(unit.MyReaction == WoWUnitReaction.Hostile && ObjectManager.Executor == null, "explicit test reaction or deny-native state missing");
             test(world, unit, Database());
         }
-        finally { objects.Clear(); foreach (var pair in saved) objects[pair.Key] = pair.Value; Marshal.FreeHGlobal(storage); }
+        finally
+        {
+            if (hadReaction) reactions[TargetId] = previousReaction; else reactions.Remove(TargetId);
+            objects.Clear(); foreach (var pair in saved) objects[pair.Key] = pair.Value;
+            Marshal.FreeHGlobal(storage);
+        }
     }
     private static void Check(bool result, string message) { if (!result) throw new Failure(message); }
 }

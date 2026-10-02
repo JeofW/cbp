@@ -21,12 +21,13 @@ internal static class FlightorDismountRegressionTests
         if(directory==null) throw new InvalidOperationException("Tracked checkout required.");
         var syntax=CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(directory.FullName,"Styx/Logic/Pathing/Flightor.cs"))).GetRoot();
         var helper=syntax.DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c=>c.Identifier.ValueText=="MountHelper");
+        var travelForm=syntax.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m=>m.Identifier.ValueText=="HasTravelFormAura");
         var members=helper.Members.Where(m=>m is MethodDeclarationSyntax method && method.Identifier.ValueText is "Dismount" or "TryDismount"
             || m is ClassDeclarationSyntax type && type.Identifier.ValueText=="DisMount").ToArray();
         if(!members.OfType<MethodDeclarationSyntax>().Any(m=>m.Identifier.ValueText=="Dismount")
             || members.OfType<ClassDeclarationSyntax>().Count()!=1) throw new InvalidOperationException("Both complete dismount owners required.");
         string source=Prefix+"\npublic static class MountHelper {public static bool Mounted=>World.Mounted;\n"+
-            string.Join("\n",members.Select(m=>m.ToString()))+"}\n"+Cases;
+            travelForm+"\n"+string.Join("\n",members.Select(m=>m.ToString()))+"}\n"+Cases;
         var trusted=AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string ?? throw new InvalidOperationException("Runtime references required.");
         var references=trusted.Split(Path.PathSeparator).Append(typeof(TreeSharp.Composite).Assembly.Location)
             .Distinct(StringComparer.OrdinalIgnoreCase).Select(p=>MetadataReference.CreateFromFile(p));
@@ -42,9 +43,15 @@ internal static class FlightorDismountRegressionTests
     private const string Prefix="""
 #nullable disable
 using System;using System.Collections.Generic;using System.Linq;using TreeSharp;
+public sealed class RawAura {public uint SpellId;}
 public sealed class LocalPlayer {
  public ulong Guid=123;public bool IsValid=true,IsAlive=true,IsMoving;public uint Flags;public ulong Transport;
- public bool Available=true;public string Form;public bool HasAura(string name){World.AuraRead?.Invoke();return name==Form;}
+ public bool Available=true;public string Form;
+ public IEnumerable<RawAura> GetRawAuras(){
+  World.AuraRead?.Invoke();
+  uint id=Form=="Flight Form"?33943u:Form=="Swift Flight Form"?40120u:Form=="Aquatic Form"?1066u:0u;
+  return id==0?Array.Empty<RawAura>():new[]{new RawAura{SpellId=id}};
+ }
  public bool TryGetMovementState(out uint flags,out ulong transport){flags=Flags;transport=Transport;return Available;}
 }
 public static class World {

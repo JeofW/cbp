@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><PlatformTarget>x86</PlatformTarget>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" /><Compile Include="Boundary.cs" />
+    <Compile Include="../../TreeSharp/*.cs" Link="TreeSharp/%(Filename)%(Extension)" />
+    <Compile Include="../../Styx/Logic/Combat/MountedCombatTransition.cs" Link="Actual/MountedCombatTransition.cs" />
+    <Compile Include="../../Bots/Quest/PublishedQuestRoot.cs" Link="Actual/PublishedQuestRoot.cs" />
+    <Compile Include="../../Styx/Logic/MountedTravelProgress.cs" Link="Actual/MountedTravelProgress.cs" />
+    <Compile Include="../../CommonBehaviors/Actions/ActionAlwaysSucceed.cs" Link="Actual/ActionAlwaysSucceed.cs" />
+    <Compile Include="../../CommonBehaviors/Actions/ActionClearPoi.cs" Link="Actual/ActionClearPoi.cs" />
+    <Compile Include="../../CommonBehaviors/Actions/ActionDebugString.cs" Link="Actual/ActionDebugString.cs" />
+    <Compile Include="../../CommonBehaviors/Actions/DebugStringDelegate.cs" Link="Actual/DebugStringDelegate.cs" />
+    <Compile Include="../../CommonBehaviors/Decorators/DecoratorIsPoiType.cs" Link="Actual/DecoratorIsPoiType.cs" />
+    <Compile Include="../../CommonBehaviors/Actions/OwnedTargetHandoff.cs" Link="Actual/OwnedTargetHandoff.cs" />
+    <Compile Include="../../Bots/Grind/Levelbot/Actions/Combat/ActionPull.cs" Link="Actual/ActionPull.cs" />
+    <Compile Include="../../Bots/Grind/Levelbot/Actions/Combat/ActionSetTarget.cs" Link="Actual/ActionSetTarget.cs" />
+    <Compile Include="../../Bots/Grind/Levelbot/Decorators/Combat/DecoratorNeedToFindTarget.cs" Link="Actual/DecoratorNeedToFindTarget.cs" />
+  </ItemGroup>
+  <Target Name="GenerateMountedCombatProductionExtracts" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <MountedGeneratedSource>$(IntermediateOutputPath)MountedCombatProductionExtracts.g.cs</MountedGeneratedSource>
+      <MountedExtractManifest>$(IntermediateOutputPath)mounted-combat-extract-manifest.json</MountedExtractManifest>
+    </PropertyGroup>
+    <Exec Command="python &quot;$(MSBuildProjectDirectory)/generate.py&quot; &quot;$(MSBuildProjectDirectory)/$(MountedGeneratedSource)&quot; &quot;$(MSBuildProjectDirectory)/$(MountedExtractManifest)&quot;" />
+    <ItemGroup><Compile Include="$(MountedGeneratedSource)" /></ItemGroup>
+  </Target>
+</Project>

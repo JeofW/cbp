@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../Styx/Logic/GroupObservation.cs" Link="Production/GroupObservation.cs" />
     <Compile Include="../../TreeSharp/*.cs" Link="Production/TreeSharp/%(Filename)%(Extension)" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Common.cs" Link="Production/Common.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs" Link="Production/Retribution.cs" />

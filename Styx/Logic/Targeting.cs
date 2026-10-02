@@ -455,7 +455,7 @@ namespace Styx.Logic
             {
                 MarkObservationUnavailable("Target observation did not complete: " +
                     (ObservationUnavailableException.Find(ex)?.Message ?? ex.GetBaseException().Message));
-                ObservationUnavailableException.RethrowCancellation(ex);
+                RecoveryActions.RethrowControlFlow(ex);
                 if (this.DisplayTargetingExceptions)
                 {
                     ObservationFailureDiagnostics.Report(new ObservationUnavailableException("targeting",

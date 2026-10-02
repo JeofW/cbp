@@ -23,6 +23,25 @@ namespace Styx.Logic.Questing
 		KnownComplete
 	}
 
+	/// <summary>A completed-history result carries the request epoch it can prove.</summary>
+	public sealed class CompletedQuestHistoryObservation
+	{
+		internal CompletedQuestHistoryObservation(string identity, long generation, long revision,
+			DateTime observedUtc, CompletedQuestCacheStatus status, ReadOnlyCollection<uint> questIds)
+		{
+			Identity = identity; Generation = generation; Revision = revision;
+			ObservedUtc = observedUtc; Status = status; QuestIds = questIds;
+		}
+		public string Identity { get; }
+		public long Generation { get; }
+		public long Revision { get; }
+		public DateTime ObservedUtc { get; }
+		public CompletedQuestCacheStatus Status { get; }
+		public ReadOnlyCollection<uint> QuestIds { get; }
+		public bool IsAuthoritativeAfter(long requestedGeneration) => Identity != null
+			&& Status == CompletedQuestCacheStatus.Valid && Generation >= requestedGeneration;
+	}
+
 	public readonly struct QuestCompletionSnapshot
 	{
 		public QuestCompletionSnapshot(bool isAccepted, QuestCompletionState state)
@@ -51,7 +70,61 @@ namespace Styx.Logic.Questing
 		private static DateTime _completedQuestRefreshAttemptTime = DateTime.MinValue;
 		private static CompletedQuestCacheStatus _completedQuestCacheStatus = CompletedQuestCacheStatus.Unknown;
 		private static string _completedQuestCacheIdentity;
+		private static long _completedQuestRequestedGeneration;
+		private static long _completedQuestObservedGeneration;
+		private static long _completedQuestObservationRevision;
+		private static DateTime _completedQuestObservedUtc = DateTime.MinValue;
 		private static readonly TimeSpan CompletedQuestCacheDuration = TimeSpan.FromMinutes(1);
+
+		/// <summary>
+		/// Require a query started after this call. Valid old history is not evidence
+		/// about a later reward action. This requests observation; it adds no quest ID.
+		/// </summary>
+		public long RequestCompletedQuestHistoryRefresh() =>
+			RequestCompletedQuestHistoryRefreshForIdentity(CaptureCompletedQuestCacheIdentity());
+
+		internal static long RequestCompletedQuestHistoryRefreshForIdentity(string identity)
+		{
+			lock (CompletedQuestCacheLock)
+			{
+				EnsureCompletedQuestCacheIdentity(identity);
+				_completedQuestRequestedGeneration++;
+				_completedQuestCacheTime = DateTime.MinValue;
+				_completedQuestRefreshAttemptTime = DateTime.MinValue;
+				_completedQuestCacheStatus = CompletedQuestCacheStatus.Unknown;
+				return _completedQuestRequestedGeneration;
+			}
+		}
+
+        // Revoking a submitted action also revokes negative history predating it.
+        // A new session must observe the server again; this never adds a quest ID.
+        internal static void InvalidateCompletedQuestHistory()
+        {
+            lock (CompletedQuestCacheLock)
+            {
+                _completedQuestRequestedGeneration++;
+                _completedQuestCacheTime = DateTime.MinValue;
+                _completedQuestRefreshAttemptTime = DateTime.MinValue;
+                _completedQuestCacheStatus = CompletedQuestCacheStatus.Unknown;
+            }
+        }
+
+		public CompletedQuestHistoryObservation CaptureCompletedQuestHistory()
+		{
+			lock (CompletedQuestCacheLock)
+			{
+				TryGetAuthoritativeCompletedQuests(out _);
+				return SnapshotCompletedQuestHistory();
+			}
+		}
+
+		internal static CompletedQuestHistoryObservation SnapshotCompletedQuestHistory()
+		{
+			lock (CompletedQuestCacheLock)
+				return new CompletedQuestHistoryObservation(_completedQuestCacheIdentity,
+					_completedQuestObservedGeneration, _completedQuestObservationRevision,
+					_completedQuestObservedUtc, _completedQuestCacheStatus, CreateCompletedQuestSnapshot());
+		}
 
 		/// <summary>
 		/// Reports whether the completed-quest cache is backed by a successful live refresh.
@@ -360,11 +433,19 @@ namespace Styx.Logic.Questing
 				EnsureCompletedQuestCacheIdentity(identity);
 				if (identity != null && ShouldRefreshCompletedQuestCache())
 				{
+					long requestedGeneration = _completedQuestRequestedGeneration;
 					List<uint> refreshedQuestIds = refresh();
 					string refreshedIdentity = identityProvider();
 					if (!string.Equals(identity, refreshedIdentity, StringComparison.OrdinalIgnoreCase))
 					{
 						EnsureCompletedQuestCacheIdentity(refreshedIdentity);
+						completedQuestIds = CreateCompletedQuestSnapshot();
+						return false;
+					}
+					// A reentrant invalidation can replace an outstanding refresh even
+					// without changing character/realm. Its late result has no authority.
+					if (requestedGeneration != _completedQuestRequestedGeneration)
+					{
 						completedQuestIds = CreateCompletedQuestSnapshot();
 						return false;
 					}
@@ -379,6 +460,9 @@ namespace Styx.Logic.Questing
 						_completedQuestIds.AddRange(refreshedQuestIds);
 						_completedQuestCacheTime = DateTime.Now;
 						_completedQuestCacheStatus = CompletedQuestCacheStatus.Valid;
+						_completedQuestObservedGeneration = requestedGeneration;
+						_completedQuestObservationRevision++;
+						_completedQuestObservedUtc = DateTime.UtcNow;
 					}
 				}
 
@@ -440,7 +524,7 @@ namespace Styx.Logic.Questing
 				Styx.Helpers.Logging.Write("[QuestLog] Failed to read completed quest cache from memory and Lua");
 				return null;
 			}
-			catch (Exception ex)
+			catch (Exception ex) when (ex is not OperationCanceledException && ex is not System.Threading.ThreadInterruptedException)
 			{
 				Styx.Helpers.Logging.WriteException(ex);
 				return null;
@@ -526,7 +610,7 @@ namespace Styx.Logic.Questing
 				var me = ObjectManager.Me;
 				return me == null ? null : CreateCompletedQuestCacheIdentity(me.Name, me.RealmName);
 			}
-			catch (Exception)
+			catch (Exception error) when (error is not OperationCanceledException && error is not System.Threading.ThreadInterruptedException)
 			{
 				return null;
 			}
@@ -546,6 +630,9 @@ namespace Styx.Logic.Questing
 				return;
 
 			_completedQuestCacheIdentity = identity;
+			_completedQuestRequestedGeneration++;
+			_completedQuestObservedGeneration = 0;
+			_completedQuestObservedUtc = DateTime.MinValue;
 			_completedQuestIds.Clear();
 			_completedQuestCacheTime = DateTime.MinValue;
 			_completedQuestRefreshAttemptTime = DateTime.MinValue;
@@ -586,7 +673,7 @@ namespace Styx.Logic.Questing
 						questIds.Add(questId);
 					nodeAddress = next;
 				}
-				catch (Exception)
+				catch (Exception error) when (error is not OperationCanceledException && error is not System.Threading.ThreadInterruptedException)
 				{
 					return false;
 				}

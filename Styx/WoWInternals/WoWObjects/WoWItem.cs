@@ -197,6 +197,34 @@ namespace Styx.WoWInternals.WoWObjects
 
         public uint StackCount => GetItemDescriptor<uint>(ITEM_FIELD_STACK_COUNT);
 
+        /// <summary>Observe a complete stack count without the legacy failed-read zero default.</summary>
+        public bool TryGetStackCount(out uint count)
+        {
+            const uint descriptorOffset = 8U; // Original build12340 object descriptor pointer.
+            count = 0;
+            var memory = ObjectManager.Wow;
+            uint address = BaseAddress;
+            ulong guid = Guid;
+            try
+            {
+                if (memory == null || address == 0 || guid == 0 || !IsValid) return false;
+                uint descriptor = ReadObservedUInt32(address + descriptorOffset);
+                if (descriptor == 0) return false;
+                uint observed = ReadObservedUInt32(descriptor + (OBJECT_FIELD_COUNT + ITEM_FIELD_STACK_COUNT) * 4U);
+                if (!ReferenceEquals(memory, ObjectManager.Wow) || BaseAddress != address || Guid != guid || !IsValid
+                    || ReadObservedUInt32(address + descriptorOffset) != descriptor) return false;
+                count = observed;
+                return true;
+            }
+            catch (Exception error)
+            {
+                RecoveryActions.RethrowControlFlow(error);
+                if (memory != null && memory.ProcessHandle == IntPtr.Zero)
+                    throw new InvalidProcessException("The item stack observation lost its process handle.", error);
+                return false;
+            }
+        }
+
         public uint Duration => GetItemDescriptor<uint>(ITEM_FIELD_DURATION);
 
         public uint SpellCharges => GetItemDescriptor<uint>(ITEM_FIELD_SPELL_CHARGES);

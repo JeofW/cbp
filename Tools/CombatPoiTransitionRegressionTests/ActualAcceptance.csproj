@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ActualAcceptanceProgram.cs" />
+    <Compile Include="ActualAcceptanceBoundary.cs" />
+    <Compile Include="../../Styx/Logic/POI/BotPoi.cs" Link="Production/BotPoi.cs" />
+    <Compile Include="../../Styx/Logic/POI/PoiType.cs" Link="Production/PoiType.cs" />
+    <Compile Include="../../Styx/Logic/Combat/MountedCombatTransition.cs" Link="Production/MountedCombatTransition.cs" />
+    <Compile Include="../../Styx/Logic/MountedTravelProgress.cs" Link="Production/MountedTravelProgress.cs" />
+    <Compile Include="../../Bots/Grind/Levelbot/Actions/Combat/ActionPull.cs" Link="Production/ActionPull.cs" />
+    <Compile Include="../../Bots/Grind/Levelbot/Actions/Combat/ActionSetTarget.cs" Link="Production/ActionSetTarget.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransition.cs" Link="Production/GroundTransition.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransitionContext.cs" Link="Production/GroundTransitionContext.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransitionMachine.cs" Link="Production/GroundTransitionMachine.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransitionRuntime.cs" Link="Production/GroundTransitionRuntime.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundApproachGeometry.cs" Link="Production/GroundApproachGeometry.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundApproachQueries.cs" Link="Production/GroundApproachQueries.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/MeshNavigator.RequestOwnership.cs" Link="Production/MeshNavigator.RequestOwnership.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/WoWPoint.cs" Link="Production/WoWPoint.cs" />
+    <Compile Include="../../Styx/WoWInternals/World/WorldLine.cs" Link="Production/WorldLine.cs" />
+    <Compile Include="../../Tripper/Navigation/AreaType.cs" Link="Production/AreaType.cs" />
+    <Compile Include="../../TreeSharp/Action.cs" Link="TreeSharp/Action.cs" />
+    <Compile Include="../../TreeSharp/ActionDelegate.cs" Link="TreeSharp/ActionDelegate.cs" />
+    <Compile Include="../../TreeSharp/ActionSucceedDelegate.cs" Link="TreeSharp/ActionSucceedDelegate.cs" />
+    <Compile Include="../../TreeSharp/CanRunDecoratorDelegate.cs" Link="TreeSharp/CanRunDecoratorDelegate.cs" />
+    <Compile Include="../../TreeSharp/Composite.cs" Link="TreeSharp/Composite.cs" />
+    <Compile Include="../../TreeSharp/ContextChangeHandler.cs" Link="TreeSharp/ContextChangeHandler.cs" />
+    <Compile Include="../../TreeSharp/Decorator.cs" Link="TreeSharp/Decorator.cs" />
+    <Compile Include="../../TreeSharp/GroupComposite.cs" Link="TreeSharp/GroupComposite.cs" />
+    <Compile Include="../../TreeSharp/RunStatus.cs" Link="TreeSharp/RunStatus.cs" />
+  </ItemGroup>
+  <Target Name="GenerateActualInvalidationMembers" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <ActualGeneratedSource>$(IntermediateOutputPath)ActualInvalidationMembers.g.cs</ActualGeneratedSource>
+      <ActualExtractManifest>$(IntermediateOutputPath)actual-extract-manifest.json</ActualExtractManifest>
+    </PropertyGroup>
+    <Exec Command="python &quot;$(MSBuildProjectDirectory)/generate_actual.py&quot; &quot;$(MSBuildProjectDirectory)/$(ActualGeneratedSource)&quot; &quot;$(MSBuildProjectDirectory)/$(ActualExtractManifest)&quot;" />
+    <ItemGroup><Compile Include="$(ActualGeneratedSource)" /></ItemGroup>
+  </Target>
+</Project>

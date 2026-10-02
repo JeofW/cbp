@@ -43,6 +43,7 @@ namespace Styx.Logic.Pathing
 
 		// Managed request identity fences reentrant cleanup, not native frame/session state.
 		private object _routeOwner = new object();
+		private MovementRequestObservation? _pathRequest;
 		private WoWPoint _destination;
 		private readonly List<WoWPoint> _currentPath = new List<WoWPoint>();
 
@@ -190,6 +191,7 @@ namespace Styx.Logic.Pathing
 		/// </summary>
 		private void OnPulse(object sender, EventArgs e)
 		{
+			InvalidateRouteContext();
 			var me = ObjectManager.Me;
 			if (me != null)
 				_factionAreaType = me.IsHorde ? TripperNav.AreaType.Horde : TripperNav.AreaType.Alliance;
@@ -305,10 +307,21 @@ namespace Styx.Logic.Pathing
 			return comparisonPoint.DistanceSqr(requestedDestination) > thresholdSqr;
 		}
 
-		public MoveResult MoveTo(WoWPoint destination, float precision, string destinationName)
-		{
-			_routeOwner = new object();
+        public MoveResult MoveTo(WoWPoint destination, float precision, string destinationName)
+            => MoveToOwned(destination, precision, destinationName, null, null);
+
+        internal MoveResult MoveToOwned(WoWPoint destination, float precision, string destinationName,
+            Func<bool>? admitted, System.Action<object>? registered, Func<bool>? routeLease = null)
+        {
+            if (admitted != null && !admitted()) return MoveResult.Failed;
+            InvalidateRouteContext();
+            if (admitted != null && !admitted()) return MoveResult.Failed;
+            _routeOwner = new object();
+            _routeAdmission = admitted;
+            _routeLease = routeLease;
+            registered?.Invoke(_routeOwner);
 			var request = new MovementRequestObservation(this);
+			_pathRequest = request;
 			WoWPoint origin = request.Player?.Location ?? WoWPoint.Zero;
 			if (!request.IsCurrent(this))
 				return MoveResult.Failed;
@@ -358,10 +371,12 @@ namespace Styx.Logic.Pathing
 
 		private bool TryStartLocalConnector(LocalPlayer me, WoWPoint destination)
 		{
+			var request = new MovementRequestObservation(this);
 			if (_ridingElevator || !CanUseLocalConnector(me) || !_localConnectorSearchTimer.IsFinished
 			    || _currentAvoidPath != null || !_localDetourHistory.CanAttempt(me.MapId, me.Location, DateTime.UtcNow)
 			    || HasRequiredAvoidanceRoute(destination))
 				return false;
+			if (!request.IsCurrent(this)) return false;
 			_localConnectorSearchTimer.Reset();
 			WoWPoint origin = me.Location;
 			uint mapId = me.MapId;
@@ -383,9 +398,11 @@ namespace Styx.Logic.Pathing
 				    && area != (byte)TripperNav.AreaType.Alliance && area != (byte)TripperNav.AreaType.KnownBuilding))
 					continue;
 				TripperNav.PathFindResult onward = FindPath(landing, destination);
+				if (!request.IsCurrent(this)) return false;
 				if (!LocalMeshConnector.HasUsableOnwardPath(onward, landing, destination)
 				    || !ValidateLocalConnector(me, origin, landing))
 					continue;
+				if (!request.IsCurrent(this)) return false;
 
 				_localConnectorTarget = landing;
 				_localDetourHistory.Record(mapId, origin, DateTime.UtcNow);
@@ -393,6 +410,7 @@ namespace Styx.Logic.Pathing
 				_localConnectorStartedUtc = DateTime.UtcNow;
 				Logging.WriteDiagnostic("[Nav] Following validated local detour: map={0} from={1} landing={2} destination={3}",
 					mapId, origin, landing, destination);
+				if (!request.IsCurrent(this)) return false;
 				Navigator.PlayerMover.MoveTowards(landing);
 				return true;
 			}
@@ -401,8 +419,11 @@ namespace Styx.Logic.Pathing
 
 		private MoveResult? ContinueLocalConnector(LocalPlayer me, WoWPoint destination)
 		{
+			var request = new MovementRequestObservation(this);
 			// Dynamic hazards retain priority while crossing a previously clear corridor.
-			if (HasRequiredAvoidanceRoute(destination))
+			bool avoidance = HasRequiredAvoidanceRoute(destination);
+			if (!request.IsCurrent(this)) return MoveResult.Failed;
+			if (avoidance)
 			{
 				ResetLocalConnector();
 				return null;
@@ -423,7 +444,9 @@ namespace Styx.Logic.Pathing
 				ResetLocalConnector();
 				return null;
 			}
-			if (!ValidateLocalConnector(me, me.Location, _localConnectorTarget))
+			bool valid = ValidateLocalConnector(me, me.Location, _localConnectorTarget);
+			if (!request.IsCurrent(this)) return MoveResult.Failed;
+			if (!valid)
 			{
 				ResetLocalConnector();
 				return MoveResult.Failed;
@@ -580,10 +603,12 @@ namespace Styx.Logic.Pathing
 
 			if (TryOpenClosedDoor(me))
 				return MoveResult.Moved;
+			if (!request.IsCurrent(this)) return MoveResult.Failed;
 
 			if (_localConnectorTarget != WoWPoint.Zero)
 			{
 				MoveResult? connectorResult = ContinueLocalConnector(me, destination);
+				if (!request.IsCurrent(this)) return MoveResult.Failed;
 				if (connectorResult.HasValue)
 					return connectorResult.Value;
 			}
@@ -626,18 +651,24 @@ namespace Styx.Logic.Pathing
 					_suppressDriftUntilUtc = DateTime.MinValue;
 					_liveCollisionTracker.Reset();
 					try { StuckHandler.Reset(); } catch { }
+					if (!request.IsCurrent(this)) return MoveResult.Failed;
 					ResetElevatorTransit();
 				}
 
 				// HB 6.2.3 MeshNavigator.FindPath → MeshMovePath assignment.
 				ResetTerminalRouteEvidence();
 				var pathResult = FindPath(me.Location, destination);
+				// Native queries/logging may dispatch callbacks. Do not publish a
+				// route after its POI, actor, map, profile or request was replaced.
+				if (!request.IsCurrent(this))
+					return MoveResult.Failed;
 				_lastPathStatus = pathResult.Status;
 				if (!pathResult.Succeeded || pathResult.Points == null || pathResult.Points.Length == 0)
 				{
 					Logging.Write(System.Drawing.Color.Red,
 						"Could not generate path from {0} to {1} on map {2} (status: {3})",
 						me.Location, destination, me.MapId, pathResult.Status);
+					if (!request.IsCurrent(this)) return MoveResult.Failed;
 					RecordTerminalRouteFailure(me, partial: false);
 					return MoveResult.PathGenerationFailed;
 				}
@@ -819,6 +850,7 @@ namespace Styx.Logic.Pathing
 				{
 					bool hadAvoidPath = _currentAvoidPath != null;
 					var avoidPoints = Navigator.NavAvoidWaypointProvider(_destination);
+					if (!request.IsCurrent(this)) return MoveResult.Failed;
 					if (avoidPoints != null && avoidPoints.Length > 0)
 					{
 						bool avoidEndpointChanged = _currentAvoidPath == null || _currentAvoidPath.Length == 0
@@ -852,11 +884,13 @@ namespace Styx.Logic.Pathing
 						if (hadAvoidPath)
 						{
 							var refreshedPath = Navigator.ComputeRawPath(me.Location, _destination);
+							if (!request.IsCurrent(this)) return MoveResult.Failed;
 							if (refreshedPath == null || refreshedPath.Length == 0)
 								return MoveResult.PathGenerationFailed;
 
-							OverrideCurrentPath(refreshedPath);
+							ApplyCurrentPath(refreshedPath);
 							try { StuckHandler.Reset(); } catch { }
+							if (!request.IsCurrent(this)) return MoveResult.Failed;
 						}
 					}
 				}
@@ -886,6 +920,7 @@ namespace Styx.Logic.Pathing
 
 		private MoveResult MoveAlongGroundPath(LocalPlayer me, WoWPoint clickPoint)
 		{
+			var request = new MovementRequestObservation(this);
 			bool canRecover = CanUseLocalConnector(me) && !_ridingElevator
 				&& !me.Stunned && !me.Fleeing && !me.Dazed && !me.Rooted && !me.IsCasting;
 			if (!canRecover)
@@ -894,14 +929,20 @@ namespace Styx.Logic.Pathing
 			{
 				Logging.WriteDiagnostic("[Nav] Ground movement made no progress for 3s despite repeated commands: from={0} waypoint={1} destination={2} moving={3} speed={4:F1} ctm={5}. Trying validated detour, then stuck recovery.",
 					me.Location, clickPoint, _destination, me.IsMoving, me.MovementInfo.CurrentSpeed, WoWMovement.ClickToMoveInfo.Type);
+				if (!request.IsCurrent(this)) return MoveResult.Failed;
 				Navigator.PlayerMover.MoveStop();
+				if (!request.IsCurrent(this)) return MoveResult.Failed;
 				if (TryStartLocalConnector(me, _destination))
 					return MoveResult.Moved;
+				if (!request.IsCurrent(this)) return MoveResult.Failed;
 				Logging.WriteDiagnostic("[Nav] No supported, clear local detour found; advancing stuck recovery.");
+				if (!request.IsCurrent(this)) return MoveResult.Failed;
 				StuckHandler.Unstick();
+				if (!request.IsCurrent(this)) return MoveResult.Failed;
 				_suppressDriftUntilUtc = DateTime.UtcNow + UnstickDriftGrace;
 				return MoveResult.UnstuckAttempt;
 			}
+			if (!request.IsCurrent(this)) return MoveResult.Failed;
 			Navigator.PlayerMover.MoveTowards(clickPoint);
 			return MoveResult.Moved;
 		}
@@ -910,20 +951,46 @@ namespace Styx.Logic.Pathing
 		/// <summary>
 		/// Clears all navigation state. HB 6.2.3 MeshNavigator.Clear().
 		/// </summary>
-		public override bool Clear()
+		internal void InvalidateRouteContext()
 		{
-			var owner = new object();
-			_routeOwner = owner;
+			if (_pathRequest is { } request && !request.IsCurrent(this))
+				ClearRoute(request.OwnsInput);
+		}
+
+        public override bool Clear() => ClearRoute(null);
+
+        internal bool ReleaseOwned(object expected, Func<bool> ownsInput, System.Action<object> registered)
+        {
+            if (!ReferenceEquals(_routeOwner, expected) || !ownsInput()
+                || !ReferenceEquals(_routeOwner, expected)) return false;
+            // Managed reset and handler callbacks retain the existing Clear
+            // implementation. The ground owner owns the separately fenced stop.
+            object? released = null;
+            bool cleared = ClearRoute(false, owner => { released = owner; registered(owner); }, ownsInput);
+            return cleared && ReferenceEquals(_routeOwner, released) && ownsInput();
+        }
+
+        private bool ClearRoute(bool? stopOwnedInput, System.Action<object>? registered = null, Func<bool>? admitted = null)
+        {
+            var owner = new object();
+            _routeOwner = owner;
+            _routeAdmission = null;
+            _routeLease = null;
+            registered?.Invoke(owner);
 			var mover = Navigator.PlayerMover;
 			var provider = Navigator.NavigationProvider;
 			var stuck = _stuckHandler;
-			bool stopMovement = _localConnectorTarget != WoWPoint.Zero ||
-				_elevatorTransit.SelectedTransportGuid != 0UL || _ridingElevator;
+			// Context revocation must not send connector/elevator cleanup to a
+			// replacement actor, mover or provider. Public Clear retains its
+			// existing explicit-clear semantics when no override was supplied.
+			bool stopMovement = stopOwnedInput ?? (_localConnectorTarget != WoWPoint.Zero ||
+				_elevatorTransit.SelectedTransportGuid != 0UL || _ridingElevator);
 
 			// Detach the entire managed route before either external cleanup boundary.
 			// CancelElevatorTransitMovement stops first and can reenter; split its
 			// managed reset from the single admitted stop shared with the connector.
 			_commandedProgress.Reset();
+			_pathRequest = null;
 			ResetTerminalRouteEvidence();
 			LastMoveResult = null;
 			LastMoveOrigin = WoWPoint.Zero;
@@ -957,7 +1024,7 @@ namespace Styx.Logic.Pathing
 			ExceptionDispatchInfo? failure = null;
 			// Stop before resetting the handler, so a nested Clear from that handler
 			// cannot lose the old stop obligation after seeing an already empty route.
-			if (stopMovement)
+            if (stopMovement && (admitted == null || admitted()) && ReferenceEquals(_routeOwner, owner))
 			{
 				try { mover.MoveStop(); }
 				catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
@@ -968,7 +1035,8 @@ namespace Styx.Logic.Pathing
 				ReferenceEquals(Navigator.PlayerMover, mover) && ReferenceEquals(Navigator.NavigationProvider, provider) &&
 				_currentPath.Count == 0 && _currentAvoidPath == null && _destination == WoWPoint.Zero &&
 				_localConnectorTarget == WoWPoint.Zero && !_ridingElevator && !_usingDirectSwimMovement &&
-				_elevatorTransit.SelectedTransportGuid == 0UL)
+                _elevatorTransit.SelectedTransportGuid == 0UL && (admitted == null || admitted())
+                && ReferenceEquals(_routeOwner, owner))
 			{
 				try { stuck?.Reset(); }
 				catch (Exception error) when (error is OperationCanceledException || error is ThreadInterruptedException)
@@ -1245,6 +1313,12 @@ namespace Styx.Logic.Pathing
 		public void OverrideCurrentPath(WoWPoint[] points)
 		{
 			_routeOwner = new object();
+			_pathRequest = new MovementRequestObservation(this);
+			ApplyCurrentPath(points);
+		}
+
+		private void ApplyCurrentPath(WoWPoint[] points)
+		{
 			ResetTerminalRouteEvidence();
 			_currentPath.Clear();
 			if (points != null)

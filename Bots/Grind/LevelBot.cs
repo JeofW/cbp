@@ -209,11 +209,9 @@ namespace Bots.Grind
         public static Composite CreateCombatBehavior()
         {
             return new PrioritySelector(
-                // Dismount for combat if needed
-                new Decorator(
-                    ctx => Mount.ShouldDismount(BotPoi.Current.Location),
-                    new TreeSharp.Action(ctx => Mount.Dismount("Combat"))
-                ),
+                // Committed/protective mounted work owns landing + observed
+                // dismount before any routine attack branch can execute.
+                MountedCombatTransition.CreateBehavior(),
                 new PrioritySelector(
                     // Cancel skinning if not skinning POI
                     new Decorator(
@@ -281,32 +279,55 @@ namespace Bots.Grind
             BotPoi poi = null;
             object targeting = null;
             ulong actorGuid = 0, bestGuid = 0, displayedGuid = 0, poiGuid = 0, subjectGuid = 0;
+            uint actorAddress = 0, bestAddress = 0, displayedAddress = 0, subjectAddress = 0;
             uint map = 0, entry = 0;
+            long poiGeneration = 0;
             PoiType type = PoiType.None;
-            bool ParticipantsCurrent() => actor != null && actorGuid != 0
+            bool publishingPoi = false;
+            bool ParticipantsIdentity() => actor != null && actorGuid != 0 && actorAddress != 0
                 && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
-                && actor.Guid == actorGuid && actor.MapId == map && !IsPlayerOrPetInCombat()
+                && actor.Guid == actorGuid && actor.BaseAddress == actorAddress && actor.MapId == map && !IsPlayerOrPetInCombat()
                 && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(Targeting.Instance.FirstUnit, best)
-                && (best == null || bestGuid != 0 && best.IsValid && best.IsAlive && best.Guid == bestGuid);
-            bool PoiCurrent() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, poi)
+                && (best == null || bestGuid != 0 && bestAddress != 0 && best.IsValid && best.IsAlive
+                    && best.Guid == bestGuid && best.BaseAddress == bestAddress);
+            bool PoiIdentity() => !publishingPoi && ParticipantsIdentity() && ReferenceEquals(BotPoi.Current, poi)
+                && BotPoi.CurrentGeneration == poiGeneration
                 && poi != null && poi.Type == type && poi.Guid == poiGuid && poi.Entry == entry
-                && ReferenceEquals(poi.AsObject, subject) && (subject == null || subject.Guid == subjectGuid)
-                && ParticipantsCurrent();
-            bool Current() => PoiCurrent() && ReferenceEquals(actor.CurrentTarget, displayed)
-                && actor.CurrentTargetGuid == displayedGuid && PoiCurrent();
-            void CapturePoi(BotPoi value)
+                && ReferenceEquals(poi.AsObject, subject) && (subject == null || subject.Guid == subjectGuid && subject.BaseAddress == subjectAddress)
+                && ParticipantsIdentity();
+            bool CurrentIdentity() => PoiIdentity() && ReferenceEquals(actor.CurrentTarget, displayed)
+                && actor.CurrentTargetGuid == displayedGuid && (displayed == null || displayed.BaseAddress == displayedAddress) && PoiIdentity();
+            bool Current() => CurrentIdentity();
+            bool AttackCurrent() => CurrentIdentity() && MountedCombatTransition.CanActUnmounted(CurrentIdentity);
+            void CapturePoiAtGeneration(BotPoi value, long generation)
             {
                 poi = value; type = poi?.Type ?? PoiType.None; poiGuid = poi?.Guid ?? 0; entry = poi?.Entry ?? 0;
-                subject = poi?.AsObject; subjectGuid = subject?.Guid ?? 0;
+                poiGeneration = generation;
+                subject = poi?.AsObject; subjectGuid = subject?.Guid ?? 0; subjectAddress = subject?.BaseAddress ?? 0;
+            }
+            void CapturePoi(BotPoi value) => CapturePoiAtGeneration(value, BotPoi.CurrentGeneration);
+            bool PublishPoi(BotPoi value)
+            {
+                long expectedGeneration = unchecked(BotPoi.CurrentGeneration + 1);
+                publishingPoi = true;
+                try
+                {
+                    CapturePoiAtGeneration(value, expectedGeneration);
+                    BotPoi.Current = value;
+                }
+                finally { publishingPoi = false; }
+                return ReferenceEquals(BotPoi.Current, value)
+                    && BotPoi.CurrentGeneration == expectedGeneration && CurrentIdentity();
             }
             Composite Guard(Composite child) => new RoutineAdmissionGuard(Current, child);
+            Composite AttackGuard(Composite child) => MountedCombatTransition.GuardAction(child, CurrentIdentity);
 
             return new Sequence(
                 new TreeSharp.Action(ctx =>
                 {
-                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
-                    targeting = Targeting.Instance; best = Targeting.Instance.FirstUnit; bestGuid = best?.Guid ?? 0;
-                    displayed = actor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; actorAddress = actor?.BaseAddress ?? 0; map = actor?.MapId ?? 0;
+                    targeting = Targeting.Instance; best = Targeting.Instance.FirstUnit; bestGuid = best?.Guid ?? 0; bestAddress = best?.BaseAddress ?? 0;
+                    displayed = actor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0; displayedAddress = displayed?.BaseAddress ?? 0;
                     CapturePoi(BotPoi.Current);
                     return Current() ? RunStatus.Success : RunStatus.Failure;
                 }),
@@ -322,20 +343,16 @@ namespace Bots.Grind
                                     if (!Current()) return RunStatus.Failure;
                                     var next = new BotPoi(best, PoiType.Kill);
                                     if (!Current()) return RunStatus.Failure;
-                                    // Declare only our own publication before its callbacks.
-                                    // Never reread a replacement global POI as the target.
-                                    CapturePoi(next);
-                                    BotPoi.Current = next;
-                                    if (!Current()) return RunStatus.Failure;
+                                    if (!PublishPoi(next)) return RunStatus.Failure;
                                     best.Target();
-                                    if (!PoiCurrent() || !ReferenceEquals(actor.CurrentTarget, best)
+                                    if (!PoiIdentity() || !ReferenceEquals(actor.CurrentTarget, best)
                                         || actor.CurrentTargetGuid != bestGuid)
                                         return RunStatus.Failure;
-                                    displayed = best; displayedGuid = bestGuid;
+                                    displayed = best; displayedGuid = bestGuid; displayedAddress = bestAddress;
                                     return Current() ? RunStatus.Success : RunStatus.Failure;
                                 }))),
-                        Guard(PullIsolationCoordinator.CreatePreCombatBehavior()),
-                        Guard(new Decorator(ctx => CanPull(), Guard(Routine.PullBehavior)))
+                        AttackGuard(PullIsolationCoordinator.CreatePreCombatBehavior()),
+                        AttackGuard(new Decorator(ctx => CanPull(), new RoutineAdmissionGuard(AttackCurrent, Routine.PullBehavior)))
                     )))
                 )));
         }
@@ -346,23 +363,26 @@ namespace Bots.Grind
             WoWUnit candidate = null;
             object targeting = null;
             ulong actorGuid = 0, candidateGuid = 0;
-            uint map = 0;
-            bool ActorCurrent() => actor != null && actorGuid != 0
+            uint actorAddress = 0, candidateAddress = 0, map = 0;
+            bool ActorIdentity() => actor != null && actorGuid != 0 && actorAddress != 0
                 && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
-                && actor.Guid == actorGuid && actor.MapId == map && !actor.Mounted
+                && actor.Guid == actorGuid && actor.BaseAddress == actorAddress && actor.MapId == map
                 && IsPlayerOrPetInCombat() && ReferenceEquals(StyxWoW.Me, actor)
                 && actor.Guid == actorGuid;
-            bool TargetCurrent() => ActorCurrent() && candidate != null && candidateGuid != 0
-                && candidate.IsValid && candidate.IsAlive && candidate.Guid == candidateGuid
+            bool ActorCurrent() => ActorIdentity() && MountedCombatTransition.CanActUnmounted(ActorIdentity);
+            bool TargetIdentity() => ActorIdentity() && candidate != null && candidateGuid != 0 && candidateAddress != 0
+                && candidate.IsValid && candidate.IsAlive && candidate.Guid == candidateGuid && candidate.BaseAddress == candidateAddress
                 && ReferenceEquals(Targeting.Instance, targeting)
-                && ReferenceEquals(Targeting.Instance.FirstUnit, candidate) && ActorCurrent();
+                && ReferenceEquals(Targeting.Instance.FirstUnit, candidate) && ActorIdentity();
+            bool TargetCurrent() => TargetIdentity() && MountedCombatTransition.CanActUnmounted(TargetIdentity);
             Composite ActorGuard(Composite child) => new RoutineAdmissionGuard(ActorCurrent, child);
             Composite TargetGuard(Composite child) => new RoutineAdmissionGuard(TargetCurrent, child);
+            Composite TargetAttackGuard(Composite child) => MountedCombatTransition.GuardAction(child, TargetIdentity);
 
             return new Sequence(
                 new TreeSharp.Action(ctx =>
                 {
-                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; actorAddress = actor?.BaseAddress ?? 0; map = actor?.MapId ?? 0;
                     return ActorCurrent() ? RunStatus.Success : RunStatus.Failure;
                 }),
                 ActorGuard(new PrioritySelector(
@@ -374,10 +394,10 @@ namespace Bots.Grind
                         {
                             if (!ActorCurrent()) return RunStatus.Failure;
                             targeting = Targeting.Instance;
-                            candidate = Targeting.Instance.FirstUnit; candidateGuid = candidate?.Guid ?? 0;
+                            candidate = Targeting.Instance.FirstUnit; candidateGuid = candidate?.Guid ?? 0; candidateAddress = candidate?.BaseAddress ?? 0;
                             return TargetCurrent() ? RunStatus.Success : RunStatus.Failure;
                         }),
-                        TargetGuard(new PrioritySelector(
+                        TargetAttackGuard(new PrioritySelector(
                             TargetGuard(Routine.CombatBuffBehavior),
                             TargetGuard(Routine.CombatBehavior))))),
                     // Target revocation still belongs to ongoing player/pet combat;
@@ -409,12 +429,15 @@ namespace Bots.Grind
                 && ReferenceEquals(poi.AsObject, target) && poi.Guid == targetGuid;
             if (!Current())
                 return false;
+            if (!MountedCombatTransition.CanActUnmounted(Current))
+                return false;
             bool sight = target.InLineOfSpellSight;
             if (!Current() || !sight)
                 return false;
             double distance = target.Distance, range = Targeting.PullDistance;
             return Current() && double.IsFinite(distance) && distance >= 0
-                && double.IsFinite(range) && range >= 0 && distance <= range && Current();
+                && double.IsFinite(range) && range >= 0 && distance <= range
+                && MountedCombatTransition.CanActUnmounted(Current) && Current();
         }
 
         #endregion
@@ -1246,12 +1269,16 @@ namespace Bots.Grind
                         ),
                         // Move to vendor
                         new Decorator(
-                            ctx => BotPoi.Current.Location.Distance(StyxWoW.Me.Location) > 5.0,
+                            ctx => BotPoi.Current.AsObject is { } subject
+                                ? !GroundTransition.CanInteractWith(subject)
+                                : BotPoi.Current.Location.Distance(StyxWoW.Me.Location) > 5.0,
                             new ActionMoveToPoi()
                         ),
                         // At vendor
                         new Decorator(
-                            ctx => BotPoi.Current.Location.Distance(StyxWoW.Me.Location) <= 5.0,
+                            ctx => BotPoi.Current.AsObject is { } subject
+                                ? GroundTransition.CanInteractWith(subject)
+                                : BotPoi.Current.Location.Distance(StyxWoW.Me.Location) <= 5.0,
                             new PrioritySelector(
                             // Vendor/mailbox not found
                                 new Decorator(
@@ -1275,7 +1302,21 @@ namespace Bots.Grind
                                     new Sequence(
                                         new TreeSharp.Action(ctx => Navigator.PlayerMover.MoveStop()),
                                         new TreeSharp.Action(ctx => SleepForLag()),
-                                        new TreeSharp.Action(ctx => BotPoi.Current.AsObject.Interact()),
+                                        new TreeSharp.Action(ctx =>
+                                        {
+                                            var poi = BotPoi.Current;
+                                            var type = poi.Type;
+                                            if (type is not (PoiType.Sell or PoiType.Repair or PoiType.Mail or PoiType.Buy or PoiType.Train or PoiType.Fly))
+                                                return RunStatus.Failure;
+                                            long generation = BotPoi.CurrentGeneration;
+                                            uint entry = poi.Entry;
+                                            ulong guid = poi.Guid;
+                                            var subject = poi.AsObject;
+                                            bool Current() => ReferenceEquals(BotPoi.Current, poi) && BotPoi.CurrentGeneration == generation
+                                                && poi.Type == type && poi.Entry == entry && poi.Guid == guid
+                                                && ReferenceEquals(poi.AsObject, subject);
+                                            return GroundTransition.TryInteractWith(subject, Current) ? RunStatus.Success : RunStatus.Failure;
+                                        }),
                                         new WaitContinue(5, ctx => IsVendorFrameOpen(),
                                             new PrioritySelector(
                                                 new DecoratorFrameIsVisible<GossipFrame>(new Sequence(

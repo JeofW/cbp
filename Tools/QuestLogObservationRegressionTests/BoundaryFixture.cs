@@ -76,7 +76,7 @@ namespace Styx.WoWInternals
  public static class ObjectManager
  {public static LocalPlayer? Me;public static GreenMagic.Memory? Wow;public static GreenMagic.ExecutorRand? Executor;public static bool IsInGame=true;}
  public sealed class LuaEventWait(string name):IDisposable {public bool Wait(int ms)=>false;public void Dispose() { }}
- public static class Lua {public static void DoString(string _) { }public static List<string> GetReturnValues(string _,string name)=>new(){""};}
+ public static class Lua {public static Exception? Failure;public static void DoString(string _) { if(Failure!=null)throw Failure; }public static List<string> GetReturnValues(string _,string name)=>new(){""};}
 }
 namespace Styx.WoWInternals.WoWObjects
 {
@@ -147,3 +147,6 @@ namespace WholesomeAQ
  public partial class WholesomeAutoQuest
  {public Settings _settings=new();public Loader _dataLoader=new();public Scheduler? _scheduler=new();private bool _lastFrameVisible;private void Log(string _){}public void RunSale()=>SellByQuality();}
 }
+
+// Completion ownership is exercised by the host integration suite.
+namespace Styx.Logic.Questing { public static class QuestTurnInCompletion { public static void ObservePending(QuestLogSnapshot snapshot) { } } }

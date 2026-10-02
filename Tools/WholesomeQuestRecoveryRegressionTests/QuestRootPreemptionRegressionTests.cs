@@ -11,6 +11,7 @@ using Bots.Quest;
 using Bots.Quest.Actions;
 using Bots.Quest.QuestOrder;
 using Styx;
+using Styx.Logic.BehaviorTree;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
 using Styx.Logic.Profiles;
@@ -39,6 +40,7 @@ internal static class QuestRootPreemptionRegressionTests
             throw new PlatformNotSupportedException("Quest-root preemption tests require Windows x86.");
         var cases = new List<(string Name, Action Test)>
         {
+            ("controlled root session exposes a live run identity without worker loop", () => With(c => c.AssertSession())),
             ("unchanged running root retains one nested lifetime", () => With(c =>
             {
                 c.StartQuest(); c.Step(); c.Step();
@@ -55,6 +57,12 @@ internal static class QuestRootPreemptionRegressionTests
                 c.StartQuest(); c.EnableCombat(); c.Step();
                 Check(c.Behavior.Body.Effects == 2 && c.Behavior.Body.Cleanups == 0 && c.Combat.Effects == 0,
                     "combat preemption stopped healthy mounted travel before its escape policy ran");
+            })),
+            ("mounted committed Kill preempts a running quest before combat transition", () => With(c =>
+            {
+                c.SetMounted(true); BotPoi.Current = new BotPoi(new WoWPoint(210, 20, 30), PoiType.QuestTurnIn);
+                c.StartQuest(); BotPoi.Current = new BotPoi(new WoWPoint(25, 20, 30), PoiType.Kill); c.Combat.Status = RunStatus.Success;
+                c.ExpectSupport(c.Combat);
             })),
             ("forced dismount immediately restores protective ground combat", () => With(c =>
             {
@@ -251,6 +259,51 @@ internal static class QuestRootPreemptionRegressionTests
         public override bool SuppressServiceBehavior { get { var callback = OnExclusive; OnExclusive = null; callback?.Invoke(); return Exclusive; } }
         protected override Composite CreateBehavior() => Body;
     }
+    private sealed class ControlledTreeSession : IDisposable
+    {
+        private const BindingFlags Hidden = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+        private readonly FieldInfo workerField = typeof(TreeRoot).GetField("_workerThread", Hidden)!;
+        private readonly PropertyInfo stateProperty = typeof(TreeRoot).GetProperty("State", Hidden)!;
+        private readonly FieldInfo currentBotField = typeof(BotManager).GetField("_current", Hidden)!;
+        private readonly object? previousWorker;
+        private readonly TreeRootState previousState;
+        private readonly object? previousBot;
+        private readonly Thread owner = Thread.CurrentThread;
+        private bool installed;
+
+        internal ControlledTreeSession(BotBase bot)
+        {
+            previousWorker = workerField.GetValue(null);
+            previousState = TreeRoot.State;
+            previousBot = currentBotField.GetValue(null);
+            if (TreeRoot.IsRunning || previousWorker is Thread { IsAlive: true })
+                throw new InvalidOperationException("A TreeRoot worker is already active; root-preemption fixture refuses to attach.");
+
+            currentBotField.SetValue(null, bot);
+            workerField.SetValue(null, owner);
+            stateProperty.SetValue(null, TreeRootState.Running);
+            installed = true;
+            if (!TreeRoot.IsRunning || !TreeRoot.CurrentThreadIsBotThread
+                || !ReferenceEquals(workerField.GetValue(null), owner) || !ReferenceEquals(TreeRoot.Current, bot))
+                throw new InvalidOperationException("Controlled TreeRoot session did not publish the real running-thread identity.");
+        }
+
+        internal bool Current => installed && TreeRoot.IsRunning && TreeRoot.CurrentThreadIsBotThread
+            && ReferenceEquals(workerField.GetValue(null), owner);
+
+        public void Dispose()
+        {
+            if (!installed) return;
+            installed = false;
+            // Restore lifecycle state directly; do not call TreeRoot.Stop/Start or
+            // execute WorkerThread. This fixture owns no real bot/game loop.
+            stateProperty.SetValue(null, TreeRootState.Stopped);
+            workerField.SetValue(null, previousWorker);
+            currentBotField.SetValue(null, previousBot);
+            stateProperty.SetValue(null, previousState);
+            try { Thread.Sleep(0); } catch (ThreadInterruptedException) { }
+        }
+    }
     private sealed class Case : IDisposable
     {
         private readonly object fixture;
@@ -271,6 +324,7 @@ internal static class QuestRootPreemptionRegressionTests
         internal readonly object Context = new();
         internal ObservedBehavior Behavior = null!;
         internal readonly string Output;
+        private ControlledTreeSession? treeSession;
         internal LocalPlayer Player => (LocalPlayer)Get(fixture, "Player")!;
         private uint Descriptor => (uint)Get(fixture, "descriptor")!;
         internal Case()
@@ -302,6 +356,7 @@ internal static class QuestRootPreemptionRegressionTests
                 Scheduler = (QuestScheduler)Call(fixture, "Scheduler", Output)!;
                 Bot = NewBot(Scheduler); Gate = (RefreshGate)Get(Bot, "_refreshGate")!; Gate.Start(); Rescan(); AssertPublished();
                 sharedRoot.SetValue(null, null); Root = (GroupComposite)Bot.Root; Configure(Root); InstallBehavior();
+                treeSession = new ControlledTreeSession(Bot);
             }
             catch { Dispose(); throw; }
         }
@@ -326,6 +381,8 @@ internal static class QuestRootPreemptionRegressionTests
             try { Call(bot, "DoScan", Scheduler, lease); } finally { gate.Complete(lease); }
         }
         internal RunStatus Step() { if (Root.LastStatus != RunStatus.Running) Root.Start(Context); return Root.Tick(Context); }
+        internal void AssertSession() => Check(treeSession?.Current == true && ReferenceEquals(TreeRoot.Current, Bot),
+            "root-preemption fixture lacks a current production TreeRoot run identity");
         internal void StartQuest() => Check(Step() == RunStatus.Running && Behavior.Body.Effects == 1 && Behavior.Body.Cleanups == 0, "real root did not start quest control");
         internal void EnableCombat() { SetCombat(true); Check(Player.Combat, "actual combat descriptor did not change"); Combat.Status = RunStatus.Success; }
         internal void EnableService() { BotPoi.Current = new BotPoi(new WoWPoint(10, 10, 10), PoiType.Sell); Service.Status = RunStatus.Success; }
@@ -357,17 +414,36 @@ internal static class QuestRootPreemptionRegressionTests
         {
             Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
             Write(Descriptor + Convert.ToUInt32(Enum.Parse(fields, "MountDisplayId")) * 4, mounted ? 123U : 0U);
+            // Mounted-combat escape now requires a complete original-client
+            // movement observation. This fixture supplies known ground movement
+            // (no flying/falling flags, no transport) instead of relying on the
+            // old default-zero fallback from a missing movement pointer.
+            uint movement = Player.BaseAddress + 52000;
+            Write(Player.BaseAddress + 216, movement);
+            Write(movement + 68, 0);
+            Write64(movement + 8, 0);
             Check(Player.Mounted == mounted, "controlled mount descriptor did not change");
+            Check(Player.TryGetMovementState(out uint flags, out ulong transport) && flags == 0 && transport == 0,
+                "controlled mounted root lacks complete ground movement observation");
         }
         private void Write(uint address, uint value)
         {
             var cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)Get(fixture, "cache")!; var pointer = new IntPtr(unchecked((int)address));
             cache.Value!.Remove(pointer); Marshal.WriteInt32(pointer, unchecked((int)value));
         }
+        private void Write64(uint address, ulong value)
+        {
+            var cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)Get(fixture, "cache")!; var pointer = new IntPtr(unchecked((int)address));
+            cache.Value!.Remove(pointer); Marshal.WriteInt64(pointer, unchecked((long)value));
+        }
         public void Dispose()
         {
             try { Root?.Stop(Context); Behavior?.Branch.Stop(Context); }
-            finally { Styx.Helpers.Logging.OnLogMessage -= diagnosticListener; Gate?.Stop(); Order.Nodes = previousNodes; Order.CurrentBehavior = previousBehavior; sharedRoot.SetValue(null, previousRoot); BotPoi.Current = previousPoi; ((IDisposable)fixture).Dispose(); }
+            finally
+            {
+                try { treeSession?.Dispose(); }
+                finally { Styx.Helpers.Logging.OnLogMessage -= diagnosticListener; Gate?.Stop(); Order.Nodes = previousNodes; Order.CurrentBehavior = previousBehavior; sharedRoot.SetValue(null, previousRoot); BotPoi.Current = previousPoi; ((IDisposable)fixture).Dispose(); }
+            }
         }
     }
     private static IEnumerable<Composite> All(Composite root)

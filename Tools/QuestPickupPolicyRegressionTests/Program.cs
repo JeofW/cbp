@@ -340,22 +340,23 @@ static void TestOutcomeIsTaggedAndConsumedOnceByItsProducingInteraction()
     var record = typeof(ForcedQuestPickUp).GetMethod(
         "RecordPickupDecision",
         System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-    Assert(interact != null && record != null,
+    var begin = typeof(ForcedQuestPickUp).GetMethod(
+        "BeginInteractionCycle", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+    Assert(interact != null && record != null && begin != null,
         "the real interaction path must own explicit cycle-start and result-publication boundaries");
+
+    Assert(interact!.Invoke(pickup, new object?[] { null }) is TreeSharp.RunStatus.Failure
+           && pickup.InteractionCycleId == 0 && !pickup.TryConsumeOutcome(out _),
+        "a missing giver must not create a fictitious interaction cycle or outcome");
 
     for (long expectedCycle = 1; expectedCycle <= 3; expectedCycle++)
     {
-        try
-        {
-            interact!.Invoke(pickup, new object?[] { null });
-            throw new InvalidOperationException("the null-giver fixture must stop after the real cycle start");
-        }
-        catch (System.Reflection.TargetInvocationException ex) when (ex.InnerException is NullReferenceException)
-        {
-        }
+        // Exercise the actual cycle owner directly, without relying on an old
+        // null-reference crash to simulate an admitted native interaction.
+        begin!.Invoke(pickup, null);
         Assert(pickup.InteractionCycleId == expectedCycle
                && !pickup.TryConsumeOutcome(out _),
-            "the real giver interaction must clear prior output before the following 1.5-second dialog wait");
+            "the real cycle owner must clear prior output before subsequent dialog observation");
         record!.Invoke(pickup, new object[] { Decide(shown: 867, accept: true) });
         Assert(pickup.TryConsumeOutcome(out var result)
                && result.InteractionCycleId == expectedCycle

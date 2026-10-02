@@ -32,15 +32,15 @@ namespace Singular.ClassSpecific.Paladin
                 //Spell.WaitForCast(),
                 // Lay on Hands: emergency heal, gives Forbearance — only use if no Forbearance active
                 Spell.Cast("Lay on Hands", ret => StyxWoW.Me,
-                           ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth &&
-                                  !StyxWoW.Me.HasAura("Forbearance")),
+                           ret => CanUseRetributionEmergencyDefense(true) &&
+                                  StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth),
                 Common.CreatePaladinDispelBehavior(),
                 // Holy Light: primary heal (big, slow) — uses HolyLightHealth threshold
                 Spell.Heal("Holy Light", ret => StyxWoW.Me,
-                           ret => StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.HolyLightHealth)),
+                           ret => CanRecover() && StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.HolyLightHealth)),
                 // Flash of Light: fast cheap fallback — uses FlashOfLightHealth threshold
                 Spell.Heal("Flash of Light", ret => StyxWoW.Me,
-                           ret => StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.FlashOfLightHealth)));
+                           ret => CanRecover() && StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.FlashOfLightHealth)));
         }
 
         [Class(WoWClass.Paladin)]
@@ -50,7 +50,7 @@ namespace Singular.ClassSpecific.Paladin
         public static Composite CreateRetributionPaladinRest()
         {
             return new PrioritySelector( // use ooc heals if we have mana to
-                new Decorator(ret => !StyxWoW.Me.HasAura("Drink") && !StyxWoW.Me.HasAura("Food"),
+                new Decorator(ret => CanRecover(),
                     CreateRetributionPaladinHeal()),
                 // Rest up damnit! Do this first, so we make sure we're fully rested.
                 Rest.CreateDefaultRestBehaviour(),
@@ -113,14 +113,13 @@ namespace Singular.ClassSpecific.Paladin
                                                           WoWSpellMechanic.Slowed,
                                                           WoWSpellMechanic.Snared)),
 
-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
-                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
+                    CreateRetributionEmergencyDefenses(),
 
                     CreateRetributionSealBehavior(),
                     CreateManaRecoveryBehavior(),
 
                     //7	Blow buffs seperatly.  No reason for stacking while grinding.
-                    Spell.BuffSelf("Avenging Wrath", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 3),
+                    CreateSupportedSelfBuff("Avenging Wrath", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 3),
                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
@@ -174,14 +173,13 @@ namespace Singular.ClassSpecific.Paladin
                                                           WoWSpellMechanic.Slowed,
                                                           WoWSpellMechanic.Snared)),
 
-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
-                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
+                    CreateRetributionEmergencyDefenses(),
 
                     //  Buffs
                     CreateRetributionSealBehavior(),
                     CreateManaRecoveryBehavior(),
 
-                    Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8),
+                    CreateSupportedSelfBuff("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8),
                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
@@ -230,13 +228,12 @@ namespace Singular.ClassSpecific.Paladin
                                                                WoWSpellMechanic.Slowed,
                                                                WoWSpellMechanic.Snared)),
 
-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
-                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
+                    CreateRetributionEmergencyDefenses(),
 
                     CreateRetributionSealBehavior(),
                     CreateManaRecoveryBehavior(),
 
-                    Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.IsBoss()),
+                    CreateSupportedSelfBuff("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.IsBoss()),
                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
@@ -299,10 +296,13 @@ namespace Singular.ClassSpecific.Paladin
         private static Composite CreateTacticsBehavior(bool self, Func<string> choose, params string[] spells)
         {
             return new PrioritySelector(_ => new TacticsChoice(choose),
-                spells.Select(name => Spell.Cast(name,
-                    context => context is TacticsChoice choice && choice.IsCurrent(name, choose)
-                        ? (self ? StyxWoW.Me : StyxWoW.Me.CurrentTarget) : null,
-                    _ => true)).ToArray());
+                spells.Select(name => self
+                    ? Spell.Buff(name, false,
+                        context => context is TacticsChoice choice && choice.IsCurrent(name, choose) ? StyxWoW.Me : null,
+                        context => context is TacticsChoice choice && choice.IsCurrent(name, choose), new string[0])
+                    : Spell.Cast(name,
+                        context => context is TacticsChoice choice && choice.IsCurrent(name, choose) ? StyxWoW.Me.CurrentTarget : null,
+                        _ => true)).ToArray());
         }
 
         internal static Composite CreateRetributionSealBehavior() =>
@@ -314,7 +314,8 @@ namespace Singular.ClassSpecific.Paladin
         {
             var me = StyxWoW.Me;
             if (me == null || !me.IsValid || !me.IsAlive || me.Mounted || me.IsOnTransport
-                || me.IsCasting || me.IsChanneling || me.HasAura("Food") || me.HasAura("Drink"))
+                || me.IsCasting || me.IsChanneling
+                || !Styx.Logic.Common.Rest.TryObserveActivity(me, out bool food, out bool drink) || food || drink)
                 return null;
 
             string wanted;
@@ -347,7 +348,7 @@ namespace Singular.ClassSpecific.Paladin
                         return null;
                     // Observe the actual seal as the hysteresis state: no
                     // unowned timer and no reapplication near the entry edge.
-                    if (me.HasAura("Seal of Light") && health < settings.SoloSealOfLightRecoveryHealth)
+                    if (Common.HasSupportedAura(me, "Seal of Light") && health < settings.SoloSealOfLightRecoveryHealth)
                         return null;
                     double mana = me.ManaPercent;
                     if (health <= settings.SoloSealOfLightHealth && target.IsWithinMeleeRange
@@ -360,20 +361,20 @@ namespace Singular.ClassSpecific.Paladin
                 // automatic cleave/DoT seals out when Righteousness is learned;
                 // explicit Command remains available for a deliberate assignment.
                 if (target != null && target.IsPlayer && SpellManager.HasSpell("Seal of Righteousness"))
-                    return me.HasAura("Seal of Righteousness") ? null : "Seal of Righteousness";
+                    return Common.HasSupportedAura(me, "Seal of Righteousness") ? null : "Seal of Righteousness";
                 string stacking = SpellManager.HasSpell("Seal of Corruption") ? "Seal of Corruption"
                     : SpellManager.HasSpell("Seal of Vengeance") ? "Seal of Vengeance" : null;
                 bool safeCleave = target == null || Unit.IsAreaEffectSafe("Divine Storm", target);
                 int nearby = Unit.NearbyUnfriendlyUnits.Count(u => u.IsValid && u.IsAlive && u.Distance <= 8);
                 bool boss = target != null && target.IsBoss();
                 bool command = SpellManager.HasSpell("Seal of Command") && safeCleave
-                    && ((!boss && (nearby >= 3 || nearby >= 2 && me.HasAura("Seal of Command"))) || stacking == null);
+                    && ((!boss && (nearby >= 3 || nearby >= 2 && Common.HasSupportedAura(me, "Seal of Command"))) || stacking == null);
                 wanted = command ? "Seal of Command" : stacking
                     ?? (SpellManager.HasSpell("Seal of Righteousness") ? "Seal of Righteousness" : null);
                 // Damage seals stay preferred in groups; mana is recovered with
                 // judgements/Plea, not an automatic DPS-to-Wisdom seal swap.
             }
-            return wanted != null && !me.HasAura(wanted) ? wanted : null;
+            return wanted != null && !Common.HasSupportedAura(me, wanted) ? wanted : null;
         }
 
         private static Composite CreateRetributionJudgementBehavior() =>
@@ -386,17 +387,17 @@ namespace Singular.ClassSpecific.Paladin
             var target = me?.CurrentTarget;
             if (me == null || target == null || !me.IsValid || !me.IsAlive || !target.IsValid || !target.IsAlive)
                 return null;
-            if ((target.Fleeing || target.IsPlayer && (target.IsMoving || target.HasAura("Horde Flag") || target.HasAura("Alliance Flag")))
+            if ((target.Fleeing || target.IsPlayer && (target.IsMoving || Common.HasSupportedAura(target, "Horde Flag") || Common.HasSupportedAura(target, "Alliance Flag")))
                 && SpellManager.HasSpell("Judgement of Justice"))
                 return "Judgement of Justice";
 
             bool grouped = me.IsInParty || me.IsInRaid;
             // Auras belong to their caster. Our own Wisdom is not a partner's
             // coverage, and expired/unknown-owner observations cannot cover it.
-            var auras = target.GetAllAuras().ToArray();
-            bool externalWisdom = auras.Any(a => a != null && a.Name == "Judgement of Wisdom"
+            var auras = target.GetRawAuras().ToArray();
+            bool externalWisdom = auras.Any(a => a != null && Common.SupportedAuraName(a) == "Judgement of Wisdom"
                 && a.IsActive && a.TimeLeft > TimeSpan.FromSeconds(2) && a.CreatorGuid != 0 && a.CreatorGuid != me.Guid);
-            bool externalLight = auras.Any(a => a != null && a.Name == "Judgement of Light"
+            bool externalLight = auras.Any(a => a != null && Common.SupportedAuraName(a) == "Judgement of Light"
                 && a.IsActive && a.TimeLeft > TimeSpan.FromSeconds(2) && a.CreatorGuid != 0 && a.CreatorGuid != me.Guid);
             bool preferLight = grouped ? externalWisdom && !externalLight : me.HealthPercent < 70 && me.ManaPercent >= 40;
             string preferred = preferLight ? "Judgement of Light" : "Judgement of Wisdom";
@@ -405,12 +406,17 @@ namespace Singular.ClassSpecific.Paladin
                 : SpellManager.HasSpell(fallback) ? fallback : null;
         }
 
+        private static Composite CreateSupportedSelfBuff(string name, Func<object, bool> requirements) =>
+            Spell.Buff(name, false, _ => StyxWoW.Me,
+                ret => CanRecover() && requirements(ret) && !Common.HasSupportedAura(StyxWoW.Me, name),
+                new string[0]);
+
         private static Composite CreateManaRecoveryBehavior() => new PrioritySelector(
             // Talented damaging judgements also restore mana. Keep the cheap
             // judgement available before spending the last mana on melee strikes.
             new Decorator(_ => StyxWoW.Me != null && StyxWoW.Me.ManaPercent <= 15,
                 CreateRetributionJudgementBehavior()),
-            Spell.BuffSelf("Divine Plea", _ => StyxWoW.Me != null
+            CreateSupportedSelfBuff("Divine Plea", _ => StyxWoW.Me != null
                 && StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana
                 && StyxWoW.Me.HealthPercent > 70));
 
@@ -458,6 +464,32 @@ namespace Singular.ClassSpecific.Paladin
                     && u.Distance <= 10 && u.IsUndeadOrDemon());
         }
 
+        private static bool CanRecover()
+        {
+            var me = StyxWoW.Me;
+            return me != null && me.IsValid && me.IsAlive && !me.IsGhost
+                && !me.Mounted && !me.IsOnTransport && !me.IsCasting && !me.IsChanneling
+                && double.IsFinite(me.HealthPercent) && me.HealthPercent >= 0 && me.HealthPercent <= 100
+                && Styx.Logic.Common.Rest.TryObserveActivity(me, out bool food, out bool drink) && !food && !drink;
+        }
+
+        private static bool CanUseRetributionEmergencyDefense(bool layOnHands) =>
+            CanRecover() && !StyxWoW.Me.GetRawAuras().Any(a => a != null && a.IsActive
+                // Pinned TC335 immunity and self-LoH checks. These are explicit
+                // restriction IDs, not a generic interpretation of missing rows.
+                && (a.SpellId == 25771 || a.SpellId == 61987 || layOnHands && a.SpellId == 61988));
+
+        private static Composite CreateRetributionEmergencyDefenses() => new PrioritySelector(
+            Spell.Buff("Divine Shield", false, _ => StyxWoW.Me,
+                _ => CanUseRetributionEmergencyDefense(false) && StyxWoW.Me.HealthPercent <= 20
+                    && !Common.HasSupportedAura(StyxWoW.Me, "Divine Shield")
+                    && !Common.HasSupportedAura(StyxWoW.Me, "Horde Flag")
+                    && !Common.HasSupportedAura(StyxWoW.Me, "Alliance Flag"), new string[0]),
+            Spell.Buff("Divine Protection", false, _ => StyxWoW.Me,
+                _ => CanUseRetributionEmergencyDefense(false)
+                    && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet
+                    && !Common.HasSupportedAura(StyxWoW.Me, "Divine Protection"), new string[0]));
+
         private static int GetRetributionHealThreshold(int configured)
         {
             var me = StyxWoW.Me;
@@ -492,7 +524,7 @@ namespace Singular.ClassSpecific.Paladin
                     return false;
                 // Original rank-one proc 53489 removes 750 ms. Only rank-two
                 // 59578 removes 100%; the shared name cannot promise an instant.
-                var auras = player.ActiveAuras.Values;
+                var auras = player.GetRawAuras().Where(a => a != null && !a.IsPassive && a.TimeLeft > TimeSpan.Zero);
                 bool proc = auras.Any(aura => aura != null && aura.IsActive && aura.SpellId == 59578);
                 bool reducedCast = auras.Any(aura => aura != null && aura.IsActive && aura.SpellId == 53489);
                 return proc == requireProc

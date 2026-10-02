@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup><PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" /></ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../CommonBehaviors/Actions/ActionMoveToPoi.cs" Link="Production/ActionMoveToPoi.cs" />
+    <Compile Include="../../CommonBehaviors/Actions/NavigationAction.cs" Link="Production/NavigationAction.cs" />
+    <Compile Include="../../CommonBehaviors/Actions/GetPointDelegate.cs" Link="Production/GetPointDelegate.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransition.cs" Link="Production/GroundTransition.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransitionContext.cs" Link="Production/GroundTransitionContext.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransitionMachine.cs" Link="Production/GroundTransitionMachine.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundTransitionRuntime.cs" Link="Production/GroundTransitionRuntime.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundApproachGeometry.cs" Link="Production/GroundApproachGeometry.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundApproachQueries.cs" Link="Production/GroundApproachQueries.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/WoWPoint.cs" Link="Production/WoWPoint.cs" />
+    <Compile Include="../../Styx/WoWInternals/World/WorldLine.cs" Link="Production/WorldLine.cs" />
+    <Compile Include="../../Tripper/Navigation/AreaType.cs" Link="Production/AreaType.cs" />
+    <Compile Include="../../TreeSharp/Action.cs" Link="Production/Action.cs" />
+    <Compile Include="../../TreeSharp/Composite.cs" Link="Production/Composite.cs" />
+    <Compile Include="../../TreeSharp/ActionDelegate.cs" Link="Production/ActionDelegate.cs" />
+    <Compile Include="../../TreeSharp/ActionSucceedDelegate.cs" Link="Production/ActionSucceedDelegate.cs" />
+    <Compile Include="../../TreeSharp/ContextChangeHandler.cs" Link="Production/ContextChangeHandler.cs" />
+    <Compile Include="../../TreeSharp/RunStatus.cs" Link="Production/RunStatus.cs" />
+  </ItemGroup>
+</Project>

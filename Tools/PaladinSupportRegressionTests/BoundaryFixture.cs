@@ -10,6 +10,8 @@ internal static class Fixture
     internal static readonly HashSet<string> Known = new(StringComparer.Ordinal);
     internal static readonly HashSet<string> Unavailable = new(StringComparer.Ordinal);
     internal static readonly List<(string Spell, ulong Target)> Attempts = new();
+    internal static readonly List<(string Spell, bool Aura)> RecoveryRoutes = new();
+    internal static List<string>? RosterObservation;
     internal static readonly List<Exception> Errors = new();
     internal static readonly Dictionary<string, WoWSpell> Metadata = new();
     internal static readonly List<string> LuaQueries = new();
@@ -19,8 +21,8 @@ internal static class Fixture
     internal static bool GlobalCooldown;
     internal static void Reset()
     {
-        Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear(); Metadata.Clear();
-        LuaQueries.Clear(); LuaResult = null;
+        Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear(); Metadata.Clear(); RecoveryRoutes.Clear(); RosterObservation=null;
+        LuaQueries.Clear(); LuaResult = null; Styx.WoWInternals.ObjectManager.Wow=new(); Styx.WoWInternals.ObjectManager.Resolve=null;
         DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
         GlobalCooldown = false;
         Singular.Managers.TankManager.Instance.FirstUnit = null;
@@ -29,7 +31,7 @@ internal static class Fixture
         Singular.Managers.HealerManager.NeedHealTargeting = false;
         Singular.Helpers.Group.Tanks.Clear();
         Singular.Settings.SingularSettings.Instance.EnableTaunting = false;
-        Styx.StyxWoW.Me = new LocalPlayer { Guid = 1, Class = WoWClass.Paladin, Name = "SelfPaladin" };
+        Styx.StyxWoW.Me = new LocalPlayer { Guid = 1, BaseAddress = 100, Class = WoWClass.Paladin, Name = "SelfPaladin" };
         Singular.Settings.SingularSettings.Instance.Paladin = new();
         Singular.Settings.SingularSettings.Instance.DeathKnight = new();
         Singular.Settings.SingularSettings.Instance.Rogue = new();
@@ -40,7 +42,8 @@ internal static class Fixture
     internal static WoWPlayer Add(WoWClass kind = WoWClass.Warrior, bool raid = false)
     {
         var me = Styx.StyxWoW.Me;
-        var p = new WoWPlayer { Guid = (ulong)(me.PartyMembers.Count + me.RaidMembers.Count + 10), Class = kind,
+        var p = new WoWPlayer { Guid = (ulong)(me.PartyMembers.Count + me.RaidMembers.Count + 10),
+            BaseAddress = (uint)(1000 + me.PartyMembers.Count + me.RaidMembers.Count), Class = kind,
             Name = "Member" + (me.PartyMembers.Count + me.RaidMembers.Count + 10),
             MaxMana = kind is WoWClass.Warrior or WoWClass.Rogue or WoWClass.DeathKnight ? 0 : 100 };
         if (raid) { me.IsInRaid = true; me.RaidMembers.Add(p); }
@@ -48,16 +51,17 @@ internal static class Fixture
         return p;
     }
     internal static void Aura(WoWUnit p, string name, ulong owner, int id = 1, WoWDispelType dispel = WoWDispelType.None)
-        => p.ObservedAuras.Add(new WoWAura { Name = name, CreatorGuid = owner, SpellId = id,
+        => p.ObservedAuras.Add(new WoWAura { Name = name, CreatorGuid = owner, SpellId = id == 1 ? name switch { "Blessing of Kings" => 20217, "Blessing of Might" => 19740, "Blessing of Wisdom" => 19742, "Blessing of Sanctuary" => 20911, "Greater Blessing of Kings" => 25898, "Greater Blessing of Might" => 25782, "Greater Blessing of Wisdom" => 25894, "Greater Blessing of Sanctuary" => 25899, "Battle Shout" => 2048, "Moonkin Form" => 24858, "Tree of Life" => 5420, "Devotion Aura" => 465, "Retribution Aura" => 7294, "Concentration Aura" => 19746, "Shadow Resistance Aura" => 19876, "Frost Resistance Aura" => 19888, "Fire Resistance Aura" => 19891, "Crusader Aura" => 32223, "Seal of Command" => 20375, "Seal of Corruption" => 53736, "Seal of Justice" => 20164, "Seal of Light" => 20165, "Seal of Righteousness" => 20154, "Seal of Vengeance" => 31801, "Seal of Wisdom" => 20166, "Judgement of Wisdom" => 20186, "Judgement of Light" => 20185, "Horde Flag" => 14267, "Alliance Flag" => 14268, "Divine Shield" => 642, "Divine Protection" => 498, _ => 1 } : id,
             IsHarmful = dispel != WoWDispelType.None, Spell = new WoWSpell { DispelType = dispel } });
     internal static Composite Nothing() => new TreeSharp.Action(_ => RunStatus.Failure);
-    internal static Composite Submit(string name, Func<object, WoWUnit?> select, Func<object, bool>? requires = null, bool buff = false)
+    internal static Composite Submit(string name, Func<object, WoWUnit?> select, Func<object, bool>? requires = null, bool buff = false, bool checkAura = true)
         => new TreeSharp.Action(context =>
         {
             var target = select(context);
             if (target == null || (requires != null && !requires(context)) || !SpellManager.CanCast(name, target))
                 return RunStatus.Failure;
-            if (buff && target.HasMyAura(name)) return RunStatus.Failure;
+            if (buff && checkAura && target.HasMyAura(name)) return RunStatus.Failure;
+            RecoveryRoutes.Add((name,buff));
             Attempts.Add((name, target.Guid));
             return RunStatus.Success;
         });
@@ -114,6 +118,7 @@ namespace Styx.WoWInternals.WoWObjects
         public MapState CurrentMap { get; } = new();
         public bool IsInInstance => CurrentMap.IsInstance;
         public ulong Guid { get; set; }
+        public uint BaseAddress { get; set; } = 100;
         public uint Entry { get; set; } = 1;
         public string Name { get; set; } = "";
         public bool IsValid { get; set; } = true;
@@ -162,9 +167,11 @@ namespace Styx.WoWInternals.WoWObjects
         public Dictionary<string, WoWAura> Auras => ObservedAuras.GroupBy(a => a.Name).ToDictionary(g => g.Key, g => g.Last());
         public Dictionary<string, WoWAura> ActiveAuras => Auras;
         public Dictionary<string, WoWAura> Debuffs => Auras.Where(a => a.Value.IsHarmful).ToDictionary(a => a.Key, a => a.Value);
-        public IEnumerable<WoWAura> GetAllAuras() => ObservedAuras;
+        public bool RawUnknown, MetadataUnknown;
+        public IEnumerable<WoWAura> GetRawAuras() => RawUnknown ? throw new InvalidOperationException("raw observation unavailable") : ObservedAuras;
+        public IEnumerable<WoWAura> GetAllAuras() => MetadataUnknown ? throw new InvalidOperationException("metadata unavailable") : GetRawAuras();
         public bool HasAura(string name) => ObservedAuras.Any(a => a.Name == name && a.IsActive);
-        public bool HasMyAura(string name) => ObservedAuras.Any(a => a.Name == name && a.IsActive && a.CreatorGuid == Styx.StyxWoW.Me.Guid);
+        public bool HasMyAura(string name) => ObservedAuras.Any(a => a.Name == name && a.IsActive && a.CreatorGuid == Styx.StyxWoW.Me.Guid) ? true : MetadataUnknown ? throw new InvalidOperationException("metadata unavailable") : false;
         public TimeSpan GetAuraTimeLeft(string name, bool mine) => ObservedAuras
             .FirstOrDefault(a => a.Name == name && a.IsActive && (!mine || a.CreatorGuid == Styx.StyxWoW.Me.Guid))?.TimeLeft ?? TimeSpan.Zero;
         public bool IsStunned() => StunnedObservation;
@@ -220,9 +227,17 @@ namespace Styx.WoWInternals
 {
     public static class Lua
     {
+        public static List<string> GetObservedReturnValues(string code) => GetReturnValues(code);
         public static List<string> GetReturnValues(string code)
         {
             Fixture.LuaQueries.Add(code);
+            if(code.Contains("group-v1"))
+            {
+                if(Fixture.RosterObservation!=null)return Fixture.RosterObservation;
+                var me=Styx.StyxWoW.Me;var roster=me.IsInRaid?me.RaidMembers:me.PartyMembers;
+                var members=me.IsInRaid?new[]{me}.Concat(roster.Where(p=>p.Guid!=me.Guid)).ToArray():roster.ToArray();
+                return new List<string>{"group-v1",me.IsInRaid?members.Length.ToString():"0",me.IsInParty?me.PartyMembers.Count.ToString():"0","0x"+me.Guid.ToString("X")}.Concat(members.Select(p=>"0x"+p.Guid.ToString("X"))).ToList();
+            }
             return Fixture.LuaResult?.Invoke(code) ?? new List<string>();
         }
         public static string Escape(string value) => (value ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"");
@@ -392,6 +407,9 @@ namespace Singular.Helpers
         public static Composite Buff(string name, Func<object, WoWUnit?> select, Func<object, bool> requires)
             => Fixture.Submit(name, select, context => requires(context)
                 && select(context) is WoWUnit target && !target.HasAura(name));
+        public static Composite Buff(string name, bool myBuff, Func<object, WoWUnit?> select, Func<object, bool> requires, params string[] names)
+            => Fixture.Submit(name, select, context => requires(context)
+                && select(context) is WoWUnit target && names.All(a => myBuff ? !target.HasMyAura(a) : !target.HasAura(a)), true, false);
         public static Composite Heal(string name, Func<object, WoWUnit?> select, Func<object, bool> requires) => Fixture.Submit(name, select, requires);
     }
 }
@@ -405,4 +423,26 @@ namespace Singular.ClassSpecific.Rogue
         public static Composite CreateRogueBlindOnAddBehavior() => Fixture.Nothing();
         public static WoWUnit? BestTricksTarget => null;
     }
+}
+
+namespace Styx.Logic.Common
+{
+ public static class Rest
+ {
+  public static bool TryObserveActivity(Styx.WoWInternals.WoWObjects.LocalPlayer player,out bool food,out bool drink)
+  { food=player.ObservedAuras.Any(a=>a.Name=="Food"&&a.IsActive);drink=player.ObservedAuras.Any(a=>a.Name=="Drink"&&a.IsActive);return !player.RawUnknown; }
+ }
+}
+
+namespace Styx.WoWInternals
+{
+ public sealed class GroupMemory { public GroupExecutor Executor=new(); }
+ public sealed class GroupExecutor { public uint FrameCount=1; public GroupMemory Memory => ObjectManager.Wow; }
+ public static class ObjectManager
+ {
+  public static GroupMemory Wow=new();
+  public static GroupExecutor Executor => Wow.Executor;
+  public static Func<ulong,WoWPlayer?>? Resolve;
+  public static T? GetObjectByGuid<T>(ulong guid) where T:WoWPlayer => (Resolve!=null?Resolve(guid):Styx.StyxWoW.Me.PartyMembers.Concat(Styx.StyxWoW.Me.RaidMembers).FirstOrDefault(p=>p.Guid==guid)) as T;
+ }
 }

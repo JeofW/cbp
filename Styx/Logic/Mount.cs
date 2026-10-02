@@ -20,7 +20,10 @@ namespace Styx.Logic
 		private static CanMountDelegate? _defaultCanMount;
 		private static bool _wasMounted;
 		private static LocationRetriever? _currentDestinationRetriever;
-		private static readonly MountedTravelProgress _mountedTravelProgress = new();
+			private static readonly MountedTravelProgress _mountedTravelProgress = new();
+			private const string GroundDismountReceipt = "cb-ground-dismount-submitted";
+			private const string GroundDismountPendingReceipt = "cb-ground-dismount-pending";
+			private const int GroundDismountLeaseSeconds = 12;
 
 		/// <summary>
 		/// Fired when the player mounts up (HB 4.3.4 compatibility).
@@ -77,16 +80,40 @@ namespace Styx.Logic
 			if (CanClear()) Lua.DoString("CancelShapeshiftForm()");
 		}
 
-		public static void Dismount(string reason)
-		{
-				LocalPlayer? me = Me;
-				if (me == null) return;
+        public static void Dismount(string reason)
+        {
+            // The legacy void API has no result channel. An unavailable
+            // observation must defer removal rather than tear down its caller's
+            // quest/POI. The owned internal API keeps its strict exception
+            // contract, and real cancellation/process/executor loss propagates.
+            try { TryDismountOwned(reason, () => true, null); }
+            catch (Exception error)
+            {
+                RecoveryActions.RethrowControlFlow(error);
+                if (error is not ObservationUnavailableException) throw;
+                RecoveryActions.ReportDeferral(error, "Legacy mount removal");
+            }
+        }
 
-				ulong guid = me.Guid;
-				ShapeshiftForm shapeshift = me.Shapeshift;
-				bool flight = shapeshift == ShapeshiftForm.FlightForm || shapeshift == ShapeshiftForm.EpicFlightForm;
-				bool CanDismount() => CanRemoveMount(me, guid) && me.Shapeshift == shapeshift
-					&& (me.Mounted || flight) && ReferenceEquals(Me, me) && me.Guid == guid;
+        internal static bool TryDismountOwned(string reason, Func<bool> admitted, System.Action? submitted)
+        {
+                LocalPlayer? me = Me;
+                if (me == null || !admitted()) return false;
+                Func<bool> ownerCurrent = WorldQueryObservation.CaptureLocalOwner(me);
+
+					ulong guid = me.Guid;
+					var initialState = WorldQueryObservation.ReadGroundUnitState(me);
+					uint mountDisplayId = initialState.MountDisplayId;
+					ShapeshiftForm shapeshift = initialState.Form;
+					bool flight = shapeshift == ShapeshiftForm.FlightForm || shapeshift == ShapeshiftForm.EpicFlightForm;
+                bool CanDismount()
+                {
+                    if (!ownerCurrent() || !initialState.Mounted || !admitted() || !CanRemoveMount(me, guid, out var state)) return false;
+                    return state.Mounted && state.MountDisplayId == mountDisplayId && state.Form == shapeshift
+                        && ReferenceEquals(Me, me) && me.Guid == guid && admitted()
+                        && CanRemoveMount(me, guid, out state) && state.Mounted
+                        && state.MountDisplayId == mountDisplayId && state.Form == shapeshift && ownerCurrent();
+                }
 				if (CanDismount())
 				{
 				if (string.IsNullOrEmpty(reason))
@@ -94,32 +121,80 @@ namespace Styx.Logic
 				else
 					Logging.WriteDebug("Stop and dismount. Reason: {0}", reason);
 
-					// A caller's distance or elapsed descent wait does not prove landing.
-					// Reobserve this actor around setup before removing its mount/form.
-					if (!CanDismount()) return;
-					WoWMovement.MoveStop();
-					if (!CanDismount()) return;
+						// A caller's distance or elapsed descent wait does not prove landing.
+						// Reobserve this actor around setup before removing its mount/form.
+                    if (!CanDismount()) return false;
+                    WoWMovement.MoveStop();
+                    if (!CanDismount()) return false;
 
-					if (flight)
-				{
-					Lua.DoString("CancelShapeshiftForm()");
-				}
-				else
-				{
-					Lua.DoString("Dismount()");
+						// The complete Lua transport owns its request/output bytes, verifies
+						// the current process/executor/Lua state at native entry, propagates
+						// cancellation/fatal ownership loss, and reports pcall failure as
+						// UNKNOWN. The marker proves local submission only; observed mount
+						// removal remains the later acknowledgement.
+							string owner = GroundDismountDispatchContext.Owner ?? Guid.NewGuid().ToString("N");
+							if (!Guid.TryParseExact(owner, "N", out Guid ownerGuid) || ownerGuid == Guid.Empty)
+								throw new ObservationUnavailableException("mount-dismount", "The dismount actor/session owner is unavailable.");
+							string action = flight ? "CancelShapeshiftForm()" : "Dismount()";
+                                var receipt = Lua.GetObservedReturnValues(BuildGroundDismountLua(action, owner), CanDismount);
+                                if (!ownerCurrent()) throw new ObservationUnavailableException("mount-dismount", "The dismount result belongs to a replaced actor/session.");
+							if (receipt.Count != 1 || receipt[0] != GroundDismountReceipt && receipt[0] != GroundDismountPendingReceipt)
+								throw new ObservationUnavailableException("mount-dismount", "The original-client dismount submission receipt is unavailable.");
+
+							// The Lua envelope installs the same actor/session token immediately
+							// before the action. A post-entry UNKNOWN therefore survives target/
+							// POI churn on the client even if this reply cannot be read. Either
+							// exact receipt arms the managed pending lease; neither is effect ack.
+							submitted?.Invoke();
+
+							// Preserve the existing dispatch event; it is not server acknowledgement.
+                    if (receipt[0] == GroundDismountReceipt) RaiseOnDismount(reason);
+                    return true;
+                }
+                return false;
 				}
 
-					// Preserve the existing dispatch event; it is not server acknowledgement.
-					RaiseOnDismount(reason);
-				}
+			private static string BuildGroundDismountLua(string action, string owner)
+			{
+				return "local owner='" + owner + "'; local ttl="
+					+ GroundDismountLeaseSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture) + @";
+local now=GetTime()
+if type(now)~='number' or now~=now or now<0 or now>=math.huge or now+ttl<=now then error('ground dismount clock unavailable') end
+local lease=_G.CopilotBuddy_GroundDismountLease
+if lease~=nil then
+ if type(lease)~='table' or lease.schema~='cb-ground-dismount-v1'
+  or type(lease.owner)~='string' or not string.match(lease.owner,'^[0-9a-f]+$') or #lease.owner~=32
+  or type(lease.startedAt)~='number' or lease.startedAt~=lease.startedAt or lease.startedAt<0 or lease.startedAt>=math.huge
+  or type(lease.untilAt)~='number' or lease.untilAt~=lease.untilAt or lease.untilAt>=math.huge
+  or lease.untilAt<=lease.startedAt or lease.untilAt-lease.startedAt>ttl then
+  error('ground dismount lease unavailable or foreign')
+ end
+ if lease.owner==owner then
+  if now<lease.startedAt then error('ground dismount clock moved backward') end
+  if now<lease.untilAt then return '" + GroundDismountPendingReceipt + @"' end
+ end
+end
+_G.CopilotBuddy_GroundDismountLease={schema='cb-ground-dismount-v1',owner=owner,startedAt=now,untilAt=now+ttl}
+" + action + @"
+return '" + GroundDismountReceipt + "'";
 			}
 
-			private static bool CanRemoveMount(LocalPlayer player, ulong guid) =>
-				guid != 0 && ReferenceEquals(Me, player) && player.Guid == guid
-				&& player.IsValid && player.IsAlive
-				&& player.TryGetMovementState(out uint flags, out ulong transport)
-				&& transport == 0 && (flags & 0x02003000u) == 0
-				&& ReferenceEquals(Me, player) && player.Guid == guid && player.IsValid && player.IsAlive;
+			private static bool CanRemoveMount(LocalPlayer player, ulong guid)
+				=> CanRemoveMount(player, guid, out _);
+
+			private static bool CanRemoveMount(LocalPlayer player, ulong guid, out WorldQueryObservation.GroundUnitState state)
+			{
+				state = default;
+				if (guid == 0 || !ReferenceEquals(Me, player) || player.Guid != guid || !player.IsValid || !player.IsAlive)
+					return false;
+				if (!player.TryGetMovementState(out uint flags, out ulong transport)) return false;
+				state = WorldQueryObservation.ReadGroundUnitState(player);
+                    return state.Mounted && !state.OnTaxi && !state.Rooted && !state.Stunned
+                        && transport == 0 && (flags & 0x02003000u) == 0
+                        && player.TryGetMovementState(out uint finalFlags, out ulong finalTransport)
+                        && finalFlags == flags && finalTransport == transport
+                        && ReferenceEquals(Me, player) && player.Guid == guid && player.IsValid && player.IsAlive;
+			}
 
 		/// <summary>
 		/// HB 6.2.3 Mount.smethod_1: Safely raises OnDismount event,
@@ -138,9 +213,10 @@ namespace Styx.Logic
 				{
 					d.DynamicInvoke(reason, EventArgs.Empty);
 				}
-				catch (Exception ex)
-				{
-					Logging.WriteException(ex);
+                catch (Exception ex)
+                {
+                    RecoveryActions.RethrowControlFlow(ex);
+                    Logging.WriteException(ex);
 				}
 			}
 		}

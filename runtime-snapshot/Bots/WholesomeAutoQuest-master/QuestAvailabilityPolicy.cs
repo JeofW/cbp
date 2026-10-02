@@ -367,6 +367,7 @@ namespace WholesomeAQ
                 QuestDailySnapshot daily = QuestDailySnapshot.Capture(me);
                 QuestLogSnapshot raw = log.CaptureSnapshot();
                 var states = QuestAvailabilityPolicy.RawStates(raw);
+                var pendingCompletions = QuestTurnInCompletion.ObservePending(raw);
                 bool authoritative = log.TryGetAuthoritativeCompletedQuests(out var rewarded);
                 // An ordinary history-only predicate must not scan every bag at
                 // each permission check. Item constraints use the complete owner.
@@ -379,6 +380,7 @@ namespace WholesomeAQ
                     DailyObservationStatus = daily.Status,
                     HasCompleteQuestLog = raw.IsIdentityComplete, RawQuestStates = states,
                     HasAuthoritativeCompletions = authoritative,
+                    PendingCompletionQuestIds = pendingCompletions,
                     CarriedItemCounts = inventory?.IsCurrent() == true ? inventory.ItemCounts : null,
                     InventoryObservationStatus = inventory?.Status ?? "not-required-for-availability",
                     ConfirmedSpellIds = spells?.ConfirmedSpellIds,

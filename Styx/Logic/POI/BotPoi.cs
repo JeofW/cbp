@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using Styx.Helpers;
 using Styx.Logic;
 using Styx.Logic.Pathing;
@@ -17,6 +18,26 @@ namespace Styx.Logic.POI
 		private WoWObject? _asObject;
 		private object? _object0;
 		private WoWPoint _location;
+		private PoiType _type;
+		private ulong _guid;
+			private uint _entry;
+			private static long _currentGeneration;
+			private static long _currentWorkGeneration;
+			internal static long CurrentGeneration => Interlocked.Read(ref _currentGeneration);
+			internal static long CurrentWorkGeneration => Interlocked.Read(ref _currentWorkGeneration);
+			internal static event Action<BotPoi, BotPoi>? CurrentChanged;
+		internal bool IsWorldSubjectBlacklisted => Guid != 0UL
+			&& (Type == PoiType.Kill || Type == PoiType.Loot || Type == PoiType.Skin || Type == PoiType.Harvest)
+			&& Blacklist.Contains(Guid, false);
+
+			private void InvalidateCurrentRoute(bool workIdentityChanged)
+			{
+				if (!ReferenceEquals(_current, this)) return;
+				if (workIdentityChanged)
+					Interlocked.Increment(ref _currentWorkGeneration);
+				Interlocked.Increment(ref _currentGeneration);
+				Navigator.InvalidatePoiRoute();
+			}
 
 		private WoWObject? _observedObject;
 		private ObjectInvalidateDelegate? _objectInvalidated;
@@ -24,19 +45,21 @@ namespace Styx.Logic.POI
 		// Bind once per observed wrapper, not once per property read. The exact
 		// registration owns its callback, so a captured old multicast tail cannot
 		// revoke a replacement (including a later binding of the same wrapper).
-		private void ObserveObject(WoWObject? obj)
-		{
-			_asObject = obj;
-			if (ReferenceEquals(_observedObject, obj))
+			private void ObserveObject(WoWObject? obj, bool invalidateWorkIdentity = true)
+			{
+				_asObject = obj;
+				if (ReferenceEquals(_observedObject, obj))
 				return;
 			var previous = _observedObject;
 			var previousHandler = _objectInvalidated;
 			_observedObject = null;
-			_objectInvalidated = null;
-			if (previous != null && previousHandler != null)
-				previous.OnInvalidate -= previousHandler;
-			if (obj == null)
-				return;
+				_objectInvalidated = null;
+				if (previous != null && previousHandler != null)
+					previous.OnInvalidate -= previousHandler;
+				if (invalidateWorkIdentity)
+					InvalidateCurrentRoute(workIdentityChanged: true);
+				if (obj == null)
+					return;
 
 			ObjectInvalidateDelegate? handler = null;
 			handler = () =>
@@ -155,7 +178,15 @@ namespace Styx.Logic.POI
 			{
 				if (_current != value)
 				{
+					var previous = _current;
 					_current = value ?? new BotPoi(PoiType.None);
+					var published = _current;
+						Interlocked.Increment(ref _currentWorkGeneration);
+						Interlocked.Increment(ref _currentGeneration);
+						Navigator.InvalidatePoiRoute();
+					if (!ReferenceEquals(_current, published)) return;
+					CurrentChanged?.Invoke(previous, published);
+					if (!ReferenceEquals(_current, published)) return;
 					if (_current.Type == PoiType.None)
 					{
 						Logging.WriteDebug("Cleared POI");
@@ -168,13 +199,13 @@ namespace Styx.Logic.POI
 			}
 		}
 
-		public PoiType Type { get; set; }
+			public PoiType Type { get => _type; set { if (_type == value) return; _type = value; InvalidateCurrentRoute(workIdentityChanged: true); } }
 
 		public string? Name { get; set; }
 
-		public ulong Guid { get; set; }
+			public ulong Guid { get => _guid; set { if (_guid == value) return; _guid = value; ObserveObject(null, invalidateWorkIdentity: false); InvalidateCurrentRoute(workIdentityChanged: true); } }
 
-		public uint Entry { get; set; }
+			public uint Entry { get => _entry; set { if (_entry == value) return; _entry = value; ObserveObject(null, invalidateWorkIdentity: false); InvalidateCurrentRoute(workIdentityChanged: true); } }
 
 		public WoWPoint Location
 		{
@@ -198,7 +229,7 @@ namespace Styx.Logic.POI
 							WoWObject? asObject = AsObject;
 							if (asObject != null && asObject.IsValid)
 							{
-								_location = asObject.Location;
+								Location = asObject.Location;
 							}
 						}
 						catch (Exception)
@@ -210,10 +241,12 @@ namespace Styx.Logic.POI
 				}
 				return _location;
 			}
-			set
-			{
-				_location = value;
-			}
+				set
+				{
+					if (_location.Equals(value)) return;
+					_location = value;
+					InvalidateCurrentRoute(workIdentityChanged: false);
+				}
 		}
 
 		public WoWObject? AsObject
@@ -267,14 +300,16 @@ namespace Styx.Logic.POI
 						case PoiType.Kill:
 						case PoiType.Loot:
 						case PoiType.Skin:
-							// For kill/loot/skin, search by GUID first, then by Entry
+							// A selected world object owns its exact GUID. A despawned
+							// target must be reselected by the caller, never silently
+							// replaced with a same-entry object under the old POI/path.
 							if (Guid != 0UL)
 							{
 								_asObject = ObjectManager.GetObjectByGuid<WoWObject>(Guid);
 								if (_asObject != null && !_asObject.IsValid)
 									_asObject = null;
 							}
-							if (_asObject == null && Entry > 0)
+							if (_asObject == null && Guid == 0UL && Entry > 0)
 							{
 								_asObject = ObjectManager.ObjectList
 									.Where(o => (o is WoWUnit || o is WoWGameObject) && o.IsValid)
@@ -299,6 +334,9 @@ namespace Styx.Logic.POI
 						_asObject = null;
 					}
 				}
+				if (Guid != 0UL && (Type == PoiType.Kill || Type == PoiType.Loot || Type == PoiType.Skin || Type == PoiType.Harvest)
+					&& _asObject != null && (_asObject.Guid != Guid || Entry != 0U && _asObject.Entry != Entry))
+					_asObject = null;
 				ObserveObject(_asObject);
 				return _asObject;
 			}

@@ -607,17 +607,7 @@ namespace Styx.WoWInternals.WoWObjects
         /// </summary>
         public override bool IsOutdoors
         {
-            get
-            {
-                try
-                {
-                    return Lua.GetReturnVal<bool>("return IsOutdoors()", 0);
-                }
-                catch
-                {
-                    return true;
-                }
-            }
+            get => World.WorldQueryObservation.ReadLocalOutdoors(this);
         }
 
         /// <summary>
@@ -2102,6 +2092,58 @@ namespace Styx.WoWInternals.WoWObjects
         /// <summary>
         /// Gets all items in bags and equipped slots.
         /// </summary>
+        public bool TryGetBagItems(out List<WoWItem> items, out string reason)
+        {
+            items = new List<WoWItem>();
+            reason = "inventory-complete";
+            var memory = ObjectManager.Wow;
+            uint address = BaseAddress;
+            ulong guid = Guid;
+            bool Current() => memory != null && ReferenceEquals(memory, ObjectManager.Wow)
+                && ReferenceEquals(this, ObjectManager.Me) && BaseAddress == address && Guid == guid && IsValid;
+            if (!Current()) { reason = "inventory-owner-unavailable"; return false; }
+            try
+            {
+                // Read the existing build12340 bag structures strictly. The legacy
+                // BagItems convenience property drops unresolved GUIDs and catches
+                // read failures, so it cannot establish an authoritative absence.
+                var inventory = new WoWPlayerInventory(WoWBag.ReadStructure(address + 6384U));
+                var guids = new List<ulong>(inventory.Backpack.ReadItemGuids());
+                for (uint slot = 0; slot < 4; slot++)
+                {
+                    var bagBytes = memory!.ReadBytes(12727616U + 8U * slot, 8);
+                    if (bagBytes == null || bagBytes.Length != 8)
+                        throw new InvalidOperationException("Equipped bag GUID is unavailable.");
+                    ulong bagGuid = BitConverter.ToUInt64(bagBytes, 0);
+                    if (bagGuid == 0) continue;
+                    var bag = ObjectManager.GetObjectByGuid<WoWContainer>(bagGuid);
+                    if (bag == null || !bag.IsValid || bag.Guid != bagGuid)
+                    { reason = "bag-object-unavailable"; return false; }
+                    guids.AddRange(new WoWBag(WoWBag.ReadStructure(bag.BaseAddress + 1888U)).ReadItemGuids());
+                }
+                bool complete = true;
+                foreach (ulong itemGuid in guids.Distinct())
+                {
+                    if (itemGuid == 0) continue;
+                    var item = ObjectManager.GetObjectByGuid<WoWItem>(itemGuid);
+                    if (item == null || !item.IsValid || item.Guid != itemGuid)
+                    { complete = false; reason = "item-object-unavailable"; continue; }
+                    items.Add(item);
+                }
+                if (!Current()) { items.Clear(); reason = "inventory-owner-replaced"; return false; }
+                return complete;
+            }
+            catch (Exception error)
+            {
+                Styx.Logic.Combat.RecoveryActions.RethrowControlFlow(error);
+                if (memory != null && memory.ProcessHandle == IntPtr.Zero)
+                    throw new InvalidProcessException("The bag observation lost its process handle.", error);
+                items.Clear();
+                reason = "inventory-read-failed:" + error.GetType().Name;
+                return false;
+            }
+        }
+
         public List<WoWItem> BagItems
         {
             get

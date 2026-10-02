@@ -32,7 +32,7 @@ internal static class AuraDurationObservationRegressionTests
             + "\n" + string.Join("\n", selected.Select(p => p.ToString()));
         var support = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,
             "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs"))).GetRoot();
-        var names = new HashSet<string> { "SelectNormalBlessing", "SupportAuras", "MatchesBlessing" };
+        var names = new HashSet<string> { "SelectNormalBlessing", "SupportCoverageAuras", "MatchesBlessing", "SupportedAuraName", "HasSupportedAura" };
         var methods = support.DescendantNodes().OfType<MethodDeclarationSyntax>()
             .Where(m => names.Contains(m.Identifier.ValueText)).ToArray();
         if (methods.Length != names.Count) throw new InvalidOperationException("Complete blessing selector required");
@@ -71,12 +71,13 @@ public enum WoWClass {Paladin,Mage,Priest,Warlock,Warrior}
 public enum TalentSpec {RetributionPaladin,HolyPaladin}
 public enum WoWContext {Normal,Battlegrounds}
 public enum PaladinBlessings {Auto,Kings,Might,Wisdom,Sanctuary}
-public sealed class WoWPlayer {
+public class WoWUnit {
  public ulong Guid;public WoWClass Class=WoWClass.Paladin;public bool IsMe,IsInParty,IsInRaid;public int MaxMana=100;
  public readonly List<WoWAura> Auras=new List<WoWAura>();
- public IEnumerable<WoWAura> GetAllAuras()=>Auras;
+ public IEnumerable<WoWAura> GetAllAuras()=>Auras;public IEnumerable<WoWAura> GetRawAuras()=>Auras;
  public bool HasAura(string name)=>Auras.Any(a=>a.Name==name);
 }
+public sealed class WoWPlayer:WoWUnit {}
 public sealed class Clock {public uint Now=1000;public int Reads;public uint PerformanceCounter(){Reads++;return Now;}}
 public static class StyxWoW {public static Clock WoWClient=new Clock();public static WoWPlayer Me;}
 public sealed class PaladinSettings {public PaladinBlessings Blessings;public bool UsePallyPowerAssignments;}
@@ -114,7 +115,7 @@ public static class AuraDurationCases {
   SingularRoutine.CurrentWoWContext=WoWContext.Normal;
  }
  private static WoWAura Aura(string name,byte flags,uint duration,uint expiry,ulong owner=9){
-  int id=++nextId;World.Names[id]=name;return new WoWAura(id,owner,(WoWAura.AuraFlags)flags,1,80,duration,expiry);
+  int id=name switch {"Blessing of Kings"=>20217,"Blessing of Might"=>19740,"Blessing of Wisdom"=>19742,"Blessing of Sanctuary"=>20911,"Greater Blessing of Kings"=>25898,"Greater Blessing of Might"=>25782,"Greater Blessing of Wisdom"=>25894,"Greater Blessing of Sanctuary"=>25899,"Battle Shout"=>6673,_=>++nextId};World.Names[id]=name;return new WoWAura(id,owner,(WoWAura.AuraFlags)flags,1,80,duration,expiry);
  }
  private static void Timer(WoWAura aura,uint duration,uint expiry,uint now){
   bool permanent=unchecked((int)duration)<=0; // actual signed JLE in the original API owner

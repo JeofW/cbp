@@ -48,7 +48,8 @@ internal static class Fixture
 }
 namespace Styx
 {
-    public class Aura { public string Name { get; set; } = ""; public int SpellId { get; set; } public ulong CreatorGuid { get; set; } public bool IsActive { get; set; } = true; public TimeSpan TimeLeft { get; set; } = TimeSpan.FromSeconds(20); }
+    public class Aura { public string Name { get; set; } = ""; public int SpellId { get; set; } public ulong CreatorGuid { get; set; } public bool IsActive { get; set; } = true;
+        public bool IsPassive { get; set; } public TimeSpan TimeLeft { get; set; } = TimeSpan.FromSeconds(20); }
     public partial class UnitState
     {
         public uint Entry { get; set; } = 1;
@@ -59,12 +60,14 @@ namespace Styx
         public bool Boss { get; set; }
         public bool IsValid { get; set; } = true;
         public bool IsAlive { get; set; } = true;
+        public bool IsGhost { get; set; }
         public bool IsPlayer { get; set; }
         public bool Elite { get; set; }
         public bool IsMoving { get; set; }
         public bool Fleeing { get; set; }
         public bool Combat { get; set; }
         public IEnumerable<Aura> GetAllAuras() => Auras.Values;
+        public IEnumerable<Aura> GetRawAuras() => Auras.Values;
         public bool HasMyAura(string name) => Auras.TryGetValue(name, out var a) && a.CreatorGuid == StyxWoW.Me.Guid;
         public bool IsWithinMeleeRange => Distance <= 5;
         public readonly Dictionary<string, Aura> Auras = new();
@@ -169,6 +172,8 @@ namespace Singular.Helpers
             Fixture.Attempt(name, select, requires);
         public static Composite BuffSelf(string name, Func<object, bool>? requires = null) =>
             Fixture.Attempt(name, _ => Styx.StyxWoW.Me, c => !Styx.StyxWoW.Me.HasAura(name) && (requires == null || requires(c)));
+        public static Composite Buff(string name, bool mine, Func<object, Styx.UnitState?> select, Func<object,bool> requires, params string[] names) =>
+            Fixture.Attempt(name, select, c => requires(c) && select(c) is {} target && names.All(n => mine ? !target.HasMyAura(n) : !target.HasAura(n)));
         public static Composite Heal(string name, Func<object, Styx.UnitState?> select, Func<object, bool> requires) =>
             Fixture.Attempt(name, select, requires);
     }
@@ -181,5 +186,18 @@ namespace Singular.ClassSpecific.Paladin
     public static class Common
     {
         public static Composite CreatePaladinDispelBehavior() => Fixture.Nothing();
+        // Exact-family coverage is an external boundary of this rotation-only suite;
+        // the support suite exercises its linked production implementation.
+        public static bool HasSupportedAura(Styx.UnitState unit,string name) => unit.HasAura(name);
+        public static string SupportedAuraName(Styx.Aura aura) => aura.Name;
     }
+}
+
+namespace Styx.Logic.Common
+{
+ public static class Rest
+ {
+  public static bool TryObserveActivity(Styx.Player player,out bool food,out bool drink)
+  {food=player.HasAura("Food");drink=player.HasAura("Drink");return true;}
+ }
 }

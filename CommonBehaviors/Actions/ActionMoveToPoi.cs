@@ -18,7 +18,8 @@ namespace CommonBehaviors.Actions
 		private WoWPoint _lastLocation = WoWPoint.Empty;
 		private ulong _lastGuid;
 			private bool _hasLoggedMove;
-			private readonly Func<bool>? _callerCurrent;
+				private readonly Func<bool>? _callerCurrent;
+				private GroundTransition? _groundApproach;
 
 			public ActionMoveToPoi() { }
 
@@ -68,12 +69,43 @@ namespace CommonBehaviors.Actions
 					_lastLocation = destination;
 					_hasLoggedMove = true;
 				}
-				if (!Current()) return RunStatus.Failure;
-				Flightor.MoveTo(destination);
+					if (!Current()) return RunStatus.Failure;
+					if (RequiresGroundApproach(type))
+					{
+						if (_groundApproach == null)
+						{
+							_groundApproach = new GroundTransition(GroundTransitionPurpose.Interaction);
+							CleanupHandlers.Push(new ApproachCleanup(this, context, _groundApproach));
+						}
+						GroundTransitionState result = _groundApproach.Tick(destination, subject, Current);
+						if (!Current() || result == GroundTransitionState.Revoked) return RunStatus.Failure;
+						// A retained action owns the exterior/landing/ground legs. Neither
+						// a flight request nor an unavailable route completes this action.
+						return result == GroundTransitionState.Ready ? RunStatus.Success : RunStatus.Running;
+					}
+					Flightor.MoveTo(destination);
 				// The void Flightor API only establishes dispatch. A handled tick is
 				// not physical arrival or a successful native/mesh route receipt.
 				return Current() ? RunStatus.Success : RunStatus.Failure;
-			}
+				}
+
+				private static bool RequiresGroundApproach(PoiType type) => type is PoiType.QuestPickUp
+					or PoiType.QuestTurnIn or PoiType.Buy or PoiType.Sell or PoiType.Repair
+					or PoiType.Train or PoiType.Mail or PoiType.Fly or PoiType.InnKeeper;
+
+				private sealed class ApproachCleanup : CleanupHandler
+				{
+					private readonly ActionMoveToPoi _action;
+					private readonly GroundTransition _approach;
+					internal ApproachCleanup(ActionMoveToPoi action, object context, GroundTransition approach)
+						: base(action, context) { _action = action; _approach = approach; }
+					protected override void DoCleanup(object context)
+					{
+						// Detach before stopping input: a callback may start another run.
+						if (ReferenceEquals(_action._groundApproach, _approach)) _action._groundApproach = null;
+						_approach.Cancel();
+					}
+				}
 
 			private static bool Finite(WoWPoint point) => point != WoWPoint.Zero && point != WoWPoint.Empty
 				&& !float.IsNaN(point.X) && !float.IsInfinity(point.X)

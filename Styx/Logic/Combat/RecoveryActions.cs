@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using Styx.Helpers;
 using Styx.Logic.BehaviorTree;
+using Styx.Logic.Common;
 using Styx.Logic.Profiles;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
@@ -61,9 +62,32 @@ namespace Styx.Logic.Combat
                     || ObjectManager.Wow.ProcessHandle != ProcessHandle || ProcessHandle == IntPtr.Zero)
                     throw Unavailable("The recovery action owner changed.");
             }
+            internal bool MatchesCurrentNativeOwner()
+            {
+                // Raw SpellManager callers have no scoped _dispatch binding. A
+                // retained recovery request may suppress their identical native
+                // entry only while the complete spell-observation/session owner
+                // is still the same. This check is observational only: a stale
+                // predecessor cannot revoke or clear a reentrant successor here.
+                var currentObservation = SpellManager.CaptureSpellObservation();
+                var actor = StyxWoW.Me;
+                var routine = RoutineManager.Current;
+                var profile = ProfileManager.CurrentProfile;
+                currentObservation.RequireCurrent();
+                if (!ReferenceEquals(_context, this) || actor == null)
+                    return false;
+                bool current = Observation.SameOwner(currentObservation)
+                    && ReferenceEquals(Actor, actor) && Actor.IsValid && Actor.IsAlive
+                    && Actor.Guid == ActorGuid && Actor.MapId == Map
+                    && ReferenceEquals(Routine, routine) && ReferenceEquals(Profile, profile)
+                    && ReferenceEquals(Run, TreeRoot.RunIdentity) && ReferenceEquals(Bot, TreeRoot.Current)
+                    && ObjectManager.Wow?.ProcessHandle == ProcessHandle && ProcessHandle != IntPtr.Zero;
+                currentObservation.RequireCurrent();
+                return current && ReferenceEquals(_context, this);
+            }
             internal bool HasEventOwners => Bindings.Any(b => IsPending(b.Ticket)
                 && (b.Ticket.Kind == RecoveryActionKind.Heal
-                    || b.Ticket.Kind == RecoveryActionKind.Consumable && (b.Ticket.Resources & RecoveryResource.Health) != 0));
+                    || b.Ticket.Kind == RecoveryActionKind.Consumable && !b.RestConsumable && (b.Ticket.Resources & RecoveryResource.Health) != 0));
         }
 
         private sealed class Binding
@@ -80,6 +104,9 @@ namespace Styx.Logic.Combat
             internal RecoveryItemObservation? ItemBefore;
             internal RecoverySpellEvidence? Cast;
             internal readonly HashSet<int> HealEffects = new HashSet<int>();
+            internal readonly HashSet<int> RestEffects = new HashSet<int>();
+            internal bool RestConsumable;
+            internal Func<bool>? RestAdmission;
             internal long EventBaseline;
             internal double EarliestClientTime;
             internal bool ItemHealObserved, EventGap;
@@ -97,7 +124,7 @@ namespace Styx.Logic.Combat
                     || Recipient.BaseAddress != RecipientBase)
                     throw Unavailable("The recovery recipient changed.");
             }
-            internal void RequireNative()
+            internal void RequireNative(bool allowRestQueries = false)
             {
                 RequireRecipient();
                 if (Spell != null)
@@ -115,6 +142,11 @@ namespace Styx.Logic.Combat
                 if (Item != null && (!Item.IsValid || Item.Guid != Ticket.ItemGuid
                     || Item.Entry != ItemEntry || Item.BaseAddress != ItemBase || Item.OwnerGuid != Context.ActorGuid))
                     throw Unavailable("The carried recovery item changed before native entry.");
+                if (RestConsumable && Rest.GetAdmissionDenial(Context.Actor, allowQueries: allowRestQueries) is string reason)
+                    throw Unavailable("Rest admission changed before native entry: " + reason);
+                if (RestAdmission != null && !RestAdmission())
+                    throw Unavailable("The rest submission owner was replaced.");
+                Context.Require();
             }
         }
 
@@ -236,16 +268,25 @@ namespace Styx.Logic.Combat
         }
 
         public static bool TryUseConsumable(WoWItem item, bool health, bool mana, string owner)
+            => TryUseConsumableCore(item, health, mana, owner, false, null);
+
+        public static bool TryUseRestConsumable(WoWItem item, bool health, bool mana, string owner, Func<bool>? admission = null)
+            => TryUseConsumableCore(item, health, mana, owner, true, admission);
+
+        private static bool TryUseConsumableCore(WoWItem item, bool health, bool mana, string owner, bool resting, Func<bool>? admission)
         {
             return Run(context =>
             {
                 if (item == null || !item.IsValid || item.Guid == 0 || item.Entry == 0
                     || item.OwnerGuid != context.ActorGuid || (!health && !mana)) return false;
+                if (resting && (Rest.GetAdmissionDenial(context.Actor) != null || admission != null && !admission())) return false;
                 Pump(context, false);
                 var info = item.ItemInfo;
                 if (info == null || info.SpellId == null || info.SpellId.Length != 5)
                     throw Unavailable("The carried item's complete effect slots are unavailable.");
                 var healEffects = new HashSet<int>();
+                var restEffects = new HashSet<int>();
+                if (resting) health = mana = false;
                 foreach (int id in info.SpellId.Where(id => id != 0))
                 {
                     var effectSpell = WoWSpell.FromId(id);
@@ -257,10 +298,20 @@ namespace Styx.Logic.Combat
                     if (effects.Any(e => IsDirectHeal(e.EffectType))) { health = true; healEffects.Add(id); }
                     // Uninterpreted effects cannot establish that a mana candidate
                     // has no health consequence. Reserve health conservatively.
-                    if (effects.Any(e => e.EffectType != WoWSpellEffectType.None
+                    if (!resting && effects.Any(e => e.EffectType != WoWSpellEffectType.None
                         && e.EffectType != WoWSpellEffectType.Energize && e.EffectType != WoWSpellEffectType.EnergizePct
                         && !IsDirectHeal(e.EffectType))) health = true;
+                    if (resting)
+                    {
+                        if (!RestSpellFamilies.Food.Contains(id) && !RestSpellFamilies.Drink.Contains(id))
+                            throw Unavailable("The rest item's effect is outside the supported original-client family. Spell=" + id);
+                        health |= RestSpellFamilies.Food.Contains(id);
+                        mana |= RestSpellFamilies.Drink.Contains(id);
+                        restEffects.UnionWith(RestSpellFamilies.RecoveryAuras(id));
+                    }
                 }
+                if (resting && restEffects.Count == 0)
+                    throw Unavailable("The rest item's applied recovery aura is unavailable.");
                 var resources = (health ? RecoveryResource.Health : RecoveryResource.None)
                     | (mana ? RecoveryResource.Mana : RecoveryResource.None);
                 if (!Ledger.CanPrepare(context, RecoveryActionKind.Consumable, 0, context.ActorGuid,
@@ -269,7 +320,16 @@ namespace Styx.Logic.Combat
                     ReportBlocked(context, owner);
                     return false;
                 }
-                if (health && !PrepareEventBaseline(context)) return false;
+                if (resting)
+                {
+                    foreach (int id in restEffects)
+                    {
+                        bool? present = AuraPresent(context, context.Actor, id);
+                        if (present == true) return false;
+                        if (!present.HasValue) throw Unavailable("The rest item's baseline aura coverage is unavailable.");
+                    }
+                }
+                if (health && !resting && !PrepareEventBaseline(context)) return false;
                 var values = Lua.GetObservedReturnValues(RecoveryActionLua.ItemSnapshot(item.Entry, context.ActorGuid));
                 context.Require();
                 if (!RecoveryActionEvidence.TryParseItem(values, item.Entry, context.ActorGuid, out var before))
@@ -284,16 +344,27 @@ namespace Styx.Logic.Combat
                 var binding = new Binding(context, ticket!, context.Actor, context.ActorGuid)
                 {
                     Item = item, ItemEntry = item.Entry, ItemBase = item.BaseAddress, ItemBefore = before,
-                    EventBaseline = context.ProducerSequence, EarliestClientTime = before.ClientTime
+                    EventBaseline = context.ProducerSequence, EarliestClientTime = before.ClientTime,
+                    RestConsumable = resting, RestAdmission = admission
                 };
                 binding.HealEffects.UnionWith(healEffects);
+                binding.RestEffects.UnionWith(restEffects);
                 context.Bindings.Add(binding);
                 context.PublishedBindings = context.Bindings.ToArray();
                 var previous = _dispatch;
                 _dispatch = binding;
                 try
                 {
-                    binding.RequireNative();
+                    binding.RequireNative(allowRestQueries: true);
+                    if (resting)
+                    {
+                        foreach (int id in restEffects)
+                        {
+                            bool? present = AuraPresent(context, context.Actor, id);
+                            if (present == true) return false;
+                            if (!present.HasValue) throw Unavailable("The final rest aura baseline is unavailable.");
+                        }
+                    }
                     return item.TryUseContainerItem();
                 }
                 finally
@@ -326,11 +397,7 @@ namespace Styx.Logic.Combat
             if (binding == null)
             {
                 var context = _context;
-                if (context == null || !ReferenceEquals(context.Run, TreeRoot.RunIdentity)
-                    || !ReferenceEquals(context.Actor, StyxWoW.Me) || context.Actor.MapId != context.Map
-                    || !ReferenceEquals(context.Routine, RoutineManager.Current)
-                    || !ReferenceEquals(context.Profile, ProfileManager.CurrentProfile)
-                    || ObjectManager.Wow?.ProcessHandle != context.ProcessHandle) return true;
+                if (context == null || !context.MatchesCurrentNativeOwner()) return true;
                 return !context.PublishedBindings.Any(b => IsPending(b.Ticket) && b.Ticket.SpellId == spellId
                     && b.NativeTargetGuid == targetGuid && b.Ticket.WasSubmitted);
             }
@@ -475,8 +542,19 @@ namespace Styx.Logic.Combat
                         if (!RecoveryActionEvidence.TryParseItem(values, binding.ItemEntry, context.ActorGuid, out var after))
                             throw Unavailable("The submitted consumable outcome is unavailable.");
                         bool health = (binding.Ticket.Resources & RecoveryResource.Health) != 0;
-                        bool acknowledged = after!.Acknowledges(binding.ItemBefore!)
-                            && (!health || binding.ItemHealObserved && !binding.EventGap);
+                        bool acknowledged;
+                        if (binding.RestConsumable)
+                        {
+                            // Food/water commonly has no item cooldown. A decreased
+                            // carried stack AND every selected applied aura from our
+                            // actor are required; neither alone acknowledges rest.
+                            acknowledged = after!.ClientTime >= binding.ItemBefore!.ClientTime
+                                && after.Count < binding.ItemBefore.Count
+                                && binding.RestEffects.All(id => AuraPresent(context, context.Actor, id, true) == true);
+                        }
+                        else
+                            acknowledged = after!.Acknowledges(binding.ItemBefore!)
+                                && (!health || binding.ItemHealObserved && !binding.EventGap);
                         Ledger.Observe(binding.Ticket, context, Environment.TickCount64, acknowledged, false);
                     }
                 }
@@ -531,7 +609,9 @@ namespace Styx.Logic.Combat
             if (!target.IsValid || target.Guid == 0) return null;
             ulong guid = target.Guid;
             uint address = target.BaseAddress;
-            if (!target.TryGetAllAuras(out var auras, "recovery acknowledgement") || auras == null) return null;
+            // Exact ID/creator evidence is present in complete raw aura records.
+            // Unrelated server-only IDs need not have client Spell metadata.
+            if (!target.TryGetRawAuras(out var auras, "recovery acknowledgement") || auras == null) return null;
             // Existing coverage blocks duplicate application regardless of its
             // caster. Only an owned caster can acknowledge our submitted action.
             bool found = auras.Any(a => a.SpellId == spellId && (!requireOwnCaster || a.CreatorGuid == context.ActorGuid));

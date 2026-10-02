@@ -51,6 +51,7 @@ public class CollectItemObjective : QuestObjective
     private readonly HashSet<uint> _includedVendors = new HashSet<uint>();
     private readonly HashSet<uint> _excludedGameObjects = new HashSet<uint>();
     private readonly HashSet<uint> _includedGameObjects = new HashSet<uint>();
+    private readonly QuestObjectReacquisition _objectReacquisition;
 
     public CollectItemObjective(
         PlayerQuest quest,
@@ -66,6 +67,14 @@ public class CollectItemObjective : QuestObjective
         this._itemProtection = ProtectedItemsManager.Acquire((uint)this.Objective.ID);
         if (this.OverridedQuestInfo != null)
             this._collectItemInfo = this.OverridedQuestInfo.FindCollectItem((uint)this.Objective.ID);
+        _objectReacquisition = new QuestObjectReacquisition(() =>
+        {
+            var executor = QuestState.Instance.Order.CurrentBehavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
+            return ReferenceEquals(executor?.Objective, this)
+                && Quest.GetData(out QuestDescriptorData data) && data.Id == Quest.Id
+                && (data.Flags & WoWDescriptorQuestFlags.Failed) == 0 && !IsCompleted ? executor : null;
+        },
+            IsValidGameObjectTarget, subject => Navigator.PathDistance(ObjectManager.Me.Location, subject.Location));
     }
 
     public Styx.Logic.Questing.Quest.QuestObjective Objective { get; private set; }
@@ -109,6 +118,7 @@ public class CollectItemObjective : QuestObjective
 
     public override void Dispose()
     {
+        _objectReacquisition.Dispose();
         this._itemProtection.Dispose();
         LootTargeting.Instance.IncludeTargetsFilter -= new IncludeTargetsFilterDelegate(this.IncludeLootTargets);
         Targeting.Instance.IncludeTargetsFilter -= new IncludeTargetsFilterDelegate(this.IncludeTargets);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Styx.Helpers;
 using Styx.Logic;
 using Styx.Logic.BehaviorTree;
 using Styx.Logic.Inventory.Frames.Gossip;
@@ -110,6 +111,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
         private Composite _root;
         private long _lastSubmissionUtc = -1;
         private long _gossipOpenStartedUtc = -1;
+        private long _interactionUnknownStartedUtc = -1;
         private long _targetWaitStartedUtc = -1;
         private long _navigationStartedUtc = -1;
         private ulong _interactionGuid;
@@ -443,6 +445,7 @@ if not currentObserver() then return 0 end
             TryCloseOwnedGossip();
             _lastSubmissionUtc = -1;
             _gossipOpenStartedUtc = -1;
+            _interactionUnknownStartedUtc = -1;
             _navigationStartedUtc = -1;
             _interactionGuid = 0;
             _observedGossipMenu = null;
@@ -485,6 +488,23 @@ if not currentObserver() then return 0 end
                 if (Counter >= MaxAttempts)
                     return DeferAuthoritativeAttempt(
                         "bounded gossip submissions were exhausted");
+
+                ResetForRetry();
+            }
+
+            if (_interactionUnknownStartedUtc >= 0)
+            {
+                if (IsAcknowledgementPending(
+                        now, _interactionUnknownStartedUtc, GossipOpenTimeout))
+                {
+                    TreeRoot.StatusText =
+                        "Waiting to retry source-bound gossip interaction";
+                    return RunStatus.Running;
+                }
+
+                if (Counter >= MaxAttempts)
+                    return DeferAuthoritativeAttempt(
+                        "bounded gossip interaction observations remained unavailable");
 
                 ResetForRetry();
             }
@@ -653,12 +673,51 @@ if not currentObserver() then return 0 end
                 return DeferAuthoritativeAttempt("the player changed before NPC interaction");
 
             _observedGossipMenu = null;
-            bool interactionCompleted = target.TryInteract();
+            _interactionGuid = 0;
+            _gossipOpenStartedUtc = -1;
+            uint targetEntry = target.Entry;
+            uint targetAddress = target.BaseAddress;
+            bool TargetIsCurrent()
+            {
+                return targetEntry != 0 && targetAddress != 0 && target.IsValid && target.IsAlive &&
+                    target.Guid == guid && target.Entry == targetEntry && target.BaseAddress == targetAddress &&
+                    MobIds.Contains((int)targetEntry) && IsWithinSourceAnchor(target.Location, Location, CollectionDistance) &&
+                    ReferenceEquals(ObjectManager.GetObjectByGuid<WoWObject>(guid), target);
+            }
+
+            bool interactionCompleted;
+            try
+            {
+                interactionCompleted = target.TryInteract();
+            }
+            catch (ObservationUnavailableException unavailable)
+            {
+                // UNKNOWN is neither native refusal nor submission. Keep it out of
+                // menu ownership, but bound retries under this exact actor/recipient.
+                if (!OwnsActor() || !TargetIsCurrent())
+                    return RunStatus.Running;
+                LogMessage("warning",
+                    "GossipEvent interaction observation is unavailable for quest {0}: {1}",
+                    QuestId, unavailable.Message);
+                // Logging is a callback boundary: a stale owner must not consume
+                // an attempt or transfer the future menu to replacement work.
+                if (!OwnsActor() || IsDone)
+                    return RunStatus.Success;
+                if (!TargetIsCurrent())
+                    return RunStatus.Running;
+
+                Counter++;
+                _interactionUnknownStartedUtc = UtcNowMilliseconds();
+                TreeRoot.StatusText =
+                    "Waiting to retry source-bound gossip interaction";
+                return RunStatus.Running;
+            }
             // Host callbacks can revoke this owner while Interact is running.
             if (!OwnsActor() || IsDone)
                 return RunStatus.Success;
 
             Counter++;
+            _interactionUnknownStartedUtc = -1;
             // Preserve the bounded attempt even when local execution refuses,
             // but do not let that attempt adopt a subsequently visible menu.
             _interactionGuid = interactionCompleted ? guid : 0;
@@ -696,6 +755,7 @@ if not currentObserver() then return 0 end
             Counter = 0;
             _lastSubmissionUtc = -1;
             _gossipOpenStartedUtc = -1;
+            _interactionUnknownStartedUtc = -1;
             _targetWaitStartedUtc = -1;
             _navigationStartedUtc = -1;
             _interactionGuid = 0;

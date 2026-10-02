@@ -21,9 +21,9 @@ using Styx.WoWInternals.WoWObjects;
 // owners. Never attaches to WoW and never replaces a production decision method.
 internal sealed class QuestDatasetObservationFixture : IDisposable
 {
-    private sealed class ObservedPlayer(uint address) : LocalPlayer(address)
+    private sealed class ObservedPlayer(uint address, string characterName) : LocalPlayer(address)
     {
-        public override string Name => "Dataset Fixture";
+        public override string Name => characterName;
         public override string RealmName => "Controlled Observation Realm";
         public override Styx.Logic.Pathing.WoWPoint Location => new(10, 10, 10);
     }
@@ -45,13 +45,13 @@ internal sealed class QuestDatasetObservationFixture : IDisposable
     internal PlayerQuest Quest { get; private set; } = null!;
     internal uint QuestId { get; private set; }
 
-    internal QuestDatasetObservationFixture()
+    internal QuestDatasetObservationFixture(string characterName = "Dataset Fixture")
     {
         baseline = (IDisposable)Activator.CreateInstance(typeof(QuestPublicationRegressionTests).GetNestedType("Fixture", Hidden)!, true)!;
         var type = baseline.GetType();
         start = unchecked((uint)((IntPtr)type.GetField("storage", Hidden)!.GetValue(baseline)!).ToInt32());
         descriptor = (uint)type.GetField("descriptor", Hidden)!.GetValue(baseline)!;
-        Player = new ObservedPlayer(start);
+        Player = new ObservedPlayer(start, characterName);
         typeof(ObjectManager).GetField("<Me>k__BackingField", Hidden)!.SetValue(null, Player);
         cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)type.GetField("cache", Hidden)!.GetValue(baseline)!;
         objects = (Dictionary<ulong, WoWObject>)typeof(ObjectManager).GetField("_objectList", Hidden)!.GetValue(null)!;
@@ -59,7 +59,8 @@ internal sealed class QuestDatasetObservationFixture : IDisposable
         areas = (IList)StyxWoW.AreaManager.GetType().GetField("_areas", Hidden)!.GetValue(StyxWoW.AreaManager)!;
         previousAreaCount = areas.Count;
         completedBefore = ((List<uint>)typeof(QuestLog).GetField("_completedQuestIds", Hidden)!.GetValue(null)!).ToArray();
-        foreach (string name in new[] { "_completedQuestCacheTime", "_completedQuestRefreshAttemptTime", "_completedQuestCacheStatus", "_completedQuestCacheIdentity" })
+        foreach (string name in new[] { "_completedQuestCacheTime", "_completedQuestRefreshAttemptTime", "_completedQuestCacheStatus", "_completedQuestCacheIdentity",
+            "_completedQuestRequestedGeneration", "_completedQuestObservedGeneration", "_completedQuestObservationRevision", "_completedQuestObservedUtc" })
         {
             var field = typeof(QuestLog).GetField(name, Hidden)!; completionState.Add((field, field.GetValue(null)));
         }
@@ -81,7 +82,7 @@ internal sealed class QuestDatasetObservationFixture : IDisposable
         SetHistory(Array.Empty<uint>());
     }
 
-    internal void SetQuest(uint id, string name, int level, int[] normalIds, int[] normalCounts, int[] itemIds, int[] itemCounts)
+    internal void SetQuest(uint id, string name, int level, int[] normalIds, int[] normalCounts, int[] itemIds, int[] itemCounts, uint flags = 0)
     {
         ReleaseOwners(); QuestId = id;
         object boxed = new WoWCache.QuestCacheEntry();
@@ -93,6 +94,7 @@ internal sealed class QuestDatasetObservationFixture : IDisposable
         }
         var entry = (WoWCache.QuestCacheEntry)boxed;
         entry.Id = id; entry.ObjectiveId = normalIds.ToArray(); entry.ObjectiveRequiredCount = normalCounts.ToArray();
+        entry.Flags = (WoWCache.QuestFlags)flags;
         entry.CollectItemId = itemIds.ToArray(); entry.CollectItemCount = itemCounts.ToArray();
         Encoding.UTF8.GetBytes(name).Take(entry.Name.Length - 1).ToArray().CopyTo(entry.Name, 0);
         Write32(node, id); Write32(node + 4, 0);
@@ -111,6 +113,15 @@ internal sealed class QuestDatasetObservationFixture : IDisposable
         Write32(descriptor + 632, accepted ? QuestId : 0);
         Write32(descriptor + 636, (complete ? (uint)WoWDescriptorQuestFlags.Completed : 0) | (failed ? (uint)WoWDescriptorQuestFlags.Failed : 0));
         Invalidate();
+    }
+
+    internal void SetAlive()
+    {
+        Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(value => value.IsEnum && value.Name == "UnitFields");
+        Write32(descriptor + Convert.ToUInt32(Enum.Parse(fields, "Health")) * 4, 100);
+        Write32(descriptor + Convert.ToUInt32(Enum.Parse(fields, "MaxHealth")) * 4, 100);
+        Invalidate();
+        if (!Player.IsAlive) throw new InvalidOperationException("Controlled living actor observation failed");
     }
 
     internal void SetRaceClass(int race, int playerClass)

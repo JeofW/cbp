@@ -29,6 +29,8 @@ public class ForcedIf : ForcedBehavior
 
     public IfNode IfNode { get; private set; }
 
+    internal QuestOrder ActiveOrder => this.conditionalOrder;
+
     protected override Composite CreateBehavior()
     {
         return this.behaviorExecutor ??= new ConditionalComposite(this);

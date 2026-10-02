@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <UseAppHost>false</UseAppHost>
+    <PlatformTarget>x86</PlatformTarget>
+    <Platforms>x86</Platforms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../RestFullGateIntegrationRegressionTests/QuestPublicationBoundary.cs" Link="QuestPublicationBoundary.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/AquaticObservationRegressionTests.cs" Link="AquaticObservationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/WholesomeAquaticPauseRegressionTests.cs" Link="WholesomeAquaticPauseRegressionTests.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/DataModels.cs" Link="DataModels.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/DataLoader.cs" Link="DataLoader.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestDataRepairPack.cs" Link="QuestDataRepairPack.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestCollectionRouteRepairs.cs" Link="QuestCollectionRouteRepairs.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestDependentPreviousRepairs.cs" Link="QuestDependentPreviousRepairs.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestAvailabilityPolicy.cs" Link="QuestAvailabilityPolicy.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestDeliveryPolicy.cs" Link="QuestDeliveryPolicy.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestRequiredStockPolicy.cs" Link="QuestRequiredStockPolicy.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestDependencyCatalog.cs" Link="QuestDependencyCatalog.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/ProfileBuilder.cs" Link="ProfileBuilder.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs" Link="QuestScheduler.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestSchedulerDiagnostics.cs" Link="QuestSchedulerDiagnostics.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestSchedulerInventory.cs" Link="QuestSchedulerInventory.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestObservedRoutes.cs" Link="QuestObservedRoutes.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestSchedulingPolicy.cs" Link="QuestSchedulingPolicy.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/SettingsForm.cs" Link="SettingsForm.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/VendorDataLoader.cs" Link="VendorDataLoader.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAQSettings.cs" Link="WholesomeAQSettings.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeRestPolicy.cs" Link="WholesomeRestPolicy.cs" />
+    <Compile Include="../../runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs" Link="WholesomeAutoQuest.cs" />
+    <Reference Include="CopilotBuddy"><HintPath>../../bin/x86/Release/net10.0-windows7.0/CopilotBuddy.dll</HintPath></Reference>
+  </ItemGroup>
+</Project>

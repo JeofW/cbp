@@ -41,6 +41,7 @@ internal static class WholesomeAquaticPauseRegressionTests
         cases.Add(("returning to an observed dry location can rest again", f => f.ReturnDry()));
         cases.Add(("paused health recovery retries a fresh food observation", f => f.PendingRetry(false)));
         cases.Add(("paused mana recovery retries a fresh drink observation", f => f.PendingRetry(true)));
+        cases.Add(("a resumed consumable retry releases its pause on liquid UNKNOWN", f => f.UnknownRetry()));
         cases.Add(("session restart cannot retain an old rest pause", f => f.ResetSession()));
         foreach (bool loot in new[] { false, true })
         foreach (bool wet in new[] { false, true })
@@ -137,6 +138,20 @@ internal static class WholesomeAquaticPauseRegressionTests
             Check(food.StartTime == feedStart && drink.StartTime == drinkStart && !CoreRest.NoFood && !CoreRest.NoDrink,
                 "wet pause consumed an item retry or fabricated missing inventory");
         }
+        internal void UnknownRetry()
+        {
+            SeedPause();
+            DateTime feedStart = food.StartTime, drinkStart = drink.StartTime;
+            try
+            {
+                typeof(WholesomeAutoQuest).GetMethod("RetryRestConsumables", Hidden)!.Invoke(bot,
+                    new object[] { player, ObjectManager.Wow! });
+            }
+            catch (TargetInvocationException error) when (error.InnerException != null)
+            { ExceptionDispatchInfo.Capture(error.InnerException).Throw(); }
+            Check(!Paused && mover.Stops == 0 && food.StartTime == feedStart && drink.StartTime == drinkStart,
+                "unavailable resumed rest retained its pause or consumed an action retry");
+        }
         internal void Stopped()
         {
             Set("_stopped", true); WorldCall("Swim", true); bot.Pulse();
@@ -173,12 +188,12 @@ internal static class WholesomeAquaticPauseRegressionTests
             SeedPause(); Prime();
             var timer = drinking ? drink : food;
             timer.Stop(); DateTime oldStart = timer.StartTime;
-            bot.Pulse();
+            WorldCall("WithStrictRestObservation", (Action)bot.Pulse);
             Check(Paused && timer.StartTime != oldStart && !timer.IsFinished &&
                 (drinking ? CoreRest.NoDrink : CoreRest.NoFood),
                 "an already-paused recovery never retried current inventory");
             DateTime attemptedAt = timer.StartTime;
-            bot.Pulse();
+            WorldCall("WithStrictRestObservation", (Action)bot.Pulse);
             Check(timer.StartTime == attemptedAt, "each pulse renewed the consumable throttle");
         }
         internal void ResetSession()

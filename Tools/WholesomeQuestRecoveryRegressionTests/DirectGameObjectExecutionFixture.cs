@@ -68,8 +68,10 @@ public static class StyxWoW
     public static void Sleep(int milliseconds){World.Sleeps++;}
 }
 public enum PoiType{None,Hotspot,Quest,Loot,Skin,Harvest,Kill}
+public static class ProfileManager { public static object CurrentProfileSnapshot=new(); }
 public sealed class BotPoi
 {
+    public static long CurrentGeneration;
     public static BotPoi Current=new();public PoiType Type;public WoWObject AsObject;
     public ulong Guid=>AsObject?.Guid??0;public uint Entry=>AsObject?.Entry??0;
     public BotPoi(){}public BotPoi(WoWObject subject,PoiType kind){AsObject=subject;Type=kind;}
@@ -82,7 +84,7 @@ public static class Navigator
     public static MoveResult MoveTo(WoWPoint point){World.GroundRequests++;World.LastDestination=point;return World.NavigationResult;}
     public static void Clear(){World.RouteClears++;}
 }
-public static class Flightor{public static void MoveTo(WoWPoint point){World.FlightRequests++;World.LastDestination=point;}}
+public static class Flightor{public static void MoveToGroundInteraction(WoWPoint point,Func<bool> admitted){if(admitted())MoveTo(point);}public static bool PreferFlightForGroundInteraction(WoWPoint point,float range)=>false;public static void MoveTo(WoWPoint point){World.FlightRequests++;World.LastDestination=point;}}
 public static class WoWMovement
 {
     public enum MovementDirection{Descend}

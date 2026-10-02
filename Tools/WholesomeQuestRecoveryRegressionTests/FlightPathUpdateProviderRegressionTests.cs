@@ -72,6 +72,9 @@ internal static class FlightPathUpdateProviderRegressionTests
         private IntPtr storage;
         private WoWUnit merchant = null!;
         private bool installed;
+        private LocalPlayer? reactionPlayer;
+        private uint reactionDescriptor, priorReactionEntry;
+        private bool reactionEntryInstalled;
         private readonly XmlFlightNode priorFrom, priorTo;
         private readonly FlightPathReason priorReason;
         private readonly bool priorNeed;
@@ -91,6 +94,13 @@ internal static class FlightPathUpdateProviderRegressionTests
             try
             {
                 if (ObjectManager.Executor != null) throw new InvalidOperationException("Test requires no native executor");
+                reactionPlayer = ObjectManager.Me ?? throw new InvalidOperationException("Controlled flight player is unavailable");
+                reactionDescriptor = unchecked((uint)Marshal.ReadInt32(new IntPtr(unchecked((int)(reactionPlayer.BaseAddress + 8)))));
+                if (reactionDescriptor == 0) throw new InvalidOperationException("Controlled flight player descriptor is unavailable");
+                priorReactionEntry = unchecked((uint)Marshal.ReadInt32(new IntPtr(unchecked((int)(reactionDescriptor + 12)))));
+                Write(reactionDescriptor + 12, 6); // Existing WoWUnit hardcoded Neutral branch; no invented native reaction.
+                typeof(WoWObject).GetField("_cachedEntry", Hidden)!.SetValue(reactionPlayer, 0U);
+                reactionEntryInstalled = true;
                 storage = Marshal.AllocHGlobal(8192); Marshal.Copy(new byte[8192], 0, storage, 8192);
                 uint address = unchecked((uint)storage.ToInt32()), descriptor = address + 4096;
                 Write(address + 8, descriptor); Write(address + 20, 3); Write64(address + 48, MerchantGuid); Write64(descriptor, MerchantGuid);
@@ -152,6 +162,12 @@ internal static class FlightPathUpdateProviderRegressionTests
                 {
                     lock (registryLock) { if (hadMerchant) registry[MerchantGuid] = previousMerchant!; else registry.Remove(MerchantGuid); }
                     installed = false; ResetCaches();
+                }
+                if (reactionEntryInstalled && reactionPlayer != null && reactionDescriptor != 0)
+                {
+                    Write(reactionDescriptor + 12, priorReactionEntry);
+                    typeof(WoWObject).GetField("_cachedEntry", Hidden)!.SetValue(reactionPlayer, 0U);
+                    reactionEntryInstalled = false;
                 }
                 Navigator.NavigationProvider = previousProvider;
             }

@@ -32,7 +32,7 @@ internal static class CombatTargetGapRegressionTests
         try
         {
             Styx.Helpers.Logging.FileLogging=false;
-            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using System.Collections.Generic;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;\n"+region+"\n}}");
+            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using System.Collections.Generic;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.Combat;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;\n"+region+"\n}}");
             File.WriteAllText(Path.Combine(temp,"IsolationBoundary.cs"),"using TreeSharp;namespace Levelbot.Actions.Combat{public static class PullIsolationCoordinator{public static Composite CreatePreCombatBehavior()=>new TreeSharp.Action(_=>RunStatus.Failure);public static Composite CreateRetreatBehavior()=>new TreeSharp.Action(_=>RunStatus.Failure);}}");
             File.Copy(Path.Combine(root,"CommonBehaviors","Decorators","DecoratorIsPoiType.cs"),Path.Combine(temp,"DecoratorIsPoiType.cs"));
             File.WriteAllText(Path.Combine(temp,"Boundary.cs"),Boundary);
@@ -462,7 +462,7 @@ public static class GapCases
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx {public static class StyxWoW{public static LocalPlayer Me=new();}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.WoWInternals.WoWObjects
 {
-    public class WoWObject{public ulong Guid=++GapCases.NextGuid;public uint Entry=100;public bool IsValid=true;public WoWPoint Location=new(10,10,10);public WoWUnit ToUnit()=>(WoWUnit)this;}
+    public class WoWObject{public ulong Guid=++GapCases.NextGuid;public uint Entry=100;public uint BaseAddress=100;public bool IsValid=true;public WoWPoint Location=new(10,10,10);public WoWUnit ToUnit()=>(WoWUnit)this;}
     public class WoWUnit:WoWObject{public bool IsAlive=true;public bool Dead=>!IsAlive;public bool Combat;private bool sight=true;public bool InLineOfSpellSight{get{GapCases.Event("sight");return sight;}set{sight=value;}}private float distance=3;public float Distance{get{GapCases.Event("distance");return distance;}set{distance=value;}}public WoWUnit? CurrentTarget;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public void Target(){GapCases.Targets++;GapCases.SelectedTargets.Add(Guid);StyxWoW.Me.CurrentTarget=this;GapCases.Event("target");}}
     public class LocalPlayer:WoWUnit{public uint MapId=530;public bool Mounted;public WoWUnit? Pet;public bool GotAlivePet=>Pet?.IsAlive==true;public bool HasPendingSpell(string name)=>false;}
 }
@@ -470,9 +470,18 @@ public static class GapCases
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic.POI
 {
     public enum PoiType{None,Kill,Skin,Repair}
-    public sealed class BotPoi{private static BotPoi current=new(null,PoiType.None);public static BotPoi Current{get=>current;set{current=value;GapCases.Event("poi");}}public static void Seed(BotPoi value)=>current=value;public WoWObject? AsObject;public PoiType Type;public ulong Guid=>AsObject?.Guid??0;public uint Entry=>AsObject?.Entry??0;public WoWPoint Location=>AsObject?.Location??WoWPoint.Zero;public BotPoi(WoWObject? subject,PoiType type){AsObject=subject;Type=type;}public static void Clear(string reason){Current=new(null,PoiType.None);}}
+    public sealed class BotPoi{private static BotPoi current=new(null,PoiType.None);private static long generation;public static BotPoi Current{get=>current;set{current=value;generation++;GapCases.Event("poi");}}public static long CurrentGeneration=>generation;public static void Seed(BotPoi value){current=value;generation++;}public WoWObject? AsObject;public PoiType Type;public ulong Guid=>AsObject?.Guid??0;public uint Entry=>AsObject?.Entry??0;public WoWPoint Location=>AsObject?.Location??WoWPoint.Zero;public BotPoi(WoWObject? subject,PoiType type){AsObject=subject;Type=type;}public static void Clear(string reason){Current=new(null,PoiType.None);}}
 }
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic.Pathing {public static class Mount{public static bool DismountNeeded;public static bool ShouldDismount(WoWPoint p)=>DismountNeeded;public static void Dismount(string reason){GapCases.Dismounts++;StyxWoW.Me.Mounted=false;}}}
+/* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic.Combat
+{
+    public static class MountedCombatTransition
+    {
+        public static Composite CreateBehavior()=>new TreeSharp.Action(_=>{if(!Styx.Logic.Pathing.Mount.DismountNeeded)return RunStatus.Failure;GapCases.Dismounts++;StyxWoW.Me.Mounted=false;return RunStatus.Success;});
+        public static bool CanActUnmounted(Func<bool> admitted=null)=>(admitted?.Invoke()??true)&&!StyxWoW.Me.Mounted;
+        public static Composite GuardAction(Composite child,Func<bool> admitted=null)=>new Decorator(_=>CanActUnmounted(admitted),child);
+    }
+}
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.WoWInternals {public static class Lua{public static void DoString(string text){}}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace CommonBehaviors.Actions
 {

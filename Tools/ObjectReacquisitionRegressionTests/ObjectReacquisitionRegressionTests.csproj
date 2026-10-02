@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../NavigationOwnerRegressionTests/Boundary.cs" Link="Boundary.cs" />
+    <Compile Include="../../Styx/Logic/POI/BotPoi.cs" Link="BotPoi.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/MeshNavigator.RequestOwnership.cs" Link="MeshNavigator.RequestOwnership.cs" />
+    <Compile Include="../../Styx/Logic/Questing/QuestObjectReacquisition.cs" Link="QuestObjectReacquisition.cs" />
+  </ItemGroup>
+</Project>

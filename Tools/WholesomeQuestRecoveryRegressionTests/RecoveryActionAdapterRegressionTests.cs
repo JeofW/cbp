@@ -26,6 +26,7 @@ internal static class RecoveryActionAdapterRegressionTests
         string cast=manager.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m=>m.Identifier.ValueText=="Cast"&&m.ParameterList.Parameters.Count==2&&m.ParameterList.Parameters[0].Type!.ToString()=="WoWSpell").ToFullString();
         string spellOwner=ManagerPrefix+context+capture+cast+ManagerSuffix;
         var trees=names.Select(name=>CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,"Styx/Logic/Combat",name)))).ToList();
+        trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,"Styx/Logic/Common/RestSpellFamilies.cs"))));
         trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,"Styx/Helpers/ObservationUnavailableException.cs"))));
         trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,"Styx/InvalidProcessException.cs"))));
         trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,"Styx/InvalidExecutorException.cs"))));
@@ -56,7 +57,7 @@ using Styx;using Styx.Helpers;using Styx.Logic.Combat;using Styx.Logic.BehaviorT
 }
 /* controlled profile boundary */ namespace Styx.Logic.Profiles {public static class ProfileManager {public static object CurrentProfile=new();}}
 /* controlled world boundary */ namespace Styx.WoWInternals.WoWObjects {
- public class WoWUnit {public bool IsValid=true,IsAlive=true;public ulong Guid=1;public uint BaseAddress=4096,MapId;public WoWUnit CurrentTarget;public string Name="Player";public bool TryGetAllAuras(out WoWAuraCollection a,string consumer=""){if(State.AuraUnknown){a=null;return false;}a=new WoWAuraCollection();a.AddRange(State.Auras.Where(x=>x.Target==Guid).Select(x=>new WoWAura{SpellId=x.Spell,CreatorGuid=x.Actor}));return true;}}
+ public class WoWUnit {public bool IsValid=true,IsAlive=true;public ulong Guid=1;public uint BaseAddress=4096,MapId;public WoWUnit CurrentTarget;public string Name="Player";public bool TryGetAllAuras(out WoWAuraCollection a,string consumer=""){if(State.AuraMetadataUnknown){a=null;return false;}return TryGetRawAuras(out a,consumer);}public bool TryGetRawAuras(out WoWAuraCollection a,string consumer=""){if(State.AuraUnknown){a=null;return false;}a=new WoWAuraCollection();a.AddRange(State.Auras.Where(x=>x.Target==Guid).Select(x=>new WoWAura{SpellId=x.Spell,CreatorGuid=x.Actor}));return true;}}
  public sealed class LocalPlayer:WoWUnit {}
  public sealed class ItemInfo {public int[] SpellId=new[]{301,0,0,0,0};}
  public sealed class WoWItem {public ulong Guid=2,OwnerGuid=1;public uint Entry=123,BaseAddress=8192;public bool IsValid=true,Usable=true;public ItemInfo ItemInfo=new();public string Name="Potion";
@@ -78,6 +79,7 @@ using Styx;using Styx.Helpers;using Styx.Logic.Combat;using Styx.Logic.BehaviorT
   }
  }
 }
+/* controlled rest admission (full owner tested separately) */ namespace Styx.Logic.Common {public static class Rest {public static string GetAdmissionDenial(LocalPlayer player,bool requireStationary=true,bool allowQueries=true){if(State.Prepared&&allowQueries)State.NestedPreparedQueries++;return State.RestDenial;}}}
 /* controlled metadata boundary */ namespace Styx.Logic.Combat {
  static class Environment {internal static long TickCount64=>State.Now;}
  public static class RoutineManager {public static object Current=new();}
@@ -87,9 +89,9 @@ using Styx;using Styx.Helpers;using Styx.Logic.Combat;using Styx.Logic.BehaviorT
  public sealed class WoWSpell {public int Id;public string Name;public bool IsValid=true;public uint AttributesEx;public SpellEffect[] SpellEffects=new[]{new SpellEffect(),new SpellEffect(),new SpellEffect()};public static WoWSpell FromId(int id)=>State.Spells.TryGetValue(id,out var s)?s:null;}
  static class State {
   internal static long Now=1000,Lost;internal static int SpellCalls,ItemCalls,Queries,ObservationFailures;internal static ulong NativeTarget;
-  internal static bool QueryUnknown,CooldownKnown=true,AuraUnknown,NoNative,UncertainReply,GuardRefused,BadRank,Instant;
+  internal static bool QueryUnknown,CooldownKnown=true,AuraUnknown,AuraMetadataUnknown,NoNative,UncertainReply,GuardRefused,BadRank,Instant;
   internal static long ItemCount=4;internal static double CooldownStart,CooldownDuration;internal static string CollectorToken;
-  internal static Action OnQuery,BeforeNative,OnLog;internal static Exception NativeFailure;
+  internal static Action OnQuery,BeforeNative,OnLog;internal static Exception NativeFailure;internal static string RestDenial;internal static bool Prepared;internal static int NestedPreparedQueries;
   internal static readonly Dictionary<int,WoWSpell> Spells=new();internal static readonly List<RecoveryEvent> Events=new();internal static readonly List<(int Spell,ulong Actor,ulong Target)> Auras=new();internal static readonly List<string> Messages=new();
   internal static void Add(string kind,int spell=101,long counter=42,ulong source=1,ulong target=1){Events.Add(new RecoveryEvent(Events.Count+1,Now/1000d,kind,kind=="HEAL"?"":Spells[spell].Name,kind=="HEAL"?"":"Rank 1",kind=="HEAL"?0:counter,source,kind=="HEAL"?target:0,kind=="HEAL"?spell:0,kind=="HEAL"?500:0,0));}
   internal static WoWSpell Spell(int id,string name,WoWSpellEffectType effect){var s=new WoWSpell{Id=id,Name=name};s.SpellEffects[0].EffectType=effect;Spells[id]=s;return s;}
@@ -114,9 +116,26 @@ using Styx;using Styx.Helpers;using Styx.Logic.Combat;using Styx.Logic.BehaviorT
  private static bool Aura(string name="Divine Protection")=>RecoveryActions.TryCast(name,StyxWoW.Me,false,true,"test-aura");
  private static WoWItem Potion(bool mana=false,bool dual=false)=>new WoWItem{ItemInfo=new ItemInfo{SpellId=new[]{dual?303:mana?302:301,0,0,0,0}}};
  private static bool Use(bool mana=false,bool dual=false)=>RecoveryActions.TryUseConsumable(Potion(mana,dual),!mana,mana,"test-item");
+ private static bool RestItem(bool drink=false,Func<bool> admission=null){int id=drink?430:433;State.Spell(id,drink?"Drink":"Food",WoWSpellEffectType.ApplyAura);var item=new WoWItem{ItemInfo=new(){SpellId=new[]{id,0,0,0,0}}};return RecoveryActions.TryUseRestConsumable(item,!drink,drink,"rest",admission);}
  public static void Run(){int total=0,passed=0,failed=0,unexpected=0;
-  void Case(string name,Action body){total++;State.Reset();try{body();passed++;}catch(Failure error){failed++;Console.Error.WriteLine("FAIL recovery adapter: "+name+": "+error.Message);}catch(Exception error){unexpected++;Console.Error.WriteLine("ERROR recovery adapter: "+name+": "+error);}}
+  void Case(string name,Action body){total++;State.Reset();State.AuraMetadataUnknown=false;State.RestDenial=null;State.Prepared=false;State.NestedPreparedQueries=0;try{body();passed++;}catch(Failure error){failed++;Console.Error.WriteLine("FAIL recovery adapter: "+name+": "+error.Message);}catch(Exception error){unexpected++;Console.Error.WriteLine("ERROR recovery adapter: "+name+": "+error);}}
   Case("submitted self heal reserves health",()=>{Check(Heal(),"healthy heal was not submitted");Check(!Use()&&State.SpellCalls==1&&State.ItemCalls==0,"pending self heal spent a health item");});
+  Case("rest food requires new owned aura and consumed stack",()=>{Check(RestItem(),"food did not submit");State.ItemCount--;State.Auras.Add((433,1,1));State.Now+=500;RecoveryActions.Pulse();Check(Heal(),"consumed food with owned effect never acknowledged");});
+  Case("rest drink is independent of pending self heal",()=>{Check(Heal()&&RestItem(true)&&State.ItemCalls==1,"mana-only rest blocked behind health");});
+  Case("rest fresh denial before native request",()=>{State.OnQuery=()=>State.RestDenial="combat";Check(!RestItem()&&State.ItemCalls==0,"combat starting during item query did not revoke rest");});
+  Case("rest denied context avoids item queries",()=>{State.RestDenial="moving";Check(!RestItem()&&State.Queries==0&&State.ItemCalls==0,"unsafe rest crossed item observation or dispatch boundary");});
+  Case("rest native reentry checks current safety",()=>{State.BeforeNative=()=>State.RestDenial="mounted";Check(!RestItem()&&State.ItemCalls==0,"mount change before native entry ignored");});
+  Case("rest prepared item request does not query another native observation",()=>{State.BeforeNative=()=>State.Prepared=true;Check(RestItem()&&State.ItemCalls==1&&State.NestedPreparedQueries==0,"native rest safety queried inside prepared container request");});
+  Case("rest configured owner denial avoids queries",()=>Check(!RestItem(admission:()=>false)&&State.Queries==0&&State.ItemCalls==0,"revoked configured owner queried or used item"));
+  Case("rest configured owner replaced during query",()=>{bool current=true;State.OnQuery=()=>current=false;Check(!RestItem(admission:()=>current)&&State.ItemCalls==0,"obsolete configured owner dispatched item");});
+  Case("rest configured owner replaced at native entry",()=>{bool current=true;State.BeforeNative=()=>current=false;Check(!RestItem(admission:()=>current)&&State.ItemCalls==0,"native entry borrowed obsolete configured owner");});
+  Case("rest submitted request alone remains pending",()=>{Check(RestItem(),"food did not submit");State.Now+=500;RecoveryActions.Pulse();Check(!Heal(),"submission acknowledged food");});
+  Case("rest quantity alone remains pending",()=>{RestItem();State.ItemCount--;State.Now+=500;RecoveryActions.Pulse();Check(!Heal(),"consumed food lacks aura effect");});
+  Case("rest aura alone remains pending",()=>{RestItem();State.Auras.Add((433,1,1));State.Now+=500;RecoveryActions.Pulse();Check(!Heal(),"aura without inventory change acknowledged item");});
+  Case("rest foreign aura cannot acknowledge",()=>{RestItem();State.ItemCount--;State.Auras.Add((433,9,1));State.Now+=500;RecoveryActions.Pulse();Check(!Heal(),"foreign aura acknowledged local food");});
+  Case("rest raw unknown keeps pending",()=>{RestItem();State.ItemCount--;State.Auras.Add((433,1,1));State.AuraUnknown=true;State.Now+=500;RecoveryActions.Pulse();Check(!Heal(),"raw UNKNOWN acknowledged food");});
+  Case("rest unrelated metadata does not hide owned effect",()=>{RestItem();State.ItemCount--;State.Auras.Add((433,1,1));State.Auras.Add((61988,1,1));State.AuraMetadataUnknown=true;State.Now+=500;RecoveryActions.Pulse();Check(Heal(),"unrelated metadata hid owned rest effect");});
+  Case("rest preexisting aura is not a new effect",()=>{State.Auras.Add((433,1,1));Check(!RestItem()&&State.ItemCalls==0,"already resting actor consumed duplicate item");});
   Case("different self heal also conflicts",()=>{Heal();Check(!Heal("Flash of Light")&&State.SpellCalls==1,"pending heal was doubled by another spell");});
   Case("submission result does not prove healing",()=>{Heal();State.Now+=3008;RecoveryActions.Pulse();Check(!Use(),"submitted cast was considered landed");});
   Case("unknown post-dispatch result retains reservation",()=>{State.UncertainReply=true;Check(!Heal(),"uncertain return claimed submission success");State.UncertainReply=false;Check(!Use()&&State.ItemCalls==0,"uncertain dispatched heal released health reservation");});
@@ -135,6 +154,9 @@ using Styx;using Styx.Helpers;using Styx.Logic.Combat;using Styx.Logic.BehaviorT
   Case("observed event loss does not imply a heal outcome",()=>{Heal();State.Add("START");State.Add("SUCCEEDED");State.Add("HEAL");State.Lost=1;State.Now+=500;RecoveryActions.Pulse();Check(!Use(),"incomplete event coverage was promoted to completion");});
   Case("defensive interval beyond old prevention stays pending",()=>{Check(Aura(),"defensive did not submit");State.Now+=3008;Check(!Aura()&&State.SpellCalls==1,"Divine Protection submitted twice without acknowledgement");});
   Case("known defensive aura is authoritative acknowledgement",()=>{Aura();State.Auras.Add((201,1,1));State.Now+=500;RecoveryActions.Pulse();Check(!Aura()&&State.SpellCalls==1,"already active defensive was resubmitted");});
+  Case("unrelated unavailable metadata does not hide exact defensive absence",()=>{State.AuraMetadataUnknown=true;State.Auras.Add((61988,1,1));Check(Aura()&&State.SpellCalls==1,"unrelated missing row blocked a known exact-ID absence");});
+  Case("unrelated unavailable metadata does not hide owned defensive acknowledgement",()=>{Check(Aura(),"defensive did not submit");State.AuraMetadataUnknown=true;State.Auras.Add((61988,1,1));State.Auras.Add((201,1,1));State.Now+=500;RecoveryActions.Pulse();Check(State.Messages.Any(m=>m.Contains("state=Acknowledged")),"owned exact aura was hidden by unrelated metadata");});
+  Case("metadata-only unknown does not weaken defensive caster ownership",()=>{Check(Aura(),"defensive did not submit");State.AuraMetadataUnknown=true;State.Auras.Add((61988,1,1));State.Auras.Add((201,9,1));State.Now+=500;RecoveryActions.Pulse();Check(!State.Messages.Any(m=>m.Contains("state=Acknowledged")),"foreign caster borrowed ownership through partial metadata");});
   Case("unknown aura coverage never authorizes a defensive",()=>{State.AuraUnknown=true;Check(!Aura()&&State.SpellCalls==0,"unknown aura coverage became absence");});
   Case("existing aura from another caster is not absent coverage",()=>{State.Auras.Add((201,9,1));Check(!Aura()&&State.SpellCalls==0,"other-caster coverage authorized an unnecessary duplicate");});
   Case("existing aura with unavailable caster is not absence",()=>{State.Auras.Add((201,0,1));Check(!Aura()&&State.SpellCalls==0,"unavailable aura caster became absence");});
@@ -164,6 +186,8 @@ using Styx;using Styx.Helpers;using Styx.Logic.Combat;using Styx.Logic.BehaviorT
   Case("blocked repeated health item admission does not reread Lua every pulse",()=>{Heal();int queries=State.Queries;for(int i=0;i<20;i++)Check(!Use(),"pending heal allowed an item submission");Check(State.Queries==queries&&State.ItemCalls==0,"conflicting item repeatedly crossed the native observation boundary");});
   Case("blocked repeated defensive does not reread Lua metadata",()=>{Aura();int queries=State.Queries;for(int i=0;i<20;i++)Check(!Aura(),"pending defensive resubmitted");Check(State.Queries==queries,"pending defensive repeated metadata reads");});
   Case("native duplicate bypass is denied while scoped action is pending",()=>{Heal();Check(!RecoveryActions.BeforeSpellSubmission(101,1),"raw same-spell duplicate bypassed reservation");});
+  foreach(string replacement in new[]{"executor","memory-same-handle","bot"})Case("stale raw duplicate owner does not suppress successor / "+replacement,()=>{Check(Heal(),"initial recovery submission failed");if(replacement=="executor")ObjectManager.Executor=new();else if(replacement=="memory-same-handle")ObjectManager.Wow=new();else TreeRoot.Current=new();Check(SpellManager.Cast(State.Spells[101],StyxWoW.Me)&&State.SpellCalls==2,"stale recovery owner suppressed a current raw native action");});
+  Case("stale raw check cannot clear reentrant successor",()=>{Check(Heal(),"initial recovery submission failed");State.BeforeNative=()=>{ObjectManager.Executor=new();Check(RecoveryActions.TryCast("Flash of Light",StyxWoW.Me,true,false,"reentrant-successor"),"reentrant successor did not acquire current owner");};Check(SpellManager.Cast(State.Spells[101],StyxWoW.Me)&&State.SpellCalls==3,"outer raw action did not survive stale-owner replacement");Check(!SpellManager.Cast(State.Spells[102],StyxWoW.Me)&&State.SpellCalls==3,"stale predecessor cleanup erased the reentrant successor reservation");});
   Case("raw combo duplicate retains its native target ownership",()=>{Aura("Combo Buff");Check(!RecoveryActions.BeforeSpellSubmission(202,9),"native enemy target bypassed a pending self-aura reservation");});
   Case("aura arriving during metadata read prevents duplicate native entry",()=>{State.OnQuery=()=>State.Auras.Add((201,1,1));Check(!Aura()&&State.SpellCalls==0,"newly observed aura was ignored after metadata yielded");});
   Case("replaced aura recipient cannot acknowledge an older action",()=>{var target=StyxWoW.Me.CurrentTarget;Check(RecoveryActions.TryCast("Divine Protection",target,false,true,"group-aura"),"group aura control failed");target.Guid=10;State.Auras.Add((201,1,10));State.Now+=500;RecoveryActions.Pulse();Check(!State.Messages.Any(m=>m.Contains("state=Acknowledged")),"replacement recipient acknowledged an older target's action");});

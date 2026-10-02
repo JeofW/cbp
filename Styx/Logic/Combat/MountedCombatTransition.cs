@@ -1,0 +1,303 @@
+using System;
+using System.Collections.Generic;
+using Styx.Helpers;
+using Styx.Logic.BehaviorTree;
+using Styx.Logic.Pathing;
+using Styx.Logic.POI;
+using Styx.WoWInternals;
+using Styx.WoWInternals.WoWObjects;
+using TreeSharp;
+
+#nullable disable
+
+namespace Styx.Logic.Combat
+{
+    /// <summary>
+    /// Bridges committed/protective combat intent to the shared ground-transition
+    /// owner. It never acknowledges landing or mount removal itself.
+    /// </summary>
+    public sealed class MountedCombatTransition : IDisposable
+    {
+        private static readonly MountedTravelProgress EscapeProgress = new();
+        private readonly GroundTransition _ground = new(GroundTransitionPurpose.Combat);
+        private Func<bool> _admitted;
+        private WoWObject _subject;
+        private WoWPoint _destination;
+        private bool _active;
+        private long _lifetime;
+
+        public static bool IsMountedOrFlying(LocalPlayer actor)
+            => actor != null && (actor.Mounted || actor.Shapeshift is ShapeshiftForm.FlightForm or ShapeshiftForm.EpicFlightForm);
+
+        public static bool HasProtectiveCombat(LocalPlayer actor)
+        {
+            if (actor == null) return false;
+            var pet = actor.GotAlivePet ? actor.Pet : null;
+            return actor.Combat || pet != null && pet.IsAlive && pet.Combat;
+        }
+
+        /// <summary>
+        /// Returns true when mounted travel must yield to the combat transition.
+        /// A committed Kill always yields. Incidental aggro retains the existing
+        /// bounded progress/health escape policy until that policy says stop.
+        /// </summary>
+        public static bool RequiresProtectiveHandoff(WoWPoint travelDestination)
+        {
+            var actor = ObjectManager.Me;
+            if (actor == null || !actor.IsValid || !actor.IsAlive || actor.IsGhost) return false;
+            var poi = BotPoi.Current;
+            bool committed = poi != null && poi.Type == PoiType.Kill;
+            bool threat = HasProtectiveCombat(actor);
+            if (!committed && !threat)
+            {
+                EscapeProgress.Reset();
+                return false;
+            }
+
+            // Known unmounted ground state can use the ordinary combat owner.
+            // UNKNOWN/flying/falling remains a transition concern, never attack permission.
+            if (!IsMountedOrFlying(actor))
+                return !CanActUnmounted();
+            if (committed) return true;
+
+            object memory = ObjectManager.Wow;
+            ulong guid = actor.Guid;
+            uint address = actor.BaseAddress;
+            uint map = actor.MapId;
+            int processId = ObjectManager.Wow?.ProcessId ?? 0;
+            if (memory == null || guid == 0 || address == 0 || !actor.TryGetMovementState(out _, out _))
+                return true;
+
+            bool stop = EscapeProgress.ShouldStop(actor, memory, guid, map, Environment.TickCount64,
+                actor.Location, travelDestination, actor.HealthPercent, actor.Rooted, actor.Stunned, out _);
+            // Observation callbacks/native reads cannot transfer this result to a
+            // replacement actor or process epoch.
+            return !ReferenceEquals(ObjectManager.Me, actor) || !ReferenceEquals(ObjectManager.Wow, memory)
+                || actor.Guid != guid || actor.BaseAddress != address || actor.MapId != map
+                || ObjectManager.Wow?.ProcessId != processId || stop;
+        }
+
+        /// <summary>Transition the current committed Kill or protective threat.</summary>
+        public GroundTransitionState TickCurrent(WoWPoint travelDestination)
+        {
+            if (_active) return Continue();
+
+            var actor = ObjectManager.Me;
+            var poi = BotPoi.Current;
+            bool committed = poi != null && poi.Type == PoiType.Kill;
+            bool playerThreat = actor?.Combat == true;
+            WoWUnit protectivePet = actor?.Pet;
+            bool petThreat = protectivePet != null && protectivePet.IsAlive && protectivePet.Combat;
+            bool threat = playerThreat || petThreat;
+            if (actor == null || !committed && !threat) return GroundTransitionState.Revoked;
+            if (IsMountedOrFlying(actor) && !committed && !RequiresProtectiveHandoff(travelDestination))
+                return GroundTransitionState.Revoked;
+
+            var capturedPoi = poi;
+            long poiWorkGeneration = BotPoi.CurrentWorkGeneration;
+            if (committed)
+            {
+                WoWUnit target = capturedPoi?.AsObject as WoWUnit;
+                ulong poiGuid = capturedPoi?.Guid ?? 0, targetGuid = target?.Guid ?? 0;
+                uint poiEntry = capturedPoi?.Entry ?? 0, targetAddress = target?.BaseAddress ?? 0, targetEntry = target?.Entry ?? 0;
+                _subject = target;
+                _destination = target?.Location ?? (capturedPoi?.Location ?? actor.Location);
+                _admitted = () => ReferenceEquals(BotPoi.Current, capturedPoi) && BotPoi.CurrentWorkGeneration == poiWorkGeneration
+                    && capturedPoi?.Type == PoiType.Kill && capturedPoi.Guid == poiGuid && capturedPoi.Entry == poiEntry
+                    && (target == null || targetGuid != 0 && targetAddress != 0 && target.IsValid && target.IsAlive
+                        && target.Guid == targetGuid && target.BaseAddress == targetAddress && target.Entry == targetEntry
+                        && ReferenceEquals(capturedPoi.AsObject, target));
+            }
+            else
+            {
+                // Protective/incidental combat has no proven enemy destination.
+                // Land around the actor's observed handoff point and let ordinary
+                // combat targeting decide the enemy only after ground admission.
+                // The travel destination and an unrelated displayed target are
+                // neither landing evidence nor threat ownership.
+                ulong actorGuid = actor.Guid;
+                uint actorAddress = actor.BaseAddress, actorMap = actor.MapId;
+                ulong petGuid = petThreat ? protectivePet.Guid : 0;
+                uint petAddress = petThreat ? protectivePet.BaseAddress : 0;
+                _subject = null;
+                _destination = actor.Location;
+                bool ActorCurrent() => actorGuid != 0 && actorAddress != 0
+                    && ReferenceEquals(ObjectManager.Me, actor) && actor.IsValid && actor.IsAlive && !actor.IsGhost
+                    && actor.Guid == actorGuid && actor.BaseAddress == actorAddress && actor.MapId == actorMap;
+                bool PetThreatCurrent() => petThreat && petGuid != 0 && petAddress != 0
+                    && ReferenceEquals(actor.Pet, protectivePet) && protectivePet.IsValid && protectivePet.IsAlive
+                    && protectivePet.Guid == petGuid && protectivePet.BaseAddress == petAddress && protectivePet.Combat;
+                _admitted = () => ActorCurrent()
+                    && ((playerThreat && actor.Combat) || PetThreatCurrent())
+                    && ActorCurrent();
+            }
+            unchecked { _lifetime++; }
+            _active = true;
+            return Continue();
+        }
+
+        /// <summary>Transition a caller-owned explicit pull/target intent.</summary>
+        public GroundTransitionState TickExplicit(WoWUnit subject, Func<bool> admitted)
+        {
+            ArgumentNullException.ThrowIfNull(subject);
+            ArgumentNullException.ThrowIfNull(admitted);
+            if (!_active)
+            {
+                _subject = subject;
+                _destination = subject.Location;
+                _admitted = admitted;
+                unchecked { _lifetime++; }
+                _active = true;
+            }
+            else if (!ReferenceEquals(_subject, subject))
+            {
+                Cancel();
+                return GroundTransitionState.Revoked;
+            }
+            return Continue();
+        }
+
+        private GroundTransitionState Continue()
+        {
+            var admitted = _admitted;
+            var subject = _subject;
+            var destination = _destination;
+            long lifetime = _lifetime;
+            bool OwnsLifetime() => _active && _lifetime == lifetime && ReferenceEquals(_admitted, admitted);
+            bool OwnerAdmitted()
+            {
+                if (!OwnsLifetime() || admitted == null) return false;
+                bool allowed = admitted();
+                return allowed && OwnsLifetime();
+            }
+
+            if (!OwnerAdmitted())
+            {
+                if (OwnsLifetime()) Cancel();
+                return GroundTransitionState.Revoked;
+            }
+            GroundTransitionState state;
+            try { state = _ground.Tick(destination, subject, OwnerAdmitted); }
+            catch (InvalidProcessException error) { throw new OperationCanceledException("Mounted combat lost the game process.", error); }
+            catch (InvalidExecutorException error) { throw new OperationCanceledException("Mounted combat lost the native executor.", error); }
+            if (!OwnsLifetime()) return GroundTransitionState.Revoked;
+            if (state is GroundTransitionState.Ready or GroundTransitionState.Revoked)
+            {
+                long detachedLifetime = unchecked(lifetime + 1);
+                Cancel();
+                if (_active || _lifetime != detachedLifetime)
+                    return GroundTransitionState.Revoked;
+            }
+            return state;
+        }
+
+        public void Cancel()
+        {
+            unchecked { _lifetime++; }
+            _admitted = null; _subject = null; _destination = WoWPoint.Empty; _active = false;
+            _ground.Cancel();
+        }
+
+        public void Dispose() => Cancel();
+
+        /// <summary>
+        /// Guard an attack composite with one captured execution epoch and a fresh
+        /// unmounted observation before and after every resumed child tick.
+        /// </summary>
+        public static Composite GuardAction(Composite child, Func<bool> admitted = null)
+            => new UnmountedActionGuard(child, admitted ?? (() => true));
+
+        public static bool CanActUnmounted(Func<bool> admitted = null)
+        {
+            if (!TreeRoot.IsRunning) throw new OperationCanceledException("Mounted combat session stopped.");
+            try { return GroundTransition.CanActUnmounted(admitted); }
+            catch (InvalidProcessException error) { throw new OperationCanceledException("Mounted combat lost the game process.", error); }
+            catch (InvalidExecutorException error) { throw new OperationCanceledException("Mounted combat lost the native executor.", error); }
+        }
+
+        internal static ActionLease CaptureActionLease(WoWObject subject, Func<bool> admitted)
+        {
+            ArgumentNullException.ThrowIfNull(admitted);
+            try { return new ActionLease(subject, admitted); }
+            catch (Exception error)
+            {
+                if (error is InvalidProcessException process) throw new OperationCanceledException("Mounted combat lost the game process.", process);
+                if (error is InvalidExecutorException executor) throw new OperationCanceledException("Mounted combat lost the native executor.", executor);
+                RecoveryActions.RethrowControlFlow(error);
+                if (error is ObservationUnavailableException) return null;
+                throw;
+            }
+        }
+
+        internal sealed class ActionLease
+        {
+            private readonly GroundTransitionContext _context;
+            internal ActionLease(WoWObject subject, Func<bool> admitted)
+                => _context = new GroundTransitionContext(subject, subject?.Location ?? WoWPoint.Empty, false, admitted);
+            internal bool Current
+            {
+                get
+                {
+                    if (!TreeRoot.IsRunning) throw new OperationCanceledException("Mounted combat session stopped.");
+                    try { return _context.Current && CanActUnmounted(() => _context.Current); }
+                    catch (InvalidProcessException error) { throw new OperationCanceledException("Mounted combat lost the game process.", error); }
+                    catch (InvalidExecutorException error) { throw new OperationCanceledException("Mounted combat lost the native executor.", error); }
+                }
+            }
+        }
+
+        private sealed class UnmountedActionGuard : Decorator
+        {
+            private readonly Func<bool> _admitted;
+            private ActionLease _lease;
+            internal UnmountedActionGuard(Composite child, Func<bool> admitted) : base(child) => _admitted = admitted;
+
+            public override void Start(object context)
+            {
+                _lease = CaptureActionLease(null, _admitted);
+                base.Start(context);
+            }
+
+            public override RunStatus Tick(object context)
+            {
+                if (_lease?.Current == true)
+                {
+                    RunStatus result = base.Tick(context);
+                    if (_lease?.Current == true) return result;
+                }
+                LastStatus = RunStatus.Failure;
+                base.Stop(context);
+                return RunStatus.Failure;
+            }
+
+            public override void Stop(object context)
+            {
+                _lease = null;
+                base.Stop(context);
+            }
+        }
+
+        private sealed class CurrentTransitionBehavior : Composite
+        {
+            private readonly MountedCombatTransition _owner = new();
+            protected override IEnumerable<RunStatus> Execute(object context)
+            {
+                while (true)
+                {
+                    GroundTransitionState state = _owner.TickCurrent(BotPoi.Current?.Location ?? WoWPoint.Empty);
+                    if (state is GroundTransitionState.Pending or GroundTransitionState.Unavailable)
+                    { yield return RunStatus.Running; continue; }
+                    yield return RunStatus.Failure;
+                    yield break;
+                }
+            }
+            public override void Stop(object context)
+            {
+                _owner.Cancel();
+                base.Stop(context);
+            }
+        }
+
+        public static Composite CreateBehavior() => new CurrentTransitionBehavior();
+    }
+}
