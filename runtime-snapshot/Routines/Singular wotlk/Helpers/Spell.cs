@@ -27,7 +27,8 @@ namespace Singular.Helpers
         {
             if (SpellManager.HasSpell(spell))
                 return SpellManager.Spells[spell].CooldownTimeLeft();
-            return TimeSpan.MaxValue;
+            throw new Styx.Helpers.ObservationUnavailableException("spell-cooldown",
+                "No current known spell for the named Singular cooldown observation.");
         }
 
         // Temp wrapper for upcoming HB API
@@ -36,11 +37,7 @@ namespace Singular.Helpers
         // Fix: GetSpellInfo(id) returns the localized name — works on ALL clients.
         public static TimeSpan CooldownTimeLeft(this WoWSpell spell)
         {
-            var luaTime = Lua.GetReturnVal<double>(
-                string.Format("local n=GetSpellInfo({0}); if not n then return 0 end; local x,y=GetSpellCooldown(n); if not x then return 0 end; return x+y-GetTime()", spell.Id), 0);
-            if (luaTime <= 0)
-                return TimeSpan.Zero;
-            return TimeSpan.FromSeconds(luaTime);
+            return SpellManager.GetSpellCooldownTimeLeft(spell.Id);
         }
 
         #region Properties

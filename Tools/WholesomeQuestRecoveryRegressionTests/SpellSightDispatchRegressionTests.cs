@@ -64,6 +64,7 @@ public static class SightCases
     private sealed class Failure(string text):Exception(text){}
     internal static readonly List<ulong> Targets=new();
     internal static System.Action? DuringSetup, DuringLog;
+    internal static Exception? AvailabilityError;
     internal static bool Setup, Ready, Safe, Required, Accepted;
     public static void Run()
     {
@@ -109,6 +110,26 @@ public static class SightCases
                 Target.Sight=false;Tick(id?Spell.Cast(101,_=>StyxWoW.Me,_=>Required):Spell.Cast("Test",_=>StyxWoW.Me,_=>Required));Expect(1);
             });
             Add("backend false remains failure and not recorded success",()=>{Accepted=false;Tick(Build(id));Expect();});
+            foreach(bool late in new[]{false,true})
+            {
+                bool afterSetup=late;
+                Add("unknown cooldown yields to independent recovery / late="+late,()=>{
+                    var unknown=new Styx.Helpers.ObservationUnavailableException("spell-cooldown","controlled unavailable cooldown");
+                    if(afterSetup){Setup=true;DuringSetup=()=>AvailabilityError=unknown;}else AvailabilityError=unknown;
+                    int recovery=0;
+                    Tick(new PrioritySelector(Build(id),new TreeSharp.Action(_=>{recovery++;return RunStatus.Success;})));
+                    Expect();Check(recovery==1,"unknown cast admission starved independent recovery");
+                    AvailabilityError=null;Setup=false;DuringSetup=null;Tick(Build(id));Expect(2);
+                });
+                Add("cancelled cooldown never selects recovery / late="+late,()=>{
+                    var signal=new OperationCanceledException("controlled cooldown cancellation");
+                    if(afterSetup){Setup=true;DuringSetup=()=>AvailabilityError=signal;}else AvailabilityError=signal;
+                    int recovery=0;bool cancelled=false;
+                    try{Tick(new PrioritySelector(Build(id),new TreeSharp.Action(_=>{recovery++;return RunStatus.Success;})));}
+                    catch(OperationCanceledException error){cancelled=ReferenceEquals(error,signal);}
+                    Expect();Check(cancelled&&recovery==0,"cancelled cast admission became ordinary failure/fallback");
+                });
+            }
             Add("late obstruction does not enter buff retry dictionary",()=>{
                 Setup=true;DuringSetup=()=>Target.Sight=false;Tick(id?Spell.Buff(101):Spell.Buff("Test"));Expect();
                 Check(!Spell.DoubleCastPreventionDict.ContainsKey("Test"),"denied buff acquired retry state");
@@ -130,7 +151,7 @@ public static class SightCases
     }
     private static WoWUnit Target=>StyxWoW.Me.CurrentTarget!;
     private static Composite Build(bool id)=>id?Spell.Cast(101,_=>StyxWoW.Me.CurrentTarget,_=>Required):Spell.Cast("Test",_=>false,_=>StyxWoW.Me.CurrentTarget,_=>Required);
-    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};Targets.Clear();Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();SpellManager.Spells["Test"]=new();Setup=false;DuringSetup=null;DuringLog=null;Ready=Safe=Required=Accepted=true;}
+    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};Targets.Clear();Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();SpellManager.Spells["Test"]=new();Setup=false;DuringSetup=null;DuringLog=null;AvailabilityError=null;Ready=Safe=Required=Accepted=true;}
     private static void Tick(Composite tree){tree.Start(null!);try{int count=0;while(tree.Tick(null!)==RunStatus.Running)if(++count>12)throw new Failure("unbounded decision");}finally{tree.Stop(null!);}}
     private static void Expect(params ulong[] ids)=>Check(Targets.SequenceEqual(ids),"unexpected submission targets: "+string.Join(',',Targets));
     private static void Check(bool yes,string why){if(!yes)throw new Failure(why);}
@@ -156,7 +177,7 @@ public static class SightCases
     public static class SpellManager
     {
         public static Dictionary<string,WoWSpell> Spells=new();
-        public static bool CanCast(string name,WoWUnit target,bool range,bool movement)=>SightCases.Ready&&target!=null&&Spells.TryGetValue(name,out var s)&&(!range||target.IsMe||(target.InLineOfSpellSight&&target.Distance>=s.MinRange&&target.Distance<=s.MaxRange));
+        public static bool CanCast(string name,WoWUnit target,bool range,bool movement){if(SightCases.AvailabilityError is {} error)throw error;return SightCases.Ready&&target!=null&&Spells.TryGetValue(name,out var s)&&(!range||target.IsMe||(target.InLineOfSpellSight&&target.Distance>=s.MinRange&&target.Distance<=s.MaxRange));}
         public static bool CanCast(int id,WoWUnit target,bool range)=>id==101&&CanCast("Test",target,range,false);
         public static bool Cast(string name,WoWUnit target)=>Submit(target);
         public static bool Cast(int id,WoWUnit target)=>Submit(target);

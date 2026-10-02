@@ -23,23 +23,28 @@ internal static class SpellDispatchReceiptRegressionTests
         var names = new HashSet<string>(StringComparer.Ordinal)
         {
             "GetSpellByName", "Cast", "CastSpellById", "TryCastSpellById",
-            "CastSpell", "CanBuff", "Buff", "CastRandom", "BuffRandom"
+            "CastSpell", "CanBuff", "Buff", "CastRandom", "BuffRandom",
+            "CaptureSpellObservation", "PrepareCooldownContext", "TrackDeadline"
         };
         var methods = manager.DescendantNodes().OfType<MethodDeclarationSyntax>()
             .Where(m => names.Contains(m.Identifier.ValueText)).ToArray();
-        foreach (string required in names.Where(n => n != "TryCastSpellById"))
+        foreach (string required in names.Where(n => n != "TryCastSpellById"
+            && n != "CaptureSpellObservation" && n != "PrepareCooldownContext" && n != "TrackDeadline"))
             if (!methods.Any(m => m.Identifier.ValueText == required))
                 throw new InvalidOperationException("Missing tracked dispatch owner: " + required);
         var fieldNames = new HashSet<string>(StringComparer.Ordinal)
         {
             "_knownSpells", "_cooldownSync", "_castVerificationUntilTicks",
-            "CastAttemptVerificationDelayMs", "_spellRandom"
+            "CastAttemptVerificationDelayMs", "_spellRandom", "_cooldownReadyAtTicks", "_readinessProbeNotBeforeTicks",
+            "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks"
         };
         string fields = string.Join("\n", manager.DescendantNodes().OfType<FieldDeclarationSyntax>()
             .Where(f => f.Declaration.Variables.Any(v => fieldNames.Contains(v.Identifier.ValueText)))
             .Select(f => f.ToFullString()));
         string spells = manager.DescendantNodes().OfType<PropertyDeclarationSyntax>()
             .Single(p => p.Identifier.ValueText == "Spells").ToFullString();
+        string observation = string.Join("\n", manager.DescendantNodes().OfType<ClassDeclarationSyntax>()
+            .Where(c => c.Identifier.ValueText == "SpellObservationContext").Select(c => c.ToFullString()));
         var singular = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,
             "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"))).GetRoot();
         string ground = singular.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m =>
@@ -49,7 +54,7 @@ internal static class SpellDispatchReceiptRegressionTests
         try
         {
             File.WriteAllText(Path.Combine(directory, "Probe.cs"), Prefix +
-                "public static class SpellManager {\n" + fields + spells +
+                "public static class SpellManager {\n" + fields + spells + observation +
                 string.Join("\n", methods.Select(m => m.ToFullString())) + Cases + "}\n" +
                 "public static class GroundProbe {\n" + ground + "}\n");
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
@@ -79,6 +84,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Styx.Helpers;
 using TreeSharp;
 using CommonBehaviors.Actions;
 using Action = TreeSharp.Action;
@@ -104,6 +110,7 @@ public class WoWUnit
 }
 public sealed class LocalPlayer : WoWUnit
 {
+    public uint BaseAddress = 4096, MapId = 530;
     public WoWUnit? CurrentTarget;
     public Point Location = new Point();
     public bool HasPendingSpell(string name)
@@ -151,7 +158,16 @@ public sealed class ExecutorRand
         Completions++;
     }
 }
-public static class ObjectManager { public static ExecutorRand? Executor; }
+public static class ObjectManager { public static ExecutorRand? Executor; public static object Wow = new object(); }
+public static class TreeRoot
+{
+    public static object Current = new object(), RunIdentity = new object();
+    public static bool IsRunning = true, CurrentThreadIsBotThread;
+    public static void VerifyPulseOwner(object bot, bool worker)
+    {
+        if (worker && (!IsRunning || !ReferenceEquals(bot, Current))) throw new OperationCanceledException("controlled dispatch Stop");
+    }
+}
 public static class StyxWoW
 {
     public static LocalPlayer Me = new LocalPlayer();

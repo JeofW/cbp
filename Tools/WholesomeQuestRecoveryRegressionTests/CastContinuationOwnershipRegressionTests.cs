@@ -33,8 +33,8 @@ internal static class CastContinuationOwnershipRegressionTests
         boundary = ReplaceOnce(boundary, "        int passed=0,assertions=0,unexpected=0;", AdditionalCases + "        int passed=0,assertions=0,unexpected=0;");
         boundary = ReplaceOnce(boundary, "DuringSetup, DuringLog;", "DuringSetup, DuringLog, DuringAdmission, DuringSubmit;");
         boundary = ReplaceOnce(boundary, "DuringSetup=null;DuringLog=null;", "DuringSetup=null;DuringLog=null;DuringAdmission=null;DuringSubmit=null;");
-        boundary = ReplaceOnce(boundary, "=>SightCases.Ready&&target!=null&&Spells.TryGetValue(name,out var s)&&(!range||target.IsMe||(target.InLineOfSpellSight&&target.Distance>=s.MinRange&&target.Distance<=s.MaxRange));",
-            "{var callback=SightCases.DuringAdmission;SightCases.DuringAdmission=null;callback?.Invoke();return SightCases.Ready&&target!=null&&Spells.TryGetValue(name,out var s)&&(!range||target.IsMe||(target.InLineOfSpellSight&&target.Distance>=s.MinRange&&target.Distance<=s.MaxRange));}");
+        boundary = ReplaceOnce(boundary, "{if(SightCases.AvailabilityError is {} error)throw error;return SightCases.Ready",
+            "{var callback=SightCases.DuringAdmission;SightCases.DuringAdmission=null;callback?.Invoke();if(SightCases.AvailabilityError is {} error)throw error;return SightCases.Ready");
         boundary = ReplaceOnce(boundary, "SightCases.Targets.Add(target.Guid);return true;", "SightCases.Targets.Add(target.Guid);var callback=SightCases.DuringSubmit;SightCases.DuringSubmit=null;callback?.Invoke();return true;");
         boundary = boundary.Replace("Spell sight dispatch scenarios:", "Cast continuation ownership scenarios:");
         string temporary = Path.Combine(Path.GetTempPath(), "cb-cast-continuation-" + Guid.NewGuid().ToString("N"));

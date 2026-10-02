@@ -112,7 +112,11 @@ internal static class SpellLifecycleRegressionTests
                 Initialize.Invoke(null, null);
                 Check(fixture.Owned(Learned) == 1 && fixture.Owned(Talent) == 1,
                     "disconnect/reset must not duplicate managed subscriptions");
-            })
+            }),
+            ("initialization retires previous cooldown and submission holds", fixture => VerifyCooldownReset(fixture, "initialize")),
+            ("shutdown retires previous cooldown and submission holds", fixture => VerifyCooldownReset(fixture, "shutdown")),
+            ("learned spell notification retires previous readiness holds", fixture => VerifyCooldownReset(fixture, Learned)),
+            ("talent change retires previous readiness holds", fixture => VerifyCooldownReset(fixture, Talent))
         };
         var failures = new List<string>();
         foreach (var test in cases)
@@ -145,6 +149,23 @@ internal static class SpellLifecycleRegressionTests
         Check(fixture.Refreshes - before == 1, "one notification must cause exactly one refresh after repeated initialization");
     }
 
+    private static void VerifyCooldownReset(Fixture fixture, string lifecycle)
+    {
+        Initialize.Invoke(null, null);
+        string[] names = { "_cooldownReadyAtTicks", "_castVerificationUntilTicks", "_readinessProbeNotBeforeTicks" };
+        var maps = names.Select(name => (Dictionary<int, long>)typeof(SpellManager).GetField(name, PrivateStatic)!.GetValue(null)!).ToArray();
+        long now = Environment.TickCount64;
+        foreach (var values in maps) values[12340] = now + 60000;
+        if (lifecycle == "initialize") Initialize.Invoke(null, null);
+        else if (lifecycle == "shutdown") Shutdown.Invoke(null, null);
+        else foreach (var handler in fixture.Handlers(lifecycle))
+            handler(null!, new LuaEventArgs(lifecycle, 0, Array.Empty<object>()));
+        var read = typeof(SpellManager).GetMethod("GetTrackedCooldownTimeLeft", PrivateStatic)!;
+        foreach (var values in maps)
+            Check((TimeSpan)read.Invoke(null, new object[] { values, 12340, now })! == TimeSpan.Zero,
+                "a previous session's cooldown, submitted cast or unavailable probe blocks fresh work after " + lifecycle);
+    }
+
     private static int OwnedStartCount() => ((Delegate?)StartHandlers.GetValue(null))?
         .GetInvocationList().Count(handler => handler.Method.DeclaringType == typeof(SpellManager)) ?? 0;
 
@@ -161,6 +182,8 @@ internal static class SpellLifecycleRegressionTests
         private readonly Dictionary<string, WoWSpell> _spells = new(SpellManager.KnownSpells);
         private readonly bool _fileLogging = Logging.FileLogging;
         private readonly Logging.LogMessageDelegate _logHandler;
+        private readonly Dictionary<FieldInfo, Dictionary<int, long>> _cooldownMaps = new();
+        private readonly Dictionary<FieldInfo, object?> _cooldownState = new();
         internal LuaEvents Events { get; }
         internal int Refreshes { get; private set; }
 
@@ -168,6 +191,16 @@ internal static class SpellLifecycleRegressionTests
         {
             if (ObjectManager.Wow != null || ObjectManager.Me != null || ObjectManager.Executor != null)
                 throw new InvalidOperationException("Lifecycle fixtures require an unattached process.");
+            foreach (string name in new[] { "_cooldownReadyAtTicks", "_castVerificationUntilTicks", "_readinessProbeNotBeforeTicks" })
+            {
+                var field = typeof(SpellManager).GetField(name, PrivateStatic)!;
+                _cooldownMaps[field] = new Dictionary<int, long>((Dictionary<int, long>)field.GetValue(null)!);
+            }
+            foreach (string name in new[] { "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks" })
+            {
+                var field = typeof(SpellManager).GetField(name, PrivateStatic);
+                if (field != null) _cooldownState[field] = field.GetValue(null);
+            }
             Events = (LuaEvents)Activator.CreateInstance(typeof(LuaEvents), nonPublic: true)!;
             StartHandlers.SetValue(null, null);
             LuaManager.SetValue(null, Events);
@@ -198,6 +231,13 @@ internal static class SpellLifecycleRegressionTests
             SpellManager.KnownSpells.Clear();
             foreach (var spell in _spells) SpellManager.KnownSpells.Add(spell.Key, spell.Value);
             LastCount.SetValue(null, _lastCount);
+            foreach (var pair in _cooldownMaps)
+            {
+                var current = (Dictionary<int, long>)pair.Key.GetValue(null)!;
+                current.Clear();
+                foreach (var value in pair.Value) current.Add(value.Key, value.Value);
+            }
+            foreach (var pair in _cooldownState) pair.Key.SetValue(null, pair.Value);
         }
     }
 }

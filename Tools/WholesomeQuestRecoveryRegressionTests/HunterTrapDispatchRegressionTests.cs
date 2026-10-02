@@ -37,13 +37,17 @@ internal static class HunterTrapDispatchRegressionTests
             && m.ParameterList.Parameters.FirstOrDefault()?.Type?.ToString() == "string").ToArray();
         if (spellMethods.Length != 7) throw new InvalidOperationException("Complete named cast overload/admission region required");
         var manager = CSharpSyntaxTree.ParseText(Load("Styx/Logic/Combat/SpellManager.cs")).GetRoot();
-        var names = new HashSet<string> { "HasSpell", "GetSpellByName", "Cast", "CastSpellById", "TryCastSpellById" };
+        var names = new HashSet<string> { "HasSpell", "GetSpellByName", "Cast", "CastSpellById", "TryCastSpellById",
+            "CaptureSpellObservation", "PrepareCooldownContext", "TrackDeadline" };
         var managerMethods = manager.DescendantNodes().OfType<MethodDeclarationSyntax>()
             .Where(m => names.Contains(m.Identifier.ValueText)).ToArray();
-        var fields = new HashSet<string> { "_knownSpells", "_cooldownSync", "_castVerificationUntilTicks", "CastAttemptVerificationDelayMs" };
+        var fields = new HashSet<string> { "_knownSpells", "_cooldownSync", "_castVerificationUntilTicks", "CastAttemptVerificationDelayMs",
+            "_cooldownReadyAtTicks", "_readinessProbeNotBeforeTicks", "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks" };
         string managerState = string.Join("\n", manager.DescendantNodes().OfType<FieldDeclarationSyntax>()
             .Where(f => f.Declaration.Variables.Any(v => fields.Contains(v.Identifier.ValueText))).Select(f => f.ToFullString()));
         managerState += manager.DescendantNodes().OfType<PropertyDeclarationSyntax>().Single(p => p.Identifier.ValueText == "Spells").ToFullString();
+        managerState += string.Join("\n", manager.DescendantNodes().OfType<ClassDeclarationSyntax>()
+            .Where(c => c.Identifier.ValueText == "SpellObservationContext").Select(c => c.ToFullString()));
         var specializationSources = new[] { "BeastMaster", "Marksman", "Survival" }.Select(name =>
             CSharpSyntaxTree.ParseText(Load("runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/" + name + ".cs"))
                 .GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().Single(type => type.Identifier.ValueText == name).ToFullString()).ToArray();
@@ -91,6 +95,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Styx.Helpers;
 using TreeSharp;
 using CommonBehaviors.Actions;
 using Singular.Dynamics;
@@ -116,6 +121,7 @@ public class WoWUnit
 }
 public sealed class LocalPlayer:WoWUnit
 {
+    public uint BaseAddress=4096,MapId=530;
     public WoWUnit? Pet;public bool GotAlivePet=>Pet!=null&&Pet.IsValid&&Pet.IsAlive;
     public WoWSpell CastingSpell=new();public int CurrentCastId;
 }
@@ -145,7 +151,16 @@ public sealed class ExecutorRand
         Completed.Add((id,guid));
     }
 }
-public static class ObjectManager { public static ExecutorRand? Executor; }
+public static class ObjectManager { public static ExecutorRand? Executor; public static object Wow=new object(); }
+public static class TreeRoot
+{
+    public static object Current=new object(),RunIdentity=new object();
+    public static bool IsRunning=true,CurrentThreadIsBotThread;
+    public static void VerifyPulseOwner(object bot,bool worker)
+    {
+        if(worker&&(!IsRunning||!ReferenceEquals(bot,Current)))throw new OperationCanceledException("controlled Hunter dispatch Stop");
+    }
+}
 public static class StyxWoW { public static LocalPlayer Me=new(); public static void ResetAfk(){World.Resets++;} }
 public static class Logging { public static void WriteDebug(string message,params object[] args){} public static void WriteException(Exception e){World.Errors++;} }
 public static class Patchables { public static class GlobalOffsets { public const uint Spell_C__CastSpell=12345; } }
