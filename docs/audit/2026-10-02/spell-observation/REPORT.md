@@ -51,6 +51,8 @@ All receipt directories below are under `D:/Dev/CopilotBuddy-Evidence/action-ack
 
 The real host lifecycle suite also passed with four additional initialization/shutdown/spellbook reset controls. The existing dispatch fixture now extracts the full added observation helper chain and supplies actor/map/memory/worker leaves; its original 97 assertions remain unchanged. Fixture compilation errors, the initial Lua-fixture normalizer error and an interrupted build whose terminal disappeared are preserved separately and are not counted as behavioral red evidence. All accepted focused runs retain stable source snapshots. Final source review was performed inline without a separate reviewer agent; no independent review is claimed.
 
+The complete local gate at b3a0bece passed33/34 stages with stable source inputs. The Wholesome aggregate exposed two additional fixture integration errors: an outdated cast-continuation admission anchor and omitted observation helpers in the Hunter extractor. Both were corrected while retaining their original assertions and full owner calls. `spell-aggregate-fixture-integration-b3a0bece` then passed144 cast-continuation,582 Hunter,280 cooldown and97 dispatch cases. The failed complete gate is retained, and a fresh complete gate on the corrected commit is required before release.
+
 ## Deployment and continuing incidents
 
 PR91 is now installed in production: `ReleaseData/Deployment-PR91-c106a721-20261002.json` records 434 verified payload files, 2,013 protected files preserved, and all 13 deployed runtime components compiled. This new uncommitted spell scope is not part of that deployment.
