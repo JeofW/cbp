@@ -23,7 +23,7 @@ namespace Styx.Logic.Combat
  public enum WoWApplyAuraType { None, ModResistancePct, ModDamagePercentDone, ModMechanicDamageTakenPercent }
  public sealed class SpellEffect { public WoWApplyAuraType AuraType; public int MiscValueA; public int BasePoints; }
  public sealed class WoWSpell { public static WoWSpell FromId(int id) => new() { Name = id == 53385 ? "Divine Storm" : "Crusader Strike" }; public string Name = ""; public WoWSpellMechanic Mechanic; public SpellEffect? GetSpellEffect(int _) => null; }
- public sealed class WoWAura { public string Name=""; public int StackCount; public ulong CreatorGuid; public TimeSpan TimeLeft; public WoWSpell Spell=new(); }
+ public sealed class WoWAura { public string Name=""; public int StackCount; public ulong CreatorGuid; public TimeSpan TimeLeft; public bool IsHarmful; public WoWSpell Spell=new(); }
 }
 namespace Styx.WoWInternals
 {
@@ -66,6 +66,7 @@ namespace Styx.WoWInternals.WoWObjects
   public WoWPoint Location { get; set; }
   public WoWCreatureType CreatureType { get; set; }
   public Dictionary<string, WoWAura> Auras { get; } = new();
+  public IEnumerable<WoWAura> GetRawAuras() => Auras.Values;
   public IEnumerable<WoWAura> GetAllAuras() => Auras.Values;
   public Dictionary<ulong,uint> Threats { get; } = new();
   public UnitThreatInfo GetThreatInfoFor(WoWUnit p) => new() { ThreatValue = Threats.GetValueOrDefault(p.Guid) };
