@@ -390,17 +390,17 @@ internal static class QuestPublicationRegressionTests
             if (readHandle == IntPtr.Zero)
                 throw new InvalidOperationException("Could not open the fixture's read-only self-process handle.");
             Set(memory, "_hProcess", readHandle);
-            Bytes(0xBD0792, new byte[] { 1 }); Bytes(0xB6A9E0, BitConverter.GetBytes(0u));
+            FixedGlobal(0xBD0792, new byte[] { 1 }); FixedGlobal(0xB6A9E0, BitConverter.GetBytes(0u));
             // Separate numeric lifecycle word; the legacy address is screen text.
-            Bytes(0xB6AA38, BitConverter.GetBytes(0u));
-            Bytes(0xBD088C, BitConverter.GetBytes(1u));
+            FixedGlobal(0xB6AA38, BitConverter.GetBytes(0u));
+            FixedGlobal(0xBD088C, BitConverter.GetBytes(1u));
             // ZoneText reads a client-global pointer, then an actual 512-byte string.
             // Both observations must belong to this fixture, not arbitrary memory
             // at the same numeric address in the Windows test process.
             uint zoneText = start + 49152;
             byte[] zoneBytes = System.Text.Encoding.UTF8.GetBytes("W42 Publication Zone\0");
             Marshal.Copy(zoneBytes, 0, new IntPtr(unchecked((int)zoneText)), zoneBytes.Length);
-            Bytes(12388232U, BitConverter.GetBytes(zoneText));
+            FixedGlobal(12388232U, BitConverter.GetBytes(zoneText));
             Write(start + 8, descriptor); Write(start + 0x14, 4); Write(start + 0xBC, 0);
             // Supply matching raw object/descriptor identity in this allocated fixture.
             Write(start + 48, 123); Write(descriptor, 123);
@@ -415,15 +415,15 @@ internal static class QuestPublicationRegressionTests
             // Reading a StyxWoW static field initializes Landmarks. Install its
             // controlled observations first; the constants below match the actual
             // Landmarks fields, not the differing hexadecimal comments there.
-            Bytes(12488416, BitConverter.GetBytes(0));
-            Bytes(12488476, BitConverter.GetBytes(0u));
+            FixedGlobal(12488416, BitConverter.GetBytes(0));
+            FixedGlobal(12488476, BitConverter.GetBytes(0u));
             previousCache = typeof(StyxWoW).GetField("_cache", StaticHidden)!.GetValue(null);
             cacheCaptured = true;
             var questCache = new WoWCache(); typeof(StyxWoW).GetField("_cache", StaticHidden)!.SetValue(null, questCache);
             WoWCache.Cache owner = questCache[CacheDb.Quest]; Set(owner, "_entryOffset", 0u);
             uint table = start + 32768, node = start + 33024;
             byte[] header = new byte[48]; BitConverter.GetBytes(table).CopyTo(header, 36);
-            Bytes(owner.Address, header); Write(table + 8, node); Write(node, 867); Write(node + 4, 0); Write(node + 24, 867);
+            FixedGlobal(owner.Address, header); Write(table + 8, node); Write(node, 867); Write(node + 4, 0); Write(node + 24, 867);
             Navigator.NavigationProvider = new TestNavigationProvider(_ => { BeforeNavigation?.Invoke(); return 1f; });
             // Trigger the actual manager's static constructor before retaining its state.
             _ = ProfileManager.XmlLocation;
@@ -438,12 +438,15 @@ internal static class QuestPublicationRegressionTests
           }
           catch { Dispose(); throw; }
         }
-        private void Bytes(uint address, byte[] bytes)
+        private void FixedGlobal(uint address, byte[] bytes)
         {
             if (address == 0 || bytes.Length == 0 || (ulong)address + (uint)bytes.Length > QuestFixtureBuffer.SyntheticGlobalLimit)
                 throw new InvalidOperationException("A fixed client observation escaped the fixture's reserved address range.");
-            cache.Value![new IntPtr(unchecked((int)address))] = bytes;
+            Bytes(address, bytes);
         }
+        // Other fixtures seed observations of their owned allocated buffers here.
+        // Only FixedGlobal has the original-client address-range contract.
+        private void Bytes(uint address, byte[] bytes) => cache.Value![new IntPtr(unchecked((int)address))] = bytes;
         private static void Write(uint address, uint value) => Marshal.WriteInt32(new IntPtr(unchecked((int)address)), unchecked((int)value));
         internal void SetLevel(uint level)
         {
