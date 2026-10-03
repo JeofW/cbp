@@ -1,3 +1,13 @@
+# Current: flight priority and mounted quest continuation — 4 October 2026
+
+Continue `D:/Dev/CB-RegressionAudit-20261003` on its existing isolated branch `audit/next-regression-audit-20261003`. PR97 is completed history: merged master `5e993c98cf3a54e35321f1a616de9daa199bdb5c` has the same source tree as tested/deployed candidate `aa6f1fa4dd90ae45c8596bcf94702cc8c8a38d65`. Do not repeat its merge or deploy its earlier baseline.
+
+Read `docs/audit/2026-10-04/travel-priority/REPORT.md`, `docs/superpowers/plans/2026-10-04-travel-priority.md` and `D:/Dev/CopilotBuddy-Evidence/travel-priority-20261004`. The complete production log `2026-10-03_2356_21624.log` is frozen there. This repair replaces remote landing probes during long journeys with positively supported local flight progress, handles covered departures and later flight eligibility, separates rejected mount preparation from actual pending submissions, and repairs the mandatory quest/patrolling-NPC combat veto. Incidental mounted aggro still has no authority to voluntarily dismount; supported client-observed mount loss releases combat. An out-of-combat ground-to-flight upgrade has separate bounded removal admission and acknowledgement.
+
+Focused Windows/x86 suites and the host build pass at the precommit boundary described in the report. Full stable-source local/hosted gates, fresh native replay, publication, merge and deployment must be recovered from current Git and the new evidence directory; this checkpoint does not invent a future commit or claim a release before its receipts exist. The user previously authorized completing the integrated repair through verified merge/deployment. Preserve settings, original client hash, old dirty worktrees, failed receipts and the installed runtime until the new release is accepted. Never start or stop the game/bot. A new-branch transaction was provider-blocked twice; the failed request is preserved, and independent work continues on the existing isolated branch.
+
+## Preserved previous checkpoint
+
 # Current: shared travel, collection and Consecration — 3 October 2026
 
 Continue `D:/Dev/CB-RegressionAudit-20261003`, local branch `audit/next-regression-audit-20261003`, and PR97's remote head branch `audit/next-travel-efficiency-20261002`. The recovered deployed starting revision is `f1f045b50511e2ede7e97205c7175392ff01c208`; earlier worktrees and prior checkpoints below are preserved history. Do not restart PR61/94 or overwrite their dirty worktrees.

@@ -11,6 +11,14 @@ internal static class Program
     private static int passed, failed, unexpected;
     private static void Main()
     {
+        foreach(var route in new[]{
+            ("Hagash repair",new WoWPoint(-989.65204f,3218.9448f,45.25728f),new WoWPoint(-1329.01f,2397.58f,89.1584f)),
+            ("Aledis turn-in",new WoWPoint(-1328.8708f,2398.1316f,89.101585f),new WoWPoint(-689.583f,4167.8f,58.5228f))})
+            Case("distant "+route.Item1+" uses locally observed flight progress",()=>LocalFlightProgress(route.Item2,route.Item3));
+        Case("local flight progress still rejects unknown mesh areas", LocalFlightUnknownArea);
+        Case("local flight progress revalidates positive support", LocalFlightSupportRevoked);
+        foreach(string fault in new[]{"none","no-end-marker","nonzero-reference","interior-zero","partial","missing-polygon","wrong-floor","unknown-area","changed-provider"})
+            Case("native endpoint area observation/"+fault,()=>NativeEndpointArea(fault));
         Case("covered actor projects support below roof", CoveredActorProjectsBelowRoof);
         foreach (float altitude in new[] { 80f, 240f, 500f })
             foreach (float ground in new[] { -120f, 35f })
@@ -88,6 +96,47 @@ internal static class Program
         };
         q.Snapper=p=>new GroundSurface(p,AreaType.Ground);
         return q;
+    }
+
+    private static Queries LocalRegion(WoWPoint origin)
+    {
+        var q=HorizontalSurface(origin.Z);var observed=q.Ray;
+        q.Ray=(line,flags)=>line.Start.Distance2DSqr(origin)<=96*96?observed(line,flags):new(false,default);
+        // A far, partial mesh path cannot prove final arrival. It also must not
+        // veto a positively supported local leg that does not claim arrival.
+        q.Pather=(a,b)=>Path(false,a,b);
+        return q;
+    }
+
+    private static void LocalFlightProgress(WoWPoint origin,WoWPoint destination)
+    {
+        var q=LocalRegion(origin);
+        var search=new GroundApproachSearch(origin,destination,1,2,true,false,q,()=>true);
+        var plan=search.Step(4);
+        Check(plan!=null,"all candidate work was spent on unobservable remote landing geometry: "+search.LastReason);
+        Check(plan.Source=="local-flight-leg"&&plan.OnwardPath==null,"local progress fabricated a final ground approach");
+        Check(plan.Landing.Distance2DSqr(origin)<=96*96&&plan.Landing.Distance2DSqr(destination)<origin.Distance2DSqr(destination),
+            "flight leg was outside the observed region or made no progress");
+        Check(plan.OpenColumn&&plan.AirWaypoint.Z>=plan.Landing.Z+20,"local leg lost takeoff/cruise clearance");
+        Check(q.PathCalls==0,"local progress queried or trusted a distant final ground path");
+    }
+
+    private static void LocalFlightUnknownArea()
+    {
+        var origin=new WoWPoint(100,10,0);var q=LocalRegion(origin);
+        q.Snapper=p=>new GroundSurface(p,(AreaType)0);
+        var search=new GroundApproachSearch(origin,new WoWPoint(800,10,0),1,2,true,false,q,()=>true);
+        Check(search.Step(8)==null,"unknown polygon area authorized a local flight leg");
+    }
+
+    private static void LocalFlightSupportRevoked()
+    {
+        var origin=new WoWPoint(100,10,0);var q=LocalRegion(origin);
+        var search=new GroundApproachSearch(origin,new WoWPoint(800,10,0),1,2,true,false,q,()=>true);
+        var plan=search.Step(4);
+        Check(plan!=null,"initial local progress plan missing: "+search.LastReason);
+        q.Ray=(_,_)=>new(false,default);
+        Check(!search.Revalidate(plan),"missing support retained local flight authority");
     }
 
     private static void CoveredActorProjectsBelowRoof()
@@ -306,6 +355,40 @@ internal static class Program
     {
         var q=Adapter(out var mesh);GameWorld.Observe=(lines,flags)=>{Navigator.NavigationProvider=new object();return(new bool[lines.Length],new WoWPoint[lines.Length]);};
         bool threw=false;try{q.Trace(new[]{new WorldLine(new(0,0,1),new(0,0,0))},GameWorld.CGWorldFrameHitFlags.HitTestGround);}catch(ObservationUnavailableException){threw=true;}Check(threw,"adapter accepted replaced provider callback");
+    }
+
+    private static void NativeEndpointArea(string fault)
+    {
+        // The native 530 route receipt has Start/End, Ground/0 and a zero
+        // terminal polygon. A separate positive endpoint query must fill only
+        // that marker; neither the zero value nor route status grants land area.
+        var q=Adapter(out var mesh);
+        var result=new PathFindResult{Succeeded=true,IsPartialPath=fault=="partial",
+            Points=new[]{new Vector3(100,10,0),new Vector3(140,10,0)},
+            PolyTypes=new[]{fault=="interior-zero"?(AreaType)0:AreaType.Ground,(AreaType)0},
+            Flags=new[]{StraightPathFlags.Start,fault=="no-end-marker"?StraightPathFlags.None:StraightPathFlags.End},
+            Polygons=new[]{new PolygonReference(1),new PolygonReference(fault=="nonzero-reference"?2UL:0UL)}};
+        mesh.Find=(_,_)=>result;
+        int observations=0;
+        Navigator.TripperNavigator.Nearest=(_,p)=>
+        {
+            observations++;
+            if(fault=="changed-provider")Navigator.NavigationProvider=new object();
+            return(fault!="missing-polygon",3,p+new Vector3(0,0,fault=="wrong-floor"?8:0));
+        };
+        Navigator.TripperNavigator.Area=(_,_) => (0,fault=="unknown-area"?(byte)0:(byte)AreaType.Ground);
+        GroundPath path=null;bool deferred=false;
+        try{path=q.Path(new(100,10,0),new(140,10,0));}catch(ObservationUnavailableException){deferred=true;}
+        if(fault=="none")
+            Check(!deferred&&path.Complete&&path.Areas.Count==2&&path.Areas.All(a=>a==AreaType.Ground)&&observations==1,
+                "complete native endpoint marker blocked a positively observed final ground route");
+        else if(fault=="changed-provider")
+            Check(deferred||path.Areas[^1]==0,"replaced provider published endpoint ground authority");
+        else if(fault=="interior-zero")
+            Check(path.Areas[0]==0,"endpoint observation filled an unknown interior segment");
+        else
+            Check(path.Areas[^1]==0,"invalid or unobserved endpoint became safe ground: "+fault);
+        Check(result.PolyTypes[^1]==0,"query adapter rewrote the native provider's result buffer");
     }
 
     private static void AdapterIncompleteCollision()

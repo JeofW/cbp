@@ -80,10 +80,30 @@ internal sealed class GroundApproachQueries : IGroundApproachQueries
     {
         PathFindResult result = _mesh.FindPath(from, to);
         RequireCurrent();
-        return new GroundPath(result.Succeeded && !result.IsPartialPath && !result.Aborted,
+        bool complete = result.Succeeded && !result.IsPartialPath && !result.Aborted;
+        var points = (result.Points ?? Array.Empty<Vector3>()).ToArray();
+        var areas = (result.PolyTypes ?? Array.Empty<AreaType>()).ToArray();
+        // Detour's terminal End vertex can have no polygon reference/area.
+        // The retained native replay contains Ground/0 with Start/End and a
+        // terminal zero reference. Resolve that one vertex from a separate
+        // positive mesh query; an interior/missing/partial area stays UNKNOWN.
+        if (complete && points.Length >= 2 && areas.Length == points.Length && areas[^1] == 0
+            && result.Flags?.Length == points.Length && result.Flags[^1] == StraightPathFlags.End
+            && result.Polygons?.Length == points.Length && !result.Polygons[^1].IsValid)
+        {
+            var endpoint = new WoWPoint(points[^1].X, points[^1].Y, points[^1].Z);
+            if (GroundApproachSearch.Finite(endpoint))
+            {
+                var surface = Snap(endpoint);
+                RequireCurrent();
+                if (surface.HasValue && GroundApproachSearch.Finite(surface.Value.Position)
+                    && surface.Value.Position.DistanceSqr(endpoint) <= .25f)
+                    areas[^1] = surface.Value.Area;
+            }
+        }
+        return new GroundPath(complete,
             result.Status + "/" + result.FailStep,
-            (result.Points ?? Array.Empty<Vector3>()).Select(p => new WoWPoint(p.X, p.Y, p.Z)),
-            result.PolyTypes ?? Array.Empty<AreaType>());
+            points.Select(p => new WoWPoint(p.X, p.Y, p.Z)), areas);
     });
 
     public bool Forbidden(WoWPoint point, float radius) => Observe(() => BlackspotManager.IsBlackspotted(point, radius));

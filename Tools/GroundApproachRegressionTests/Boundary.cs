@@ -53,6 +53,8 @@ namespace Styx.Logic.Pathing
         public string Status="ok", FailStep="none";
         public Vector3[] Points=Array.Empty<Vector3>();
         public Tripper.Navigation.AreaType[] PolyTypes=Array.Empty<Tripper.Navigation.AreaType>();
+        public Tripper.Navigation.PolygonReference[] Polygons=Array.Empty<Tripper.Navigation.PolygonReference>();
+        public Tripper.Navigation.StraightPathFlags[] Flags=Array.Empty<Tripper.Navigation.StraightPathFlags>();
     }
 
     public sealed class MeshNavigator

@@ -252,6 +252,8 @@ namespace Styx.Logic.Pathing
     {
         public bool Succeeded, IsPartialPath, Aborted; public string Status = "controlled", FailStep = "none";
         public Vector3[] Points = Array.Empty<Vector3>(); public AreaType[] PolyTypes = Array.Empty<AreaType>();
+        public PolygonReference[] Polygons = Array.Empty<PolygonReference>();
+        public StraightPathFlags[] Flags = Array.Empty<StraightPathFlags>();
     }
     public partial class MeshNavigator : NavigationProvider
     {
@@ -317,6 +319,8 @@ namespace Styx.Logic.Pathing
     internal sealed class FlightPath { }
     public static partial class Flightor
     {
+        public static bool CanFly => World.PreferFlight;
+        public static class MountHelper { public static bool Mounted => (World.Actor.Flags & 0x02000000u) != 0; }
         private static LocalPlayer? _antiStuckPlayer;
         private static WoWUnit? _antiStuckOwner;
         private static ulong _antiStuckPlayerGuid, _antiStuckOwnerGuid;

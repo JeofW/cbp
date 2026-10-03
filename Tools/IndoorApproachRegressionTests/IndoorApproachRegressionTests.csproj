@@ -15,6 +15,8 @@
     <Compile Include="../../Styx/Logic/Pathing/GroundTransitionRuntime.cs" Link="Production/GroundTransitionRuntime.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundApproachGeometry.cs" Link="Production/GroundApproachGeometry.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundApproachQueries.cs" Link="Production/GroundApproachQueries.cs" />
+    <Compile Include="../../Tripper/Navigation/PolygonReference.cs" Link="Production/PolygonReference.cs" />
+    <Compile Include="../../Tripper/Navigation/StraightPathFlags.cs" Link="Production/StraightPathFlags.cs" />
     <Compile Include="../../Styx/Logic/Pathing/WoWPoint.cs" Link="Production/WoWPoint.cs" />
     <Compile Include="../../Styx/WoWInternals/World/WorldLine.cs" Link="Production/WorldLine.cs" />
     <Compile Include="../../Tripper/Navigation/AreaType.cs" Link="Production/AreaType.cs" />

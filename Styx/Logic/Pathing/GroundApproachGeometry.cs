@@ -29,7 +29,7 @@ internal sealed class GroundPath
 }
 
 internal sealed record GroundApproachPlan(WoWPoint Landing, WoWPoint AirWaypoint, AreaType Area,
-    GroundPath? OnwardPath, bool OpenColumn, string Source);
+    GroundPath? OnwardPath, bool OpenColumn, string Source, bool ProgressOnly = false);
 
 /// <summary>
 /// Collision and mesh queries have separate authority. Implementations throw
@@ -60,7 +60,7 @@ internal sealed class GroundApproachSearch
     private readonly float _interactionRange;
     private WoWPoint? _groundGoal;
     private bool _goalObserved;
-    private readonly bool _requireOnward, _allowCoveredBelowActor;
+    private readonly bool _requireOnward, _allowCoveredBelowActor, _progressLeg;
     private readonly IGroundApproachQueries _queries;
     private readonly Func<bool> _current;
     private IEnumerator<(WoWPoint Point, string Source)>? _seeds;
@@ -83,6 +83,7 @@ internal sealed class GroundApproachSearch
         _height = Math.Max(1.5f, height); _requireOnward = requireOnward;
         _allowCoveredBelowActor = allowCoveredBelowActor; _queries = queries; _current = current;
         _interactionRange = interactionRange;
+        _progressLeg = requireOnward && origin.Distance2DSqr(destination) > 120f * 120f;
     }
 
     internal GroundApproachPlan? Step(int candidateBudget = 4)
@@ -104,7 +105,8 @@ internal sealed class GroundApproachSearch
             RequireCurrent();
             if (plan == null) continue;
             Plan = plan;
-            LastReason = "supported-approach-and-static-mesh-leg; traversal-unobserved";
+            LastReason = plan.ProgressOnly ? "supported-local-flight-leg; final-approach-unobserved"
+                : "supported-approach-and-static-mesh-leg; traversal-unobserved";
             return Plan;
         }
         return null;
@@ -121,6 +123,23 @@ internal sealed class GroundApproachSearch
 
     private IEnumerable<(WoWPoint Point, string Source)> Seeds()
     {
+        if (_progressLeg)
+        {
+            // The client's collision world is local. Remote misses cannot prove
+            // a destination landing or justify downgrading an entire journey.
+            // These bounded local seeds still need positive support, matching
+            // mesh and open-body clearance; they carry no arrival authority.
+            double bearing = Math.Atan2(_destination.Y - _origin.Y, _destination.X - _origin.X);
+            foreach (float distance in new[] { 64f, 48f, 32f })
+                foreach (double offset in new[] { 0d, -Math.PI / 8, Math.PI / 8, -Math.PI / 4, Math.PI / 4 })
+                {
+                    var point = _origin.Add(distance * (float)Math.Cos(bearing + offset),
+                        distance * (float)Math.Sin(bearing + offset), 0);
+                    if (point.Distance2DSqr(_destination) < _origin.Distance2DSqr(_destination))
+                        yield return (point, "local-flight-leg");
+                }
+            yield break;
+        }
         ObserveGroundGoal();
         // A selected object can be used from supported ground inside its actual
         // range. Its model origin is not necessarily a walkable mesh endpoint.
@@ -201,6 +220,7 @@ internal sealed class GroundApproachSearch
     private GroundApproachPlan? Validate(GroundSurface surface, string source)
     {
         RequireCurrent();
+        bool progressOnly = _progressLeg && source == "local-flight-leg";
         WoWPoint p = surface.Position;
         if (!LandingArea(surface.Area) || _queries.Forbidden(p, _radius)) { LastReason = "landing-area-forbidden"; return null; }
         RequireCurrent();
@@ -214,10 +234,10 @@ internal sealed class GroundApproachSearch
         RequireCurrent();
         if (Trace(groundLines, GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2).Any(r => r.Hit))
         { LastReason = "landing-footprint-intersects-liquid"; return null; }
-        float approachHeight = Math.Max(4, _height + 1);
+        float approachHeight = progressOnly ? Math.Max(40, _origin.Z - p.Z) : Math.Max(4, _height + 1);
         var openColumn = new[] { new WorldLine(p.Add(0, 0, .25f), p.Add(0, 0, Math.Max(250, _origin.Z - p.Z + 20))) };
         bool open = !Trace(openColumn, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures)[0].Hit;
-        bool belowActor = _allowCoveredBelowActor && _origin.Distance2DSqr(p) <= .5625f && _origin.Z >= p.Z;
+        bool belowActor = !progressOnly && _allowCoveredBelowActor && _origin.Distance2DSqr(p) <= .5625f && _origin.Z >= p.Z;
         if (!open && !belowActor) { LastReason = "landing-column-covered"; return null; }
         if (!open) approachHeight = Math.Max(.75f, Math.Min(approachHeight, _origin.Z - p.Z));
         var clearance = footprint.Select(q => new WorldLine(q.Add(0, 0, .25f), q.Add(0, 0, Math.Max(_height, approachHeight + _height)))).ToArray();
@@ -225,7 +245,7 @@ internal sealed class GroundApproachSearch
         { LastReason = "landing-body-clearance-blocked"; return null; }
         GroundPath? onward = null;
         bool inObjectRange = _interactionRange > 0 && p.DistanceSqr(_destination) <= _interactionRange * _interactionRange;
-        if (_requireOnward && !inObjectRange)
+        if (_requireOnward && !progressOnly && !inObjectRange)
         {
             ObserveGroundGoal();
             if (!_groundGoal.HasValue) { LastReason = "no-observed-ground-goal-in-object-range"; return null; }
@@ -234,7 +254,7 @@ internal sealed class GroundApproachSearch
             if (!Usable(onward, p, _groundGoal.Value)) { LastReason = "onward-mesh-incomplete-or-wrong-floor"; return null; }
         }
         RequireCurrent();
-        return new GroundApproachPlan(p, p.Add(0, 0, approachHeight), surface.Area, onward, open, source);
+        return new GroundApproachPlan(p, p.Add(0, 0, approachHeight), surface.Area, onward, open, source, progressOnly);
     }
 
     internal static bool Usable(GroundPath path, WoWPoint from, WoWPoint to) => path.Complete

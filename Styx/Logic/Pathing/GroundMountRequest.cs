@@ -20,7 +20,7 @@ internal sealed class GroundMountRequest
         _inside = true;
         try
         {
-            if (mounted) { _spell = 0; _submitted = false; return false; }
+            if (mounted) { _spell = 0; _submitted = false; _nextProbe = now; return false; }
             if (_spell != 0 && now >= _deadline) { _spell = 0; _submitted = false; return false; }
             if (_submitted || casting) return current();
             if (_spell == 0)
@@ -29,11 +29,15 @@ internal sealed class GroundMountRequest
                 _nextProbe = now + 5;
                 int selected = select();
                 if (!current() || selected <= 0) return false;
-                _spell = selected; _deadline = now + 8; _nextProbe = now + 30;
+                _spell = selected; _deadline = now + 8;
             }
             if (moving) { stop(); return current(); }
             if (!current()) return false;
             _submitted = submit(_spell);
+            // A rejected preparation issued no mount request. Permit walking
+            // out of that spot and a prompt bounded retry. Only a submitted
+            // request owns the longer observation/retry lifetime.
+            _nextProbe = now + (_submitted ? 30 : 1);
             if (!_submitted) _spell = 0;
             return _submitted && current();
         }

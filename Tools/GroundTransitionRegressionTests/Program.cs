@@ -195,6 +195,18 @@ Case("grounded flight selection is retained until landing handoff", (r, m) =>
 {
     r.Motion = r.Motion with { Mounted = false, PreferFlight = true }; Pending(m); Check(r.Flights == 1 && r.Walks == 0, "long travel flight selection lost");
 }, GroundTransitionPurpose.Interaction);
+Case("final exterior landing keeps its ground leg despite a distant indoor destination", (r,m)=>
+{
+    Air(r);Pending(m);
+    r.Motion=r.Motion with { Position=new(50,10,4) };r.Time=.3;Pending(m);
+    Check(r.Descents==1,"final exterior landing did not begin");
+    r.Motion=r.Motion with { Position=new(50,10,0),Flying=false,Supported=true,Descending=true,PreferFlight=true };
+    r.Time=.6;Pending(m);
+    r.Motion=r.Motion with { Descending=false };r.Time=.9;Pending(m);
+    Check(r.Dismounts==1&&r.Flights==1,"final ground approach restarted flight instead of awaiting supported unmount");
+    r.Motion=r.Motion with { Mounted=false };r.Time=1.2;Pending(m);
+    Check(r.Walks==1&&r.Flights==1,"distant indoor endpoint caused takeoff/landing oscillation");
+},GroundTransitionPurpose.Interaction);
 Case("pending flight search does not commit a partial batch to ground travel", (r, m) =>
 {
     r.Motion = r.Motion with { Mounted = false, PreferFlight = true };
