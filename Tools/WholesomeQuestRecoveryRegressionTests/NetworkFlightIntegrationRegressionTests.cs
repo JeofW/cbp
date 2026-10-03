@@ -13,10 +13,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 // are controlled. This catches the cross-owner dependency hidden by prior suites.
 internal static class NetworkFlightIntegrationRegressionTests
 {
-#if !NETWORK_ENTRY_FOCUSED
     [ModuleInitializer]
-#endif
     internal static void Run()
+    {
+#if !NETWORK_ENTRY_FOCUSED
+        RunAll();
+#endif
+    }
+
+    internal static void RunAll()
     {
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (root != null && !File.Exists(Path.Combine(root.FullName, "CopilotBuddy.csproj"))) root = root.Parent;

@@ -12,10 +12,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 // and mount observations are controlled leaves; this does not certify a route.
 internal static class FlightorWaitContinuityRegressionTests
 {
-#if !NETWORK_ENTRY_FOCUSED
     [ModuleInitializer]
-#endif
     internal static void Run()
+    {
+#if !NETWORK_ENTRY_FOCUSED
+        RunAll();
+#endif
+    }
+
+    internal static void RunAll()
         => Build().GetType("FlightWaitCases", true)!.GetMethod("Run")!.Invoke(null, null);
 
     internal static void RunRawAura(Func<string, bool> names, Func<int, bool> ids, bool unavailable)

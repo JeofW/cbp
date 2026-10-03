@@ -15,10 +15,15 @@ using System.Runtime.ExceptionServices;
 // Only process memory is simulated; no game is attached or commanded.
 internal static class NetworkClientEntryRegressionTests
 {
-#if !NETWORK_ENTRY_FOCUSED
     [ModuleInitializer]
-#endif
     internal static void Run()
+    {
+#if !NETWORK_ENTRY_FOCUSED
+        RunAll();
+#endif
+    }
+
+    internal static void RunAll()
     {
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (root != null && !File.Exists(Path.Combine(root.FullName, "CopilotBuddy.csproj"))) root = root.Parent;
@@ -94,7 +99,7 @@ using Styx.Helpers;
 using Styx.WoWInternals;
 using Styx.WoWInternals.Misc;
 using NetworkMemoryOwner = Styx.WoWInternals.ObjectManager;
-namespace Styx.WoWInternals {
+/* Controlled memory transport. */ namespace Styx.WoWInternals {
  public static class ObjectManager { public static ObservedMemory Wow = new(); }
  public sealed class ObservedMemory {
   public readonly Dictionary<uint,byte[]> Blocks = new();
