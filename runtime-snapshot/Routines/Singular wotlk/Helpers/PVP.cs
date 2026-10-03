@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Styx.Logic.Combat;
 using Styx.WoWInternals.WoWObjects;
 
@@ -8,7 +8,9 @@ namespace Singular.Helpers
     {
         public static bool IsCrowdControlled(WoWUnit unit)
         {
-            return unit.GetAllAuras().Any(a => a.IsHarmful &&
+            // Resolve mechanics only inside the declared harmful mask. Missing
+            // harmful metadata still throws UNKNOWN; helpful markers do not.
+            return unit.GetRawAuras().Any(a => a.IsHarmful &&
                 (a.Spell.Mechanic == WoWSpellMechanic.Shackled ||
                 a.Spell.Mechanic == WoWSpellMechanic.Polymorphed ||
                 a.Spell.Mechanic == WoWSpellMechanic.Horrified ||
@@ -32,7 +34,7 @@ namespace Singular.Helpers
 
         public static bool IsSilenced(WoWUnit unit)
         {
-            return unit.GetAllAuras().Any(a => a.IsHarmful &&
+            return unit.GetRawAuras().Any(a => a.IsHarmful &&
                 (a.Spell.Mechanic == WoWSpellMechanic.Interrupted || 
                 a.Spell.Mechanic == WoWSpellMechanic.Silenced));
         }

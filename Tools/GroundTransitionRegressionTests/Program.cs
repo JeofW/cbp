@@ -22,6 +22,12 @@ Case("ground mount submission waits for observed removal", (r, m) =>
     r.Motion = r.Motion with { Mounted = false };
     Check(m.Tick() == GroundTransitionState.Ready && r.Dismounts == 1, "observed unmount did not acquire combat");
 });
+Case("transit points never become stop or dismount destinations", (r,m)=>
+{
+    r.Motion=r.Motion with { GroundTravel=true, InteractionReady=true };
+    for(int i=0;i<8;i++){r.Time=i*.3;r.Motion=r.Motion with { Position=new WoWPoint(10+i*8,10,0) };Pending(m);}
+    Check(r.Walks==8&&r.Dismounts==0&&r.Holds==0,"transit introduced stops or dismounts at intermediate points");
+},(GroundTransitionPurpose)2);
 Case("distant grounded travel retains a mount until final approach", (r,m)=>
 {
     r.Motion=r.Motion with { GroundTravel=true };

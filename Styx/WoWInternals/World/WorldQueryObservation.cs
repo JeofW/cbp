@@ -65,7 +65,7 @@ internal static class WorldQueryObservation
         executor.AddLine("call eax");
         executor.AddLine("retn");
         RequireAdmission();
-        executor.Execute();
+        session.Execute();
         RequireAdmission();
         Logging.WriteDebug("[Interact] Local executor returned for object at 0x{0:X}; awaiting world/UI observation", subject.BaseAddress);
         RequireAdmission();
@@ -79,7 +79,7 @@ internal static class WorldQueryObservation
         session.Executor.AddLine("call {0}", (uint)Styx.Patchables.GlobalOffsets.IsOutdoors);
         session.Executor.AddLine("retn");
         session.RequireCurrent();
-        session.Executor.Execute();
+        session.Execute();
         session.RequireCurrent();
         return session.ReadReturnedBoolean();
     });
@@ -132,8 +132,8 @@ internal static class WorldQueryObservation
         if (!ReferenceEquals(ObjectManager.Me, player) || address == 0 || address > uint.MaxValue - 55 || guid == 0)
             throw session.Unavailable("player descriptor owner unavailable");
 
-        uint UInt(uint pointer) => BitConverter.ToUInt32(session.ReadCompletedBytes(pointer, 4), 0);
-        ulong GuidAt(uint pointer) => BitConverter.ToUInt64(session.ReadCompletedBytes(pointer, 8), 0);
+        uint UInt(uint pointer) => BitConverter.ToUInt32(session.ReadCurrentBytes(pointer, 4), 0);
+        ulong GuidAt(uint pointer) => BitConverter.ToUInt64(session.ReadCurrentBytes(pointer, 8), 0);
         // Existing build12340 object+8 descriptor pointer / object+48 raw GUID,
         // and absolute original unit-field indices already used by WoWUnit.
         uint descriptor = UInt(address + 8);
@@ -186,7 +186,7 @@ internal static class WorldQueryObservation
                 executor.AddLine("add esp, 0x18");
                 executor.AddLine("retn");
                 session.RequireCurrent();
-                executor.Execute();
+                session.Execute();
                 session.RequireCurrent();
                 bool intersects = session.ReadReturnedBoolean();
                 if (intersects)
@@ -283,13 +283,13 @@ internal static class WorldQueryObservation
                 executor.AddLine("retn");
                 session.RequireCurrent();
                 if (!InputsCurrent()) throw session.Unavailable("collision input changed before dispatch");
-                executor.Execute();
+                session.Execute();
                 session.RequireCurrent();
-                var frame = executor.FrameCount;
+                var generation = executor.ExecutionGeneration;
                 uint returned = executor.ReturnPointer;
                 byte[] hitBytes = session.ReadCompletedBytes(buffer.At(0), length);
                 byte[] pointBytes = session.ReadCompletedBytes(buffer.At(pointOffset), checked(length * 12));
-                if (executor.FrameCount != frame || executor.ReturnPointer != returned || !InputsCurrent())
+                if (executor.ExecutionGeneration != generation || executor.ReturnPointer != returned || !InputsCurrent())
                     throw session.Unavailable("collision batch or result epoch changed");
                 for (int i = 0; i < length; i++)
                 {
@@ -376,6 +376,7 @@ internal static class WorldQueryObservation
         private readonly uint actorAddress, subjectAddress, map;
         private readonly int processId;
         private readonly IntPtr processHandle;
+        private long? completedGeneration;
 
         internal Session(string observation, WoWObject? subject)
         {
@@ -409,17 +410,41 @@ internal static class WorldQueryObservation
                 throw Unavailable("world query owner changed");
         }
 
-        internal byte[] ReadCompletedBytes(uint pointer, int count)
+        internal void Execute()
+        {
+            RequireCurrent();
+            completedGeneration = null;
+            long before = Executor.ExecutionGeneration;
+            Executor.Execute();
+            RequireCurrent();
+            long expected = unchecked(before + 1);
+            if (Executor.ExecutionGeneration != expected)
+                throw Unavailable("native command replaced before its result was retained");
+            completedGeneration = expected;
+        }
+
+        internal byte[] ReadCurrentBytes(uint pointer, int count)
         {
             RequireCurrent();
             if (pointer == 0 || count <= 0 || pointer > uint.MaxValue - (uint)count + 1)
                 throw Unavailable("invalid result range");
-            var frame = Executor.FrameCount;
-            uint returnPointer = Executor.ReturnPointer;
             byte[] bytes;
             using (Memory.TemporaryCacheState(false)) bytes = Memory.ReadBytes(pointer, count);
             RequireCurrent();
-            if (bytes == null || bytes.Length != count || Executor.FrameCount != frame || Executor.ReturnPointer != returnPointer)
+            if (bytes == null || bytes.Length != count) throw Unavailable("incomplete current memory observation");
+            return bytes;
+        }
+
+        internal byte[] ReadCompletedBytes(uint pointer, int count)
+        {
+            RequireCurrent();
+            if (!completedGeneration.HasValue || Executor.ExecutionGeneration != completedGeneration.Value)
+                throw Unavailable("no current completed native command owns this result");
+            var generation = completedGeneration.Value;
+            uint returnPointer = Executor.ReturnPointer;
+            byte[] bytes = ReadCurrentBytes(pointer, count);
+            RequireCurrent();
+            if (bytes == null || bytes.Length != count || Executor.ExecutionGeneration != generation || Executor.ReturnPointer != returnPointer)
                 throw Unavailable("incomplete result or replaced executor result epoch");
             return bytes;
         }

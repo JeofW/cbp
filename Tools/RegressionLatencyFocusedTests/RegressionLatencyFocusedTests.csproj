@@ -20,5 +20,14 @@
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/SharedBuffDispatchRegressionTests.cs" Link="SharedBuffDispatchRegressionTests.cs" />
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/NearbyHostileQueryBudgetRegressionTests.cs" Link="NearbyHostileQueryBudgetRegressionTests.cs" />
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/MountVetoCancellationRegressionTests.cs" Link="MountVetoCancellationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/SpellCooldownObservationRegressionTests.cs" Link="SpellCooldownObservationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/SpellSightDispatchRegressionTests.cs" Link="SpellSightDispatchRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/GroundMountOwnerRegressionTests.cs" Link="GroundMountOwnerRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/ReactionObservationRegressionTests.cs" Link="ReactionObservationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/OptionalAuraConsumerLivenessTests.cs" Link="OptionalAuraConsumerLivenessTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/AutoEquipSchedulingRegressionTests.cs" Link="AutoEquipSchedulingRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/ExecutorCommandGenerationRegressionTests.cs" Link="ExecutorCommandGenerationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/NetworkLatencyBoundRegressionTests.cs" Link="NetworkLatencyBoundRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/LagWaitConstructionRegressionTests.cs" Link="LagWaitConstructionRegressionTests.cs" />
   </ItemGroup>
 </Project>

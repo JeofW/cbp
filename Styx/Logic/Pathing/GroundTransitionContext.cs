@@ -20,6 +20,7 @@ internal sealed class GroundTransitionContext
     internal readonly IPlayerMover Input;
     internal readonly WoWObject? Subject;
     internal WoWPoint Destination { get; private set; }
+    internal double? RemainingGroundTravelDistance { get; set; }
     internal readonly ulong ActorGuid, SubjectGuid;
     internal readonly uint ActorAddress, SubjectAddress, Map, SubjectEntry;
     internal readonly int ProcessId;
@@ -31,11 +32,11 @@ internal sealed class GroundTransitionContext
     private readonly uint _moverAddress, _poiEntry;
     private readonly PoiType _poiType;
     private readonly object _profile;
-    private readonly bool _bindDestination, _combatRoute, _running;
+    private readonly bool _bindDestination, _combatRoute, _running, _transitRoute;
     private readonly Func<bool> _admitted;
 
     internal GroundTransitionContext(WoWObject? subject, WoWPoint destination, bool bindDestination, Func<bool> admitted,
-        bool combatRoute = false)
+        bool combatRoute = false, bool transitRoute = false)
     {
         Actor = ObjectManager.Me ?? throw Unknown("player unavailable");
         Mover = WoWMovement.ActiveMover ?? throw Unknown("active mover unavailable");
@@ -43,7 +44,7 @@ internal sealed class GroundTransitionContext
         Executor = ObjectManager.Executor ?? throw Unknown("executor unavailable");
         Provider = Navigator.NavigationProvider;
         Input = Navigator.PlayerMover;
-        Subject = subject; Destination = destination; _bindDestination = bindDestination; _combatRoute = combatRoute; _admitted = admitted;
+        Subject = subject; Destination = destination; _bindDestination = bindDestination; _combatRoute = combatRoute; _transitRoute = transitRoute; _admitted = admitted;
         ActorGuid = Actor.Guid; ActorAddress = Actor.BaseAddress; Map = Actor.MapId;
         SubjectGuid = subject?.Guid ?? 0; SubjectAddress = subject?.BaseAddress ?? 0; SubjectEntry = subject?.Entry ?? 0;
         _moverGuid = Mover.Guid; _moverAddress = Mover.BaseAddress;
@@ -94,6 +95,16 @@ internal sealed class GroundTransitionContext
     internal bool RefreshGroundDestination(WoWPoint destination)
     {
         if (_bindDestination || Subject is not WoWUnit || !Current || !GroundApproachSearch.Finite(destination)) return false;
+        Destination = destination;
+        return Current;
+    }
+    internal bool RefreshTransitDestination(WoWPoint destination)
+    {
+        // Only an explicitly retained coordinate-transit owner may replace this
+        // endpoint. Interaction landing plans and exact combat subjects cannot.
+        if (!_transitRoute || Subject != null || !Current || !GroundApproachSearch.Finite(destination)
+            || !Actor.TryGetMovementState(out uint flags, out ulong transport)
+            || transport != 0 || (flags & 0x02003000u) != 0 || !Current) return false;
         Destination = destination;
         return Current;
     }

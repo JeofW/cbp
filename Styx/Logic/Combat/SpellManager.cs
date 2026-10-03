@@ -177,9 +177,27 @@ namespace Styx.Logic.Combat
 			public static bool TryClaimCastCandidate(string spellName)
 			{
 				if (string.IsNullOrWhiteSpace(spellName)) return false;
-				WoWSpell? spell = GetSpellByName(spellName);
-				if (spell == null || spell.Id <= 0) return false;
-				lock (_cooldownSync)
+					WoWSpell? spell = GetSpellByName(spellName);
+					if (spell == null || spell.Id <= 0) return false;
+					// A current negative observation must not spend the sole expensive
+					// candidate slot again. Expiry only permits a fresh final query;
+					// it never establishes readiness or authorizes native submission.
+					try
+					{
+						var observedOwner = CaptureSpellObservation();
+						lock (_cooldownSync)
+						{
+							long now = Environment.TickCount64;
+							if (_cooldownContext != null && _cooldownContext.SameOwner(observedOwner)
+								&& now >= _lastCooldownObservationTicks
+								&& ((_cooldownReadyAtTicks.TryGetValue(spell.Id, out long cooldown) && now < cooldown)
+									|| (_castVerificationUntilTicks.TryGetValue(spell.Id, out long verification) && now < verification)
+									|| (_readinessProbeNotBeforeTicks.TryGetValue(spell.Id, out long retry) && now < retry)))
+								return false;
+						}
+					}
+					catch (ObservationUnavailableException) { return false; }
+					lock (_cooldownSync)
 				{
 						if (!ReferenceEquals(_castSelectionBot, TreeRoot.Current)
 							|| !ReferenceEquals(_castSelectionRun, TreeRoot.RunIdentity))

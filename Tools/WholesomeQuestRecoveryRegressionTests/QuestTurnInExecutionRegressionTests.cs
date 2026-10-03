@@ -23,6 +23,7 @@ internal static class QuestTurnInExecutionRegressionTests
         cases += fixture.VerifyReviewBoundaries();
         cases += fixture.VerifyApproachBoundaries();
         cases += fixture.VerifyMissingNpcBoundaries();
+        cases += fixture.VerifyTransitBoundaries();
         foreach (bool choices in new[] { false, true })
         {
             int acknowledgements = 0;
@@ -239,6 +240,13 @@ internal static class QuestTurnInExecutionRegressionTests
             return (int)Call("MissingNpcCases")!;
         }
 
+        internal int VerifyTransitBoundaries()
+        {
+            _session?.Dispose(); _session = _lua.BeginSession(UiSetup);
+            _observe.SetValue(null, new Func<string, List<string>>(Observe));
+            return (int)Call("TransitCases")!;
+        }
+
         private List<string> Observe(string script)
         {
             var result = _session!.Execute(script, _loadSize(script));
@@ -321,6 +329,17 @@ public static class TurnInState {
 }
 public static class TurnInDriver {
  static ForcedQuestTurnIn owner; static Composite tree;
+ public static int TransitCases(){
+  Reset(10286,20159,-689.583f,4167.8f,58.5228f,530);Tick();Arrive();TurnInState.Npc=null;Tick();
+  var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+  var search=typeof(ForcedQuestTurnIn).GetField("relationSearch",flags).GetValue(owner);
+  search.GetType().GetField("_started",flags).SetValue(search,Environment.TickCount64/1000.0-3);
+  GroundTransition.Created=GroundTransition.Cancelled=0;Tick();
+  if(GroundTransition.Created!=1)throw new InvalidOperationException("patrol did not create its first travel owner");
+  for(int i=0;i<5;i++){StyxWoW.Me.Location=GroundTransition.LastDestination;Tick();}
+  if(GroundTransition.Created!=1||GroundTransition.Cancelled!=0)throw new InvalidOperationException("patrol waypoint cancelled and recreated its travel owner");
+  Stop();Console.WriteLine("PASS complete turn-in transit: one owner across six waypoints");return 1;
+ }
  public static void Reset(uint quest,uint ender,float x,float y,float z,uint map){Stop();TurnInState.Moves=TurnInState.Interactions=TurnInState.Clears=0;TurnInState.Errors.Clear();TurnInState.Quest=quest;TurnInState.NeedQuestItem=false;BotPoi.ResidualObject=null;Styx.Logic.Inventory.Frames.LootFrame.LootFrame.Instance.LootingObjectGuid=0;Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot=new object();
   TurnInState.Mounted=TurnInState.Flying=false;TurnInState.Sight=true;
   StyxWoW.Me=new LocalPlayer{Guid=1,MapId=map,Location=new WoWPoint(x-30,y,z)};WoWMovement.ActiveMover=StyxWoW.Me;
@@ -508,14 +527,16 @@ public partial class ForcedQuestPickUp:ForcedBehavior {
 /* Controlled navigation dispatch. */ namespace Styx.Logic.Pathing {
  public static class Navigator {public static object NavigationProvider=new();public static MoveResult MoveTo(WoWPoint destination){TurnInState.Moves++;return MoveResult.Moved;}public static RunStatus GetRunStatusFromMoveResult(MoveResult result)=>RunStatus.Success;}
  public static class Flightor {public static void MoveTo(WoWPoint destination){TurnInState.Moves++;}}
- public enum GroundTransitionPurpose{Interaction,Combat}
+ public enum GroundTransitionPurpose{Interaction,Combat,Transit}
  public enum GroundTransitionState{Pending,Ready,Unavailable,Revoked}
  public sealed class GroundTransition{
-  public GroundTransition(GroundTransitionPurpose purpose){}
+  public static int Created,Cancelled;public static WoWPoint LastDestination;
+  public GroundTransition(GroundTransitionPurpose purpose){Created++;}
+  public GroundTransitionState TickTransit(WoWPoint destination,double distance,Func<bool> admitted){if(!double.IsFinite(distance)||distance<destination.Distance(StyxWoW.Me.Location))throw new InvalidOperationException("patrol omitted the remaining journey cost");return Tick(destination,null,admitted);}
   public static bool CanInteractWith(WoWObject subject,Func<bool> admitted=null)=>subject!=null&&!TurnInState.Mounted&&!TurnInState.Flying&&TurnInState.Sight&&subject.WithinInteractRange&&(admitted==null||admitted());
   public static bool TryInteractWith(WoWObject subject,Func<bool> admitted=null,bool ignoreTimer=false){if(!CanInteractWith(subject,admitted))return false;subject.Interact();return admitted==null||admitted();}
-  public GroundTransitionState Tick(WoWPoint destination,WoWObject subject,Func<bool> admitted){if(!admitted())return GroundTransitionState.Revoked;if(CanInteractWith(subject,admitted))return GroundTransitionState.Ready;TurnInState.Moves++;return GroundTransitionState.Pending;}
-  public void Cancel(){}
+  public GroundTransitionState Tick(WoWPoint destination,WoWObject subject,Func<bool> admitted){if(!admitted())return GroundTransitionState.Revoked;LastDestination=destination;if(CanInteractWith(subject,admitted))return GroundTransitionState.Ready;TurnInState.Moves++;return GroundTransitionState.Pending;}
+  public void Cancel(){Cancelled++;}
  }
 }
 """;

@@ -23,6 +23,20 @@ public sealed class GroundTransition : IDisposable
     public GroundTransition(GroundTransitionPurpose purpose) { _purpose = purpose; }
 
     public GroundTransitionState Tick(WoWPoint destination, WoWObject? subject, Func<bool> admitted)
+        => TickCore(destination, subject, admitted, null);
+
+    /// <summary>Continue one ground journey; distance is an estimate for mount cost, not route authority.</summary>
+    public GroundTransitionState TickTransit(WoWPoint destination, double remainingDistance, Func<bool> admitted)
+    {
+        if (_purpose != GroundTransitionPurpose.Transit)
+            throw new InvalidOperationException("Transit distance belongs only to a coordinate-transit owner.");
+        if (!double.IsFinite(remainingDistance) || remainingDistance < 0)
+            throw new ArgumentOutOfRangeException(nameof(remainingDistance));
+        return TickCore(destination, null, admitted, remainingDistance);
+    }
+
+    private GroundTransitionState TickCore(WoWPoint destination, WoWObject? subject, Func<bool> admitted,
+        double? remainingDistance)
     {
         ArgumentNullException.ThrowIfNull(admitted);
         try
@@ -35,6 +49,7 @@ public sealed class GroundTransition : IDisposable
                 _runtime = new GroundTransitionRuntime(_purpose, destination, subject, admitted);
                 _machine = new GroundTransitionMachine(_purpose, _runtime);
             }
+            _runtime.SetTransitDistanceEstimate(remainingDistance);
             GroundTransitionState result = _machine!.Tick();
             _unknownSince = double.NaN;
             return result;

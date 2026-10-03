@@ -191,7 +191,7 @@ public static class Patchables
     public enum GlobalOffsets : uint { Spell_C__CastSpell = 0x00123450 }
 }
 public static class Unit { public static bool IsAreaEffectSafe(string spell, Point point) => true; }
-public static class Logger { public static void Write(string format, params object[] arguments) { } }
+public static class Logger { public static void Write(string format, params object[] arguments) { } public static void WriteDebug(string text) { } }
 public static class LegacySpellManager
 {
     public static void ClickRemoteLocation(Point point) { World.Clicks++; }

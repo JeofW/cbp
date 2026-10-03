@@ -71,6 +71,12 @@ namespace GreenMagic
         private byte[] m_ClearBytes;
         private byte[]? m_OriginalEndSceneBytes;
         private bool m_Disposed;
+        private long m_ExecutionGeneration;
+
+        // Unlike FrameCount, this changes only when a command is submitted.
+        // Observation readers must not confuse an ordinary rendered frame with
+        // replacement of the executor's returned data.
+        internal long ExecutionGeneration => Interlocked.Read(ref m_ExecutionGeneration);
 
         public bool IsOpen => Memory != null && Memory.IsProcessOpen && Memory.IsThreadOpen;
         public bool IsInitialized { get; private set; }
@@ -223,6 +229,7 @@ namespace GreenMagic
                 throw new Exception("Cannot execute code while process is not opened and/or Executor is not initialized.");
             lock (thisLock)
             {
+                Interlocked.Increment(ref m_ExecutionGeneration);
                 Memory.Asm!.Inject(m_InjectedCode);
                 SharedExecuteLogicEnd(15000);
             }

@@ -33,7 +33,7 @@ internal static class GroundMountSubmissionRegressionTests
             Receipt(s,"cb-ground-mount-submitted",1);Receipt(s,"cb-ground-mount-pending",1);
             Check(Exec(s,"return mounted and 'yes' or 'no',selectedSlot").Values.SequenceEqual(new[]{"no","2"}),"wrong companion or fabricated mount");
         });
-        foreach(string change in new[]{"mounted=true","combat=true","flying=true","falling=true","swimming=true","outdoors=false","taxi=true","vehicle=true","casting=true","channel=true","speed=1","speed=0/0","guid='foreign'","known=false","usable=false","usable='unknown'","outdoors='unknown'","enabled=0","duration=10;start=now","now=0/0","count=0/0","count=2.5","GetCompanionInfo=nil"})
+        foreach(string change in new[]{"mounted=true","combat=true","flying=true","falling=true","swimming=true","outdoors=false","taxi=true","vehicle=true","casting=true","channel=true","speed=1","speed=0/0","guid='foreign'","known=false","enabled=nil","enabled='unknown'","outdoors='unknown'","enabled=0","duration=10;start=now","now=0/0","count=0/0","count=2.5","GetCompanionInfo=nil","GetCompanionCooldown=nil"})
             Case("denied current state/"+change,s=>{Exec(s,change);Receipt(s,"cb-ground-mount-rejected",0);});
         Case("failed action retains client-side pending lease",s=>{
             Exec(s,"fail=true");var r=Exec(s,script);Check(r.Call!=0&&r.Clicks==1,"post-entry error not reached");
@@ -68,6 +68,7 @@ function UnitChannelInfo() if channel then return 'channel' end end
 function GetUnitSpeed() return speed end
 function GetSpellCooldown() return start,duration,enabled end
 function IsUsableSpell() return usable end
+function GetCompanionCooldown(kind,slot) assert(kind=='MOUNT' and slot==2);return start,duration,enabled end
 function GetTime() return now end
 function GetNumCompanions() return count end
 function GetCompanionInfo(kind,slot) if slot==2 and known then return 1,'Selected mount',35022,0,false else return 2,'Other mount',123,0,false end end

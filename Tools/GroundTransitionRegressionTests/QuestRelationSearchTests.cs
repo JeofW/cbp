@@ -26,8 +26,11 @@ internal static class QuestRelationSearchTests
             var s=new QuestRelationSearch(530,10286,20159,origin);
             Check(s.SearchPointCount==44&&s.Next(100,origin)==null,"patrol identity or initial observation grace wrong");
             var p=s.Next(102,origin);Check(p.HasValue&&p.Value.Distance(new WoWPoint(-693.036f,4187.63f,57.0026f))<.1,"search did not follow the source patrol from its origin");
+            double remaining = s.EstimateRemainingDistance(origin);
+            Check(remaining > 2000 && remaining < 10000,"long patrol was costed as one short waypoint");
             for(int i=0;i<50&&!s.Exhausted;i++){p=s.Next(103+i,p??origin);}
             Check(s.Exhausted,"patrol search cycled indefinitely");
+            Check(s.EstimateRemainingDistance(p??origin)==0,"exhausted route retained mounting incentive");
         });
         foreach(int changed in new[]{0,1,2,3})Case("patrol hints cannot cross an identity boundary/"+changed,()=>{
             var s=new QuestRelationSearch(changed==0?0u:530u,changed==1?1u:10286u,changed==2?1u:20159u,changed==3?origin.Add(100,0,0):origin);

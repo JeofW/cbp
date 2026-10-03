@@ -62,14 +62,20 @@ namespace Styx.WoWInternals.Misc
 
 		public void GetNetStats(out float downKBs, out float upKBs, out uint latency)
 		{
-			NetStats netStats = NetStats;
+				NetStats netStats = NetStats;
+				// Both positions belong to the original sixteen-slot latency ring.
+				// A torn/unavailable end index above sixteen made the old wrapping
+				// loop spin forever; invalid data is not zero latency.
+				if (netStats.Latencies == null || netStats.Latencies.Length != 16
+					|| netStats.LatencyIndex > 16 || netStats.LatencyCount > 16)
+					throw new Styx.Helpers.ObservationUnavailableException("network-latency", "Latency ring unavailable or out of bounds.");
 			double elapsedSeconds = (PerformanceCounter() - (ulong)netStats.StartTime) * 0.001;
 			downKBs = (float)(netStats.BytesReceived * 0.001 / elapsedSeconds);
 			upKBs = (float)(netStats.BytesSent * 0.001 / elapsedSeconds);
 
 			uint latencyIndex = netStats.LatencyIndex;
 			uint latencyCount = netStats.LatencyCount;
-			uint totalLatency = 0;
+				ulong totalLatency = 0;
 			uint count = 0;
 
 			if (latencyIndex == latencyCount)
@@ -91,11 +97,11 @@ namespace Styx.WoWInternals.Misc
 					totalLatency += netStats.Latencies[latencyIndex++];
 					count++;
 				}
-				while (latencyIndex != latencyCount);
+					while (latencyIndex != latencyCount && count < 16);
 
 				if (count != 0)
 				{
-					latency = totalLatency / count;
+						latency = (uint)(totalLatency / count);
 				}
 				else
 				{

@@ -464,7 +464,8 @@ namespace Singular.Helpers
                             var target = retainedSelection(ret);
                             if (target == null || !Unit.IsCombatActionSafe(name, target))
                                 return RunStatus.Failure;
-                            Logger.Write("Casting " + name + " on " + target.SafeName());
+                            string targetName = target.SafeName();
+                            Logger.WriteDebug("Evaluating cast candidate: " + name + " on " + targetName);
                             // Dismount/target setup and logging may have changed sight,
                             // range, availability or caller requirements. Do not reselect
                             // a different recipient between this check and submission.
@@ -477,7 +478,8 @@ namespace Singular.Helpers
                             }
                             bool submitted = RecoveryActions.TryCast(name, target, healing, aura, "Singular.Cast") && IsCurrent();
                             SpellManager.RecordCastCandidateResult(name, submitted);
-                            return submitted ? RunStatus.Success : RunStatus.Failure;
+                            if (submitted) Logger.Write("Cast request submitted: " + name + " on " + targetName);
+                            return submitted && IsCurrent() ? RunStatus.Success : RunStatus.Failure;
 
                             //WoWSpell spell;
                             //if (SpellManager.Spells.TryGetValue(name, out spell))
@@ -613,15 +615,16 @@ namespace Singular.Helpers
                             var target = retainedSelection(ret);
                             if (target == null || !Unit.IsCombatActionSafe(spellId, target))
                                 return RunStatus.Failure;
-                            Logger.Write("Casting " + spellId + " on " + target.SafeName());
+                            string targetName = target.SafeName();
+                            Logger.WriteDebug("Evaluating cast candidate: " + spellId + " on " + targetName);
                             // The ID overload retains the host's range/LOS policy.
                             if (retainedSelection(ret) == null || requirements == null || !requirements(ret) || !IsCurrent() ||
                                 !Unit.IsCombatActionSafe(spellId, target) ||
                                 !SpellManager.CanCast(spellId, target, true) || retainedSelection(ret) == null || !IsCurrent())
                                 return RunStatus.Failure;
-                            return RecoveryActions.TryCast(spellId, target, healing, aura, "Singular.CastId") && IsCurrent()
-                                ? RunStatus.Success
-                                : RunStatus.Failure;
+                            bool submitted = RecoveryActions.TryCast(spellId, target, healing, aura, "Singular.CastId") && IsCurrent();
+                            if (submitted) Logger.Write("Cast request submitted: " + spellId + " on " + targetName);
+                            return submitted && IsCurrent() ? RunStatus.Success : RunStatus.Failure;
                         }))
                 );
         }

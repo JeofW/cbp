@@ -247,14 +247,16 @@ public class ForcedQuestTurnIn : ForcedBehavior
             searchTravel?.Cancel(); searchTravel = null; searchDestination = null;
             return RunStatus.Running;
         }
-        if (!searchDestination.HasValue || !searchDestination.Value.Equals(destination.Value))
+        if (searchTravel == null)
         {
-            searchTravel?.Cancel();
             if (!SearchCurrent()) { CancelRelationSearch(); return RunStatus.Failure; }
-            searchDestination = destination;
-            searchTravel = new GroundTransition(GroundTransitionPurpose.Interaction);
+            searchTravel = new GroundTransition(GroundTransitionPurpose.Transit);
         }
-        var state = searchTravel.Tick(destination.Value, null, SearchCurrent);
+        // Patrol hints are through-points, not NPC interactions. Keep one
+        // movement/mount lifetime until discovery, cancellation or exhaustion.
+        searchDestination = destination;
+        var state = searchTravel.TickTransit(destination.Value,
+            relationSearch.EstimateRemainingDistance(Me.Location), SearchCurrent);
         if (state == GroundTransitionState.Revoked) { searchTravel.Cancel(); searchTravel = null; searchDestination = null; }
         return RunStatus.Running;
     }

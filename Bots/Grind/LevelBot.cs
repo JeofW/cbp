@@ -459,7 +459,7 @@ namespace Bots.Grind
                 new Decorator(
                     ctx => StyxWoW.Me.IsAlive && !StyxWoW.Me.IsGhost &&
                            !StyxWoW.Me.Combat &&
-                           ((CharacterSettings.Instance.RessAtSpiritHealers && StyxWoW.Me.HasAura("Resurrection Sickness")) ||
+                           ((CharacterSettings.Instance.RessAtSpiritHealers && StyxWoW.Me.HasAura(15007)) ||
                             (_waitingForHealerRecovery && DateTime.UtcNow - _healerResurrectedUtc < TimeSpan.FromSeconds(5))),
                     new TreeSharp.Action(ctx =>
                     {
@@ -597,7 +597,9 @@ namespace Bots.Grind
                     Flightor.Clear();
                     Logging.Write("[CorpseRecovery] Resurrected at spirit healer. Avoiding the death area and recalculating the next service route after recovery.");
                 }
-                if (_waitingForHealerRecovery && !me.HasAura("Resurrection Sickness") &&
+                // Original Resurrection Sickness has a fixed identity. An
+                // unrelated unresolved aura must not suspend corpse recovery.
+                if (_waitingForHealerRecovery && !me.HasAura(15007) &&
                     DateTime.UtcNow - _healerResurrectedUtc >= TimeSpan.FromSeconds(5))
                     _waitingForHealerRecovery = false;
                 if (BotPoi.Current.Type == PoiType.Corpse)

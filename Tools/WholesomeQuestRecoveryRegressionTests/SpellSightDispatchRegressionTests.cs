@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 // Execute exact contiguous Cast/Buff/BuffSelf source regions with real TreeSharp.
 // Only world observations, range/safety admission and terminal spell dispatch are
@@ -37,6 +39,7 @@ internal static class SpellSightDispatchRegressionTests
             Styx.Helpers.Logging.FileLogging=false;
             File.WriteAllText(Path.Combine(temp,"Owners.cs"),prefix+region+"}}",Encoding.UTF8);
             File.WriteAllText(Path.Combine(temp,"Boundary.cs"),Boundary,Encoding.UTF8);
+            WriteExorcismOwners(root, temp);
             Type type=typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler",true)!;
             object compiler=Activator.CreateInstance(type,new object[]{temp})!;
             foreach(string path in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator))
@@ -50,6 +53,18 @@ internal static class SpellSightDispatchRegressionTests
         }
         finally{Styx.Helpers.Logging.FileLogging=logging;Directory.Delete(temp,true);}
     }
+    internal static void WriteExorcismOwners(string root, string temp)
+    {
+        var ret = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,
+            "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs"))).GetRoot();
+        string exorcism = string.Join("\n", ret.DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Where(m => m.Identifier.ValueText is "CreateExorcismBehavior" or "CreateExorcismRetryBehavior" or "ShouldCastExorcism"));
+        File.WriteAllText(Path.Combine(temp,"Exorcism.cs"),
+            "using System;using System.Linq;using TreeSharp;using Styx;using Styx.Logic.Combat;using Singular.Helpers; namespace Singular.ClassSpecific.Paladin { public static class Retribution {" + exorcism +
+            "public static Composite Build(bool proc)=>CreateExorcismBehavior(proc);}}", Encoding.UTF8);
+        File.Copy(Path.Combine(root,"runtime-snapshot/Routines/Singular wotlk/Helpers/Throttle.cs"),Path.Combine(temp,"Throttle.cs"));
+    }
+
     private const string Boundary="""
 using System;
 using System.Collections.Generic;
@@ -66,6 +81,8 @@ public static class SightCases
     internal static System.Action? DuringSetup, DuringLog;
     internal static Exception? AvailabilityError;
     internal static bool Setup, Ready, Safe, Required, Accepted;
+    internal static int PublicCastMessages;
+    internal static bool PrematureMessage;
     public static void Run()
     {
         var cases=new List<(string,System.Action)>();
@@ -110,6 +127,9 @@ public static class SightCases
                 Target.Sight=false;Tick(id?Spell.Cast(101,_=>StyxWoW.Me,_=>Required):Spell.Cast("Test",_=>StyxWoW.Me,_=>Required));Expect(1);
             });
             Add("backend false remains failure and not recorded success",()=>{Accepted=false;Tick(Build(id));Expect();});
+            Add("cooldown rejection does not announce a cast",()=>{Ready=false;for(int n=0;n<30;n++)Tick(Build(id));Expect();Check(PublicCastMessages==0,"cooldown candidates were announced as casts");});
+            Add("rejected submission does not announce a cast",()=>{Accepted=false;Tick(Build(id));Expect();Check(PublicCastMessages==0,"rejected backend was announced as submitted");});
+            Add("cast announcement follows actual submission",()=>{Tick(Build(id));Expect(2);Check(PublicCastMessages==1&&!PrematureMessage,"cast announcement preceded or duplicated actual submission");});
             foreach(bool late in new[]{false,true})
             {
                 bool afterSetup=late;
@@ -139,6 +159,26 @@ public static class SightCases
         cases.Add(("name: existing self-range exception remains unchanged",()=>{Reset();Target.Sight=false;SpellManager.Spells["Test"].SpellRangeId=1;Tick(Build(false));Expect(2);}));
         cases.Add(("name: existing melee-range admission is preserved",()=>{Reset();Target.Distance=3;Target.Sight=false;SpellManager.Spells["Test"].SpellRangeId=2;Tick(Build(false));Expect(2);}));
         cases.Add(("name: moving out of melee during setup revokes cast",()=>{Reset();Target.Distance=3;SpellManager.Spells["Test"].SpellRangeId=2;Setup=true;DuringSetup=()=>Target.Distance=8;Tick(Build(false));Expect();}));
+        foreach(string scenario in new[]{"melee-without-proc","moving-without-proc","moving-rank-one","stationary-rank-one","moving-rank-two","expired-proc","cooldown","proc-lost-during-setup","cooldown-during-setup","replacement-target","stationary-ranged-opener","learned-talent-no-proc"}){
+            string mode=scenario;cases.Add(("complete Exorcism policy and cast/"+mode,()=>{
+                Reset();SpellManager.Spells["Exorcism"]=new();Target.Distance=3;
+                int proc=mode.Contains("rank-one")?53489:59578;
+                bool noProc=mode.Contains("without-proc")||mode is "stationary-ranged-opener" or "learned-talent-no-proc";
+                if(!noProc)StyxWoW.Me.Auras["proc"]=new Aura{SpellId=proc};
+                if(mode.StartsWith("moving"))StyxWoW.Me.IsMoving=true;
+                if(mode=="expired-proc")StyxWoW.Me.Auras["proc"].TimeLeft=TimeSpan.Zero;
+                if(mode=="cooldown")Ready=false;
+                if(mode=="proc-lost-during-setup"){Setup=true;DuringSetup=()=>StyxWoW.Me.Auras.Clear();}
+                if(mode=="cooldown-during-setup"){Setup=true;DuringSetup=()=>Ready=false;}
+                if(mode=="replacement-target"){Setup=true;DuringSetup=()=>StyxWoW.Me.CurrentTarget=new WoWUnit{Guid=3};}
+                if(mode is "stationary-ranged-opener" or "learned-talent-no-proc")Target.Distance=20;
+                if(mode=="learned-talent-no-proc")SpellManager.Spells["The Art of War"]=new();
+                bool expected=mode is "stationary-rank-one" or "moving-rank-two" or "stationary-ranged-opener";
+                Tick(Singular.ClassSpecific.Paladin.Retribution.Build(!noProc&&proc==59578));
+                if(expected)Expect(2);else Expect();
+                Check(PublicCastMessages==(expected?1:0),"Exorcism candidate was announced without submission");
+            }));
+        }
         int passed=0,assertions=0,unexpected=0;
         foreach(var c in cases)
         {
@@ -151,20 +191,24 @@ public static class SightCases
     }
     private static WoWUnit Target=>StyxWoW.Me.CurrentTarget!;
     private static Composite Build(bool id)=>id?Spell.Cast(101,_=>StyxWoW.Me.CurrentTarget,_=>Required):Spell.Cast("Test",_=>false,_=>StyxWoW.Me.CurrentTarget,_=>Required);
-    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};Targets.Clear();Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();SpellManager.Spells["Test"]=new();Setup=false;DuringSetup=null;DuringLog=null;AvailabilityError=null;Ready=Safe=Required=Accepted=true;}
+    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};Targets.Clear();PublicCastMessages=0;PrematureMessage=false;Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();SpellManager.Spells["Test"]=new();Setup=false;DuringSetup=null;DuringLog=null;AvailabilityError=null;Ready=Safe=Required=Accepted=true;}
     private static void Tick(Composite tree){tree.Start(null!);try{int count=0;while(tree.Tick(null!)==RunStatus.Running)if(++count>12)throw new Failure("unbounded decision");}finally{tree.Stop(null!);}}
     private static void Expect(params ulong[] ids)=>Check(Targets.SequenceEqual(ids),"unexpected submission targets: "+string.Join(',',Targets));
     private static void Check(bool yes,string why){if(!yes)throw new Failure(why);}
 }
 /* Controlled world observations only. */ namespace Styx.WoWInternals.WoWObjects
 {
-    public class Aura{public int SpellId;public string Name="";public ulong CreatorGuid;}
+    public class Aura{public int SpellId;public string Name="";public ulong CreatorGuid;public bool IsActive=true,IsPassive;public TimeSpan TimeLeft=TimeSpan.FromSeconds(20);}
     public class WoWUnit
     {
         public ulong Guid;public WoWUnit? CurrentTarget;public bool Mounted,IsCasting;public bool IsValid=true,IsAlive=true;
         public float CombatReach;public bool IsPlayer;
         public bool IsMe=>ReferenceEquals(this,StyxWoW.Me);public float Distance=20;public bool Sight=true;
         public bool InLineOfSpellSight=>Sight;
+        public bool IsMoving,IsAutoAttacking=true,UndeadOrDemon;
+        public bool IsUndeadOrDemon()=>UndeadOrDemon;
+        public bool IsWithinMeleeRange=>Distance<=5;
+        public IEnumerable<Aura> GetRawAuras()=>Auras.Values;
         public Dictionary<string,Aura> Auras=new();
         public bool HasAura(string name)=>Auras.ContainsKey(name);
         public bool HasMyAura(string name)=>Auras.TryGetValue(name,out var aura)&&aura.CreatorGuid==StyxWoW.Me.Guid;
@@ -177,6 +221,7 @@ public static class SightCases
     public static class SpellManager
     {
         public static Dictionary<string,WoWSpell> Spells=new();
+        public static bool HasSpell(string name)=>Spells.ContainsKey(name);
         public static bool TryClaimCastCandidate(string name)=>true;
         public static void RecordCastCandidateResult(string name,bool submitted){}
         public static bool CanCast(string name,WoWUnit target,bool range,bool movement){if(SightCases.AvailabilityError is {} error)throw error;return SightCases.Ready&&target!=null&&Spells.TryGetValue(name,out var s)&&(!range||target.IsMe||(target.InLineOfSpellSight&&target.Distance>=s.MinRange&&target.Distance<=s.MaxRange));}
@@ -195,7 +240,11 @@ public static class SightCases
 /* Only setup yields and terminal effects are controlled. */ namespace Singular.Helpers
 {
     public static class Unit{public static bool IsCombatActionSafe(string name,WoWUnit target)=>target!=null&&SightCases.Safe;public static bool IsCombatActionSafe(int id,WoWUnit target)=>target!=null&&SightCases.Safe;}
-    public static class Logger{public static void Write(string text){var action=SightCases.DuringLog;SightCases.DuringLog=null;action?.Invoke();}}
+    public static class Logger{
+        public static void Write(string text){SightCases.PublicCastMessages++;SightCases.PrematureMessage|=SightCases.Targets.Count==0;AtPreparation();}
+        public static void WriteDebug(string text){AtPreparation();}
+        private static void AtPreparation(){var action=SightCases.DuringLog;SightCases.DuringLog=null;action?.Invoke();}
+    }
     public class SetupAction:Composite
     {
         protected override IEnumerable<RunStatus> Execute(object context){yield return RunStatus.Running;var action=SightCases.DuringSetup;SightCases.DuringSetup=null;action?.Invoke();yield return RunStatus.Success;}

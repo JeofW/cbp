@@ -92,7 +92,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             && ObjectManager.Me.TryGetMovementState(out uint initialFlags, out ulong initialTransport)
             && initialTransport == 0 && (initialFlags & 0x02003000u) == 0;
         _context = new GroundTransitionContext(subject, destination, purpose == GroundTransitionPurpose.Interaction && !groundChase,
-            admitted, purpose == GroundTransitionPurpose.Combat);
+            admitted, purpose == GroundTransitionPurpose.Combat, purpose == GroundTransitionPurpose.Transit);
         // The route invalidators ask whether semantic combat work survives a
         // coordinate-only POI refresh. Do not use Runtime.Current here: that
         // also depends on the very route tokens the invalidators are deciding.
@@ -118,6 +118,17 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     {
         if (!Current || !ReferenceEquals(_context.Subject, subject)) return false;
         if (_purpose == GroundTransitionPurpose.Combat) return true;
+        if (_purpose == GroundTransitionPurpose.Transit)
+        {
+            if (destination.Equals(_context.Destination)) return true;
+            if (subject != null || !GroundApproachSearch.Finite(destination)
+                || !_context.Actor.TryGetMovementState(out uint flags, out ulong transport)
+                || transport != 0 || (flags & 0x02003000u) != 0 || !Current) return false;
+            // Retire the old endpoint's mesh predicate before changing it, but
+            // do not stop input or discard this journey's pending mount owner.
+            if (_mesh != null && !_mesh.ReleaseOwned(_meshToken!, () => Current, token => _meshToken = token)) return false;
+            return Current && _context.RefreshTransitDestination(destination);
+        }
         if (destination.Equals(_context.Destination)) return true;
         // A live NPC remains the same work while walking its patrol. Re-target
         // the owned mesh leg, rather than cancel/stop/recreate on every position
@@ -125,6 +136,13 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         if (subject is WoWUnit)
             return !_groundTravelSelected || _context.RefreshGroundDestination(destination);
         return false;
+    }
+
+    internal void SetTransitDistanceEstimate(double? distance)
+    {
+        RequireCurrent();
+        _context.RemainingGroundTravelDistance = _purpose == GroundTransitionPurpose.Transit
+            && distance.HasValue && double.IsFinite(distance.Value) && distance.Value >= 0 ? distance : null;
     }
 
     private void RequireCurrent() { if (!Current) throw Unknown("transition owner changed"); }
@@ -183,8 +201,9 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         {
             _progressPosition = position; _progressAt = Now;
         }
-        bool groundTravel = _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 12
-            && (_groundTravelSelected || !preferFlight);
+        bool groundTravel = _purpose == GroundTransitionPurpose.Transit
+            || _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 12
+                && (_groundTravelSelected || !preferFlight);
         return new GroundMotion(position, mounted, flying, falling, swimming, onTransport, immobile, supported,
             actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel);
     }
@@ -405,7 +424,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         RequireCurrent();
         if (_mesh == null) throw Unknown("ground navigator unavailable");
         _groundTravelSelected = true;
-        if (_purpose == GroundTransitionPurpose.Interaction && _context.Actor.Location.Distance(_context.Destination) > 12
+        if (_purpose != GroundTransitionPurpose.Combat && _context.Actor.Location.Distance(_context.Destination) > 12
             && _groundMount.Wait(_context, Now, () => Current, Hold)) return;
         var actor = _context.Actor;
         if (actor.IsCasting || actor.ChanneledCastingSpellId != 0) return;
@@ -416,7 +435,8 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         // CanActUnmounted in every route predicate repeated Lua dozens of times
         // and could overwrite a prepared native movement command.
         bool Admitted() => Current && _context.Destination.Equals(travelDestination) && !actor.IsCasting && actor.ChanneledCastingSpellId == 0
-            && (!state.Mounted || _purpose == GroundTransitionPurpose.Interaction && actor.Location.Distance(_context.Destination) > 12)
+            && (!state.Mounted || _purpose == GroundTransitionPurpose.Transit
+                || _purpose == GroundTransitionPurpose.Interaction && actor.Location.Distance(_context.Destination) > 12)
             && actor.TryGetMovementState(out uint flags, out ulong transport) && transport == 0
             && (flags & 0x02003000u) == 0 && !state.OnTaxi && !state.Rooted && !state.Stunned
             && WorldQueryObservation.ReadGroundUnitState(actor).Equals(state) && Current;

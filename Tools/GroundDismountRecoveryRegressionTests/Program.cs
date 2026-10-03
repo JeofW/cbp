@@ -46,6 +46,43 @@ void Case(string name, Action body)
 
 GroundTransitionRuntime Runtime() => new(GroundTransitionPurpose.Combat, World.Target.Position, World.Target, () => true);
 
+Case("one transit owner accepts successive grounded waypoints without stopping",()=>
+{
+    var first=new WoWPoint(140,10,0);var next=new WoWPoint(200,15,0);
+    var runtime=new GroundTransitionRuntime((GroundTransitionPurpose)2,first,null,()=>true);
+    runtime.Walk();World.Actor.Position=first.Add(-5,0,0);
+    Check(runtime.Matches(next,null),"intermediate coordinate revoked the continuing transit");
+    runtime.Walk();
+    Check(World.Walks.Count==2&&World.Walks[1].Equals(next)&&World.Stops==0&&World.Dismounts==0,
+        "transit retarget stopped/dismounted or dispatched the old waypoint");
+});
+foreach(string change in new[]{"airborne","transport","map","profile","poi","run","replacement-mesh"})
+    Case("transit retarget preserves revocation/"+change,()=>
+    {
+        var first=new WoWPoint(140,10,0);var next=new WoWPoint(200,15,0);
+        var runtime=new GroundTransitionRuntime(GroundTransitionPurpose.Transit,first,null,()=>true);
+        runtime.Walk();
+        switch(change)
+        {
+            case "airborne":World.Actor.Flags=0x02000000u;break;
+            case "transport":World.Actor.Transport=99;break;
+            case "map":World.Actor.MapId++;break;
+            case "profile":Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot=new();break;
+            case "poi":BotPoi.CurrentGeneration++;break;
+            case "run":Styx.Logic.BehaviorTree.TreeRoot.RunIdentity=new();break;
+            case "replacement-mesh":World.Mesh.RequestIdentity=new();break;
+        }
+        Check(!runtime.Matches(next,null)&&World.Walks.Count==1,"obsolete transit retarget acquired new movement");
+    });
+Case("transit retarget cannot clear a successor installed by route release",()=>
+{
+    var runtime=new GroundTransitionRuntime(GroundTransitionPurpose.Transit,new(140,10,0),null,()=>true);
+    runtime.Walk();var successor=new object();
+    World.Callback=stage=>{if(stage=="mesh-release"){World.Callback=null;World.Mesh.RequestIdentity=successor;}};
+    Check(!runtime.Matches(new(200,15,0),null)&&ReferenceEquals(World.Mesh.RequestIdentity,successor)
+        &&World.Stops==0&&World.Walks.Count==1,"old transit mutated successor during retarget");
+});
+
 Case("moving quest NPC refreshes the ground destination without stopping its owner", () =>
 {
     World.Actor.MountedValue=false;

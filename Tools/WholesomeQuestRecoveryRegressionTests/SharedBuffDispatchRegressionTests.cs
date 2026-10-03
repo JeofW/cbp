@@ -170,7 +170,7 @@ public static class SharedBuffCases
 /* Controlled setup yields; production Cast/Buff and host TreeSharp remain actual. */ namespace Singular.Helpers
 {
     public static class Unit{public static bool IsCombatActionSafe(string name,WoWUnit target)=>target!=null;public static bool IsCombatActionSafe(int id,WoWUnit target)=>target!=null;}
-    public static class Logger{public static void Write(string text){}}
+    public static class Logger{public static void Write(string text){}public static void WriteDebug(string text){}}
     public class SetupAction:Composite
     {
         protected override IEnumerable<RunStatus> Execute(object context){yield return RunStatus.Running;var action=SharedBuffCases.DuringSetup;SharedBuffCases.DuringSetup=null;action?.Invoke();yield return RunStatus.Success;}

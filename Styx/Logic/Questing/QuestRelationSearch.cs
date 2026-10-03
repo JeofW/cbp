@@ -50,6 +50,17 @@ internal sealed class QuestRelationSearch
         return _route[_index];
     }
 
+    internal double EstimateRemainingDistance(WoWPoint position)
+    {
+        if (Exhausted || _route.Length == 0 || _visited >= _route.Length) return 0;
+        if (!float.IsFinite(position.X) || !float.IsFinite(position.Y) || !float.IsFinite(position.Z))
+            throw new ObservationUnavailableException("quest-relation-search", "Patrol distance origin unavailable.");
+        double distance = position.Distance(_route[_index]);
+        for (int offset = 1; offset < _route.Length - _visited; offset++)
+            distance += _route[(_index + offset - 1) % _route.Length].Distance(_route[(_index + offset) % _route.Length]);
+        return distance;
+    }
+
     private static WoWPoint[] AledisPatrol() => new[]
     {
         new WoWPoint(-693.036f,4187.63f,57.0026f), new WoWPoint(-686.684f,4207.12f,56.9095f),

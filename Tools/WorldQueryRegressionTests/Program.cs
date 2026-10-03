@@ -110,9 +110,9 @@ namespace GreenMagic {
  }
  public sealed class EmptyScope:IDisposable{public void Dispose(){}}
  public sealed class ExecutorRand {
-  public Memory Memory;public bool IsOpen=true,IsInitialized=true;public uint ReturnPointer=8192,FrameCount=1;
+  public Memory Memory;public bool IsOpen=true,IsInitialized=true;public uint ReturnPointer=8192,FrameCount=1;public long ExecutionGeneration;
   public object AssemblyLock=new();public void Clear(){Probe.At("clear");Probe.Instructions.Clear();}
-  public void AddLine(string format,params object[] args){Probe.At("instruction");Probe.Instructions.Add(string.Format(format,args));}public void Execute()=>Probe.Execute();
+  public void AddLine(string format,params object[] args){Probe.At("instruction");Probe.Instructions.Add(string.Format(format,args));}public void Execute(){ExecutionGeneration++;Probe.Execute();}
  }
  public class InjectionSEHException:Exception{}
  public static class FastSize<T>where T:struct{public static readonly int Size=System.Runtime.InteropServices.Marshal.SizeOf<T>();}
@@ -166,10 +166,12 @@ public static class WorldCases {
    }
   }
   foreach(string kind in new[]{"object","ray"}){string k=kind;
+   Case(k+" nested execution cannot relabel the returned buffer",()=>{Probe.During=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown(k);});
    Case(k+" short result remains UNKNOWN",()=>{Probe.Bytes=0;Unknown(k);});
    Case(k+" zero return pointer remains UNKNOWN",()=>{ObjectManager.Executor.ReturnPointer=0;Unknown(k);});
    Case(k+" invalid bool remains UNKNOWN",()=>{Probe.Value=2;Unknown(k);});
-   Case(k+" result epoch changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;Unknown(k);});
+   Case(k+" actual execution generation changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown(k);});
+   Case(k+" ordinary render frame does not replace a result",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;bool value=false;try{value=Read(k);}catch(ObservationUnavailableException){}Check(value,"normal render-frame progression invalidated completed native data");});
    Case(k+" result pointer changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.ReturnPointer++;Unknown(k);});
    Case(k+" executor closure is fatal",()=>{ObjectManager.Executor.IsOpen=false;Exception caught=null;try{_=Read(k);}catch(Exception e){caught=e;}Check(caught is InvalidExecutorException&&Probe.Calls==0,"closed executor produced geometry");});
    Case(k+" process closure is fatal",()=>{ObjectManager.Wow.ProcessHandle=IntPtr.Zero;Exception caught=null;try{_=Read(k);}catch(Exception e){caught=e;}Check(caught is InvalidProcessException&&Probe.Calls==0,"closed process produced geometry");});
@@ -196,7 +198,9 @@ public static class WorldCases {
   Case("batch invalid boolean remains UNKNOWN",()=>{Probe.BatchHits[0]=2;Unknown("batch");});
   Case("batch nonfinite hit remains UNKNOWN",()=>{Probe.BatchPoints[0]=new(1,2,float.NaN);Unknown("batch");});
   Case("batch off-segment hit remains UNKNOWN",()=>{Probe.BatchPoints[0]=new(10,20,5);Unknown("batch");});
-  Case("batch result frame changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;Unknown("batch");});
+  Case("batch execution generation changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown("batch");});
+  Case("batch nested execution cannot relabel outputs",()=>{Probe.During=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown("batch");});
+  Case("batch survives ordinary render frame progression",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;bool value=false;try{value=Read("batch");}catch(ObservationUnavailableException){}Check(value,"render frame replaced a retained batch result without an execution");});
   Case("batch missing executor never invokes alternate provider",()=>{ObjectManager.Executor=null;try{_=Read("batch");}catch(ObservationUnavailableException){}Check(!Probe.FallbackUsed,"missing collision silently became another provider query");});
   Case("batch actor replacement before dispatch",()=>{Probe.Write=()=>ObjectManager.Me=new();Unknown("batch");Check(Probe.Calls==0,"batch wrote then dispatched under replaced actor");});
   Case("batch memory replacement frees original buffer",()=>{var original=ObjectManager.Wow;Probe.During=()=>{ObjectManager.Wow=new();ObjectManager.Executor=new(){Memory=ObjectManager.Wow};};Unknown("batch");Check(Probe.Freed.Count==1&&ReferenceEquals(Probe.Freed[0],original),"batch freed replacement memory");});

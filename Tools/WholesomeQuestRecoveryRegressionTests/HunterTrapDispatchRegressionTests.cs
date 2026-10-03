@@ -180,7 +180,7 @@ public static class Unit
     public static IEnumerable<WoWUnit> UnfriendlyUnitsNearTarget(float range)=>NearbyUnfriendlyUnits;
     public static bool IsCombatActionSafe(string name,WoWUnit target)=>World.Safe&&target!=null&&target.IsValid;
 }
-public static class Logger { public static void Write(string message){var callback=World.DuringLog;World.DuringLog=null;callback?.Invoke();} }
+public static class Logger { public static void Write(string message){var callback=World.DuringLog;World.DuringLog=null;callback?.Invoke();} public static void WriteDebug(string message)=>Write(message); }
 public sealed class SetupAction:Composite
 {
     protected override IEnumerable<RunStatus> Execute(object context)

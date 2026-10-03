@@ -4,7 +4,7 @@ using Styx.Helpers;
 namespace Styx.Logic.Pathing;
 
 public enum GroundTransitionState { Pending, Ready, Unavailable, Revoked }
-public enum GroundTransitionPurpose { Interaction, Combat }
+public enum GroundTransitionPurpose { Interaction, Combat, Transit }
 internal enum GroundDismountState { Rejected, Pending, Submitted, Expired }
 
 internal readonly record struct GroundMotion(WoWPoint Position, bool Mounted, bool Flying,
@@ -67,7 +67,7 @@ internal sealed class GroundTransitionMachine
 
         bool authoritativeReady = !observation.OnTransport && !observation.Swimming && !observation.Falling
             && !observation.Immobilized && !observation.Flying && observation.Supported && !observation.Mounted
-            && (_purpose == GroundTransitionPurpose.Combat || observation.InteractionReady);
+            && (_purpose == GroundTransitionPurpose.Combat || _purpose == GroundTransitionPurpose.Interaction && observation.InteractionReady);
         if (authoritativeReady)
         {
             _dismountPending = false;
@@ -86,7 +86,7 @@ internal sealed class GroundTransitionMachine
         // Landing/approach time limits are not a maximum length for a useful
         // ground journey. Actual displacement renews that budget; the existing
         // no-progress watchdog still bounds walls and rejected movement.
-        if (_purpose == GroundTransitionPurpose.Interaction && observation.GroundTravel
+        if (_purpose != GroundTransitionPurpose.Combat && observation.GroundTravel
             && !observation.Flying && !observation.Falling && !observation.OnTransport
             && !observation.Swimming && !observation.Immobilized && observation.Supported
             && now == _lastProgress)
@@ -103,7 +103,7 @@ internal sealed class GroundTransitionMachine
         // Mounted travel is not interaction readiness. Keep a ground mount for
         // the distant mesh leg; use the existing landing/unmount owner only for
         // the final close approach (and for all combat transitions).
-        if (_purpose == GroundTransitionPurpose.Interaction && observation.GroundTravel
+        if (_purpose != GroundTransitionPurpose.Combat && observation.GroundTravel
             && !observation.Flying && observation.Supported && !_descent && !observation.Descending)
         {
             _groundHandoff = true;

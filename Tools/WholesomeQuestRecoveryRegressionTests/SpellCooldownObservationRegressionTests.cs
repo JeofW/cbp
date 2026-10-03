@@ -25,7 +25,8 @@ internal static class SpellCooldownObservationRegressionTests
         var methodNames = new HashSet<string> { "CalculateTrackedCooldownRemaining", "IsCooldownReady",
             "IsTrackedCooldownBlocking", "TryParseAvailability", "GetTrackedCooldownTimeLeft", "TrackCooldown",
             "TrackDeadline", "IsSpellAvailable", "GetSpellCooldownTimeLeft", "CreateCooldownQuery",
-            "CaptureSpellObservation", "PrepareCooldownContext", "ResetCooldownObservations", "TryCastSpellById" };
+            "CaptureSpellObservation", "PrepareCooldownContext", "ResetCooldownObservations", "TryCastSpellById",
+            "BeginCastSelectionPulse", "TryClaimCastCandidate", "RecordCastCandidateResult", "GetSpellByName" };
         var fieldNames = new HashSet<string> { "_knownSpells", "_cooldownSync", "_cooldownReadyAtTicks",
             "_castVerificationUntilTicks", "_readinessProbeNotBeforeTicks", "CastAttemptVerificationDelayMs",
             "UnavailableProbeBackoffMs", "FailedProbeBackoffMs", "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks",
@@ -156,6 +157,24 @@ public static class CooldownCases {
   int total=0,passed=0,assertions=0,unexpected=0;
   void Case(string name,Action test){total++;try{test();passed++;Console.WriteLine("PASS cooldown observation: "+name);}catch(Failure error){assertions++;Console.Error.WriteLine("FAIL cooldown observation: "+name+": "+error.Message);}catch(Exception error){unexpected++;Console.Error.WriteLine("ERROR cooldown observation: "+name+": "+error);}}
   string[] readers={"manager","spell","singular","legacy"};
+  foreach(string mode in new[]{"active","disabled","unusable"})
+   Case("known denial does not consume next pulse's candidate budget/"+mode,()=>{
+    var spell=Reset(mode);Check(!SpellManager.Admit(spell),"controlled denial did not reach real availability owner");
+    var next=new WoWSpell{Id=100001,Name="Next"};SpellManager.Spells[next.Name]=next;
+    int reads=Lua.Reads;SpellManager.BeginCastSelectionPulse();
+    Check(!SpellManager.TryClaimCastCandidate(spell.Name),"known denied spell consumed the sole cast candidate");
+    Check(SpellManager.TryClaimCastCandidate(next.Name),"known cooldown starved independent ready candidate");
+    Check(Lua.Reads==reads,"negative selection repeated a client query");
+   });
+  Case("expired denial requires fresh readiness and becomes selectable",()=>{
+   var spell=Reset("active");Check(!SpellManager.Admit(spell),"control");Environment.TickCount64+=5001;
+   SpellManager.BeginCastSelectionPulse();Check(SpellManager.TryClaimCastCandidate(spell.Name),"expired negative became permanent exclusion");
+   Lua.Mode="disabled";Check(!SpellManager.Admit(spell),"expired negative was mistaken for positive readiness");
+  });
+  Case("negative selection does not leak across actor replacement",()=>{
+   var spell=Reset("active");Check(!SpellManager.Admit(spell),"control");StyxWoW.Me=new Actor{Guid=2};
+   SpellManager.BeginCastSelectionPulse();Check(SpellManager.TryClaimCastCandidate(spell.Name),"previous actor's negative poisoned new owner");
+  });
   foreach(string reader in readers)foreach(string mode in new[]{"ready","active","expired"})
    Case("known/"+reader+"/"+mode,()=>{var spell=Reset(mode);Check(Read(spell,reader)==TimeSpan.FromSeconds(mode=="active"?5:0),"valid current cooldown changed");});
   string[] invalid={"missing-name","name-type","name-empty","missing-start","missing-duration","missing-enabled","disabled","enabled-type","nan-start","nan-duration","infinite-start","infinite-duration","negative-start","negative-duration","negative-now","nan-now","infinite-now","string-duration","overflow-duration"};

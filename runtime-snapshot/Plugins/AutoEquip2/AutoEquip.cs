@@ -23,8 +23,8 @@ namespace Styx.Bot.Plugins.AutoEquip2
         /// <summary>Initializes this plugin after it has been properly loaded.</summary>
         public override void Initialize()
         {
-            Lua.Events.AttachEvent("UNIT_INVENTORY_CHANGED", DoCheck);
-            Lua.Events.AttachEvent("LOOT_CLOSED", DoCheck);
+            Lua.Events.AttachEvent("UNIT_INVENTORY_CHANGED", RequestItemCheck);
+            Lua.Events.AttachEvent("LOOT_CLOSED", RequestItemCheck);
             Lua.Events.AttachEvent("START_LOOT_ROLL", HandleLootRoll);
             Lua.Events.AttachEvent("CONFIRM_LOOT_ROLL", HandleConfirmLootRoll);
             Lua.Events.AttachEvent("CONFIRM_DISENCHANT_ROLL", HandleConfirmLootRoll);
@@ -34,8 +34,8 @@ namespace Styx.Bot.Plugins.AutoEquip2
         public override void Dispose()
         {
             _isDisposed = true;
-            Lua.Events.DetachEvent("UNIT_INVENTORY_CHANGED", DoCheck);
-            Lua.Events.DetachEvent("LOOT_CLOSED", DoCheck);
+            Lua.Events.DetachEvent("UNIT_INVENTORY_CHANGED", RequestItemCheck);
+            Lua.Events.DetachEvent("LOOT_CLOSED", RequestItemCheck);
             Lua.Events.DetachEvent("START_LOOT_ROLL", HandleLootRoll);
             Lua.Events.DetachEvent("CONFIRM_LOOT_ROLL", HandleConfirmLootRoll);
             Lua.Events.DetachEvent("CONFIRM_DISENCHANT_ROLL", HandleConfirmLootRoll);
@@ -74,12 +74,20 @@ namespace Styx.Bot.Plugins.AutoEquip2
         private bool _pendingEquipSubmitted;
         private string _pendingCursorOwner;
         private bool _isDisposed;
+        private bool _itemCheckRequested;
         private LocalPlayer _pendingEquipPlayer;
         private ulong _pendingEquipPlayerGuid;
 
         private bool HasPendingEquip
         {
             get { return _pendingEquipGuid != 0 && _pendingEquipEntry != 0; }
+        }
+
+        private void RequestItemCheck(object sender, LuaEventArgs args)
+        {
+            // Client events may arrive inside movement/cast observations. Queue
+            // one optional scan instead of synchronously scanning every item.
+            if (!_isDisposed) _itemCheckRequested = true;
         }
         /// <summary>
         /// Called everytime the engine pulses.
@@ -95,9 +103,15 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 return;
             }
 
-            if (!_itemCheckTimer.IsFinished)
+            // An already submitted transaction is observed above, regardless of
+            // movement. Only new optional inventory scans wait for an idle actor.
+            var player = ObjectManager.Me;
+            if (player == null || player.IsMoving || player.IsCasting || player.IsChanneling)
+                return;
+            if (!_itemCheckRequested && !_itemCheckTimer.IsFinished)
                 return;
 
+            _itemCheckRequested = false;
             _itemCheckTimer.Reset();
 
             // WotLK: Check ammo every pulse cycle (ammo uses SetAmmo, not normal equip)
