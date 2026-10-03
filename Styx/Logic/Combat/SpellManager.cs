@@ -755,7 +755,10 @@ namespace Styx.Logic.Combat
 				return false;
 
 			// HB 4.3.4: Range checks
-			if (checkRange && target != null)
+				// The exact local recipient is already at the caster. Tracing from
+				// its eye position back to itself is an invalid zero-length native
+				// collision query, not a failed line of sight for self support.
+				if (checkRange && target != null && !ReferenceEquals(target, me))
 			{
 				if (!target.InLineOfSpellSight)
 					return false;

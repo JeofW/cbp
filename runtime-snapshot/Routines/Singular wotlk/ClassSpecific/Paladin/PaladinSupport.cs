@@ -363,7 +363,7 @@ namespace Singular.ClassSpecific.Paladin
                 // Multiple same-name owners are retained by GetAllAuras, not a name-keyed dictionary.
                 if (coverage.Any(a => a.CreatorGuid == StyxWoW.Me.Guid) && !external) return null;
                 if (coverage.Length != 0) continue;
-                if (SpellManager.HasSpell(name) && SpellManager.CanCast(name, player)) return name;
+                if (SpellManager.HasSpell(name) && SupportSpellAvailable(name, player)) return name;
             }
             return null;
         }
@@ -374,7 +374,7 @@ namespace Singular.ClassSpecific.Paladin
             string greater = "Greater " + normal;
             if (!SingularSettings.Instance.Paladin.UseGreaterBlessings || me == null
                 || me.Guid == 0 || player.Guid == 0 || me.Combat
-                || !SpellManager.HasSpell(greater) || !SpellManager.CanCast(greater, player)
+                || !SpellManager.HasSpell(greater) || !SupportSpellAvailable(greater, player)
                 || !HasGreaterBlessingReagents(greater))
                 return normal;
 
@@ -431,6 +431,39 @@ namespace Singular.ClassSpecific.Paladin
 
         private static SupportAction FindBlessingAction() => FindSupportAction(true, SelectBlessing);
 
+        [ThreadStatic] private static SupportAction _readinessSelection;
+        [ThreadStatic] private static bool _recordReadiness;
+
+        // These receipts rank candidates within ONE selection; they never grant
+        // cast permission. The shared spell dispatcher still performs current
+        // readiness at native submission. Coverage/roster/assignment policies are
+        // re-evaluated on every callback, without reissuing all their Lua probes.
+        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<SupportAction,
+            List<Tuple<WoWPlayer, ulong, string, bool>>> SupportReadiness = new();
+
+        private static bool SupportSpellAvailable(string spell, WoWPlayer player)
+        {
+            var action = _readinessSelection;
+            if (action == null) return SpellManager.CanCast(spell, player);
+            var probes = SupportReadiness.GetOrCreateValue(action);
+            var prior = probes.FirstOrDefault(p => ReferenceEquals(p.Item1, player) && p.Item2 == player.Guid && p.Item3 == spell);
+            if (prior != null) return prior.Item4;
+            if (!_recordReadiness || !action.HasCurrentParticipants) return false;
+            bool available = SpellManager.CanCast(spell, player);
+            if (!action.HasCurrentParticipants) return false;
+            probes.Add(Tuple.Create(player, player.Guid, spell, available));
+            return available;
+        }
+
+        private static string EvaluateSupportSelection(SupportAction action, bool record)
+        {
+            var previous = _readinessSelection;
+            bool wasRecording = _recordReadiness;
+            _readinessSelection = action; _recordReadiness = record;
+            try { return action.Revalidate(action.Target); }
+            finally { _readinessSelection = previous; _recordReadiness = wasRecording; }
+        }
+
         private static SupportAction FindSupportAction(bool includeGroup, Func<WoWPlayer, string> choose)
         {
             var caster = StyxWoW.Me;
@@ -446,7 +479,7 @@ namespace Singular.ClassSpecific.Paladin
                     TargetGuid = targetGuid, Revalidate = choose
                 };
                 if (!action.HasCurrentParticipants) return null;
-                action.Spell = choose(player);
+                action.Spell = EvaluateSupportSelection(action, true);
                 // Assignment/availability observations may change participants.
                 if (!action.HasCurrentParticipants) return null;
                 if (action.Spell != null) return action;
@@ -476,7 +509,7 @@ namespace Singular.ClassSpecific.Paladin
             var action = context as SupportAction;
             return action != null && action.Spell == spell && action.HasCurrentParticipants
                 && CanMaintainSupport() && IsSupportRecipient(action.Target)
-                && action.Revalidate(action.Target) == spell && action.HasCurrentParticipants;
+                && EvaluateSupportSelection(action, false) == spell && action.HasCurrentParticipants;
         }
 
         private static string SelectAura(WoWPlayer player)
@@ -538,7 +571,7 @@ namespace Singular.ClassSpecific.Paladin
                 bool external = coverage.Any(a => a.CreatorGuid != 0 && a.CreatorGuid != player.Guid);
                 if (coverage.Any(a => a.CreatorGuid == player.Guid) && !external) return null;
                 if (coverage.Length != 0) continue;
-                if (SpellManager.HasSpell(name) && SpellManager.CanCast(name, player)) return name;
+                if (SpellManager.HasSpell(name) && SupportSpellAvailable(name, player)) return name;
             }
             return null;
         }
@@ -572,16 +605,30 @@ namespace Singular.ClassSpecific.Paladin
             var settings = SingularSettings.Instance.Paladin;
             if (!settings.DispelDebuffs || !CanMaintainSupport() || !IsCurrentRecipient(player, settings.DispelParty))
                 return null;
-            var harmful = SupportAuras(player).Where(a => a.IsHarmful && a.Spell != null).ToArray();
+            WoWAura[] harmful;
+            try
+            {
+                // A dispel needs complete metadata for its harmful removal mask,
+                // not for unrelated helpful/server-only auras. Do not turn a
+                // missing harmful spell into permission to remove another debuff.
+                harmful = player.GetRawAuras().Where(a => a != null && a.IsActive && a.IsHarmful).ToArray();
+                if (harmful.Any(a => a.Spell == null))
+                    throw new Styx.Helpers.ObservationUnavailableException("paladin-dispel", "Harmful aura removal coverage is unavailable.");
+            }
+            catch (Styx.Helpers.ObservationUnavailableException error)
+            {
+                RecoveryActions.ReportDeferral(error, "Paladin dispel selection");
+                return null;
+            }
             bool SafeFor(params WoWDispelType[] types) =>
                 harmful.Any(a => types.Contains(a.Spell.DispelType))
                 && !harmful.Any(a => types.Contains(a.Spell.DispelType) && ManualDispelEffects.Contains(a.SpellId));
             // Purify cannot incidentally dispel unsafe Magic while curing Disease/Poison.
             // Cleanse can, so its complete removal mask must be safe, not just one debuff.
             bool purify = SafeFor(WoWDispelType.Disease, WoWDispelType.Poison)
-                && SpellManager.HasSpell("Purify") && SpellManager.CanCast("Purify", player);
+                && SpellManager.HasSpell("Purify") && SupportSpellAvailable("Purify", player);
             bool cleanse = SafeFor(WoWDispelType.Disease, WoWDispelType.Poison, WoWDispelType.Magic)
-                && SpellManager.HasSpell("Cleanse") && SpellManager.CanCast("Cleanse", player);
+                && SpellManager.HasSpell("Cleanse") && SupportSpellAvailable("Cleanse", player);
             if (cleanse && harmful.Any(a => a.Spell.DispelType == WoWDispelType.Magic)) return "Cleanse";
             return purify ? "Purify" : cleanse ? "Cleanse" : null;
         }

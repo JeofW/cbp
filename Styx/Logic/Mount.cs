@@ -403,6 +403,7 @@ return '" + GroundDismountReceipt + "'";
 				}
 				catch (Exception ex)
 				{
+					RecoveryActions.RethrowControlFlow(ex);
 					Logging.WriteException(ex);
 				}
 			}

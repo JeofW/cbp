@@ -44,6 +44,7 @@ namespace Styx.Logic.Combat
     // signal; RecoveryActionAdapterRegressionTests exercises the actual helper.
     public static class RecoveryActions
     {
+        public static void ReportDeferral(Exception error, string owner) => RethrowControlFlow(error);
         public static void RethrowControlFlow(Exception error)
         {
             while (error is TargetInvocationException { InnerException: not null } wrapped) error = wrapped.InnerException!;

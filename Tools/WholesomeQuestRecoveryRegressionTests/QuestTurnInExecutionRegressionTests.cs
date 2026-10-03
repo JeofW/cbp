@@ -22,6 +22,7 @@ internal static class QuestTurnInExecutionRegressionTests
         cases += fixture.VerifyHandoffBoundaries();
         cases += fixture.VerifyReviewBoundaries();
         cases += fixture.VerifyApproachBoundaries();
+        cases += fixture.VerifyMissingNpcBoundaries();
         foreach (bool choices in new[] { false, true })
         {
             int acknowledgements = 0;
@@ -72,6 +73,7 @@ internal static class QuestTurnInExecutionRegressionTests
             {
                 string[] files = {
                     "Bots/Quest/QuestOrder/ForcedBehavior.cs", "Bots/Quest/QuestOrder/ForcedQuestTurnIn.cs",
+                    "Styx/Logic/Questing/QuestRelationSearch.cs",
                     "Styx/Logic/Questing/QuestTurnInCompletion.cs", "Bots/Quest/QuestLootHandoff.cs",
                     "Bots/Quest/Actions/ActionSelectQuest.cs", "Bots/Quest/Actions/ActionSelectReward.cs",
                     "Styx/Logic/Inventory/Frames/Frame.cs", "Styx/Logic/Inventory/Frames/Quest/QuestFrame.cs",
@@ -230,6 +232,13 @@ internal static class QuestTurnInExecutionRegressionTests
             return samples.Length;
         }
 
+        internal int VerifyMissingNpcBoundaries()
+        {
+            _session?.Dispose(); _session = _lua.BeginSession(UiSetup);
+            _observe.SetValue(null, new Func<string, List<string>>(Observe));
+            return (int)Call("MissingNpcCases")!;
+        }
+
         private List<string> Observe(string script)
         {
             var result = _session!.Execute(script, _loadSize(script));
@@ -364,6 +373,19 @@ public static class TurnInDriver {
   Case("selected mandatory stage cannot acquire new incidental loot",()=>{BotPoi.Current=new BotPoi(PoiType.None);int ticks=0;var gate=new Bots.Quest.QuestLootHandoff(new TreeSharp.Action(_=>{ticks++;return RunStatus.Success;}));gate.Start(null);try{Check(gate.Tick(null)==RunStatus.Failure&&ticks==0,"mandatory stage acquired fresh incidental loot");}finally{gate.Stop(null);}});
   return count;
  }
+ public static int MissingNpcCases(){
+  Reset(10161,19367,12,10,10,530);Lua.DoString("qvisible=false;gossip=false;requests=0;accepted=true;completed=false");
+  try {
+   Tick();Arrive();var npc=TurnInState.Npc;var poi=BotPoi.Current;TurnInState.Npc=null;
+   if(Tick()!="Running"||!ReferenceEquals(BotPoi.Current,poi)||owner.IsDone||TurnInState.Interactions!=0)
+    throw new InvalidOperationException("missing turn-in NPC at its stored endpoint fell through instead of retaining bounded search ownership");
+   TurnInState.Npc=npc;
+   for(int i=0;i<8&&TurnInState.Interactions==0;i++)Tick();
+   if(TurnInState.Interactions!=1||TurnInState.ReadInt("CompletionRequests")!=0)
+    throw new InvalidOperationException("a returning NPC did not reacquire exact interaction without inventing turn-in completion");
+   Console.WriteLine("PASS missing turn-in: absent NPC retains ownership and returning NPC resumes exact interaction");return 1;
+  } finally {Stop();}
+ }
  public static int ReviewCases(){
   int count=0;var failures=new List<string>();
   void Check(bool good,string why){if(!good)throw new InvalidOperationException(why);}
@@ -467,7 +489,7 @@ public static class TurnInDriver {
 }
 /* Controlled selected work and profile observations. */ namespace Bots.Quest {public class QuestState {public static QuestState Instance=new();public Bots.Quest.QuestOrder.QuestOrder Order=new();}}
 /* Controlled conditional order observations and unused pickup type. */ namespace Bots.Quest.QuestOrder {
-public class QuestOrder {public object CurrentNode;public ForcedBehavior CurrentBehavior;}
+public class QuestOrder {public static QuestOrder Instance=>Bots.Quest.QuestState.Instance.Order;public object CurrentNode;public ForcedBehavior CurrentBehavior;}
 public class ForcedIf:ForcedBehavior {public object IfNode;public QuestOrder ActiveOrder;public override bool IsDone=>false;protected override Composite CreateBehavior()=>null;}
 public class ForcedWhile:ForcedBehavior {public object WhileNode;public QuestOrder ActiveOrder;public override bool IsDone=>false;protected override Composite CreateBehavior()=>null;}
 // The production pickup tree and native-interaction caller are included above.

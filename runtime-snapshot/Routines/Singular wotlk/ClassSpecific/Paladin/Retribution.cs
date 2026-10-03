@@ -364,11 +364,20 @@ namespace Singular.ClassSpecific.Paladin
                     return Common.HasSupportedAura(me, "Seal of Righteousness") ? null : "Seal of Righteousness";
                 string stacking = SpellManager.HasSpell("Seal of Corruption") ? "Seal of Corruption"
                     : SpellManager.HasSpell("Seal of Vengeance") ? "Seal of Vengeance" : null;
-                bool safeCleave = target == null || Unit.IsAreaEffectSafe("Divine Storm", target);
-                int nearby = Unit.NearbyUnfriendlyUnits.Count(u => u.IsValid && u.IsAlive && u.Distance <= 8);
-                bool boss = target != null && target.IsBoss();
-                bool command = SpellManager.HasSpell("Seal of Command") && safeCleave
-                    && ((!boss && (nearby >= 3 || nearby >= 2 && Common.HasSupportedAura(me, "Seal of Command"))) || stacking == null);
+                bool command = SpellManager.HasSpell("Seal of Command")
+                    && (target == null || Unit.IsAreaEffectSafe("Divine Storm", target));
+                if (command && stacking != null)
+                {
+                    // Only compare nearby enemies when their count can actually
+                    // change the decision. Before a stacking seal is learned,
+                    // Command's existing fallback never depended on this scan.
+                    command = target == null || !target.IsBoss();
+                    if (command)
+                    {
+                        int nearby = Unit.NearbyUnfriendlyUnits.Count(u => u.IsValid && u.IsAlive && u.Distance <= 8);
+                        command = nearby >= 3 || nearby >= 2 && Common.HasSupportedAura(me, "Seal of Command");
+                    }
+                }
                 wanted = command ? "Seal of Command" : stacking
                     ?? (SpellManager.HasSpell("Seal of Righteousness") ? "Seal of Righteousness" : null);
                 // Damage seals stay preferred in groups; mana is recovered with

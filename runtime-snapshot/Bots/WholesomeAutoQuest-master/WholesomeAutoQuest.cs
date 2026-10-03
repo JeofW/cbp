@@ -1307,6 +1307,9 @@ namespace WholesomeAQ
             MaybeRequestTimedRetry();
             ObserveRecoveryActivation();
             ObserveQuestProgress();
+            if (!_restingPaused && StyxWoW.Me?.Combat != true
+                && QuestOrder.Instance?.CurrentBehavior is ForcedQuestTurnIn absent && absent.EndpointSearchExhausted)
+                TryDeferExhaustedTurnIn(absent, QuestRecoveryRuntime.Capture());
             CompleteCurrentStageBeforeTick();
             RunPendingRefresh();
             if (StyxWoW.IsInGame && StyxWoW.Me != null)
@@ -2125,6 +2128,17 @@ namespace WholesomeAQ
                 BotPoi.Current, () => BotPoi.Clear("Wholesome navigation retry deferred"));
             RequestRefresh($"Quest {key.QuestId} navigation is unresolved ({reason}); retry {result.Decision.RetryUtc:O}; selecting alternate eligible work without a failure episode.");
             return true;
+        }
+
+        internal bool TryDeferExhaustedTurnIn(ForcedQuestTurnIn behavior, QuestRecoveryContext context)
+        {
+            if (_stopped || !behavior.EndpointSearchExhausted
+                || !ReferenceEquals(QuestOrder.Instance?.CurrentBehavior, behavior)
+                || !_attemptOwnership.TryGet(behavior, out var key, out long generation)
+                || key.Stage != QuestRecoveryStage.TurnIn || key.QuestId != behavior.QuestId || key.NpcEntry != behavior.NpcId
+                || !IsOwnedRecoveryPoi(behavior, key, BotPoi.Current) || BotPoi.Current.AsObject != null)
+                return false;
+            return TryDeferCurrentNavigation(behavior, key, generation, context, RouteFailureReason.PathSearchFailed);
         }
 
         private void ProcessProgressUpdate(

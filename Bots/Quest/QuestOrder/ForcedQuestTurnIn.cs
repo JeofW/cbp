@@ -33,6 +33,18 @@ public class ForcedQuestTurnIn : ForcedBehavior
     private static readonly Frame QuestFrameCompleteButton = new Frame("QuestFrameCompleteButton");
     private int completeQuestAttempts;
     private QuestTurnInCompletion completion;
+    private QuestRelationSearch relationSearch;
+    private GroundTransition searchTravel;
+    private WoWPoint? searchDestination;
+    private object searchRun;
+    private LocalPlayer searchActor;
+    private BotPoi searchPoi;
+    private ulong searchActorGuid;
+    private uint searchActorAddress, searchMap;
+    private object searchProfile, searchBehavior;
+    private bool disposed;
+    private double searchLastLog = double.NegativeInfinity;
+    public bool EndpointSearchExhausted => relationSearch?.Exhausted == true;
 
     // Preserve the original constructor for compiled/reflection callers.
     public ForcedQuestTurnIn(uint questId, string questName, uint npcId, string npcName, WoWPoint location)
@@ -94,6 +106,8 @@ public class ForcedQuestTurnIn : ForcedBehavior
 
     public override void Dispose()
     {
+        disposed = true;
+        CancelRelationSearch();
         // A generated profile can be replaced precisely because the quest left
         // the log. Its submitted reward still belongs to the current session.
         if (completion != null && !completion.WasSubmitted) completion.Cancel(this);
@@ -122,9 +136,10 @@ public class ForcedQuestTurnIn : ForcedBehavior
                 completion.Observe();
                 return completion.BlocksPickup ? RunStatus.Running : RunStatus.Failure;
             })),
-            (Composite)new Decorator(_ => QuestLootHandoff.CanRunMandatory(this) && BotPoi.Current.Type != PoiType.Kill, (Composite)new PrioritySelector((ContextChangeHandler)(context => (object)null), new Composite[3]
+            (Composite)new Decorator(_ => QuestLootHandoff.CanRunMandatory(this) && BotPoi.Current.Type != PoiType.Kill, (Composite)new PrioritySelector((ContextChangeHandler)(context => (object)null), new Composite[4]
         {
             (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => new BotPoi(new TurnInNode(this.Location, this.NpcId, this.NpcName, this.TurnInType, this.QuestId, this.QuestName))))),
+            new Decorator(_ => ShouldSearchRelation(), new TreeSharp.Action(_ => SearchRelation())),
             (Composite)new Decorator((CanRunDecoratorDelegate)(context => !(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestTurnIn.Me.Location.DistanceSqr(BotPoi.Current.Location) > 16.0 : !GroundTransition.CanInteractWith(BotPoi.Current.AsObject)), (Composite)new ActionMoveToPoi()),
             (Composite)new Decorator((CanRunDecoratorDelegate)(context => GroundTransition.CanInteractWith(BotPoi.Current.AsObject)), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[9]
             {
@@ -176,6 +191,72 @@ public class ForcedQuestTurnIn : ForcedBehavior
         return current.Type != PoiType.QuestTurnIn || current.Entry != this.NpcId ||
             turnIn == null || turnIn.QuestId != this.QuestId || turnIn.TurnInType != this.TurnInType ||
             !turnIn.TurnInLocation.Equals(this.Location);
+    }
+
+    private void CancelRelationSearch()
+    {
+        var travel = searchTravel;
+        searchTravel = null; searchDestination = null; relationSearch = null;
+        searchRun = null; searchActor = null; searchPoi = null;
+        searchProfile = null; searchBehavior = null;
+        travel?.Cancel();
+    }
+
+    private bool SearchCurrent() => !disposed && TreeRoot.IsRunning && ReferenceEquals(TreeRoot.RunIdentity, searchRun)
+        && ReferenceEquals(Me, searchActor) && ReferenceEquals(BotPoi.Current, searchPoi)
+        && searchActor != null && searchActor.IsValid && searchActor.IsAlive && !searchActor.Combat
+        && searchActor.Guid == searchActorGuid && searchActor.BaseAddress == searchActorAddress && searchActor.MapId == searchMap
+        && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot, searchProfile)
+        && ReferenceEquals(QuestOrder.Instance?.CurrentBehavior, searchBehavior)
+        && !ShouldSetPoi(null);
+
+    private bool ShouldSearchRelation()
+    {
+        if (disposed || ShouldSetPoi(null)) { CancelRelationSearch(); return false; }
+        if (BotPoi.Current.AsObject != null) { CancelRelationSearch(); return false; }
+        if (relationSearch != null && !SearchCurrent()) CancelRelationSearch();
+        return relationSearch != null || Me.Location.DistanceSqr(Location) <= 16;
+    }
+
+    private RunStatus SearchRelation()
+    {
+        // Decorator predicates are not revisited while their child is Running.
+        // Recheck discovery here so a newly loaded patrol NPC can end the search.
+        if (BotPoi.Current.AsObject != null) { CancelRelationSearch(); return RunStatus.Failure; }
+        if (relationSearch == null)
+        {
+            searchRun = TreeRoot.RunIdentity; searchActor = Me; searchPoi = BotPoi.Current;
+            searchActorGuid = Me.Guid; searchActorAddress = Me.BaseAddress; searchMap = Me.MapId;
+            searchProfile = Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot;
+            searchBehavior = QuestOrder.Instance?.CurrentBehavior;
+            relationSearch = new QuestRelationSearch(Me.MapId, QuestId,
+                TurnInType == QuestObjectType.GameObject ? 0U : NpcId, Location);
+        }
+        if (!SearchCurrent()) { CancelRelationSearch(); return RunStatus.Failure; }
+        double now = Environment.TickCount64 / 1000.0;
+        var destination = relationSearch.Next(now, Me.Location);
+        if (now - searchLastLog >= 10)
+        {
+            searchLastLog = now;
+            Logging.WriteDiagnostic("[TurnInSearch] quest={0} npc={1} phase={2} hints={3}; no interaction or reward acknowledged",
+                QuestId, NpcId, relationSearch.Phase, relationSearch.SearchPointCount);
+            if (!SearchCurrent()) { CancelRelationSearch(); return RunStatus.Failure; }
+        }
+        if (relationSearch.Exhausted || !destination.HasValue)
+        {
+            searchTravel?.Cancel(); searchTravel = null; searchDestination = null;
+            return RunStatus.Running;
+        }
+        if (!searchDestination.HasValue || !searchDestination.Value.Equals(destination.Value))
+        {
+            searchTravel?.Cancel();
+            if (!SearchCurrent()) { CancelRelationSearch(); return RunStatus.Failure; }
+            searchDestination = destination;
+            searchTravel = new GroundTransition(GroundTransitionPurpose.Interaction);
+        }
+        var state = searchTravel.Tick(destination.Value, null, SearchCurrent);
+        if (state == GroundTransitionState.Revoked) { searchTravel.Cancel(); searchTravel = null; searchDestination = null; }
+        return RunStatus.Running;
     }
 
     private RunStatus CloseFrames(object context)

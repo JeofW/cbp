@@ -16,7 +16,7 @@ internal static class World
     internal static readonly List<string> Diagnostics = new(), Errors = new();
     internal static readonly List<ulong> Interactions = new();
     internal static readonly List<(WorldLine Line, GameWorld.CGWorldFrameHitFlags Flags, bool Hit, WoWPoint Point)> Rays = new();
-    internal static int Dismounts, DismountAttempts, Descents, Stops, FlightCostQueries, ScalarTraces, BatchTraces;
+    internal static int Dismounts, DismountAttempts, Descents, Stops, FlightCostQueries, ScalarTraces, BatchTraces, VehicleQueries;
     internal static string DismountMode = "success";
     internal static string? ClientDismountLeaseOwner;
     internal static double ClientDismountLeaseUntil;
@@ -32,7 +32,7 @@ internal static class World
         Callback = null; ObservationError = null;
         Styx.BotEvents.Stop();
         RawFlights.Clear(); ExteriorFlights.Clear(); Walks.Clear(); Diagnostics.Clear(); Errors.Clear(); Rays.Clear(); Interactions.Clear();
-        Dismounts = DismountAttempts = Descents = Stops = FlightCostQueries = ScalarTraces = BatchTraces = 0;
+        Dismounts = DismountAttempts = Descents = Stops = FlightCostQueries = ScalarTraces = BatchTraces = VehicleQueries = 0;
         DismountMode = "success";
         ClientDismountLeaseOwner = null;
         ClientDismountLeaseUntil = double.NegativeInfinity;
@@ -239,7 +239,7 @@ namespace Styx.Logic.Pathing
         public static bool CanInteractWith(WoWObject? subject, Func<bool>? admitted = null)
             => subject != null && subject.WithinInteractRange && admitted?.Invoke() != false;
         public static bool CanActUnmounted(Func<bool>? admitted = null)
-            => !World.Actor.MountedValue && admitted?.Invoke() != false;
+        { World.VehicleQueries++; return !World.Actor.MountedValue && admitted?.Invoke() != false; }
     }
 }
 namespace Styx.Logic
@@ -313,6 +313,7 @@ namespace Styx.WoWInternals.World
         }
         internal static bool ReadLocalVehicle(LocalPlayer actor)
         {
+            global::World.VehicleQueries++;
             global::World.Event("vehicle");
             if (global::World.ObservationError != null) throw global::World.ObservationError;
             return actor.InVehicle;

@@ -66,7 +66,7 @@ public static class SharedBuffCases
     internal static System.Action? DuringSetup;
     internal static bool Setup, Accepted=true;
     internal static bool RecoveryAllowed=true, RecoveryHealth, RecoveryAura;
-    internal static int RecoveryCalls;
+    internal static int RecoveryCalls, AuraReads;
     public static void Run()
     {
         var cases=new List<(string,System.Action)>();
@@ -98,6 +98,8 @@ public static class SharedBuffCases
         Add("intentional aspect transition is not globally frozen",()=>{Learn("Aspect of the Dragonhawk");Aura(StyxWoW.Me,"Aspect of the Viper",202,1);Tick(Spell.BuffSelf("Aspect of the Dragonhawk"));Expect(1);});
         Add("missing named target after setup remains rejected",()=>{Learn("Test");Setup=true;DuringSetup=()=>StyxWoW.Me.CurrentTarget=null;Tick(Spell.Buff("Test"));Expect();});
         Add("false requirement still prevents named dispatch",()=>{Learn("Test");Tick(Spell.BuffSelf("Test",_=>false));Expect();});
+        Add("false requirement avoids unrelated aura metadata",()=>{Tick(Spell.BuffSelf("Test",_=>false));Expect();Check(AuraReads==0,"false requirement performed an aura scan");});
+        Add("unlearned named buff avoids target and aura queries",()=>{int selections=0;Tick(Spell.Buff("Unlearned",false,_=>{selections++;return StyxWoW.Me;},_=>true));Expect();Check(selections==0&&AuraReads==0,"unlearned buff queried optional world metadata");});
         Add("rejected dispatch does not acquire retry dictionary entry",()=>{Learn("Test");Accepted=false;Tick(Spell.BuffSelf("Test"));Expect();Check(!Spell.DoubleCastPreventionDict.ContainsKey("Test"),"rejected submission acquired retry state");});
         Add("successful named dispatch retains existing retry guard",()=>{Learn("Test");Tick(Spell.BuffSelf("Test"));Tick(Spell.BuffSelf("Test"));Expect(1);});
         Add("missing caller-declared coverage array is rejected",()=>{Learn("Test");Tick(Spell.Buff("Test",false,_=>StyxWoW.Me,_=>true,null!));Expect();});
@@ -123,7 +125,7 @@ public static class SharedBuffCases
         Console.WriteLine($"Shared buff dispatch scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; exact Cast/Buff region and real TreeSharp; controlled observations/dispatch; not all class rotations or game effects.");
         if(assertions+unexpected!=0)throw new InvalidOperationException("Shared buff dispatch failures");
     }
-    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};CastTargets.Clear();Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();Setup=false;DuringSetup=null;Accepted=RecoveryAllowed=true;RecoveryHealth=RecoveryAura=false;RecoveryCalls=0;Learn("Test");}
+    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2}};CastTargets.Clear();Spell.DoubleCastPreventionDict.Clear();SpellManager.Spells.Clear();Setup=false;DuringSetup=null;Accepted=RecoveryAllowed=true;RecoveryHealth=RecoveryAura=false;RecoveryCalls=AuraReads=0;Learn("Test");}
     private static void Learn(string name)=>SpellManager.Spells[name]=new WoWSpell();
     private static void Aura(WoWUnit unit,string name,int id,ulong caster)=>unit.Auras[name]=new Aura{Name=name,SpellId=id,CreatorGuid=caster};
     private static void Tick(Composite tree){tree.Start(null!);try{int count=0;while(tree.Tick(null!)==RunStatus.Running)if(++count>12)throw new Failure("unbounded decision");}finally{tree.Stop(null!);}}
@@ -139,8 +141,8 @@ public static class SharedBuffCases
         public float CombatReach;public bool IsPlayer;
         public bool IsMe=>ReferenceEquals(this,StyxWoW.Me);public float Distance=>20;public bool InLineOfSpellSight=>true;
         public Dictionary<string,Aura> Auras=new();
-        public bool HasAura(string name)=>Auras.ContainsKey(name);
-        public bool HasMyAura(string name)=>Auras.TryGetValue(name,out var aura)&&aura.CreatorGuid==StyxWoW.Me.Guid;
+        public bool HasAura(string name){SharedBuffCases.AuraReads++;return Auras.ContainsKey(name);}
+        public bool HasMyAura(string name){SharedBuffCases.AuraReads++;return Auras.TryGetValue(name,out var aura)&&aura.CreatorGuid==StyxWoW.Me.Guid;}
         public string SafeName()=>"controlled";
     }
 }

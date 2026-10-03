@@ -9,7 +9,7 @@ internal enum GroundDismountState { Rejected, Pending, Submitted, Expired }
 
 internal readonly record struct GroundMotion(WoWPoint Position, bool Mounted, bool Flying,
     bool Falling, bool Swimming, bool OnTransport, bool Immobilized, bool Supported,
-    bool Descending, bool InteractionReady, bool PreferFlight);
+    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false);
 
 internal interface IGroundTransitionRuntime
 {
@@ -83,6 +83,14 @@ internal sealed class GroundTransitionMachine
             ResetAfterRecovery(now, observation);
             if (!_runtime.Current) return GroundTransitionState.Revoked;
         }
+        // Landing/approach time limits are not a maximum length for a useful
+        // ground journey. Actual displacement renews that budget; the existing
+        // no-progress watchdog still bounds walls and rejected movement.
+        if (_purpose == GroundTransitionPurpose.Interaction && observation.GroundTravel
+            && !observation.Flying && !observation.Falling && !observation.OnTransport
+            && !observation.Swimming && !observation.Immobilized && observation.Supported
+            && now == _lastProgress)
+            _started = now;
         if (now - _started >= 120)
             return Unavailable("ground-transition-deadline", observation, now);
         if (observation.OnTransport || observation.Swimming)
@@ -91,6 +99,17 @@ internal sealed class GroundTransitionMachine
             return Wait("landing", "falling-is-not-grounded-acknowledgement", observation, stop: true);
         if (observation.Immobilized)
             return Wait("blocked", "root-or-stun-prevents-owned-transition", observation, stop: true);
+
+        // Mounted travel is not interaction readiness. Keep a ground mount for
+        // the distant mesh leg; use the existing landing/unmount owner only for
+        // the final close approach (and for all combat transitions).
+        if (_purpose == GroundTransitionPurpose.Interaction && observation.GroundTravel
+            && !observation.Flying && observation.Supported && !_descent && !observation.Descending)
+        {
+            _groundHandoff = true;
+            if (CommandDue(now)) _runtime.Walk();
+            return Progress("ground-travel", "owned-ground-travel; interaction-unobserved", observation, now);
+        }
 
         if (!observation.Flying && observation.Supported)
         {

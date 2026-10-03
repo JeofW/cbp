@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Boundary.cs" />
+    <Compile Include="../GroundTravelMountFixture.cs" Link="Boundary/GroundTravelMountFixture.cs" />
     <Compile Include="../../Styx/Logic/Combat/MountedCombatTransition.cs" Link="Production/MountedCombatTransition.cs" />
     <Compile Include="../../Styx/Logic/MountedTravelProgress.cs" Link="Production/MountedTravelProgress.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundTransition.cs" Link="Production/GroundTransition.cs" />

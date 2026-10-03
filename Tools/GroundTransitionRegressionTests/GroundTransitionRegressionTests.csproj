@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
   <ItemGroup>
+    <None Update="aledis-patrol-source.json" CopyToOutputDirectory="PreserveNewest" />
     <Compile Include="../../Styx/Logic/Pathing/GroundTransitionMachine.cs" Link="Production/GroundTransitionMachine.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/GroundMountRequest.cs" Link="Production/GroundMountRequest.cs" />
+    <Compile Include="../../Styx/Logic/Questing/QuestRelationSearch.cs" Link="Production/QuestRelationSearch.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundApproachGeometry.cs" Link="Production/GroundApproachGeometry.cs" />
     <Compile Include="../../Styx/Logic/Pathing/WoWPoint.cs" Link="Production/WoWPoint.cs" />
     <Compile Include="../../Styx/WoWInternals/World/WorldLine.cs" Link="Production/WorldLine.cs" />

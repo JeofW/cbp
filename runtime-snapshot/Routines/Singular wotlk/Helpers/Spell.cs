@@ -769,8 +769,9 @@ namespace Singular.Helpers
             {
                 if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || buffNames == null)
                     return null;
+                if (!SpellManager.Spells.ContainsKey(name)) return null;
                 var target = onUnit(ret);
-                return target != null && !DoubleCastPreventionDict.ContainsKey(name) &&
+                return target != null && requirements(ret) && !DoubleCastPreventionDict.ContainsKey(name) &&
                        buffNames.All(b => myBuff ? !target.HasMyAura(b) : !target.HasAura(b))
                     ? target : null;
             };

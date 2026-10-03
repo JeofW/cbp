@@ -13,5 +13,12 @@
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/HunterTrapDispatchRegressionTests.cs" Link="HunterTrapDispatchRegressionTests.cs" />
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/HunterTrapSpecializationFixture.cs" Link="HunterTrapSpecializationFixture.cs" />
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/RecoveryActionAdapterRegressionTests.cs" Link="RecoveryActionAdapterRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/SpellMetadataAdmissionRegressionTests.cs" Link="SpellMetadataAdmissionRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/RewardLua51Boundary.cs" Link="RewardLua51Boundary.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/GroundMountSubmissionRegressionTests.cs" Link="GroundMountSubmissionRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/QuestTurnInExecutionRegressionTests.cs" Link="QuestTurnInExecutionRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/SharedBuffDispatchRegressionTests.cs" Link="SharedBuffDispatchRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/NearbyHostileQueryBudgetRegressionTests.cs" Link="NearbyHostileQueryBudgetRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/MountVetoCancellationRegressionTests.cs" Link="MountVetoCancellationRegressionTests.cs" />
   </ItemGroup>
 </Project>

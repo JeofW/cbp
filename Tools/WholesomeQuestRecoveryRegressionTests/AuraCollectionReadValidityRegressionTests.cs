@@ -136,6 +136,8 @@ public static class World {public static WoWPlayer Target;public static readonly
  public void Seed(uint address,byte[] bytes){_cacheEnabled.Value=true;_cache.Value[new IntPtr(unchecked((int)address))]=bytes;}
 """;
     private const string SupportLeaves = """
+ // Availability is controlled here; full per-action revalidation lives in PaladinSupportRegressionTests.
+ private static bool SupportSpellAvailable(string name,WoWPlayer player)=>SpellManager.CanCast(name,player);
  private enum PallyPowerReadStatus {Absent,Verified,Uncertain}
  private sealed class PallyPowerAssignment {public PallyPowerReadStatus Status;public string Blessing;}
  private static PallyPowerAssignment ReadPallyPowerAssignment(WoWPlayer player)=>new PallyPowerAssignment{Status=PallyPowerReadStatus.Absent};

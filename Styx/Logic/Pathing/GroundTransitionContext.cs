@@ -19,7 +19,7 @@ internal sealed class GroundTransitionContext
     internal readonly NavigationProvider Provider;
     internal readonly IPlayerMover Input;
     internal readonly WoWObject? Subject;
-    internal readonly WoWPoint Destination;
+    internal WoWPoint Destination { get; private set; }
     internal readonly ulong ActorGuid, SubjectGuid;
     internal readonly uint ActorAddress, SubjectAddress, Map, SubjectEntry;
     internal readonly int ProcessId;
@@ -91,5 +91,11 @@ internal sealed class GroundTransitionContext
             && (!_bindDestination || Subject.Location.Equals(Destination)));
 
     internal bool Current => WorldCurrent && _admitted() && WorldCurrent;
+    internal bool RefreshGroundDestination(WoWPoint destination)
+    {
+        if (_bindDestination || Subject is not WoWUnit || !Current || !GroundApproachSearch.Finite(destination)) return false;
+        Destination = destination;
+        return Current;
+    }
     private static ObservationUnavailableException Unknown(string message) => new("ground-transition-context", message);
 }

@@ -13,6 +13,7 @@
          historical diagnostic-model source and are intentionally not compiled. -->
     <Compile Include="ActualAcceptanceProgram.cs" />
     <Compile Include="ActualAcceptanceBoundary.cs" />
+    <Compile Include="../GroundTravelMountFixture.cs" Link="Boundary/GroundTravelMountFixture.cs" />
     <Compile Include="../../Styx/Logic/POI/BotPoi.cs" Link="Production/BotPoi.cs" />
     <Compile Include="../../Styx/Logic/POI/PoiType.cs" Link="Production/PoiType.cs" />
     <Compile Include="../../Styx/Logic/Combat/MountedCombatTransition.cs" Link="Production/MountedCombatTransition.cs" />

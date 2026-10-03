@@ -1487,9 +1487,9 @@ namespace Bots.Grind
                 ),
                 // Check flight paths
                 new Decorator(
-                    ctx => FlightPaths.Reason != FlightPathReason.None || 
-                           FlightPaths.NeedFlightPath || 
-                           FlightPaths.NeedNearbyUpdate(),
+                    ctx => FlightPaths.MayServiceCurrentWork && (FlightPaths.Reason != FlightPathReason.None ||
+                           FlightPaths.NeedFlightPath ||
+                           FlightPaths.NeedNearbyUpdate()),
                     new TreeSharp.Action(ctx => FlightPaths.SetPoi())
                 )
             );

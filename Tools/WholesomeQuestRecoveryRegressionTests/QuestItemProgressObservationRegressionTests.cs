@@ -62,9 +62,10 @@ internal static class QuestItemProgressObservationRegressionTests
         Add("production caller uses the complete-inventory-aware reader", f=>
         {
             var method=typeof(WholesomeAutoQuest).GetMethod("ReadObjectiveCounts",BindingFlags.NonPublic|BindingFlags.Static)!;
-            // Behavioral default: this self-process cannot read the actual trade
-            // globals, therefore production must preserve unknown rather than
-            // return its old four normal-counter vector for an item quest.
+            // Explicitly incomplete layout, not an assumption that fixed WoW
+            // addresses are unmapped in every ASLR-enabled x86 test process.
+            // The production reader must not return only four normal counters.
+            f.Write32(f.Player.BaseAddress+6384,149);
             var counts=(IReadOnlyList<int>)method.Invoke(null,new object[]{f.NativeFixture.Quest})!;
             Check(counts.Count==0,"production caller still ignores complete carried-inventory observation");
         });

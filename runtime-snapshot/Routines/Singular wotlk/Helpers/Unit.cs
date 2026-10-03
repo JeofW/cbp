@@ -41,12 +41,12 @@ namespace Singular.Helpers
         /// <value>The nearby unfriendly units.</value>
         public static IEnumerable<WoWUnit> NearbyUnfriendlyUnits
         {
-            get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => ValidUnit(p) && p.DistanceSqr <= 40 * 40).ToList(); }
+            get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p)).ToList(); }
         }
 
         public static IEnumerable<WoWUnit> NearbyUnitsInCombatWithMe
         {
-            get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => ValidUnit(p) && p.DistanceSqr <= 40 * 40 && p.Combat && p.TaggedByMe).ToList(); }
+            get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p) && p.Combat && p.TaggedByMe).ToList(); }
         }
 
 

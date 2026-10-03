@@ -22,6 +22,30 @@ Case("ground mount submission waits for observed removal", (r, m) =>
     r.Motion = r.Motion with { Mounted = false };
     Check(m.Tick() == GroundTransitionState.Ready && r.Dismounts == 1, "observed unmount did not acquire combat");
 });
+Case("distant grounded travel retains a mount until final approach", (r,m)=>
+{
+    r.Motion=r.Motion with { GroundTravel=true };
+    Pending(m);
+    Check(r.Walks==1&&r.Dismounts==0,"a distant ground journey dismounted instead of retaining mounted mesh travel");
+    r.Motion=r.Motion with { GroundTravel=false };r.Time=.3;Pending(m);
+    Check(r.Dismounts==1,"final approach did not restore safe observed unmount handling");
+},GroundTransitionPurpose.Interaction);
+Case("useful mounted ground progress outlives the landing budget", (r,m)=>
+{
+    r.Motion=r.Motion with { GroundTravel=true };Pending(m);
+    for(int i=1;i<=40;i++)
+    {
+        r.Time=i*10;r.Motion=r.Motion with { Position=new WoWPoint(10+i,10,0) };Pending(m);
+    }
+    Check(r.Holds==0&&r.Dismounts==0&&r.Resets==0,"active long-distance ground progress was interrupted by a flight-transition deadline");
+},GroundTransitionPurpose.Interaction);
+Case("landing stops descent input before distant mounted travel",(r,m)=>
+{
+    Air(r);Pending(m);r.Motion=r.Motion with { Position=new(50,10,7) };r.Time=.3;Pending(m);
+    r.Motion=r.Motion with { Position=new(50,10,0),Flying=false,Supported=true,Descending=true,GroundTravel=true };
+    r.Time=.6;Pending(m);
+    Check(r.Walks==0&&r.Dismounts==0&&m.Phase=="landed","landing resumed ground travel before stopping retained descent input");
+},GroundTransitionPurpose.Interaction);
 Case("unsubmitted dismount may retry without repeating an effect", (r, m) =>
 {
     r.AcceptDismount = false; Pending(m); Check(r.Dismounts == 0, "rejected command became submitted");

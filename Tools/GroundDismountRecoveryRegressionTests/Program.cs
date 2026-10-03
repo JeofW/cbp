@@ -46,6 +46,37 @@ void Case(string name, Action body)
 
 GroundTransitionRuntime Runtime() => new(GroundTransitionPurpose.Combat, World.Target.Position, World.Target, () => true);
 
+Case("moving quest NPC refreshes the ground destination without stopping its owner", () =>
+{
+    World.Actor.MountedValue=false;
+    var runtime=new GroundTransitionRuntime(GroundTransitionPurpose.Interaction,World.Target.Position,World.Target,()=>true);
+    runtime.Walk();World.Target.Position=World.Target.Position.Add(10,0,0);
+    Check(runtime.Matches(World.Target.Position,World.Target),"a coordinate update retired the same live quest NPC");
+    runtime.Walk();
+    Check(World.Walks.Count==2&&World.Walks[1].Equals(World.Target.Position)&&World.Stops==0,
+        "moving NPC chase restarted/stopped instead of retaining owned ground travel");
+});
+
+Case("prepared mesh predicates do not repeat vehicle Lua", () =>
+{
+    World.Actor.MountedValue=false;
+    var runtime=Runtime();runtime.Walk();
+    Check(World.Walks.Count==1&&World.VehicleQueries==1,
+        "one mesh request repeated complete vehicle queries inside its ownership predicates");
+});
+Case("ground route yields to the owned mount request", () =>
+{
+    World.Actor.MountedValue=false;int requests=0;
+    GroundTravelMount.Waiter=()=>{requests++;return true;};
+    try
+    {
+        var runtime=new GroundTransitionRuntime(GroundTransitionPurpose.Interaction,World.Target.Position,World.Target,()=>true);
+        runtime.Walk();
+        Check(requests==1&&World.Walks.Count==0,"long-distance ground approach bypassed mount acquisition");
+    }
+    finally {GroundTravelMount.Waiter=null;}
+});
+
 Case("travel estimation cannot age the subsequent ground-support footprint", () =>
 {
     World.Actor.MountedValue = false;

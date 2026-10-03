@@ -60,6 +60,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     private GroundApproachSearch? _search;
     private GroundApproachQueries? _queries;
     private bool _held, _cancelled, _groundTravelSelected;
+    private readonly GroundTravelMount _groundMount = new();
     private float _radius, _height;
     private uint? _flags;
     private bool? _outdoors;
@@ -85,7 +86,12 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     internal GroundTransitionRuntime(GroundTransitionPurpose purpose, WoWPoint destination, WoWObject? subject, Func<bool> admitted)
     {
         _purpose = purpose;
-        _context = new GroundTransitionContext(subject, destination, purpose == GroundTransitionPurpose.Interaction,
+        // Only a grounded chase can follow a live NPC's moving coordinate.
+        // Airborne approach geometry remains bound to the sampled endpoint.
+        bool groundChase = subject is WoWUnit && ObjectManager.Me != null
+            && ObjectManager.Me.TryGetMovementState(out uint initialFlags, out ulong initialTransport)
+            && initialTransport == 0 && (initialFlags & 0x02003000u) == 0;
+        _context = new GroundTransitionContext(subject, destination, purpose == GroundTransitionPurpose.Interaction && !groundChase,
             admitted, purpose == GroundTransitionPurpose.Combat);
         // The route invalidators ask whether semantic combat work survives a
         // coordinate-only POI refresh. Do not use Runtime.Current here: that
@@ -108,9 +114,18 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         && (_mesh == null || ReferenceEquals(_mesh.RequestIdentity, _meshToken));
     public double Now => MonotonicClockOverride?.Invoke() ?? (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency;
     public bool SearchExhausted => _search?.Exhausted == true;
-    internal bool Matches(WoWPoint destination, WoWObject? subject) => Current
-        && ReferenceEquals(_context.Subject, subject)
-        && (_purpose == GroundTransitionPurpose.Combat || destination.Equals(_context.Destination));
+    internal bool Matches(WoWPoint destination, WoWObject? subject)
+    {
+        if (!Current || !ReferenceEquals(_context.Subject, subject)) return false;
+        if (_purpose == GroundTransitionPurpose.Combat) return true;
+        if (destination.Equals(_context.Destination)) return true;
+        // A live NPC remains the same work while walking its patrol. Re-target
+        // the owned mesh leg, rather than cancel/stop/recreate on every position
+        // update. Flight landing plans retain their geometry until ground handoff.
+        if (subject is WoWUnit)
+            return !_groundTravelSelected || _context.RefreshGroundDestination(destination);
+        return false;
+    }
 
     private void RequireCurrent() { if (!Current) throw Unknown("transition owner changed"); }
 
@@ -168,8 +183,10 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         {
             _progressPosition = position; _progressAt = Now;
         }
+        bool groundTravel = _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 12
+            && (_groundTravelSelected || !preferFlight);
         return new GroundMotion(position, mounted, flying, falling, swimming, onTransport, immobile, supported,
-            actor.MovementInfo.IsDescending, interactionReady, preferFlight);
+            actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel);
     }
 
     private bool SupportedAt(WoWPoint position)
@@ -387,11 +404,26 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     {
         RequireCurrent();
         if (_mesh == null) throw Unknown("ground navigator unavailable");
-        if (!GroundTransition.CanActUnmounted(() => Current)) throw Unknown("ground route lacks current unmounted state");
         _groundTravelSelected = true;
+        if (_purpose == GroundTransitionPurpose.Interaction && _context.Actor.Location.Distance(_context.Destination) > 12
+            && _groundMount.Wait(_context, Now, () => Current, Hold)) return;
+        var actor = _context.Actor;
+        if (actor.IsCasting || actor.ChanneledCastingSpellId != 0) return;
+        if (WorldQueryObservation.ReadLocalVehicle(actor)) throw Unknown("ground route belongs to a vehicle");
+        var state = WorldQueryObservation.ReadGroundUnitState(actor);
+        WoWPoint travelDestination = _context.Destination;
+        // One complete preflight, then pure memory/identity predicates. Calling
+        // CanActUnmounted in every route predicate repeated Lua dozens of times
+        // and could overwrite a prepared native movement command.
+        bool Admitted() => Current && _context.Destination.Equals(travelDestination) && !actor.IsCasting && actor.ChanneledCastingSpellId == 0
+            && (!state.Mounted || _purpose == GroundTransitionPurpose.Interaction && actor.Location.Distance(_context.Destination) > 12)
+            && actor.TryGetMovementState(out uint flags, out ulong transport) && transport == 0
+            && (flags & 0x02003000u) == 0 && !state.OnTaxi && !state.Rooted && !state.Stunned
+            && WorldQueryObservation.ReadGroundUnitState(actor).Equals(state) && Current;
+        if (!Admitted()) throw Unknown("ground route movement observation changed");
         _held = false;
-        _mesh.MoveToOwned(_context.Destination, Math.Min(1.5f, _mesh.PathPrecision), "Ground interaction approach",
-            () => Current && GroundTransition.CanActUnmounted(() => Current), token => _meshToken = token, _routeLease);
+        _mesh.MoveToOwned(travelDestination, Math.Min(1.5f, _mesh.PathPrecision), "Ground interaction approach",
+            Admitted, token => _meshToken = token, _routeLease);
         RequireCurrent();
     }
 
