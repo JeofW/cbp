@@ -12,6 +12,8 @@
     <Compile Include="../../Styx/Logic/Pathing/WoWPoint.cs" Link="Production/WoWPoint.cs" />
     <Compile Include="../../Styx/WoWInternals/World/WorldLine.cs" Link="Production/WorldLine.cs" />
     <Compile Include="../../Tripper/Navigation/AreaType.cs" Link="Production/AreaType.cs" />
+    <Compile Include="../../Tripper/Navigation/PolygonReference.cs" Link="Production/PolygonReference.cs" />
+    <Compile Include="../../Tripper/Navigation/StraightPathFlags.cs" Link="Production/StraightPathFlags.cs" />
     <Compile Include="../../TreeSharp/Action*.cs" Link="TreeSharp/%(Filename)%(Extension)" />
     <Compile Include="../../TreeSharp/Composite.cs" Link="TreeSharp/Composite.cs" />
     <Compile Include="../../TreeSharp/ContextChangeHandler.cs" Link="TreeSharp/ContextChangeHandler.cs" />
