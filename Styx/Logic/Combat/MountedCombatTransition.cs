@@ -133,7 +133,7 @@ namespace Styx.Logic.Combat
             }
             unchecked { _lifetime++; }
             _active = true;
-            return Continue();
+            return Continue(allowAlreadyGrounded: true);
         }
 
         /// <summary>Transition a caller-owned explicit pull/target intent.</summary>
@@ -141,6 +141,7 @@ namespace Styx.Logic.Combat
         {
             ArgumentNullException.ThrowIfNull(subject);
             ArgumentNullException.ThrowIfNull(admitted);
+            bool starting = !_active;
             if (!_active)
             {
                 _subject = subject;
@@ -154,10 +155,10 @@ namespace Styx.Logic.Combat
                 Cancel();
                 return GroundTransitionState.Revoked;
             }
-            return Continue();
+            return Continue(allowAlreadyGrounded: starting);
         }
 
-        private GroundTransitionState Continue()
+        private GroundTransitionState Continue(bool allowAlreadyGrounded = false)
         {
             var admitted = _admitted;
             var subject = _subject;
@@ -177,9 +178,35 @@ namespace Styx.Logic.Combat
                 return GroundTransitionState.Revoked;
             }
             GroundTransitionState state;
-            try { state = _ground.Tick(destination, subject, OwnerAdmitted); }
+            try
+            {
+                // A new ordinary combat tick needs complete unmounted admission,
+                // not another landing route and collision search. An existing
+                // transition still owns its descent/dismount acknowledgement.
+                var initial = allowAlreadyGrounded
+                    ? new GroundTransitionContext(subject, destination, false, OwnerAdmitted, combatRoute: true)
+                    : null;
+                bool SameInitialOwner() => OwnerAdmitted() && (initial == null || initial.Current);
+                bool ready = allowAlreadyGrounded && CanActUnmounted(SameInitialOwner);
+                if (!OwnsLifetime()) return GroundTransitionState.Revoked;
+                // A failed ground observation can also mean the actor/session
+                // changed. Never reacquire a new epoch as the old request's
+                // fallback landing owner.
+                if (!SameInitialOwner())
+                {
+                    Cancel();
+                    return GroundTransitionState.Revoked;
+                }
+                state = ready ? GroundTransitionState.Ready : _ground.Tick(destination, subject, SameInitialOwner);
+            }
             catch (InvalidProcessException error) { throw new OperationCanceledException("Mounted combat lost the game process.", error); }
             catch (InvalidExecutorException error) { throw new OperationCanceledException("Mounted combat lost the native executor.", error); }
+            catch (ObservationUnavailableException error)
+            {
+                RecoveryActions.RethrowControlFlow(error);
+                if (!OwnsLifetime()) return GroundTransitionState.Revoked;
+                state = GroundTransitionState.Unavailable;
+            }
             if (!OwnsLifetime()) return GroundTransitionState.Revoked;
             if (state is GroundTransitionState.Ready or GroundTransitionState.Revoked)
             {

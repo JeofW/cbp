@@ -10,7 +10,7 @@ namespace Harness
         internal static int TransitionTicks, DismountSubmissions, TransitionCancels, NavigatorClears, PullCalls, PullBuffCalls, Stops;
         internal static bool SupportKnown = true;
         internal static System.Action<Styx.WoWInternals.WoWObjects.WoWUnit> OnTarget;
-        internal static System.Action OnPull,OnPullBuff,OnTransitionCancel;
+        internal static System.Action OnPull,OnPullBuff,OnTransitionCancel,OnGroundAdmission;
         internal static System.Action<Styx.Logic.POI.BotPoi> OnPoiChanged;
         internal static readonly Dictionary<Singular.Dynamics.BehaviorType, Composite> SingularFactories = new();
         internal static object PendingActor, PendingMemory;
@@ -23,7 +23,7 @@ namespace Harness
         internal static void Reset()
         {
             TransitionTicks=DismountSubmissions=TransitionCancels=NavigatorClears=PullCalls=PullBuffCalls=Stops=0;
-            SupportKnown=true;OnTarget=null;OnPull=OnPullBuff=OnTransitionCancel=null;OnPoiChanged=null;SingularFactories.Clear();RootCombatEnabled=false;
+            SupportKnown=true;OnTarget=null;OnPull=OnPullBuff=OnTransitionCancel=OnGroundAdmission=null;OnPoiChanged=null;SingularFactories.Clear();RootCombatEnabled=false;
             PendingActor=PendingMemory=null;PendingGuid=0;PendingAddress=PendingMap=0;PendingProcess=0;
             var memory=new GreenMagic.Memory{ProcessId=10,ProcessHandle=new IntPtr(10)};
             Styx.WoWInternals.ObjectManager.Wow=memory;
@@ -133,6 +133,7 @@ namespace Styx.Logic.Pathing
             admitted??=()=>true;if(!admitted())return false;var actor=Styx.WoWInternals.ObjectManager.Me;if(actor==null)return false;
             GroundTransitionContext stamp;try{stamp=new GroundTransitionContext(null,WoWPoint.Empty,false,admitted);}catch(Styx.Helpers.ObservationUnavailableException){return false;}
             if(!stamp.Current||!actor.TryGetMovementState(out uint flags,out ulong transport))return false;
+            var callback=Harness.Control.OnGroundAdmission;Harness.Control.OnGroundAdmission=null;callback?.Invoke();
             bool mounted=actor.Mounted||actor.Shapeshift is Styx.ShapeshiftForm.FlightForm or Styx.ShapeshiftForm.EpicFlightForm;
             bool allowed=!mounted&&(flags&0x02003000u)==0&&transport==0&&!actor.OnTaxi&&!actor.InVehicle;
             if(!mounted&&stamp.Current){Harness.Control.PendingActor=Harness.Control.PendingMemory=null;Harness.Control.PendingGuid=0;}

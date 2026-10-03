@@ -189,6 +189,14 @@ internal static class AquaticObservationRegressionTests
         {
             var previous = ObjectManager.Executor;
             Check(previous == null, "strict rest fixture inherited an executor");
+            // Public rest admission now observes the same recovery run as final
+            // item submission. Represent that owner explicitly while keeping the
+            // executor incapable of native dispatch and the inventory empty.
+            var root = typeof(Styx.Logic.BehaviorTree.TreeRoot);
+            var workerField = root.GetField("_workerThread", Static)!;
+            var stateField = root.GetField("<State>k__BackingField", Static)!;
+            var previousWorker = workerField.GetValue(null);
+            var previousState = stateField.GetValue(null);
             var memory = ObjectManager.Wow ?? throw new InvalidOperationException("strict rest fixture lost memory");
             var executor = (ExecutorRand)RuntimeHelpers.GetUninitializedObject(typeof(ExecutorRand));
             typeof(ExecutorRand).GetField("<Memory>k__BackingField",Hidden)!.SetValue(executor,memory);
@@ -198,9 +206,13 @@ internal static class AquaticObservationRegressionTests
             var previousThread = threadField.GetValue(memory);
             threadField.SetValue(memory,new IntPtr(1));
             ObjectManager.Executor = executor;
+            workerField.SetValue(null, Thread.CurrentThread);
+            stateField.SetValue(null, Styx.Logic.BehaviorTree.TreeRootState.Running);
             try { action(); }
             finally
             {
+                workerField.SetValue(null, previousWorker);
+                stateField.SetValue(null, previousState);
                 ObjectManager.Executor = previous;
                 threadField.SetValue(memory,previousThread);
             }

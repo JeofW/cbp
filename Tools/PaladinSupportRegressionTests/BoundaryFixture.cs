@@ -181,6 +181,7 @@ namespace Styx.WoWInternals.WoWObjects
             .FirstOrDefault(a => a.Name == name && a.IsActive && (!mine || a.CreatorGuid == Styx.StyxWoW.Me.Guid))?.TimeLeft ?? TimeSpan.Zero;
         public bool IsStunned() => StunnedObservation;
         public bool HasAuraWithMechanic(params WoWSpellMechanic[] _) => false;
+        public bool HasHarmfulAuraWithMechanic(params WoWSpellMechanic[] _) => false;
         public bool IsImmune(Styx.WoWSpellSchool school) => false;
         public bool IsCrowdControlled() => false;
         public bool IsBoss() => false;
@@ -365,6 +366,7 @@ namespace Singular.Helpers
         private static readonly List<WoWUnit> Nearby = new();
         public static List<WoWUnit> NearbyUnfriendlyUnits { get { Fixture.NearbyReads++; if (Fixture.NearbyError != null) throw Fixture.NearbyError; return Nearby; } }
         public static IEnumerable<WoWUnit> UnfriendlyUnitsNearTarget(float range) => NearbyUnfriendlyUnits;
+        public static IEnumerable<WoWUnit> UnfriendlyUnitsWithin(float range) => NearbyUnfriendlyUnits.Where(unit => unit.Distance <= range);
         public static bool IsAreaEffectSafe(string name, WoWUnit target) => true;
         public static IEnumerable<WoWPlayer> NearbyFriendlyPlayers => Styx.StyxWoW.Me.PartyMembers.Concat(Styx.StyxWoW.Me.RaidMembers);
     }

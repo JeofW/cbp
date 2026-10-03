@@ -2026,11 +2026,21 @@ namespace Bots.Grind
                     : true;
                 if (mountedPull
                     && unit.CurrentTargetGuid == 0
-                    && unit.MyReaction < WoWUnitReaction.Neutral
-                    && WoWMathHelper.IsInPath(unit, meLocation, pathDestination)
-                    && (Math.Abs(meLocation.Z - unit.Location.Z) <= 10f || unit.InLineOfSpellSight))
+                    && unit.MyReaction < WoWUnitReaction.Neutral)
                 {
-                    outgoingUnits.Add(obj);
+                    // This is an optional incidental pull, independent of the
+                    // profile and quest-source include filters. Unknown aggro
+                    // modifiers cannot authorize it or erase their candidates.
+                    bool inPath;
+                    try { inPath = WoWMathHelper.IsInPath(unit, meLocation, pathDestination); }
+                    catch (ObservationUnavailableException error)
+                    {
+                        RecoveryActions.RethrowControlFlow(error);
+                        ObservationFailureDiagnostics.Report(error, "LevelBot.OptionalTravelTarget");
+                        continue;
+                    }
+                    if (inPath && (Math.Abs(meLocation.Z - unit.Location.Z) <= 10f || unit.InLineOfSpellSight))
+                        outgoingUnits.Add(obj);
                 }
             }
         }

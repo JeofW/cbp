@@ -28,6 +28,14 @@ internal static class Program
     {
         Case("ground committed Kill requests transition",GroundKillTransition);
         Case("full PublishedQuestRoot preempts Running quest on mounted committed Kill",FullRootKillPreemption);
+        foreach(bool committed in new[]{false,true})
+            Case("already-grounded combat avoids rebuilding landing owner / "+committed,()=>AlreadyGroundedCurrent(committed));
+        Case("already-grounded explicit pull avoids rebuilding landing owner",AlreadyGroundedExplicit);
+        Case("ground UNKNOWN retains the full transition",UnknownGroundUsesTransition);
+        foreach(string replacement in new[]{"actor","run","provider","memory","poi"})
+            Case("initial ground admission rejects "+replacement+" replacement",()=>InitialGroundReplacement(replacement));
+        foreach(bool successor in new[]{false,true})
+            Case("initial ground admission reentry preserves lifetime / successor="+successor,()=>InitialGroundReentry(successor));
         Case("flying committed Kill preempts root and blocks pull",FlyingKillTransition);
         Case("healthy flying incidental aggro keeps escape",HealthyFlyingEscape);
         Case("healthy ground-mounted incidental aggro keeps escape",HealthyGroundEscape);
@@ -133,7 +141,61 @@ internal static class Program
     private static bool StunnedAggro(){var w=World(true,false,true,false);w.Me.Stunned=true;return Protective()==1;}
     private static bool FlyingFlagPending(uint flags){var w=World(true,true,false,true);w.Me.ObservedMovementFlags=flags;return Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running&&Control.DismountSubmissions==0;}
     private static bool AirborneAfterForcedUnmount(){var w=World(false,false,false,true);w.Me.ObservedMovementFlags=0x02000000u;var pull=new CountingLeaf(RunStatus.Success);RoutineManager.Current=Routine(pull:pull);return Protective()==1&&Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running&&pull.Ticks==0;}
+    private static bool AlreadyGroundedCurrent(bool committed)
+    {
+        var world=World(false,false,!committed,committed);
+        using var transition=new MountedCombatTransition();
+        for(int tick=0;tick<20;tick++)
+            Check(transition.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Ready,"complete ground admission did not release combat");
+        return Control.TransitionTicks==0&&Control.DismountSubmissions==0;
+    }
+    private static bool AlreadyGroundedExplicit()
+    {
+        var world=World(false,false,false,true);
+        using var transition=new MountedCombatTransition();
+        Check(transition.TickExplicit(world.Target,()=>true)==GroundTransitionState.Ready,"complete ground admission did not release explicit pull");
+        return Control.TransitionTicks==0&&Control.DismountSubmissions==0;
+    }
+    private static bool UnknownGroundUsesTransition()
+    {
+        var world=World(false,false,false,true);world.Me.MovementKnown=false;
+        using var transition=new MountedCombatTransition();
+        return transition.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending&&Control.TransitionTicks==1&&Control.DismountSubmissions==0;
+    }
     private static bool ForcedUnmountPull(){var w=World(true,false,false,true);var pull=new CountingLeaf(RunStatus.Success);RoutineManager.Current=Routine(pull:pull);var tree=LevelBot.CreateCombatBehavior();tree.Start(null);Check(tree.Tick(null)==RunStatus.Running&&pull.Ticks==0,"transition did not own mounted pull");w.Me.Mounted=false;w.Me.ObservedMovementFlags=0;var r=tree.Tick(null);tree.Stop(null);return pull.Ticks==1&&r!=RunStatus.Running;}
+    private static bool InitialGroundReplacement(string replacement)
+    {
+        var world=World(false,false,false,true);
+        using var transition=new MountedCombatTransition();
+        Control.OnGroundAdmission=()=>{
+            switch(replacement)
+            {
+                case "actor":
+                    var actor=new LocalPlayer{Guid=9,BaseAddress=900,MapId=530,IsAlive=true,Location=world.Me.Location,ObservedMovementFlags=0,CurrentTarget=world.Target};
+                    StyxWoW.Me=actor;WoWMovement.ActiveMover=actor;break;
+                case "run":TreeRoot.RunIdentity=new object();break;
+                case "provider":Navigator.NavigationProvider=new object();break;
+                case "memory":var memory=new GreenMagic.Memory{ProcessId=11,ProcessHandle=new IntPtr(11)};ObjectManager.Wow=memory;ObjectManager.Executor.Memory=memory;break;
+                case "poi":BotPoi.Current=new BotPoi(world.Target,PoiType.Kill);break;
+            }
+        };
+        var state=transition.TickCurrent(BotPoi.Current.Location);
+        return state==GroundTransitionState.Revoked&&Control.DismountSubmissions==0;
+    }
+    private static bool InitialGroundReentry(bool successor)
+    {
+        var world=World(false,false,false,true);
+        using var transition=new MountedCombatTransition();
+        Control.OnGroundAdmission=()=>{
+            transition.Cancel();
+            if(successor){world.Me.Mounted=true;Check(transition.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"replacement transition did not start");}
+        };
+        Check(transition.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Revoked,"old callback returned Ready after lifetime replacement");
+        if(!successor)return Control.TransitionTicks==0&&Control.DismountSubmissions==0;
+        Check(Control.TransitionTicks==1&&Control.DismountSubmissions==1,"old owner erased or duplicated successor transition");
+        world.Me.Mounted=false;
+        return transition.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Ready&&Control.DismountSubmissions==1;
+    }
     private static bool RetainedOriginalOwnerReady(){var w=World(true,false,false,true);using var t=new MountedCombatTransition();Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"retained transition did not start");w.Me.Mounted=false;w.Me.ObservedMovementFlags=0;return t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Ready;}
     private static bool SameCommittedTargetMoveRetains()
     {

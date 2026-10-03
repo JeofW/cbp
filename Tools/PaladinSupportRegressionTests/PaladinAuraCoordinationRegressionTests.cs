@@ -53,6 +53,23 @@ internal static class PaladinAuraCoordinationRegressionTests
             Add("combat aura owner is registered and uses the same choice",()=>{ StyxWoW.Me.Combat=true; Aura(f.First,10); Combat(f.Spec); Expect(f.Second); });
             Add("combat aura owner respects active casting",()=>{ StyxWoW.Me.IsCasting=true; Combat(f.Spec); None(); });
             Add("combat aura owner respects an active channel",()=>{ StyxWoW.Me.IsChanneling=true; Combat(f.Spec); None(); });
+            if (f.Spec != TalentSpec.HolyPaladin)
+            {
+                foreach(bool instance in new[]{false,true})
+                {
+                    bool dungeon=instance;
+                    Add("first melee retaliation precedes aura GCD / instance="+dungeon,()=>{
+                        StyxWoW.Me.Combat=true;StyxWoW.Me.IsInParty=dungeon;
+                        StyxWoW.Me.CurrentTarget=new WoWUnit{Guid=99,IsFriendly=false,Distance=4};
+                        int rotation=0;
+                        Fixture.Tick(new PrioritySelector(PaladinCommon.CreatePaladinCombatAuras(),new TreeSharp.Action(_=>{rotation++;return RunStatus.Success;})));
+                        Check(rotation==1&&Fixture.Attempts.Count==0,"maintenance aura delayed the initial melee rotation");
+                        StyxWoW.Me.IsAutoAttacking=true;Combat(f.Spec);
+                        Expect(!dungeon && f.Spec==TalentSpec.ProtectionPaladin ? Ret : f.First);
+                    });
+                }
+                Add("distant combat retains useful aura maintenance",()=>{StyxWoW.Me.Combat=true;StyxWoW.Me.CurrentTarget=new WoWUnit{Guid=99,Distance=30};Combat(f.Spec);Expect(f.First);});
+            }
         }
         foreach(var setting in Enum.GetValues<PaladinAura>().Where(x=>x!=PaladinAura.Auto))
         {

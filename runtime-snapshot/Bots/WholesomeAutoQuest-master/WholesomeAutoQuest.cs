@@ -1648,12 +1648,15 @@ namespace WholesomeAQ
                 Navigator.PlayerMover.MoveStop();
                 if (!Current()) { _restingPaused = false; return; }
             }
-            if (actor.HealthPercent <= _settings.RestHealthPercent && !food && Current())
+            // The pause is already active. A declined/interrupted item must be
+            // retried until this owner's resume goal, even after passive recovery
+            // crosses the lower threshold that originally started the pause.
+            if (actor.HealthPercent < _settings.RestResumeHealthPercent && !food && Current())
             {
                 if (Rest.TryFeedImmediate() && Current())
                     Log("Rest food request submitted; awaiting its aura.");
             }
-            if (Current() && actor.MaxMana > 0 && actor.ManaPercent <= _settings.RestManaPercent
+            if (Current() && actor.MaxMana > 0 && actor.ManaPercent < _settings.RestResumeManaPercent
                 && TryObserveRestAuras(actor, out _, out drink) && !drink && Current())
             {
                 if (Rest.TryDrinkImmediate() && Current())

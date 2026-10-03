@@ -45,14 +45,15 @@ using System;using System.Linq;using System.Collections.Generic;using Styx;using
 /* Controlled external boundary. */ namespace Styx {public static class StyxWoW {public static WoWUnit Me=new();}}
 /* Controlled external boundary. */ namespace Styx.Helpers {public class CharacterSettings {public static CharacterSettings Instance=new();public bool RessAtSpiritHealers=true;}}
 /* Controlled external boundary. */ namespace Styx.WoWInternals.WoWObjects {
- public class Aura {public bool IsHarmful,Missing;public int Id;public Spell Value=new();public Spell Spell=>Missing?throw new Styx.Helpers.ObservationUnavailableException("auras","missing metadata"):Value;}
+ public class Aura {public bool IsHarmful,Missing;public int Id;public Spell Value=new();public Spell Spell=>Missing?null:Value;}
  public class Spell {public WoWSpellMechanic Mechanic;}
  public class WoWUnit {public bool IsAlive=true,IsGhost,Combat,RawUnknown;public List<Aura> Auras=new();
   public IEnumerable<Aura> GetRawAuras()=>RawUnknown?throw new Styx.Helpers.ObservationUnavailableException("auras","raw unavailable"):Auras;
-  public IEnumerable<Aura> GetAllAuras(){var rows=GetRawAuras().ToArray();foreach(var row in rows)_=row.Spell;return rows;}
+  public IEnumerable<Aura> GetAllAuras(){var rows=GetRawAuras().ToArray();foreach(var row in rows)if(row.Spell==null)throw new Styx.Helpers.ObservationUnavailableException("auras","missing metadata");return rows;}
   public bool HasAura(int id)=>GetRawAuras().Any(a=>a.Id==id);
   public bool HasAura(string name)=>GetAllAuras().Any(a=>a.Id==15007);
   public bool HasAuraWithMechanic(params WoWSpellMechanic[] kinds)=>GetAllAuras().Any(a=>kinds.Contains(a.Spell.Mechanic));
+  public bool HasHarmfulAuraWithMechanic(params WoWSpellMechanic[] kinds)=>GetRawAuras().Where(a=>a.IsHarmful).Any(a=>kinds.Contains((a.Spell??throw new Styx.Helpers.ObservationUnavailableException("auras","harmful metadata unavailable")).Mechanic));
  }
 }
 """;

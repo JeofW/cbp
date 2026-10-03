@@ -44,6 +44,17 @@ namespace Singular.Helpers
             get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p)).ToList(); }
         }
 
+        // Evaluate the requested area before querying reaction/engagement. An
+        // irrelevant unit's unavailable metadata must not invalidate this area.
+        public static IEnumerable<WoWUnit> UnfriendlyUnitsWithin(float distance)
+        {
+            if (!float.IsFinite(distance) || distance < 0)
+                throw new ArgumentOutOfRangeException(nameof(distance));
+            float distanceSqr = distance * distance;
+            return ObjectManager.GetObjectsOfType<WoWUnit>(false, false)
+                .Where(p => p != null && p.DistanceSqr <= distanceSqr && ValidUnit(p)).ToList();
+        }
+
         public static IEnumerable<WoWUnit> NearbyUnitsInCombatWithMe
         {
             get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p) && p.Combat && p.TaggedByMe).ToList(); }
@@ -79,7 +90,10 @@ namespace Singular.Helpers
                 return true;
 
             bool hasUnengagedEnemy = HasUnengagedEnemyNear(StyxWoW.Me.Location, radius);
-            if (!hasUnengagedEnemy && target != null && !target.IsMe)
+            bool centeredOnActor = string.Equals(spellName, "Consecration", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(spellName, "Divine Storm", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(spellName, "Holy Wrath", StringComparison.OrdinalIgnoreCase);
+            if (!hasUnengagedEnemy && !centeredOnActor && target != null && !target.IsMe)
                 hasUnengagedEnemy = HasUnengagedEnemyNear(target.Location, radius);
 
             return DungeonEngagementPolicy.ShouldAllowAreaEffect(restricted, hasUnengagedEnemy);
@@ -101,8 +115,8 @@ namespace Singular.Helpers
         {
             float radiusSqr = radius * radius;
             return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Any(unit =>
+                unit != null && unit.Location.DistanceSqr(location) <= radiusSqr &&
                 IsBasicHostileUnit(unit) &&
-                unit.Location.DistanceSqr(location) <= radiusSqr &&
                 !unit.IsEligibleDungeonCombatTarget());
         }
 
@@ -162,7 +176,7 @@ namespace Singular.Helpers
             var dist = distance*distance;
             var curTarLocation = StyxWoW.Me.CurrentTarget.Location;
             return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(
-                        p => ValidUnit(p) && p.Location.DistanceSqr(curTarLocation) <= dist).ToList();
+                        p => p != null && p.Location.DistanceSqr(curTarLocation) <= dist && ValidUnit(p)).ToList();
         }
 
         /// <summary>
@@ -246,6 +260,14 @@ namespace Singular.Helpers
         {
             var auras = unit.GetAllAuras();
             return auras.Any(a => mechanics.Contains(a.Spell.Mechanic));
+        }
+
+        public static bool HasHarmfulAuraWithMechanic(this WoWUnit unit, params WoWSpellMechanic[] mechanics)
+        {
+            return unit.GetRawAuras().Where(a => a.IsHarmful)
+                .Select(a => (a.Spell ?? throw new Styx.Helpers.ObservationUnavailableException(
+                    "aura-mechanic", "A harmful aura's mechanic is unavailable.")).Mechanic)
+                .Any(mechanics.Contains);
         }
 
         /// <summary>

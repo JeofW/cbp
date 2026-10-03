@@ -583,7 +583,20 @@ namespace Singular.ClassSpecific.Paladin
         [Spec(TalentSpec.Lowbie)]
         [Behavior(BehaviorType.CombatBuffs)]
         [Context(WoWContext.All)]
-        public static Composite CreatePaladinCombatAuras() => CreatePaladinAuraBehavior();
+        public static Composite CreatePaladinCombatAuras() => new Decorator(
+            _ => !ShouldDeferAuraForMeleeOpening(), CreatePaladinAuraBehavior());
+
+        private static bool ShouldDeferAuraForMeleeOpening()
+        {
+            var me = StyxWoW.Me;
+            var target = me?.CurrentTarget;
+            // Let the existing guarded combat rotation start melee before spending
+            // a GCD restoring its travel aura. This grants no attack permission;
+            // the rotation still owns targeting, facing, group and ground checks.
+            return TalentManager.CurrentSpec is TalentSpec.RetributionPaladin or TalentSpec.ProtectionPaladin or TalentSpec.Lowbie
+                && me != null && me.Combat && !me.IsAutoAttacking
+                && target != null && target.IsValid && target.IsAlive && target.IsWithinMeleeRange;
+        }
 
         internal static Composite CreatePaladinAuraBehavior() => CreateSupportBehavior(
             () => FindSupportAction(false, SelectAura), "Devotion Aura", "Retribution Aura", "Concentration Aura",

@@ -45,7 +45,7 @@ internal static class RestSubmissionRegressionTests
 
     private const string Prefix = """
 #nullable enable
-using System;using System.Collections.Generic;using System.Reflection;
+using System;using System.Collections.Generic;using System.Reflection;using System.Linq;
 public sealed class Timer{public bool IsFinished=true;public int Resets;public void Reset(){IsFinished=false;Resets++;}}
 public sealed class Map{public bool IsInstance,IsBattleground;}
 public sealed class LocalPlayer{public Map CurrentMap=new();public ulong Guid=1;public uint MapId=1,BaseAddress=100;public bool IsValid=true,IsAlive=true,IsGhost,Combat,PetInCombat,Mounted,IsFlying,IsOnTransport,IsMoving,IsCasting,IsChanneling;public bool MovementKnown=true;public uint ObservedMovementFlags;public ulong ObservedTransport;public bool TryGetMovementState(out uint flags,out ulong transport){flags=ObservedMovementFlags;transport=ObservedTransport;return MovementKnown;}}
@@ -56,26 +56,29 @@ public static class ObjectManager{public static LocalPlayer? Me;public static ob
 public static class LiquidEnvironment{public static bool IsPlayerInLiquid(LocalPlayer p,bool allowQuery=true)=>World.Wet;}
 public sealed class WoWItem{public string Name="current consumable";public bool Use(){World.Uses++;World.AfterUse?.Invoke();return World.AcceptUse;}}
 /* controlled worker epoch */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot{public static object RunIdentity=new();}}
-/* shared adapter is tested by RecoveryActionAdapterRegressionTests */ namespace Styx.Logic.Combat {public static class RecoveryActions {public static bool TryUseRestConsumable(WoWItem item,bool health,bool mana,string owner,Func<bool>? admission=null)=>admission?.Invoke()!=false&&item.Use();}}
+/* shared adapter is tested by RecoveryActionAdapterRegressionTests */ namespace Styx.Logic.Combat {public static class RecoveryActions {public static bool CanPrepareRestConsumable(bool health,bool mana)=>!World.RecoveryBlocked;public static bool TryUseRestConsumable(WoWItem item,bool health,bool mana,string owner,Func<bool>? admission=null)=>!World.RecoveryBlocked&&admission?.Invoke()!=false&&item.Use();}}
 public static class Consumable{
  public sealed class SelectionObservation{public WoWItem? Item;public bool IsComplete;public string Reason="item-info-unavailable",Details="controlled inventory";}
  public static SelectionObservation ObserveBestDrink(bool specialty)=>Observe(true);
  public static SelectionObservation ObserveBestFood(bool specialty)=>Observe(false);
  public static SelectionObservation ObserveNamedRestItem(bool drinking,string name)=>Observe(drinking);
  static SelectionObservation Observe(bool drinking){World.Lookups++;World.AfterLookup?.Invoke();return new(){Item=(drinking?World.HasDrink:World.HasFood)&&!World.UnknownInventory?new WoWItem():null,IsComplete=!World.UnknownInventory};}}
-public static class Logging{public static void Write(string text,params object[] args){World.AfterLog?.Invoke();}public static void WriteDebug(string text,params object[] args){World.DebugLogs++;}}
+public static class Logging{public static void Write(string text,params object[] args){World.Messages.Add(text);World.AfterLog?.Invoke();}public static void WriteDebug(string text,params object[] args){World.DebugLogs++;}}
 public static class World{
  public static bool Wet,HasFood,HasDrink,AcceptUse,UnknownInventory,GroupKnown,GroundKnown,StrictMounted,StrictTaxi;public static uint StrictUnitFlags;public static List<LocalPlayer> Group=new();public static int Uses,Lookups,DebugLogs,GroundQueries;public static Action? AfterLookup,AfterLog,AfterUse;
+ public static bool RecoveryBlocked;public static List<string> Messages=new();
  public static void Reset(){ObjectManager.Me=new();ObjectManager.Wow=new();Wet=UnknownInventory=StrictMounted=StrictTaxi=false;StrictUnitFlags=0;GroundKnown=GroupKnown=HasFood=HasDrink=AcceptUse=true;Group=new(){ObjectManager.Me};Uses=Lookups=DebugLogs=GroundQueries=0;AfterLookup=AfterLog=AfterUse=null;CoreRest.Reset();}}
 """;
     private const string Cases = """
 public static class RestCases{
  static void Check(bool condition,string message){if(!condition)throw new InvalidOperationException(message);}
  public static void Run(){int passed=0;var errors=new List<string>();
- void Case(string name,Action test){World.Reset();try{test();passed++;Console.WriteLine("PASS rest submission: "+name);}catch(Exception e){errors.Add(name+": "+e.Message);Console.Error.WriteLine("FAIL rest submission: "+errors[^1]);}}
+ void Case(string name,Action test){World.Reset();World.RecoveryBlocked=false;World.Messages.Clear();try{test();passed++;Console.WriteLine("PASS rest submission: "+name);}catch(Exception e){errors.Add(name+": "+e.Message);Console.Error.WriteLine("FAIL rest submission: "+errors[^1]);}}
  foreach(bool drink in new[]{false,true}){
   bool d=drink;string kind=d?"drink/":"food/";
   Case(kind+"accepted native request has a receipt",()=>Check(CoreRest.Invoke(d)&&World.Uses==1,"successful submission was indistinguishable from rejection"));
+  Case(kind+"in-flight heal does not spend the food retry interval",()=>{World.RecoveryBlocked=true;Check(!CoreRest.Invoke(d)&&World.Uses==0&&CoreRest.Timer(d).Resets==0,"another recovery owner spent this item's retry timer");World.RecoveryBlocked=false;Check(CoreRest.Invoke(d)&&World.Uses==1,"released recovery owner still waited for the item timer");});
+  Case(kind+"declined request never logs consumption",()=>{World.AcceptUse=false;Check(!CoreRest.Invoke(d)&&!World.Messages.Any(message=>message.StartsWith("Eating")||message.StartsWith("Drinking")),"a declined item request was logged as eating/drinking");});
   Case(kind+"declined request has no receipt",()=>{World.AcceptUse=false;Check(!CoreRest.Invoke(d)&&World.Uses==1,"failed use claimed consumption");});
   Case(kind+"current inventory clears a stale absence flag",()=>{CoreRest.NoFood=CoreRest.NoDrink=true;CoreRest.Invoke(d);Check(!(d?CoreRest.NoDrink:CoreRest.NoFood),"stale absence survived current consumable discovery");});
   Case(kind+"empty inventory retains bounded legacy absence",()=>{World.HasFood=World.HasDrink=false;Check(!CoreRest.Invoke(d)&&World.Uses==0&&(d?CoreRest.NoDrink:CoreRest.NoFood)&&CoreRest.Timer(d).Resets==1,"missing item admission changed");});

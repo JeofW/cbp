@@ -49,6 +49,7 @@ public static class SpellManager {public static bool CanCast(string name)=>World
 public class SingularSettings {public static SingularSettings Instance=new();public int MinHealth=65,MinMana=30;}
 public class CharacterSettings {public static CharacterSettings Instance=new();public int FoodAmount=13,DrinkAmount=13;}
 public static class Logger {public static void WriteDebug(string text,params object[] args){World.Diagnostics++;World.OnLog?.Invoke();}}
+public static class RecoveryActions {public static bool CanPrepareRestConsumable(bool health,bool mana)=>!World.RecoveryBlocked;}
 public static class Consumable {
  public class Observation {public object Item=new();public bool IsComplete=true;public string Reason="known-empty";}
  public static Observation ObserveBestFood(bool specialty)=>Observe();public static Observation ObserveBestDrink(bool specialty)=>Observe();
@@ -58,7 +59,7 @@ public static class Consumable {
  public static string GetAdmissionDenial(Player player,bool requireStationary=true,bool allowQueries=true){World.Admissions++;return World.Denial??(requireStationary?World.StartDenial:World.PrepareDenial);}
  public static string GetContinuationDenial(Player player,bool requireStationary=true,bool allowQueries=true){World.ContinuationAdmissions++;return World.ContinuationDenial;}
  public static bool TryObserveActivity(Player player,out bool food,out bool drink){World.Auras++;food=World.Food;drink=World.Drink;return World.AuraKnown;}}}
-public static class World {public static string Denial,PrepareDenial,StartDenial,ContinuationDenial;public static bool Food,Drink,AuraKnown,InventoryKnown,HasItem,RetryReady,CanCast,CastAccepted,Corpse;public static int Admissions,ContinuationAdmissions,Auras,Lookups,Diagnostics,Casts;public static Action OnLookup,OnLog,OnCast;
+public static class World {public static string Denial,PrepareDenial,StartDenial,ContinuationDenial;public static bool Food,Drink,AuraKnown,InventoryKnown,HasItem,RetryReady,CanCast,CastAccepted,Corpse,RecoveryBlocked;public static int Admissions,ContinuationAdmissions,Auras,Lookups,Diagnostics,Casts;public static Action OnLookup,OnLog,OnCast;
  public static void Reset(){StyxWoW.Me=new();ObjectManager.Wow=new();Styx.Logic.BehaviorTree.TreeRoot.RunIdentity=new();SingularSettings.Instance=new();CharacterSettings.Instance=new();Denial=PrepareDenial=StartDenial=ContinuationDenial=null;Food=Drink=false;RetryReady=AuraKnown=InventoryKnown=HasItem=CanCast=CastAccepted=Corpse=true;Admissions=ContinuationAdmissions=Auras=Lookups=Diagnostics=Casts=0;OnLookup=OnLog=OnCast=null;ActualRest.Reset();}}
 public static class ActualRest {private static DateTime _nextFoodDiagnostic,_nextDrinkDiagnostic;private static string _foodAdmission,_drinkAdmission;
  private static CannibalizeLease _cannibalize;private static bool CorpseAround=>World.Corpse;
@@ -69,9 +70,10 @@ public static class ActualRest {private static DateTime _nextFoodDiagnostic,_nex
     private const string Cases = """
 public static class RestCases {
 static void Check(bool value,string message){if(!value)throw new InvalidOperationException(message);}
-public static void Run(){int pass=0;var errors=new List<string>();void Case(string name,Action test){World.Reset();try{test();pass++;Console.WriteLine("PASS Singular rest: "+name);}catch(Exception e){errors.Add(name+": "+e.Message);}}
+public static void Run(){int pass=0;var errors=new List<string>();void Case(string name,Action test){World.Reset();World.RecoveryBlocked=false;try{test();pass++;Console.WriteLine("PASS Singular rest: "+name);}catch(Exception e){errors.Add(name+": "+e.Message);}}
 foreach(bool drinking in new[]{false,true}){bool d=drinking;string kind=d?"drink/":"food/";
 Case(kind+"low resource admitted",()=>Check(ActualRest.Start(d)&&World.Lookups==1,"eligible consumable not admitted"));
+Case(kind+"pending recovery is distinct from absent inventory",()=>{World.RecoveryBlocked=true;Check(!ActualRest.Start(d)&&World.Lookups==0&&World.Auras==0,"conflicting recovery performed inventory/aura work");World.RecoveryBlocked=false;Check(ActualRest.Start(d)&&World.Lookups==1,"released owner could not retry immediately");});
 Case(kind+"retry throttle avoids expensive observations",()=>{World.RetryReady=false;for(int i=0;i<20;i++)Check(!ActualRest.Start(d),"throttled attempt admitted");Check(World.Admissions==0&&World.Auras==0&&World.Lookups==0,"throttled resource queried group or inventory");});
 Case(kind+"disabled amount has no costly safety observation",()=>{if(d)CharacterSettings.Instance.DrinkAmount=0;else CharacterSettings.Instance.FoodAmount=0;Check(!ActualRest.Start(d)&&World.Admissions==0&&World.Auras==0&&World.Lookups==0,"disabled resource queried group or inventory");});
 Case(kind+"healthy resource has no costly safety observation",()=>{StyxWoW.Me.HealthPercent=StyxWoW.Me.ManaPercent=100;Check(!ActualRest.Start(d)&&World.Admissions==0&&World.Lookups==0,"healthy resource queried group");});

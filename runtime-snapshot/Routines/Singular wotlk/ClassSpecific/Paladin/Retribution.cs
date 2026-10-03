@@ -35,12 +35,13 @@ namespace Singular.ClassSpecific.Paladin
                            ret => CanUseRetributionEmergencyDefense(true) &&
                                   StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth),
                 Common.CreatePaladinDispelBehavior(),
-                // Holy Light: primary heal (big, slow) — uses HolyLightHealth threshold
-                Spell.Heal("Holy Light", ret => StyxWoW.Me,
-                           ret => CanRecover() && StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.HolyLightHealth)),
-                // Flash of Light: fast cheap fallback — uses FlashOfLightHealth threshold
-                Spell.Heal("Flash of Light", ret => StyxWoW.Me,
-                           ret => CanRecover() && StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.FlashOfLightHealth)));
+                // Starting a heal requires a free caster. Its continuation must
+                // retain that same cast while health and recovery safety allow it.
+                new Decorator(ret => CanRecover(), new PrioritySelector(
+                    Spell.Heal("Holy Light", ret => StyxWoW.Me,
+                        ret => CanContinueRecovery() && StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.HolyLightHealth)),
+                    Spell.Heal("Flash of Light", ret => StyxWoW.Me,
+                        ret => CanContinueRecovery() && StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.FlashOfLightHealth)))));
         }
 
         [Class(WoWClass.Paladin)]
@@ -105,7 +106,7 @@ namespace Singular.ClassSpecific.Paladin
 
                 // Defensive
                 Spell.BuffSelf("Hand of Freedom",
-                    ret => StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Dazed,
+                    ret => StyxWoW.Me.HasHarmfulAuraWithMechanic(WoWSpellMechanic.Dazed,
                                                           WoWSpellMechanic.Disoriented,
                                                           WoWSpellMechanic.Frozen,
                                                           WoWSpellMechanic.Incapacitated,
@@ -119,7 +120,7 @@ namespace Singular.ClassSpecific.Paladin
                     CreateManaRecoveryBehavior(),
 
                     //7	Blow buffs seperatly.  No reason for stacking while grinding.
-                    CreateSupportedSelfBuff("Avenging Wrath", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 3),
+                    CreateSupportedSelfBuff("Avenging Wrath", ret => Unit.UnfriendlyUnitsWithin(8).Count() >= 3),
                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
@@ -164,14 +165,14 @@ namespace Singular.ClassSpecific.Paladin
 
                    // Defensive
                     Spell.BuffSelf("Hand of Freedom",
-                    ret => !StyxWoW.Me.Auras.Values.Any(a => a.Name.Contains("Hand of") && a.CreatorGuid == StyxWoW.Me.Guid) &&
-                           StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Dazed,
+                    ret => StyxWoW.Me.HasHarmfulAuraWithMechanic(WoWSpellMechanic.Dazed,
                                                           WoWSpellMechanic.Disoriented,
                                                           WoWSpellMechanic.Frozen,
                                                           WoWSpellMechanic.Incapacitated,
                                                           WoWSpellMechanic.Rooted,
                                                           WoWSpellMechanic.Slowed,
-                                                          WoWSpellMechanic.Snared)),
+                                                          WoWSpellMechanic.Snared) &&
+                           !StyxWoW.Me.Auras.Values.Any(a => a.Name.Contains("Hand of") && a.CreatorGuid == StyxWoW.Me.Guid)),
 
                     CreateRetributionEmergencyDefenses(),
 
@@ -219,14 +220,14 @@ namespace Singular.ClassSpecific.Paladin
 
                     // Defensive
                     Spell.BuffSelf("Hand of Freedom",
-                        ret => !StyxWoW.Me.Auras.Values.Any(a => a.Name.Contains("Hand of") && a.CreatorGuid == StyxWoW.Me.Guid) &&
-                                StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Dazed,
+                        ret => StyxWoW.Me.HasHarmfulAuraWithMechanic(WoWSpellMechanic.Dazed,
                                                                WoWSpellMechanic.Disoriented,
                                                                WoWSpellMechanic.Frozen,
                                                                WoWSpellMechanic.Incapacitated,
                                                                WoWSpellMechanic.Rooted,
                                                                WoWSpellMechanic.Slowed,
-                                                               WoWSpellMechanic.Snared)),
+                                                               WoWSpellMechanic.Snared) &&
+                               !StyxWoW.Me.Auras.Values.Any(a => a.Name.Contains("Hand of") && a.CreatorGuid == StyxWoW.Me.Guid)),
 
                     CreateRetributionEmergencyDefenses(),
 
@@ -374,7 +375,7 @@ namespace Singular.ClassSpecific.Paladin
                     command = target == null || !target.IsBoss();
                     if (command)
                     {
-                        int nearby = Unit.NearbyUnfriendlyUnits.Count(u => u.IsValid && u.IsAlive && u.Distance <= 8);
+                        int nearby = Unit.UnfriendlyUnitsWithin(8).Count(u => u.IsValid && u.IsAlive);
                         command = nearby >= 3 || nearby >= 2 && Common.HasSupportedAura(me, "Seal of Command");
                     }
                 }
@@ -449,7 +450,7 @@ namespace Singular.ClassSpecific.Paladin
             // is a conservative filler, not a forecast of target lifetime or DPS.
             // Keep the configured pack threshold and reserve recovery mana; the
             // real spell layer still checks current cost, cooldown and safety.
-            int nearby = Unit.NearbyUnfriendlyUnits.Count(u => u.IsValid && u.IsAlive && u.Distance <= 8);
+            int nearby = Unit.UnfriendlyUnitsWithin(8).Count(u => u.IsValid && u.IsAlive);
             return target.IsBoss() || nearby >= SingularSettings.Instance.Paladin.ConsecrationCount
                 ? "Consecration" : null;
         }
@@ -469,15 +470,17 @@ namespace Singular.ClassSpecific.Paladin
             // undead/demon stun when health pressure gives it defensive value.
             var settings = SingularSettings.Instance.Paladin;
             return (mana > settings.DivinePleaMana || health <= 70)
-                && Unit.NearbyUnfriendlyUnits.Any(u => u.IsValid && u.IsAlive
-                    && u.Distance <= 10 && u.IsUndeadOrDemon());
+                && Unit.UnfriendlyUnitsWithin(10).Any(u => u.IsValid && u.IsAlive && u.IsUndeadOrDemon());
         }
 
-        private static bool CanRecover()
+        private static bool CanRecover() => CanContinueRecovery()
+            && !StyxWoW.Me.IsCasting && !StyxWoW.Me.IsChanneling;
+
+        private static bool CanContinueRecovery()
         {
             var me = StyxWoW.Me;
             return me != null && me.IsValid && me.IsAlive && !me.IsGhost
-                && !me.Mounted && !me.IsOnTransport && !me.IsCasting && !me.IsChanneling
+                && !me.Mounted && !me.IsOnTransport
                 && double.IsFinite(me.HealthPercent) && me.HealthPercent >= 0 && me.HealthPercent <= 100
                 && Styx.Logic.Common.Rest.TryObserveActivity(me, out bool food, out bool drink) && !food && !drink;
         }

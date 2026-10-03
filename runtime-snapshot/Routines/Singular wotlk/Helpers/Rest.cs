@@ -127,6 +127,8 @@ namespace Singular.Helpers
             }
             if (reason == null)
                 reason = Styx.Logic.Common.Rest.GetAdmissionDenial(player, requireStationary: false);
+            if (reason == null && !RecoveryActions.CanPrepareRestConsumable(!drinking, drinking))
+                reason = "recovery-owner-pending-or-unavailable";
             if (reason == null)
             {
                 if (!Styx.Logic.Common.Rest.TryObserveActivity(player, out bool food, out bool drink)) reason = "aura-coverage-UNKNOWN";

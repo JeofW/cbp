@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Singular.Dynamics;
 using Singular.Helpers;
 using Singular.Managers;
@@ -53,23 +53,23 @@ namespace Singular.ClassSpecific
                 ret => SingularSettings.Instance.UseRacials,
                 new PrioritySelector(
                     Spell.BuffSelf("Stoneform",
-                        ret => StyxWoW.Me.GetAllAuras().Any(a => a.Spell.Mechanic == WoWSpellMechanic.Bleeding ||
+                        ret => SpellManager.HasSpell("Stoneform") && StyxWoW.Me.GetAllAuras().Any(a => a.Spell.Mechanic == WoWSpellMechanic.Bleeding ||
                             a.Spell.DispelType == WoWDispelType.Disease ||
                             a.Spell.DispelType == WoWDispelType.Poison)),
                     Spell.BuffSelf("Escape Artist",
-                        ret => Unit.HasAuraWithMechanic(StyxWoW.Me, WoWSpellMechanic.Rooted, WoWSpellMechanic.Snared)),
+                        ret => SpellManager.HasSpell("Escape Artist") && Unit.HasHarmfulAuraWithMechanic(StyxWoW.Me, WoWSpellMechanic.Rooted, WoWSpellMechanic.Snared)),
                     Spell.Cast("Every Man for Himself", on => StyxWoW.Me,
-                        ret => PVP.IsCrowdControlled(StyxWoW.Me)),
+                        ret => SpellManager.HasSpell("Every Man for Himself") && PVP.IsCrowdControlled(StyxWoW.Me)),
                     Spell.Cast("Will of the Forsaken", on => StyxWoW.Me,
-                        ret => StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Fleeing, WoWSpellMechanic.Horrified, WoWSpellMechanic.Charmed)),
+                        ret => SpellManager.HasSpell("Will of the Forsaken") && StyxWoW.Me.HasHarmfulAuraWithMechanic(WoWSpellMechanic.Fleeing, WoWSpellMechanic.Horrified, WoWSpellMechanic.Charmed)),
                     Spell.BuffSelf("Gift of the Naaru",
-                        ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.GiftNaaruHP),
+                        ret => SpellManager.HasSpell("Gift of the Naaru") && StyxWoW.Me.HealthPercent < SingularSettings.Instance.GiftNaaruHP),
                     Spell.BuffSelf("Shadowmeld",
-                        ret => SingularSettings.Instance.ShadowmeldThreatDrop && (StyxWoW.Me.IsInParty || StyxWoW.Me.IsInRaid) &&
+                        ret => SpellManager.HasSpell("Shadowmeld") && SingularSettings.Instance.ShadowmeldThreatDrop && (StyxWoW.Me.IsInParty || StyxWoW.Me.IsInRaid) &&
                             !StyxWoW.Me.PartyMemberInfos.Any(pm => pm.Guid == StyxWoW.Me.Guid && pm.Role == WoWPartyMember.GroupRole.Tank) &&
                             ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Any(unit => unit.CurrentTargetGuid == StyxWoW.Me.Guid)),
-                    Spell.BuffSelf("Blood Fury", ret => StyxWoW.Me.IsInCombat),
-                    Spell.BuffSelf("Berserking", ret => StyxWoW.Me.IsInCombat)
+                    Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.IsInCombat),
+                    Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.IsInCombat)
                     ));
         }
 

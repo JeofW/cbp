@@ -89,6 +89,7 @@ namespace Styx
         public bool IsChanneling { get; set; }
         public Dictionary<string, Aura> ActiveAuras => Auras;
         public bool HasAuraWithMechanic(params Logic.Combat.WoWSpellMechanic[] _) => false;
+        public bool HasHarmfulAuraWithMechanic(params Logic.Combat.WoWSpellMechanic[] _) => false;
     }
     public static partial class StyxWoW { public static Player Me { get; set; } = new(); }
 }
@@ -150,6 +151,7 @@ namespace Singular.Settings
 namespace Singular.Helpers
 {
     public static class Unit { public static List<Styx.UnitState> NearbyUnfriendlyUnits { get; } = new();
+        public static IEnumerable<Styx.UnitState> UnfriendlyUnitsWithin(float range) => NearbyUnfriendlyUnits.Where(unit => unit.Distance <= range);
         public static bool IsAreaEffectSafe(string name, Styx.UnitState target) => Fixture.AreaSafe; }
     public static class Safers { public static Composite EnsureTarget() => Fixture.Nothing(); }
     // The real shared Helpers.Common is linked by the project, not mocked.
