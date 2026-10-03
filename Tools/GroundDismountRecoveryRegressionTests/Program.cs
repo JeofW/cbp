@@ -46,6 +46,76 @@ void Case(string name, Action body)
 
 GroundTransitionRuntime Runtime() => new(GroundTransitionPurpose.Combat, World.Target.Position, World.Target, () => true);
 
+Case("travel estimation cannot age the subsequent ground-support footprint", () =>
+{
+    World.Actor.MountedValue = false;
+    World.Actor.Flags = 1;
+    var runtime = new GroundTransitionRuntime(GroundTransitionPurpose.Interaction, World.Target.Position, World.Target, () => true);
+    World.Callback = stage =>
+    {
+        if (stage != "flight-cost") return;
+        World.Callback = null;
+        World.Actor.Position = World.Actor.Position.Add(2, 0, 0);
+    };
+    var observed = runtime.Observe();
+    Check(World.FlightCostQueries == 1 && observed.Supported && observed.Position.Equals(World.Actor.Position),
+        "a slow optional flight-cost query invalidated support sampled before it and would stop ordinary walking");
+});
+
+Case("owned ground walking does not repeat unused flight-cost decisions", () =>
+{
+    World.Actor.MountedValue = false;
+    var runtime = new GroundTransitionRuntime(GroundTransitionPurpose.Interaction, World.Target.Position, World.Target, () => true);
+    var machine = new GroundTransitionMachine(GroundTransitionPurpose.Interaction, runtime);
+    Check(machine.Tick() == GroundTransitionState.Pending && World.Walks.Count == 1, "initial grounded route not selected");
+    now = .3;
+    World.Actor.Position = World.Actor.Position.Add(3, 0, 0);
+    World.Actor.Flags = 1;
+    World.Callback = stage =>
+    {
+        if (stage == "flight-cost") World.Actor.Position = World.Actor.Position.Add(2, 0, 0);
+    };
+    Check(machine.Tick() == GroundTransitionState.Pending && World.Walks.Count == 2 && World.Stops == 0,
+        "the ground owner cancelled a useful route while recomputing a flight decision it no longer uses");
+    Check(World.FlightCostQueries == 1, "retained ground travel repeated expensive flight-cost observations");
+});
+
+Case("support and liquid use one complete native batch", () =>
+{
+    Check(Runtime().Observe().Supported, "controlled supported ground was unavailable");
+    Check(World.BatchTraces == 1 && World.ScalarTraces == 0 && World.Rays.Count == 2,
+        "support/liquid observations require multiple synchronous client submissions");
+});
+
+Case("movement after fresh support still cannot authorize arrival", () =>
+{
+    var runtime = Runtime();
+    World.Callback = stage =>
+    {
+        if (stage != "trace" || World.Rays.Count != 1) return;
+        World.Callback = null;
+        World.Actor.Position = World.Actor.Position.Add(2, 0, 0);
+    };
+    Check(!runtime.Observe().Supported, "fresh query batching borrowed a previous support footprint after movement");
+});
+
+foreach (uint changedFlags in new[] { 0x02000000u, 0x00001000u })
+    Case("late airborne flags invalidate a ground observation/" + changedFlags, () =>
+    {
+        World.Actor.MountedValue = false;
+        var runtime = new GroundTransitionRuntime(GroundTransitionPurpose.Interaction, World.Target.Position, World.Target, () => true);
+        World.Callback = stage =>
+        {
+            if (stage != "flight-cost") return;
+            World.Callback = null;
+            World.Actor.Flags = changedFlags;
+        };
+        Exception? caught = null;
+        try { _ = runtime.Observe(); } catch (Exception error) { caught = error; }
+        Check(caught is Styx.Helpers.ObservationUnavailableException && World.Walks.Count == 0 && World.Dismounts == 0,
+            "late airborne state was combined with an earlier grounded observation");
+    });
+
 Case("support observation cannot be borrowed after movement during preparation", () =>
 {
     var runtime = Runtime();

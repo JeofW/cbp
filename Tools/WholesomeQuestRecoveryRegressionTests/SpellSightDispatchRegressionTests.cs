@@ -177,6 +177,8 @@ public static class SightCases
     public static class SpellManager
     {
         public static Dictionary<string,WoWSpell> Spells=new();
+        public static bool TryClaimCastCandidate(string name)=>true;
+        public static void RecordCastCandidateResult(string name,bool submitted){}
         public static bool CanCast(string name,WoWUnit target,bool range,bool movement){if(SightCases.AvailabilityError is {} error)throw error;return SightCases.Ready&&target!=null&&Spells.TryGetValue(name,out var s)&&(!range||target.IsMe||(target.InLineOfSpellSight&&target.Distance>=s.MinRange&&target.Distance<=s.MaxRange));}
         public static bool CanCast(int id,WoWUnit target,bool range)=>id==101&&CanCast("Test",target,range,false);
         public static bool Cast(string name,WoWUnit target)=>Submit(target);

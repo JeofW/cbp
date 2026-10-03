@@ -16,7 +16,7 @@ internal static class World
     internal static readonly List<string> Diagnostics = new(), Errors = new();
     internal static readonly List<ulong> Interactions = new();
     internal static readonly List<(WorldLine Line, GameWorld.CGWorldFrameHitFlags Flags, bool Hit, WoWPoint Point)> Rays = new();
-    internal static int Dismounts, DismountAttempts, Descents, Stops;
+    internal static int Dismounts, DismountAttempts, Descents, Stops, FlightCostQueries, ScalarTraces, BatchTraces;
     internal static string DismountMode = "success";
     internal static string? ClientDismountLeaseOwner;
     internal static double ClientDismountLeaseUntil;
@@ -32,7 +32,7 @@ internal static class World
         Callback = null; ObservationError = null;
         Styx.BotEvents.Stop();
         RawFlights.Clear(); ExteriorFlights.Clear(); Walks.Clear(); Diagnostics.Clear(); Errors.Clear(); Rays.Clear(); Interactions.Clear();
-        Dismounts = DismountAttempts = Descents = Stops = 0;
+        Dismounts = DismountAttempts = Descents = Stops = FlightCostQueries = ScalarTraces = BatchTraces = 0;
         DismountMode = "success";
         ClientDismountLeaseOwner = null;
         ClientDismountLeaseUntil = double.NegativeInfinity;
@@ -220,7 +220,8 @@ namespace Styx.Logic.Pathing
     {
         public static object RequestIdentity = new(); public static WoWPoint LastFlightWaypoint;
         public static void MoveTo(WoWPoint point) { World.RawFlights.Add(point); World.Event("raw-flight"); }
-        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range) => World.PreferFlight;
+        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range)
+        { World.FlightCostQueries++; World.Event("flight-cost"); return World.PreferFlight; }
         public static bool ReleaseOwned(object expected, Func<bool> admitted, System.Action<object> registered)
         {
             if (!ReferenceEquals(expected, RequestIdentity) || !admitted()) return false;
@@ -236,7 +237,7 @@ namespace Styx.Logic.Pathing
     public static class GroundTransition
     {
         public static bool CanInteractWith(WoWObject? subject, Func<bool>? admitted = null)
-            => admitted?.Invoke() != false;
+            => subject != null && subject.WithinInteractRange && admitted?.Invoke() != false;
         public static bool CanActUnmounted(Func<bool>? admitted = null)
             => !World.Actor.MountedValue && admitted?.Invoke() != false;
     }
@@ -321,10 +322,11 @@ namespace Styx.WoWInternals.World
     {
         [Flags] public enum CGWorldFrameHitFlags : uint { HitTestGroundAndStructures = 0x100111, HitTestLiquid = 0x10000, HitTestLiquid2 = 0x20000 }
         public static bool TraceLine(WoWPoint from, WoWPoint to, CGWorldFrameHitFlags flags, out WoWPoint point)
-        { var result = global::World.Trace(new(from, to), flags); point = result.Point; return result.Hit; }
+        { global::World.ScalarTraces++; var result = global::World.Trace(new(from, to), flags); point = result.Point; return result.Hit; }
         public static bool TraceLine(WoWPoint from, WoWPoint to, CGWorldFrameHitFlags flags) => TraceLine(from, to, flags, out _);
         public static void MassTraceLine(WorldLine[] lines, CGWorldFrameHitFlags[] flags, out bool[] hits, out WoWPoint[] points)
         {
+            global::World.BatchTraces++;
             var result = lines.Select((line, index) => global::World.Trace(line, flags[index])).ToArray();
             hits = result.Select(r => r.Hit).ToArray(); points = result.Select(r => r.Point).ToArray();
         }

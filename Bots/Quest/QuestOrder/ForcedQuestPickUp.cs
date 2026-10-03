@@ -153,6 +153,26 @@ public class ForcedQuestPickUp : ForcedBehavior
         TreeRoot.GoalText = goalText;
     }
 
+    public override void Dispose()
+    {
+        // Acceptance can make IsDone true while this branch is suspended in
+        // CloseFrames(). The executor then retires the behavior before the
+        // trailing ActionClearPoi gets another tick. Release only the pickup
+        // endpoint that still belongs to this exact stage; a successor published
+        // before cleanup must remain untouched. BotPoi.Clear's flight cleanup is
+        // itself compare-and-current guarded across its callback boundaries.
+        var current = BotPoi.Current;
+        var pickup = current?.AsPickUp;
+        if (current != null && current.Type == PoiType.QuestPickUp && pickup != null
+            && pickup.QuestId == this.QuestId && pickup.GiverId == this.GiverId
+            && pickup.GiverType == this.GiverType && pickup.GiverLocation.Equals(this.GiverLocation)
+            && ReferenceEquals(BotPoi.Current, current))
+        {
+            BotPoi.Clear("Quest pickup owner retired");
+        }
+        base.Dispose();
+    }
+
     public static bool CanStartPickup(int questCount, int questLogCapacity) =>
         questLogCapacity > 0 && questCount < questLogCapacity;
 

@@ -27,8 +27,13 @@ namespace Styx.Logic.Combat
 		private static readonly Dictionary<string, WoWSpell> _knownSpells = new Dictionary<string, WoWSpell>(StringComparer.OrdinalIgnoreCase);
 		private static readonly object _cooldownSync = new object();
 		private static readonly Dictionary<int, long> _cooldownReadyAtTicks = new Dictionary<int, long>();
-		private static readonly Dictionary<int, long> _castVerificationUntilTicks = new Dictionary<int, long>();
-		private static readonly Dictionary<int, long> _readinessProbeNotBeforeTicks = new Dictionary<int, long>();
+			private static readonly Dictionary<int, long> _castVerificationUntilTicks = new Dictionary<int, long>();
+			private static readonly Dictionary<int, long> _readinessProbeNotBeforeTicks = new Dictionary<int, long>();
+				private static readonly HashSet<int> _failedCastCandidates = new HashSet<int>();
+				private static readonly HashSet<int> _seenCastCandidates = new HashSet<int>();
+			private static bool _castSelectionClaimed;
+			private static int _claimedCastCandidateId;
+			private static object? _castSelectionBot, _castSelectionRun;
 		private const int CastAttemptVerificationDelayMs = 250;
 		private const int UnavailableProbeBackoffMs = 250;
 		private const int FailedProbeBackoffMs = 500;
@@ -118,18 +123,91 @@ namespace Styx.Logic.Combat
 			}
 		}
 
-		private static void ResetCooldownObservations()
-		{
-			lock (_cooldownSync)
+			private static void ResetCooldownObservations()
 			{
+				lock (_cooldownSync)
+				{
 				_cooldownEpoch++;
 				_cooldownContext = null;
 				_lastCooldownObservationTicks = 0;
 				_cooldownReadyAtTicks.Clear();
-				_castVerificationUntilTicks.Clear();
-				_readinessProbeNotBeforeTicks.Clear();
+					_castVerificationUntilTicks.Clear();
+						_readinessProbeNotBeforeTicks.Clear();
+						_failedCastCandidates.Clear();
+						_seenCastCandidates.Clear();
+						_castSelectionClaimed = false;
+					_claimedCastCandidateId = 0;
+					_castSelectionBot = null;
+					_castSelectionRun = null;
+				}
 			}
-		}
+
+			/// <summary>
+			/// Starts one routine decision pulse for expensive current cast admission.
+			/// This does not authorize a cast; it only bounds how many Singular
+			/// candidates may cross the strict CanCast observation in one pulse.
+			/// </summary>
+			public static void BeginCastSelectionPulse()
+			{
+				object? bot = TreeRoot.Current;
+				object? run = TreeRoot.RunIdentity;
+				lock (_cooldownSync)
+				{
+					bool ownerChanged = !ReferenceEquals(_castSelectionBot, bot)
+						|| !ReferenceEquals(_castSelectionRun, run);
+						// Wrap when all candidates actually seen in the previous pulse have
+						// failed. A sole recovered candidate must not lose a whole extra
+						// pulse; an untried lower priority still gets its bounded turn first.
+						if (ownerChanged || !_castSelectionClaimed
+							|| _failedCastCandidates.IsSupersetOf(_seenCastCandidates))
+							_failedCastCandidates.Clear();
+						_seenCastCandidates.Clear();
+					_castSelectionBot = bot;
+					_castSelectionRun = run;
+					_castSelectionClaimed = false;
+					_claimedCastCandidateId = 0;
+				}
+			}
+
+			/// <summary>
+			/// Reserves this pulse's one strict cast-admission observation. A failed
+			/// candidate is skipped for the remainder of the current selection pass,
+			/// allowing lower priorities to be considered on following pulses.
+			/// </summary>
+			public static bool TryClaimCastCandidate(string spellName)
+			{
+				if (string.IsNullOrWhiteSpace(spellName)) return false;
+				WoWSpell? spell = GetSpellByName(spellName);
+				if (spell == null || spell.Id <= 0) return false;
+				lock (_cooldownSync)
+				{
+						if (!ReferenceEquals(_castSelectionBot, TreeRoot.Current)
+							|| !ReferenceEquals(_castSelectionRun, TreeRoot.RunIdentity))
+							return false;
+						_seenCastCandidates.Add(spell.Id);
+						if (_failedCastCandidates.Contains(spell.Id)) return false;
+					if (_castSelectionClaimed)
+						return _claimedCastCandidateId == spell.Id;
+					_castSelectionClaimed = true;
+					_claimedCastCandidateId = spell.Id;
+					return true;
+				}
+			}
+
+			public static void RecordCastCandidateResult(string spellName, bool submitted)
+			{
+				WoWSpell? spell = GetSpellByName(spellName);
+				if (spell == null || spell.Id <= 0) return;
+				lock (_cooldownSync)
+				{
+					if (!ReferenceEquals(_castSelectionBot, TreeRoot.Current)
+						|| !ReferenceEquals(_castSelectionRun, TreeRoot.RunIdentity)
+						|| !_castSelectionClaimed || _claimedCastCandidateId != spell.Id)
+						return;
+					if (submitted) _failedCastCandidates.Clear();
+					else _failedCastCandidates.Add(spell.Id);
+				}
+			}
 
 		public static Dictionary<string, WoWSpell> KnownSpells => _knownSpells;
 

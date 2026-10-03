@@ -183,9 +183,12 @@ namespace Styx.Logic.Combat
                     || spell == null || !spell.IsValid || requestedId > 0 && spell.Id != requestedId)
                     return false;
                 var effects = spell.SpellEffects;
-                if (effects == null || effects.Length != 3 || effects.Any(e => e == null))
+                if (effects == null || effects.Length != 3)
                     throw Unavailable("The spell's complete effect metadata is unavailable.");
-                heal |= effects.Any(e => IsDirectHeal(e.EffectType));
+                // Spell.dbc exposes exactly three fixed effect slots. A zero
+                // Effect value is an authoritative unused slot and WoWSpell
+                // represents it as null; it is not missing metadata.
+                heal |= effects.Any(e => e != null && IsDirectHeal(e.EffectType));
                 if (!heal && !aura)
                 {
                     context.Require();
@@ -293,12 +296,12 @@ namespace Styx.Logic.Combat
                     if (effectSpell == null || !effectSpell.IsValid)
                         throw Unavailable("A carried item effect could not be resolved. Spell=" + id);
                     var effects = effectSpell.SpellEffects;
-                    if (effects == null || effects.Length != 3 || effects.Any(e => e == null))
+                    if (effects == null || effects.Length != 3)
                         throw Unavailable("A carried item effect is incomplete. Spell=" + id);
-                    if (effects.Any(e => IsDirectHeal(e.EffectType))) { health = true; healEffects.Add(id); }
+                    if (effects.Any(e => e != null && IsDirectHeal(e.EffectType))) { health = true; healEffects.Add(id); }
                     // Uninterpreted effects cannot establish that a mana candidate
                     // has no health consequence. Reserve health conservatively.
-                    if (!resting && effects.Any(e => e.EffectType != WoWSpellEffectType.None
+                    if (!resting && effects.Any(e => e != null && e.EffectType != WoWSpellEffectType.None
                         && e.EffectType != WoWSpellEffectType.Energize && e.EffectType != WoWSpellEffectType.EnergizePct
                         && !IsDirectHeal(e.EffectType))) health = true;
                     if (resting)

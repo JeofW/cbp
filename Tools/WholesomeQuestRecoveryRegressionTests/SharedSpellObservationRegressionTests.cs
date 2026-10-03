@@ -84,6 +84,7 @@ public static class StyxWoW {
 }
 public static class SpellManager {
  public static Dictionary<string,WoWSpell> Spells=new();
+ public static bool TryClaimCastCandidate(string name)=>true;
  public static bool CanCast(string name,WoWUnit target,bool range,bool movement)=>World.Ready;
  public static void StopCasting(){World.Stops++;World.Stopped=StyxWoW.Me;}
 }

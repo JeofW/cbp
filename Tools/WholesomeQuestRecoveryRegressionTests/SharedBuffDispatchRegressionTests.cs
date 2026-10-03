@@ -150,6 +150,8 @@ public static class SharedBuffCases
     public static class SpellManager
     {
         public static Dictionary<string,WoWSpell> Spells=new();
+        public static bool TryClaimCastCandidate(string name)=>true;
+        public static void RecordCastCandidateResult(string name,bool submitted){}
         public static bool CanCast(string name,WoWUnit target,bool range,bool movement)=>target!=null&&Spells.ContainsKey(name);
         public static bool CanCast(int id,WoWUnit target,bool range)=>id>0&&target!=null;
         public static bool Cast(string name,WoWUnit target)=>Submit(target);

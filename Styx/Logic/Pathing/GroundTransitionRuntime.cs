@@ -59,7 +59,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     private object? _meshToken;
     private GroundApproachSearch? _search;
     private GroundApproachQueries? _queries;
-    private bool _held, _cancelled;
+    private bool _held, _cancelled, _groundTravelSelected;
     private float _radius, _height;
     private uint? _flags;
     private bool? _outdoors;
@@ -135,20 +135,33 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         _height = actor.BoundingHeight;
         if (!float.IsFinite(_radius) || _radius <= 0 || !float.IsFinite(_height) || _height <= 0)
             throw Unknown("actor body geometry unavailable");
-        _outdoors = _context.Subject?.IsOutdoors;
+        // These optional queries are not inputs to an already-selected foot
+        // route. Repeating them can park walking behind unused client work.
+        _outdoors = _groundTravelSelected ? null : _context.Subject?.IsOutdoors;
         RequireCurrent();
-        bool supported = !onTransport && !swimming && SupportedAt(position);
+        WoWPoint interactionPosition = actor.Location;
         bool interactionReady = _purpose == GroundTransitionPurpose.Interaction && !mounted && !flying && !falling
             && (_context.Subject != null
                 ? GroundTransition.CanInteractWith(_context.Subject, () => Current)
-                : position.Distance2DSqr(_context.Destination) <= 2.25f && Math.Abs(position.Z - _context.Destination.Z) <= .9f);
-        bool preferFlight = _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 60
+                : interactionPosition.Distance2DSqr(_context.Destination) <= 2.25f && Math.Abs(interactionPosition.Z - _context.Destination.Z) <= .9f);
+        bool preferFlight = !_groundTravelSelected && _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 60
             && !onTransport && !swimming && !immobile && (_actorOutdoors = actor.IsOutdoors) == true && !actor.Combat
             && Flightor.PreferFlightForGroundInteraction(_context.Destination, 3f);
+        RequireCurrent();
+        // Sample after optional Lua/travel observations. Sampling before them
+        // makes ordinary forward motion stale the footprint on every tick.
+        position = actor.Location;
+        bool supported = !onTransport && !swimming && SupportedAt(position);
+        RequireCurrent();
+        if (!actor.TryGetMovementState(out uint finalFlags, out ulong finalTransport)
+            || ((finalFlags ^ flags) & 0x02003000u) != 0 || finalTransport != transport
+            || actor.IsSwimming != swimming || !WorldQueryObservation.ReadGroundUnitState(actor).Equals(groundState))
+            throw Unknown("ground movement or mount state changed during observation");
         RequireCurrent();
         WoWPoint currentPosition = actor.Location;
         if (!GroundApproachSearch.Finite(currentPosition)) throw Unknown("actor position became unavailable during observation");
         if (currentPosition.DistanceSqr(position) > .25f) supported = false;
+        interactionReady &= currentPosition.Equals(interactionPosition);
         position = currentPosition;
         _displacement = _progressPosition?.Distance(position);
         if (_progressPosition == null || _displacement >= .5)
@@ -163,14 +176,26 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     {
         RequireCurrent();
         if (!GroundApproachSearch.Finite(position)) throw Unknown("actor position unavailable");
-        bool hit = Trace("support", position.Add(0, 0, .75f), position.Add(0, 0, -1.25f),
-            GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures, out WoWPoint support);
-        RequireCurrent();
-        bool liquid = Trace("support", position.Add(0, 0, .75f), position.Add(0, 0, -1.25f),
-            GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2, out _);
-        RequireCurrent();
-        return hit && !liquid && GroundApproachSearch.Finite(support) && support.Distance2DSqr(position) <= .01f
-            && Math.Abs(support.Z - position.Z) <= .7f;
+        var line = new WorldLine(position.Add(0, 0, .75f), position.Add(0, 0, -1.25f));
+        var flags = new[] { GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures,
+            GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2 };
+        try
+        {
+            GameWorld.MassTraceLine(new[] { line, line }, flags, out bool[] hits, out WoWPoint[] points);
+            RequireCurrent();
+            if (hits == null || points == null || hits.Length != 2 || points.Length != 2)
+                throw Unknown("ground support collision batch was incomplete");
+            for (int i = 0; i < 2; i++)
+                RecordRay(new("support", line.Start, line.End, (uint)flags[i], hits[i], hits[i] ? points[i] : null));
+            WoWPoint support = points[0];
+            return hits[0] && !hits[1] && GroundApproachSearch.Finite(support) && support.Distance2DSqr(position) <= .01f
+                && Math.Abs(support.Z - position.Z) <= .7f;
+        }
+        catch (ObservationUnavailableException)
+        {
+            foreach (var flag in flags) RecordRay(new("support", line.Start, line.End, (uint)flag, null, null));
+            throw;
+        }
     }
 
     private void RecordRay(GroundApproachRayObservation observation)
@@ -214,7 +239,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         return _search.Step();
     }
     public bool Validate(GroundApproachPlan plan) { RequireCurrent(); return _search?.Revalidate(plan) == true && Current; }
-    public void ResetSearch() { RequireCurrent(); _search = null; }
+    public void ResetSearch() { RequireCurrent(); _search = null; _groundTravelSelected = false; }
 
     public void Hold()
     {
@@ -363,6 +388,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         RequireCurrent();
         if (_mesh == null) throw Unknown("ground navigator unavailable");
         if (!GroundTransition.CanActUnmounted(() => Current)) throw Unknown("ground route lacks current unmounted state");
+        _groundTravelSelected = true;
         _held = false;
         _mesh.MoveToOwned(_context.Destination, Math.Min(1.5f, _mesh.PathPrecision), "Ground interaction approach",
             () => Current && GroundTransition.CanActUnmounted(() => Current), token => _meshToken = token, _routeLease);

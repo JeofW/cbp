@@ -28,7 +28,8 @@ internal static class SpellCooldownObservationRegressionTests
             "CaptureSpellObservation", "PrepareCooldownContext", "ResetCooldownObservations", "TryCastSpellById" };
         var fieldNames = new HashSet<string> { "_knownSpells", "_cooldownSync", "_cooldownReadyAtTicks",
             "_castVerificationUntilTicks", "_readinessProbeNotBeforeTicks", "CastAttemptVerificationDelayMs",
-            "UnavailableProbeBackoffMs", "FailedProbeBackoffMs", "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks" };
+            "UnavailableProbeBackoffMs", "FailedProbeBackoffMs", "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks",
+            "_failedCastCandidates", "_seenCastCandidates", "_castSelectionClaimed", "_claimedCastCandidateId", "_castSelectionBot", "_castSelectionRun" };
         string members = string.Join("\n", manager.DescendantNodes().OfType<FieldDeclarationSyntax>()
             .Where(f => f.Declaration.Variables.Any(v => fieldNames.Contains(v.Identifier.ValueText))).Select(f => f.ToFullString()))
             + string.Join("\n", manager.DescendantNodes().OfType<MethodDeclarationSyntax>()

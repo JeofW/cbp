@@ -148,6 +148,7 @@ namespace Singular
         {
             try
             {
+                SpellManager.BeginCastSelectionPulse();
                 if (_lastTargetGuid != StyxWoW.Me.CurrentTargetGuid)
                 {
                     _lastTargetGuid = StyxWoW.Me.CurrentTargetGuid;
