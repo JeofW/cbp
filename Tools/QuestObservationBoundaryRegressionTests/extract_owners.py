@@ -22,6 +22,8 @@ SOURCE_PATHS = {
     "sets": "Styx/Helpers/DualHashSet.cs",
     "pairs": "Styx/Helpers/ValuePair.cs",
 }
+DESCRIPTOR_QUEST_PATH = "Styx/Logic/Questing/WoWDescriptorQuest.cs"
+DESCRIPTOR_QUEST_FLAGS_PATH = "Styx/Logic/Questing/WoWDescriptorQuestFlags.cs"
 # These four blob identities were read directly from GitHub during this slice.
 KNOWN_BLOBS = {
     "log": "cdceb09dd4c3f2cfdff00beb761c6dbc5807a850",
@@ -30,6 +32,7 @@ KNOWN_BLOBS = {
     "protection": "86e4e0a51d902be26491ef2179107322768eb787",
 }
 LOG_METHODS = [
+    "public int GetIndexForQuest(uint questId)",
     "public List<PlayerQuest> GetAllQuests()",
     "public PlayerQuest GetQuest(uint index)",
     "public uint GetQuestId(uint index)",
@@ -39,6 +42,9 @@ LOG_METHODS = [
     "public QuestCompletionSnapshot GetQuestCompletionSnapshot(uint questId)",
     "internal static QuestCompletionSnapshot ResolveQuestCompletionSnapshot(",
     "internal static QuestCompletionState ResolveQuestCompletionState(",
+]
+OPTIONAL_LOG_METHODS = [
+    "private static WoWDescriptorQuest[] ReadQuestDescriptorEntries()",
 ]
 
 
@@ -148,7 +154,12 @@ def generate(repo: Path, ref: str, out: Path) -> dict:
               'using Styx.WoWInternals.WoWCache;\n')
     types = '\n\n'.join(extract_block(source['log'], sig) for sig in [
         'public enum QuestCompletionState', 'public readonly struct QuestCompletionSnapshot'])
-    methods = '\n\n'.join(extract_block(source['log'], sig) for sig in LOG_METHODS)
+    log_methods = list(LOG_METHODS)
+    masked_log = _code_mask(source['log'])
+    for signature in OPTIONAL_LOG_METHODS:
+        if re.search(re.escape(signature), masked_log):
+            log_methods.append(signature)
+    methods = '\n\n'.join(extract_block(source['log'], sig) for sig in log_methods)
     quest_methods = '\n\n'.join(extract_block(source['quest'], sig) for sig in [
         'protected PlayerQuest(WoWCache.QuestCacheEntry entry)',
         'internal static new PlayerQuest FromId(uint id)'])
@@ -164,6 +175,13 @@ def generate(repo: Path, ref: str, out: Path) -> dict:
         'DualHashSet.cs': source['sets'],
         'ValuePair.cs': source['pairs'],
     }
+    if 'WoWDescriptorQuest' in methods:
+        for path in [DESCRIPTOR_QUEST_PATH, DESCRIPTOR_QUEST_FLAGS_PATH]:
+            raw = git(repo, 'show', f'{commit}:{path}')
+            manifest['files'][path] = {'git_blob': git_blob_sha(raw),
+                                       'sha256': hashlib.sha256(raw).hexdigest(),
+                                       'bytes': len(raw)}
+            generated[Path(path).name] = raw.decode('utf-8-sig')
     # Copy the complete raw observation owner from the SAME immutable source ref.
     # Historical refs without it remain valid legacy baselines; no fake contract
     # is inserted into production or into the generated QuestLog owner.
@@ -177,7 +195,7 @@ def generate(repo: Path, ref: str, out: Path) -> dict:
             generated[Path(path).name] = raw.decode('utf-8-sig')
     manifest['generated_sha256'] = {name: hashlib.sha256(text.encode('utf-8')).hexdigest()
                                     for name, text in generated.items()}
-    manifest['extracted_log_signatures'] = LOG_METHODS
+    manifest['extracted_log_signatures'] = log_methods
     out.mkdir(parents=True, exist_ok=True)
     for name, text in generated.items():
         (out / name).write_text(text, encoding='utf-8', newline='\n')

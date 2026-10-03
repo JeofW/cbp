@@ -23,6 +23,28 @@ namespace GreenMagic
     public sealed class Memory
     {
         public bool CacheEnabled = true;
+        public T Read<T>(uint address)
+        {
+            if (typeof(T) == typeof(uint))
+                return (T)(object)BitConverter.ToUInt32(ReadBytes(address, sizeof(uint)), 0);
+            throw new InvalidOperationException("Fixture only supports bounded uint pointer reads.");
+        }
+        public T[] ReadStructArray<T>(uint address, int count)
+        {
+            if (typeof(T).FullName != "Styx.Logic.Questing.WoWDescriptorQuest" || count < 0)
+                throw new InvalidOperationException("Fixture only supports bounded quest descriptor arrays.");
+            byte[] bytes = ReadBytes(address, checked(count * 20));
+            var idField = typeof(T).GetField("Id")
+                ?? throw new InvalidOperationException("Quest descriptor fixture is missing the Id field.");
+            var quests = new T[count];
+            for (int i = 0; i < count; i++)
+            {
+                object entry = Activator.CreateInstance(typeof(T));
+                idField.SetValue(entry, BitConverter.ToUInt32(bytes, i * 20));
+                quests[i] = (T)entry;
+            }
+            return quests;
+        }
         public byte[] ReadBytes(uint address, int count)
         {
             var me = Styx.WoWInternals.ObjectManager.Me;
