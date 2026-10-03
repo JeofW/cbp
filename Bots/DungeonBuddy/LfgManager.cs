@@ -537,7 +537,7 @@ namespace Bots.DungeonBuddy
         public static void SetDungeonCompleted(CompleteReason reason, int delaySeconds = 60)
         {
             ExitDelayTimer.WaitTime = TimeSpan.FromSeconds(delaySeconds);
-            if (reason != CompleteReason.None)
+            if (DungeonCompletedReason != reason && reason != CompleteReason.None)
                 ExitDelayTimer.Reset();
             DungeonCompletedReason = reason;
         }

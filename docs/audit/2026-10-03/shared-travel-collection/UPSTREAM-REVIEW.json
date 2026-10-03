@@ -1,0 +1,593 @@
+{
+  "repository": "Likon69/CopilotBuddy",
+  "head": "50c482bc24e29113c0ce429b861e681423fa6a83",
+  "since": "2026-09-18T16:00:00Z",
+  "count": 36,
+  "commits": [
+    {
+      "sha": "7b6645bef9ef151bd91358144daf3af7e10fca4c",
+      "committed": "2026-09-23T13:03:04+02:00",
+      "subject": "ForcedQuestPickUp: replace Cata HandleQuestFrame with HB 3.3.5a quest frame structure",
+      "parents": [
+        "901af3e7db2bb8ce28f5b15f21e6e526e1b19732"
+      ],
+      "files": [
+        "Bots/Quest/QuestOrder/ForcedQuestPickUp.cs"
+      ],
+      "patch": "00-7b6645be.patch",
+      "sha256": "030ae0e831bd3861eb97e6cc5369d7a83aebd78e6882d2856824b7f7e552d4e2",
+      "disposition": "retain-owned-implementation",
+      "rationale": "Original-client pickup frames are covered by the owned pickup/quest-observation path; preserve source identity, bounded retries and real acceptance acknowledgement."
+    },
+    {
+      "sha": "ff19a59d5c19e302fb3509399c951c1118278c6d",
+      "committed": "2026-09-26T13:00:58+02:00",
+      "subject": "Protected Items: add Mining Pick 2901, MailToAlt mails every item of a ticked quality that isn't soulbound, conjured or in this list, so with white ticked for the ore the Mining Pick is mailed too and the bot can no longer mine",
+      "parents": [
+        "7b6645bef9ef151bd91358144daf3af7e10fca4c"
+      ],
+      "files": [
+        "Protected Items.xml"
+      ],
+      "patch": "01-ff19a59d.patch",
+      "sha256": "f774d73080c8138b44f13a7f67db83b9f529a6df7054160f6042558386dcf36f",
+      "disposition": "already-covered",
+      "rationale": "Mining Pick 2901 is protected in both tracked and runtime lists; UpstreamSeptemberRegressionTests checks both."
+    },
+    {
+      "sha": "333083c128b60e40a948cb77d6938d4085080bcf",
+      "committed": "2026-09-26T13:50:38+02:00",
+      "subject": "LevelBot: corpse-run timer compares Elapsed.TotalSeconds, Elapsed.Seconds is the 0-59 part of the time so the 40 s SafeRes limit only fired between 41 and 59 s of each minute",
+      "parents": [
+        "7b6645bef9ef151bd91358144daf3af7e10fca4c"
+      ],
+      "files": [
+        "Bots/Grind/LevelBot.cs"
+      ],
+      "patch": "02-333083c1.patch",
+      "sha256": "b24524dfa747d2e6ec6316d6dd5f950c7674aadb131e3173ac643bf3483a60e5",
+      "disposition": "already-covered",
+      "rationale": "LevelBot uses elapsed total seconds for corpse recovery; retain existing recovery ownership."
+    },
+    {
+      "sha": "98d5b7395991dfaa1a80e5c1f8eaf80daf2c34e2",
+      "committed": "2026-09-26T13:50:40+02:00",
+      "subject": "Flightor: only mount for ground travel when Mount.ShouldMount allows it and Navigator.MoveTo wouldn't dismount again, near a vendor, trainer or mailbox the bot mounted and dismounted on alternate ticks",
+      "parents": [
+        "7b6645bef9ef151bd91358144daf3af7e10fca4c"
+      ],
+      "files": [
+        "Styx/Logic/Pathing/Flightor.cs"
+      ],
+      "patch": "03-98d5b739.patch",
+      "sha256": "c207e82da8f25732521010c240292fcc490eeed5c52acdb9e2823153fa7552f8",
+      "disposition": "retain-owned-implementation",
+      "rationale": "Shared Flightor/ground transition tests cover remount prevention at destinations; importing the older independent mount policy would bypass current ownership."
+    },
+    {
+      "sha": "e9502a65522b1f31ce411ad1e06a55b97cb8dc2c",
+      "committed": "2026-09-26T13:50:40+02:00",
+      "subject": "IsObjectiveComplete: find the quest in the log through GetQuestLogTitle's quest id, GetQuestLogIndexByID doesn't exist on 3.3.5a so the check always returned false and While loops on it never ended",
+      "parents": [
+        "7b6645bef9ef151bd91358144daf3af7e10fca4c"
+      ],
+      "files": [
+        "Styx/Logic/Profiles/Quest/ProfileHelperFunctionsBase.cs"
+      ],
+      "patch": "04-e9502a65.patch",
+      "sha256": "b276763e85c2a99c6e41d90c89741784111f117e958ef3a7baea68dadd51686c",
+      "disposition": "already-covered",
+      "rationale": "Original GetQuestLogTitle index discovery and typed unavailable observations already have stock Lua 5.1 coverage in UpstreamQuestLuaRegressionTests."
+    },
+    {
+      "sha": "cc2f049571bee7691af1c3c4b0390fb5d2e21d58",
+      "committed": "2026-09-27T16:54:20+02:00",
+      "subject": "DungeonBuddy: restore HB 4.3.4 IsBossAlive, CurrentBoss breadcrumbs and boss unit filter, the Gnomeregan escort never started and optional Grubbis was chased with KillOptionalBosses off",
+      "parents": [
+        "7b6645bef9ef151bd91358144daf3af7e10fca4c"
+      ],
+      "files": [
+        "Bots/DungeonBuddy/DungeonBuddy.cs",
+        "Bots/DungeonBuddy/Helpers/ScriptHelpers.cs"
+      ],
+      "patch": "05-cc2f0495.patch",
+      "sha256": "2034ca7d42802ae856db1c6942061efec3d46c5445438f43e447230c476d0759",
+      "disposition": "already-covered",
+      "rationale": "BossManager state, optional-boss filtering and breadcrumbs are implemented with additional route validation; UpstreamServices/UpstreamWorld cases cover them."
+    },
+    {
+      "sha": "c286f09475a712d15eb42679071e2ff92cc420cd",
+      "committed": "2026-09-27T16:57:49+02:00",
+      "subject": "Merge pull request #11 from endgor/fix/protect-mining-pick",
+      "parents": [
+        "cc2f049571bee7691af1c3c4b0390fb5d2e21d58",
+        "ff19a59d5c19e302fb3509399c951c1118278c6d"
+      ],
+      "files": [],
+      "patch": "06-c286f094.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "disposition": "merge-metadata",
+      "rationale": "Reviewed parent patches; combined merge diff contains no extra resolution patch."
+    },
+    {
+      "sha": "0443c88129504779d16b4680380ca0c4653d8b5b",
+      "committed": "2026-09-27T16:57:49+02:00",
+      "subject": "Merge pull request #18 from endgor/fix/saferes-total-seconds",
+      "parents": [
+        "c286f09475a712d15eb42679071e2ff92cc420cd",
+        "333083c128b60e40a948cb77d6938d4085080bcf"
+      ],
+      "files": [],
+      "patch": "07-0443c881.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "disposition": "merge-metadata",
+      "rationale": "Reviewed parent patches; combined merge diff contains no extra resolution patch."
+    },
+    {
+      "sha": "a2a73f67d292d68c9cff8ef948c6f6d87491d9a7",
+      "committed": "2026-09-27T16:57:49+02:00",
+      "subject": "Merge pull request #20 from endgor/fix/no-remount-at-vendor",
+      "parents": [
+        "0443c88129504779d16b4680380ca0c4653d8b5b",
+        "98d5b7395991dfaa1a80e5c1f8eaf80daf2c34e2"
+      ],
+      "files": [],
+      "patch": "08-a2a73f67.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "disposition": "merge-metadata",
+      "rationale": "Reviewed parent patches; combined merge diff contains no extra resolution patch."
+    },
+    {
+      "sha": "04b7bb770dc683eabbe0a348c4ad97c82282312e",
+      "committed": "2026-09-27T16:57:50+02:00",
+      "subject": "Merge pull request #21 from endgor/fix/isobjectivecomplete-335",
+      "parents": [
+        "a2a73f67d292d68c9cff8ef948c6f6d87491d9a7",
+        "e9502a65522b1f31ce411ad1e06a55b97cb8dc2c"
+      ],
+      "files": [],
+      "patch": "09-04b7bb77.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "disposition": "merge-metadata",
+      "rationale": "Reviewed parent patches; combined merge diff contains no extra resolution patch."
+    },
+    {
+      "sha": "f434842f02ee3de839f090c40d115b8951e99557",
+      "committed": "2026-09-27T16:59:00+02:00",
+      "subject": "Remove the comments added by PR #11, #20 and #21",
+      "parents": [
+        "04b7bb770dc683eabbe0a348c4ad97c82282312e"
+      ],
+      "files": [
+        "Protected Items.xml",
+        "Styx/Logic/Pathing/Flightor.cs",
+        "Styx/Logic/Profiles/Quest/ProfileHelperFunctionsBase.cs"
+      ],
+      "patch": "10-f434842f.patch",
+      "sha256": "e67f7c88c4bda27291b847645840f7df8072b0378a3d10b5a1d334a7748ccf52",
+      "disposition": "cosmetic-not-imported",
+      "rationale": "Comment removal changes no behavior and is not required by this fork."
+    },
+    {
+      "sha": "94c83e280848567804294e2b3a4bd4cac2d50f8d",
+      "committed": "2026-09-27T17:12:42+02:00",
+      "subject": "NpcQueries: filter vendors and trainers with the player's WoWFactionTemplate reaction like HB 4.3.4, the WoWFaction built from Faction.dbc had no template so every NPC compared Neutral and an Alliance bot picked Horde vendors",
+      "parents": [
+        "f434842f02ee3de839f090c40d115b8951e99557"
+      ],
+      "files": [
+        "Bots/DungeonBuddy/DungeonBuddy.cs",
+        "Styx/Database/NpcQueries.cs",
+        "Styx/Logic/Profiles/VendorManager.cs"
+      ],
+      "patch": "11-94c83e28.patch",
+      "sha256": "d5c320cfa723dc6d2304f194d4e4899e6a5feb9a4750285be9c069e3f83d240c",
+      "disposition": "already-covered",
+      "rationale": "Vendor/trainer selection already uses the player faction template, explicit reaction availability and current profile constraints."
+    },
+    {
+      "sha": "9b37cb34f41675f5b24320e8e52fa0639c9ce6fe",
+      "committed": "2026-09-27T17:15:51+02:00",
+      "subject": "ForcedQuestTurnIn: restore the HB 3.3.5a and 4.3.4 Dispose that adds the turned-in quest to the completed quest cache, IsQuestCompleted stayed false up to a minute after the turn-in",
+      "parents": [
+        "94c83e280848567804294e2b3a4bd4cac2d50f8d"
+      ],
+      "files": [
+        "Bots/Quest/QuestOrder/ForcedQuestTurnIn.cs"
+      ],
+      "patch": "12-9b37cb34.patch",
+      "sha256": "5aa29205dc8087f446f4aeb5a19e7a9fe3255dd57038d83f915d7cc958ae4121",
+      "disposition": "retain-owned-implementation",
+      "rationale": "Dispose is not successful turn-in evidence. Retain source-bound completion acknowledgement and authoritative completion acquisition instead of optimistic cache mutation."
+    },
+    {
+      "sha": "bbfcaffa8adc7798de8bb46476492c6c8088f6c1",
+      "committed": "2026-09-27T17:18:36+02:00",
+      "subject": "Navigator.FindMeshHeight: load the tile first like HB 3.3.5a, quest area hotspots far from the player got height 0 and the bot looped on Could not generate path",
+      "parents": [
+        "9b37cb34f41675f5b24320e8e52fa0639c9ce6fe"
+      ],
+      "files": [
+        "Styx/Logic/Pathing/Navigator.cs"
+      ],
+      "patch": "13-bbfcaffa.patch",
+      "sha256": "8ee45757843a82c48af2f9a7c8ede9198648da91d680c23f335d3cba2f237185",
+      "disposition": "already-covered",
+      "rationale": "Height lookup loads the required tile with actor, map, navigator and finite-result validation; UpstreamWorld covers it."
+    },
+    {
+      "sha": "f1654fef96f3ce4af12c919751d86ab33b9d4564",
+      "committed": "2026-09-27T17:21:45+02:00",
+      "subject": "MountHelper: classify flying mounts with the 3.3.5a flight speed auras 207, 208, 209 and 211, the ids 152-156 are detected range, split damage, stealth level and reputation gain so no mount was ever flying and profile CanFly() stayed false",
+      "parents": [
+        "bbfcaffa8adc7798de8bb46476492c6c8088f6c1"
+      ],
+      "files": [
+        "Styx/Logic/MountHelper.cs"
+      ],
+      "patch": "14-f1654fef.patch",
+      "sha256": "fe3b3fbd0535a1655deaf2312be3527202a324e2f1a754fd2b7de12823055652",
+      "disposition": "already-covered",
+      "rationale": "Mount classification already inspects 3.3.5 flight aura IDs 207/208/209/211; UpstreamObservation exercises the actual wrapper."
+    },
+    {
+      "sha": "902c72e85ee3bbe7a76af977c3b8e0de23283c69",
+      "committed": "2026-09-27T17:24:44+02:00",
+      "subject": "FlightPaths: save and load node connections as Connection elements like HB 4.3.4, node names contain a comma so the comma-joined attribute lost every route after a restart",
+      "parents": [
+        "f1654fef96f3ce4af12c919751d86ab33b9d4564"
+      ],
+      "files": [
+        "Styx/Logic/FlightPaths.cs"
+      ],
+      "patch": "15-902c72e8.patch",
+      "sha256": "362b3067052e71828877ca550ef1e1dd9fbd4cc6f26e95471b7379a9ddfdcc2d",
+      "disposition": "already-covered",
+      "rationale": "Structured taxi connection serialization is implemented; ambiguous comma-delimited legacy identities cannot invent routes."
+    },
+    {
+      "sha": "44291dbf1b9e5d0a62e7e254ea9b0d50072a1f0c",
+      "committed": "2026-09-27T17:28:31+02:00",
+      "subject": "ForcedMoveTo: finish on the Navigator MoveResult like HB 6.2.3, ReachedDestination or a failed move ends the step, a RunTo a little above or below the ground left the bot standing at the end of the path forever",
+      "parents": [
+        "902c72e85ee3bbe7a76af977c3b8e0de23283c69"
+      ],
+      "files": [
+        "Bots/Quest/QuestOrder/ForcedMoveTo.cs"
+      ],
+      "patch": "16-44291dbf.patch",
+      "sha256": "698f5909fec2ca083422f0c3526ef84a5711124768bdf1904a59a6b9ef8e6be6",
+      "disposition": "retain-owned-implementation",
+      "rationale": "A failed move is not arrival. Preserve current observed position and destination completion semantics instead of treating failure as a completed profile step."
+    },
+    {
+      "sha": "3116025f794ca8a752a9b09ba890556b6a584d21",
+      "committed": "2026-09-27T17:31:46+02:00",
+      "subject": "VendorManager: fall back to the NPC database whenever the profile has no vendor of the requested type like HB 3.3.5a, a profile with food and repair vendors but no trainer for the class never trained",
+      "parents": [
+        "44291dbf1b9e5d0a62e7e254ea9b0d50072a1f0c"
+      ],
+      "files": [
+        "Styx/Logic/Profiles/VendorManager.cs"
+      ],
+      "patch": "17-3116025f.patch",
+      "sha256": "788d7110a8af4b8966bffc117bb885a825b14b3049d40d3e6193151e8f469246",
+      "disposition": "already-covered",
+      "rationale": "Per-service automatic NPC fallback exists and retains explicit profile guards, blacklist and forced-vendor precedence."
+    },
+    {
+      "sha": "482049010d453579f3138ee0773ed1fbbc8502b7",
+      "committed": "2026-09-27T17:36:20+02:00",
+      "subject": "UnitThreatInfo: always look the unit up in the threat table and report NotTanking when the mob has no victim like HB 3.3.5a, a stunned mob read as UnitNotInThreatTable",
+      "parents": [
+        "3116025f794ca8a752a9b09ba890556b6a584d21"
+      ],
+      "files": [
+        "Styx/WoWInternals/WoWObjects/UnitThreatInfo.cs"
+      ],
+      "patch": "18-48204901.patch",
+      "sha256": "cb19cf90222478bae58c94c76fb178794c3b17d06379e2b23b54c1a041b99372",
+      "disposition": "already-covered",
+      "rationale": "Threat reader handles a victimless stunned mob with actual table lookup and adds bounded traversal/unknown handling."
+    },
+    {
+      "sha": "ac87f17279c55c306bcb496fb8444bedbb893f70",
+      "committed": "2026-09-27T17:39:24+02:00",
+      "subject": "GatherBuddy: remove the NodeDetectionRange setting, no HonorBuddy version has it and the node filter never read it",
+      "parents": [
+        "482049010d453579f3138ee0773ed1fbbc8502b7"
+      ],
+      "files": [
+        "Bots/Gatherbuddy/GatherBuddySettings.cs",
+        "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml",
+        "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml.cs",
+        "Styx/Localization/Globalization.Designer.cs",
+        "Styx/Localization/Strings.cs-CZ.resx",
+        "Styx/Localization/Strings.de-DE.resx",
+        "Styx/Localization/Strings.es-ES.resx",
+        "Styx/Localization/Strings.fr-FR.resx",
+        "Styx/Localization/Strings.it-IT.resx",
+        "Styx/Localization/Strings.ja-JP.resx",
+        "Styx/Localization/Strings.ko-KR.resx",
+        "Styx/Localization/Strings.nl-NL.resx",
+        "Styx/Localization/Strings.pl-PL.resx",
+        "Styx/Localization/Strings.pt-PT.resx",
+        "Styx/Localization/Strings.resx",
+        "Styx/Localization/Strings.ru-RU.resx",
+        "Styx/Localization/Strings.tr-TR.resx",
+        "Styx/Localization/Strings.zh-Hans.resx",
+        "Styx/Localization/Strings.zh-Hant.resx"
+      ],
+      "patch": "19-ac87f172.patch",
+      "sha256": "2ba1e2f0e2a2680aa05a1eaf679f94d504a3383e6778acb8e628e9de55e208bd",
+      "disposition": "cosmetic-not-imported",
+      "rationale": "The unused GatherBuddy UI setting is outside the repaired runtime paths. No new meaning or behavior is assigned to it."
+    },
+    {
+      "sha": "b1dacd32f56fd41a3d8b801ca513fa2610b30dd0",
+      "committed": "2026-09-27T17:55:06+02:00",
+      "subject": "Quest order nodes: read attributes case-insensitively and parse objective types with the HB 4.3.4 aliases, Type=\"Collect\" became a KillMob with id 0 and stopped the bot, an unknown type now raises the HB profile error",
+      "parents": [
+        "ac87f17279c55c306bcb496fb8444bedbb893f70"
+      ],
+      "files": [
+        "Styx/Logic/Profiles/Quest/MoveToNode.cs",
+        "Styx/Logic/Profiles/Quest/ObjectiveInfo.cs",
+        "Styx/Logic/Profiles/Quest/ObjectiveNode.cs",
+        "Styx/Logic/Profiles/Quest/OrderNode.cs",
+        "Styx/Logic/Profiles/Quest/PickUpNode.cs",
+        "Styx/Logic/Profiles/Quest/TurnInNode.cs"
+      ],
+      "patch": "20-b1dacd32.patch",
+      "sha256": "55b013fcc974d9f2ec86b1d633f95922834b68185669ce772aa393fed6ecf064",
+      "disposition": "already-covered",
+      "rationale": "Case-insensitive aliases, invalid-type rejection, conflicting-alias rejection and index-only objectives are already covered by the retained profile tests."
+    },
+    {
+      "sha": "c1309d8896c7eab7d75bb62050f7fcef67afb368",
+      "committed": "2026-09-27T17:56:54+02:00",
+      "subject": "NpcResult: restore the HB 4.3.4 IEquatable value equality, every query built new results so the navigation caches never hit and each vendor lookup redid up to 25 full path checks",
+      "parents": [
+        "b1dacd32f56fd41a3d8b801ca513fa2610b30dd0"
+      ],
+      "files": [
+        "Styx/Database/NpcResult.cs"
+      ],
+      "patch": "21-c1309d88.patch",
+      "sha256": "1008eca8fff3716bf30f2ddbed7669836482bed855c2ce00465a070153722f31",
+      "disposition": "retain-owned-implementation",
+      "rationale": "Value equality already keys geometry by entry/map/coordinates. Retain that cache identity and independently re-observe mutable faction/eligibility rather than widening equality to display metadata."
+    },
+    {
+      "sha": "49588496d58b129851a058dc1098c862286a1ad3",
+      "committed": "2026-09-27T17:59:41+02:00",
+      "subject": "MeshNavigator: remove the swimming MoveTowards shortcut, no HonorBuddy MeshNavigator has it and it headed straight for underwater and off-mesh destinations",
+      "parents": [
+        "c1309d8896c7eab7d75bb62050f7fcef67afb368"
+      ],
+      "files": [
+        "Styx/Logic/Pathing/MeshNavigator.cs"
+      ],
+      "patch": "22-49588496.patch",
+      "sha256": "a4c7bddeee384bb8944fb9759919429e9c2c2fe245372dbcd0f60775bdebb806",
+      "disposition": "already-covered",
+      "rationale": "The unowned swimming MoveTowards shortcut is absent; navigation remains subject to current route admission."
+    },
+    {
+      "sha": "6e8dbb81a205c0132637e6d81f5d7619a4d7ab77",
+      "committed": "2026-09-27T23:02:26+02:00",
+      "subject": "LevelBot loot: force the loot interact, wait 3 s for a skin window and only wait for the skinnable flag after looting a beast like HB 5.4.8, the 2 s interact timer from the loot swallowed the skin interact, the bot waited 10 s for LOOT_OPENED, then up to 5 s after every loot and 1.5 s after every kill",
+      "parents": [
+        "49588496d58b129851a058dc1098c862286a1ad3"
+      ],
+      "files": [
+        "Bots/Grind/LevelBot.cs"
+      ],
+      "patch": "23-6e8dbb81.patch",
+      "sha256": "8771d5f9d6c9a4eedf83af09c57bec69e15f283b02a615ca095d3ab095e23b1b",
+      "disposition": "retain-owned-implementation",
+      "rationale": "Loot/skin lifecycle already uses guarded interaction and separate source-bound acknowledgements. Retained upstream loot cases cover it without reintroducing raw Interact calls."
+    },
+    {
+      "sha": "24f1b4d694c62574255eedb1a7eeeea503a367ff",
+      "committed": "2026-09-27T23:07:14+02:00",
+      "subject": "NavigatorTerrainHeightProvider: find heights on map 0 like HB 5.4.8, the mapId == 0 guard returned no heights anywhere in Eastern Kingdoms so quest-area objectives, turn-ins placed from quest steps and the corpse-point search found no ground",
+      "parents": [
+        "49588496d58b129851a058dc1098c862286a1ad3"
+      ],
+      "files": [
+        "Styx/Logic/Pathing/NavigatorTerrainHeightProvider.cs"
+      ],
+      "patch": "24-24f1b4d6.patch",
+      "sha256": "f891ca789e08613bd2d313fa31fd5ecc28ab2cc8c64e3421175f490d851d2927",
+      "disposition": "already-covered",
+      "rationale": "Map zero remains a valid terrain map under the current actor/map guard; complete terrain-provider tests are retained."
+    },
+    {
+      "sha": "883646c2c2d07f65616d4f72621369fd2b1b5344",
+      "committed": "2026-09-28T13:55:38+02:00",
+      "subject": "QuestArea: place hotspots with Navigator.FindHeight like HB 4.3.4, FindMeshHeight searched from Z 10000 with the 20 yd extents, found no polygon and still returned Z 0, so every client quest area hotspot was underground and the bot looped on Could not generate path",
+      "parents": [
+        "49588496d58b129851a058dc1098c862286a1ad3"
+      ],
+      "files": [
+        "Styx/Logic/AreaManagement/QuestArea.cs"
+      ],
+      "patch": "25-883646c2.patch",
+      "sha256": "9b1d261784ff002efdcdea276f811d63d530f1f52c7ca9e29d74870500a5ba66",
+      "disposition": "already-covered",
+      "rationale": "QuestArea uses FindHeight and finite results; no zero-height fallback is treated as observed terrain."
+    },
+    {
+      "sha": "3886a9924fa8e9047cac6fd819f40a489348e43b",
+      "committed": "2026-09-28T15:47:33+02:00",
+      "subject": "Merge pull request #26 from endgor/fix/questarea-findheight",
+      "parents": [
+        "49588496d58b129851a058dc1098c862286a1ad3",
+        "883646c2c2d07f65616d4f72621369fd2b1b5344"
+      ],
+      "files": [],
+      "patch": "26-3886a992.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "disposition": "merge-metadata",
+      "rationale": "Reviewed parent patches; combined merge diff contains no extra resolution patch."
+    },
+    {
+      "sha": "df03623b6b5ca570cadd0d031604d641d00c3754",
+      "committed": "2026-09-28T15:47:51+02:00",
+      "subject": "Merge pull request #25 from endgor/fix/findheights-eastern-kingdoms",
+      "parents": [
+        "3886a9924fa8e9047cac6fd819f40a489348e43b",
+        "24f1b4d694c62574255eedb1a7eeeea503a367ff"
+      ],
+      "files": [],
+      "patch": "27-df03623b.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "disposition": "merge-metadata",
+      "rationale": "Reviewed parent patches; combined merge diff contains no extra resolution patch."
+    },
+    {
+      "sha": "e03d58d489b3b134a10ab80642862503452f6ab4",
+      "committed": "2026-09-28T15:48:07+02:00",
+      "subject": "Merge pull request #24 from endgor/fix/levelbot-loot-hb548",
+      "parents": [
+        "df03623b6b5ca570cadd0d031604d641d00c3754",
+        "6e8dbb81a205c0132637e6d81f5d7619a4d7ab77"
+      ],
+      "files": [],
+      "patch": "28-e03d58d4.patch",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "disposition": "merge-metadata",
+      "rationale": "Reviewed parent patches; combined merge diff contains no extra resolution patch."
+    },
+    {
+      "sha": "b594a51be5e1f59177ddbf0aec6e78d5d19d923a",
+      "committed": "2026-09-28T15:51:03+02:00",
+      "subject": "bump version 1.6.7.4 -> 1.6.7.5",
+      "parents": [
+        "e03d58d489b3b134a10ab80642862503452f6ab4"
+      ],
+      "files": [
+        "CopilotBuddy.csproj",
+        "UI/MainWindow.xaml.cs"
+      ],
+      "patch": "29-b594a51b.patch",
+      "sha256": "472c06fa77bb36241fc432776a2b677b808b06baed57ddf2bf4f61859180ab89",
+      "disposition": "already-covered",
+      "rationale": "The fork already identifies as version 1.6.7.5; exact source and payload hashes remain the release identity."
+    },
+    {
+      "sha": "57f37756eba903340f07a2f4160635ffd422862e",
+      "committed": "2026-09-28T15:51:03+02:00",
+      "subject": "add CONTRIBUTING.md: follow HB, test in game with a log before a PR, no code comments, one fix per PR, check the runtime-compiled callers in bin",
+      "parents": [
+        "b594a51be5e1f59177ddbf0aec6e78d5d19d923a"
+      ],
+      "files": [
+        "CONTRIBUTING.md"
+      ],
+      "patch": "30-57f37756.patch",
+      "sha256": "ea75ae3ef8e3c42d64dd04be4966124d1ccb5bc1899a89f2a5517d7f533c7eb6",
+      "disposition": "cosmetic-not-imported",
+      "rationale": "Upstream contribution guidance is relevant when submitting to that repository, not a runtime repair or a replacement for the owner specifications here."
+    },
+    {
+      "sha": "4a068b4065d1d376344e6e9eedd51cff09d4351e",
+      "committed": "2026-10-03T13:22:32+02:00",
+      "subject": "DungeonBuddy: stop re-accepting the LFG proposal every tick and handle abandoned dungeons like HB 4.3.4, PickUp: stop the bot when the giver offers nothing for 40 s like HB 6.2.3",
+      "parents": [
+        "57f37756eba903340f07a2f4160635ffd422862e"
+      ],
+      "files": [
+        "Bots/DungeonBuddy/DungeonBuddy.cs",
+        "Bots/DungeonBuddy/LfgManager.cs",
+        "Bots/Quest/QuestOrder/ForcedQuestPickUp.cs"
+      ],
+      "patch": "31-4a068b40.patch",
+      "sha256": "520482481bd12f9492379d1255d86377b61c1294e229b27e67e61f62fb529a17",
+      "disposition": "partially-adapted",
+      "rationale": "Adopted idempotent SetDungeonCompleted timer ownership after four causal failures. Retained the current loading recovery, proposal tree and abandonment policy: the upstream patch removes recovery and changes automatic exit behavior together, while the current pickup path already provides owned bounded recovery. No claim is made that every possible LFG proposal/reset defect is eliminated."
+    },
+    {
+      "sha": "6d324b01f7d2d232a713bbfcf0f19b9be399949e",
+      "committed": "2026-10-03T13:26:11+02:00",
+      "subject": "WoWUnit: clear the reaction cache every 2 s like HB 4.3.4, a cached reaction was never refreshed",
+      "parents": [
+        "4a068b4065d1d376344e6e9eedd51cff09d4351e"
+      ],
+      "files": [
+        "Styx/WoWInternals/WoWObjects/WoWUnit.cs"
+      ],
+      "patch": "32-6d324b01.patch",
+      "sha256": "fc3626b9538b3146390a48754326f5e55557f008b8b3474cceccf3ae1d7de937",
+      "disposition": "retain-owned-implementation",
+      "rationale": "Current reactions are cached against frame/session/process/instance/actor/recipient identity and revalidated. A two-second GUID-only cache would weaken the current invalidation boundary."
+    },
+    {
+      "sha": "e15ea0a390e0cef102cabc4479e5699ef0143009",
+      "committed": "2026-10-03T13:32:15+02:00",
+      "subject": "Memory, WoWDb: build the IntPtr from a uint through an unchecked int, IntPtr(long) throws on addresses above 2 GB in the x86 process",
+      "parents": [
+        "6d324b01f7d2d232a713bbfcf0f19b9be399949e"
+      ],
+      "files": [
+        "GreenMagic/Memory.cs",
+        "Styx/WoWInternals/WoWDb.cs"
+      ],
+      "patch": "33-e15ea0a3.patch",
+      "sha256": "6da90884679acd1550bcf094686fded619746d99e0ef6087e4a6e26947b62851",
+      "disposition": "integrated",
+      "rationale": "Applied unchecked int conversion before IntPtr construction to the array reader, remote-thread argument wrapper and DBC row address. 40 causal failures become 52/52 passing x86 cases; native leaves are controlled, not dispatched."
+    },
+    {
+      "sha": "6418aeb72c713295ce49a3c3fe5644032520306e",
+      "committed": "2026-10-03T13:32:16+02:00",
+      "subject": "StyxSettings: UseFrameLock off by default, HB 3.3.5a and 4.3.4 run the tick without a global frame lock and a Sleep inside a locked tick freezes WoW",
+      "parents": [
+        "e15ea0a390e0cef102cabc4479e5699ef0143009"
+      ],
+      "files": [
+        "Styx/Helpers/StyxSettings.cs"
+      ],
+      "patch": "34-6418aeb7.patch",
+      "sha256": "e7ba4f8b45b4d144c3a3dee18c63911b6c110b054bc8fe98e6227623de7c506b",
+      "disposition": "integrated",
+      "rationale": "Disabled whole-tick frame lock in the new-settings field and default metadata. Actual settings readers/tick pass 9/9 including both saved values and exception cleanup. Existing production settings are not overwritten."
+    },
+    {
+      "sha": "50c482bc24e29113c0ce429b861e681423fa6a83",
+      "committed": "2026-10-03T13:55:24+02:00",
+      "subject": "README: point the Mega mirror at the 1.6.7.5 package",
+      "parents": [
+        "6418aeb72c713295ce49a3c3fe5644032520306e"
+      ],
+      "files": [
+        "README.md"
+      ],
+      "patch": "35-50c482bc.patch",
+      "sha256": "a52e57ec61faafc66bf438657463f21933661e151aab7476ba30d813d7548ca5",
+      "disposition": "cosmetic-not-imported",
+      "rationale": "The external binary mirror link is not a source fix and is not used to construct or verify this deployment."
+    }
+  ],
+  "review_baseline": "08433b49b82e3ac570ee7361721ef262a84ebff9",
+  "counts": {
+    "retain-owned-implementation": 7,
+    "already-covered": 15,
+    "merge-metadata": 7,
+    "cosmetic-not-imported": 4,
+    "partially-adapted": 1,
+    "integrated": 2
+  },
+  "integration": "Selective compatible integration, not a wholesale merge or claim of upstream ancestry.",
+  "reviewer": "implementing agent; no independent worker",
+  "causal_cases": {
+    "pointer_failures": 40,
+    "frame_default_failures": 3,
+    "completion_failures": 4,
+    "green_pointer_cases": 52,
+    "green_frame_cases": 9,
+    "green_completion_cases": 7,
+    "retained_september_cases": 30
+  }
+}

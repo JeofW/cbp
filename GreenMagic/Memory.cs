@@ -224,7 +224,7 @@ namespace GreenMagic
 
         public T[] ReadStructArray<T>(uint address, int elements) where T : struct
         {
-            return ReadStructArray<T>(new IntPtr(address), elements);
+            return ReadStructArray<T>(new IntPtr(unchecked((int)address)), elements);
         }
 
         public T[] ReadStructArrayRelative<T>(uint address, int elements) where T : struct
@@ -774,7 +774,7 @@ namespace GreenMagic
         public IntPtr CreateRemoteThread(IntPtr hProcess, uint startAddress, uint parameter, uint creationFlags, out uint threadId)
         {
             IntPtr tid;
-            IntPtr handle = Imports.CreateRemoteThread(hProcess, IntPtr.Zero, 0U, new IntPtr(startAddress), new IntPtr(parameter), creationFlags, out tid);
+            IntPtr handle = Imports.CreateRemoteThread(hProcess, IntPtr.Zero, 0U, new IntPtr(unchecked((int)startAddress)), new IntPtr(unchecked((int)parameter)), creationFlags, out tid);
             threadId = (uint)tid.ToInt32();
             return handle;
         }
