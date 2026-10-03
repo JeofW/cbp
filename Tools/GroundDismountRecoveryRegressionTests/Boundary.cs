@@ -125,7 +125,8 @@ namespace Styx.WoWInternals.WoWObjects
         public WoWPoint Position;
         public WoWPoint Location { get { var value = Position; global::World.Event("location"); return value; } }
         public bool IsOutdoors { get { global::World.Event("outdoors"); if (global::World.ObservationError != null) throw global::World.ObservationError; return Outdoors; } }
-        public bool WithinInteractRange => global::World.Actor.Position.DistanceSqr(Position) <= 25;
+        public virtual float InteractRange => 5;
+        public bool WithinInteractRange => global::World.Actor.Position.DistanceSqr(Position) <= InteractRange * InteractRange;
         public WoWUnit? ToUnit() => this as WoWUnit;
         public void Interact() { global::World.Event("interaction-prepare"); global::World.Interactions.Add(Guid); global::World.Event("interaction-entry"); }
         internal bool TryInteractOwned(Func<bool> admitted, bool ignoreTimer)
@@ -139,6 +140,9 @@ namespace Styx.WoWInternals.WoWObjects
         }
     }
     public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat; }
+    // Object identity participates in the shared runtime's interaction-volume
+    // selection. This dismount suite continues to exercise actual unit targets.
+    public sealed class WoWGameObject : WoWObject { }
     public sealed class Movement { public bool IsDescending; }
     public sealed class LocalPlayer : WoWUnit
     {

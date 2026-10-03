@@ -20,12 +20,14 @@ internal static class Fixture
     internal static Exception? NearbyError;
     internal static RunStatus DefaultRestResult = RunStatus.Failure;
     internal static bool GlobalCooldown;
+    internal static TimeSpan ConsecrationCooldown;
     internal static void Reset()
     {
         Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear(); Metadata.Clear(); RecoveryRoutes.Clear(); RosterObservation=null;
         LuaQueries.Clear(); LuaResult = null; Styx.WoWInternals.ObjectManager.Wow=new(); Styx.WoWInternals.ObjectManager.Resolve=null;
         DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
         GlobalCooldown = false;
+        ConsecrationCooldown = TimeSpan.Zero;
         Singular.Managers.TankManager.Instance.FirstUnit = null;
         Singular.Managers.TankManager.Instance.NeedToTaunt.Clear();
         Singular.Managers.HealerManager.Instance.FirstUnit = null;
@@ -398,6 +400,8 @@ namespace Singular.Helpers
         public static Composite WaitForCast(bool _ = true, bool __ = true) => Fixture.Nothing();
         public static Composite WaitForCastOrChannel() => Fixture.Nothing();
         public static bool IsGlobalCooldown() => Fixture.GlobalCooldown;
+        public static TimeSpan GetSpellCooldown(string name) => name == "Consecration"
+            ? Fixture.ConsecrationCooldown : throw new InvalidOperationException("Unconfigured fixture cooldown: " + name);
         public static Composite Resurrect(string _) => Fixture.Nothing();
         public static Composite Cast(string name, Func<object, bool>? requires = null) => Fixture.Submit(name, _ => Styx.StyxWoW.Me.CurrentTarget, requires);
         public static Composite Cast(string name, Func<object, WoWUnit?> select, Func<object, bool> requires) => Fixture.Submit(name, select, requires);

@@ -102,7 +102,7 @@ public static class HandoffCases {
  public static LocalPlayer Actor;public static WoWUnit Selected;public static WoWObject Loot;public static BotPoi Original;
  public static int Targets,Publications,Clears,NavClears;public static bool Ack=true;public static string Stage;public static System.Action Callback;
  public static int Interactions,Slots,Closes,Stats,Moves;public static ulong FrameGuid;public static bool AutoCloseFinalSlot;public static readonly List<ulong> Blacklisted=new();
- public static int Descents,DescendStops,Dismounts,GroundMoves,Collected;public static bool GroundMode,PreferFlight,SupportKnown=true,LineClear=true;public static float FloorZ=10;
+ public static int Descents,DescendStops,Dismounts,GroundMoves,Collected;public static bool GroundMode,PreferFlight,SupportKnown=true,LineClear=true,CorridorClear=true;public static float FloorZ=10;
  public static System.Action<int> CollectionAcknowledged;public static bool TrackCollection;
  public static System.Action<int> CollectionBeforeAcknowledgement;public static Func<int,uint> CollectionEntry;
  public static Func<uint,ulong,bool> CollectionSourceAdmission;public static ulong PendingCollectionGuid;
@@ -111,7 +111,7 @@ public static class HandoffCases {
  static void Reset(string owner){
   Stage=null;Callback=null;Targets=Publications=Clears=NavClears=0;Ack=true;
   Interactions=Slots=Closes=Stats=Moves=0;FrameGuid=0;AutoCloseFinalSlot=false;Blacklisted.Clear();Lua.Events.Handlers.Clear();
-  Descents=DescendStops=Dismounts=GroundMoves=Collected=0;PendingCollectionGuid=0;GroundMode=TrackCollection=PreferFlight=false;SupportKnown=LineClear=true;FloorZ=10;
+  Descents=DescendStops=Dismounts=GroundMoves=Collected=0;PendingCollectionGuid=0;GroundMode=TrackCollection=PreferFlight=false;SupportKnown=LineClear=CorridorClear=true;FloorZ=10;GroundTransition.PendingRemoval.Clear();
   CharacterSettings.Instance=new CharacterSettings();
   StyxWoW.AreaManager.CurrentGrindArea=null;
   foreach(string field in new[]{"_lastLootGuid","_lootAttemptCount","_lootFailCount"}){var f=typeof(LevelProbe).GetField(field,BindingFlags.Static|BindingFlags.NonPublic);f.SetValue(null,Activator.CreateInstance(f.FieldType));}
@@ -182,6 +182,21 @@ public static class HandoffCases {
  static void AddGroundLootCases(List<(string,System.Action)> cases){
   void Add(string name,System.Action body)=>cases.Add(("ground collection/"+name,()=>{Reset("loot");Targeting.Instance.FirstUnit=null;Actor.IsMoving=false;GroundMode=true;Loot=new WoWGameObject{Guid=3,Entry=183394};LootTargeting.Instance.FirstObject=Loot;Original=new BotPoi(Loot,PoiType.Loot);BotPoi.Seed(Original);Publications=0;body();}));
   void Open(){FrameGuid=Loot.Guid;Lua.Events.Fire("LOOT_OPENED");}
+  foreach(bool manual in new[]{false,true}){
+   bool close=manual;
+   Add("logged Ravager Egg model-centre obstruction / manually-grounded="+manual,()=>{
+    Loot.Entry=181385;Original.Entry=Loot.Entry;Loot.InteractRange=4.75f;
+    Loot.Location=new WoWPoint(-1449.17004f,3374.82007f,23.4654999f);Original.Location=Loot.Location;
+    Actor.Location=close?new WoWPoint(-1450.16455f,3374.43042f,23.216196f):new WoWPoint(-1448.99133f,3373.38330f,27.517929f);
+    Actor.Mounted=Actor.IsFlying=!close;Actor.IsMoving=false;Loot.WithinInteractRange=true;LineClear=false;FloorZ=23.216196f;
+    var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{
+     Check(Tick(tree)==RunStatus.Running,"logged egg approach did not retain its selected work");
+     if(!close){Check(Descents==1&&Dismounts==0&&Interactions==0,"object-centre collision vetoed supported descent");return;}
+     Check(Interactions==1&&Collected==0&&Clears==0,"grounded in-range egg was vetoed by its model centre or invented collection");
+     Open();Tick(tree);Check(Collected==1&&Stats==0,"separate exact-source loot observation did not complete the controlled egg item delivery");
+    }finally{tree.Stop(null);}
+   });
+  }
   Add("distant grounded successor selects eligible flight before dismount",()=>{PreferFlight=true;Actor.Mounted=true;Loot.Location=new WoWPoint(200,10,10);Loot.WithinInteractRange=false;
    Once(new CommonBehaviors.Actions.GroundLootApproach(()=>true));Check(Moves==1&&Dismounts==0&&GroundMoves==0&&Interactions==0,"distant eligible flight was suppressed by ground-only approach");});
   Add("distant ground-only successor keeps mount until final approach",()=>{Actor.Mounted=true;Loot.Location=new WoWPoint(200,10,10);Loot.WithinInteractRange=false;
@@ -201,9 +216,9 @@ public static class HandoffCases {
     Check(Tick(tree)==RunStatus.Running&&DescendStops>0&&Dismounts==1&&Interactions==0,"landing was not separated from dismount acknowledgement");
     Actor.Mounted=false;Tick(tree);Check(Interactions==1,"landed dismounted collection never interacted");Open();Tick(tree);Check(Collected==1,"loot dispatch failed to produce the controlled item observation");
    }finally{tree.Stop(null);}});
-  foreach(string hazard in new[]{"support-unknown","wrong-floor","line-of-sight","falling","movement-unknown","zero-range","blacklisted"}){string mode=hazard;
+  foreach(string hazard in new[]{"support-unknown","wrong-floor","blocked-corridor","falling","movement-unknown","zero-range","blacklisted"}){string mode=hazard;
    Add("approach refuses "+mode,()=>{Actor.Mounted=true;Actor.IsFlying=true;Actor.Location=new WoWPoint(10,10,40);Loot.WithinInteractRange=false;
-    if(mode=="support-unknown")SupportKnown=false;if(mode=="wrong-floor")FloorZ=30;if(mode=="line-of-sight")LineClear=false;
+    if(mode=="support-unknown")SupportKnown=false;if(mode=="wrong-floor")FloorZ=30;if(mode=="blocked-corridor")CorridorClear=false;
     if(mode=="falling"){Actor.IsFlying=false;Actor.Falling=true;}if(mode=="movement-unknown")Actor.MovementKnown=false;if(mode=="zero-range")Loot.InteractRange=0;
     if(mode=="blacklisted")Blacklisted.Add(Loot.Guid);
     Once(LevelProbe.CreateLootBehavior());Check(Descents==0&&Dismounts==0&&Interactions==0,"unsafe or unknown observation authorized descent/dismount/interaction");
@@ -216,20 +231,20 @@ public static class HandoffCases {
     }finally{tree.Stop(null);}
    });
   }
-  foreach(string hazard in new[]{"support-unknown","wrong-floor","line-of-sight","movement-unknown","falling","zero-range"}){string mode=hazard;
+  foreach(string hazard in new[]{"support-unknown","wrong-floor","blocked-corridor","movement-unknown","falling","zero-range"}){string mode=hazard;
    Add("changed landing observation releases descent: "+mode,()=>{Actor.Mounted=true;Actor.IsFlying=true;Actor.Location=new WoWPoint(10,10,40);Loot.WithinInteractRange=false;
     var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{Check(Tick(tree)==RunStatus.Running&&Descents==1,"descent control failed");
-     if(mode=="support-unknown")SupportKnown=false;if(mode=="wrong-floor")FloorZ=30;if(mode=="line-of-sight")LineClear=false;if(mode=="movement-unknown")Actor.MovementKnown=false;if(mode=="falling")Actor.Falling=true;if(mode=="zero-range")Loot.InteractRange=0;
+     if(mode=="support-unknown")SupportKnown=false;if(mode=="wrong-floor")FloorZ=30;if(mode=="blocked-corridor")CorridorClear=false;if(mode=="movement-unknown")Actor.MovementKnown=false;if(mode=="falling")Actor.Falling=true;if(mode=="zero-range")Loot.InteractRange=0;
      Tick(tree);Check(DescendStops==1&&!Actor.MovementInfo.IsDescending&&Interactions==0&&Dismounts==0,"lost landing evidence left descent input active");
     }finally{tree.Stop(null);}
    });
   }
   Add("object origin above its support does not cancel valid final descent",()=>{Actor.Mounted=true;Actor.IsFlying=true;Actor.Location=new WoWPoint(10,10,14);Loot.Location=new WoWPoint(10,10,13);Original.Location=Loot.Location;Loot.WithinInteractRange=false;
    var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{Check(Tick(tree)==RunStatus.Running&&Descents==1,"supported landing control failed");Actor.Location=new WoWPoint(10,10,11);Tick(tree);Check(Moves==0&&Actor.MovementInfo.IsDescending,"valid landing below an object's origin restarted flight before reaching support");}finally{tree.Stop(null);}});
-  Add("ground navigation dispatch is rate bounded without observed movement",()=>{Loot.Location=new WoWPoint(20,10,10);Loot.WithinInteractRange=false;var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{Tick(tree);Tick(tree);Check(GroundMoves==1,"unchanged position flooded ground path requests");}finally{tree.Stop(null);}});
+  Add("pending shared movement never becomes collection proof",()=>{Loot.Location=new WoWPoint(20,10,10);Loot.WithinInteractRange=false;var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{Tick(tree);Tick(tree);Check(GroundMoves>0&&Interactions==0&&Collected==0&&Clears==0,"pending controlled travel fabricated collection or lost the selected object");}finally{tree.Stop(null);}});
   foreach(string hazard in new[]{"falling","moving","movement-unknown","range","object-location"}){string mode=hazard;
-   Add("final sight callback cannot donate stale interaction permission: "+mode,()=>{int reads=0;System.Action mutation=null;mutation=()=>{if(++reads<2){Stage="ground-los";Callback=mutation;return;}if(mode=="falling")Actor.Falling=true;if(mode=="moving")Actor.IsMoving=true;if(mode=="movement-unknown")Actor.MovementKnown=false;if(mode=="range")Loot.WithinInteractRange=false;if(mode=="object-location")Loot.Location=new WoWPoint(12,10,10);};Stage="ground-los";Callback=mutation;
-    Once(LevelProbe.CreateLootBehavior());Check(reads==2&&Interactions==0,"final collision observation bypassed fresh movement/range/position checks");
+   Add("final usability callback cannot donate stale interaction permission: "+mode,()=>{int reads=0;System.Action mutation=null;mutation=()=>{if(++reads<2){Stage="object-usability";Callback=mutation;return;}if(mode=="falling")Actor.Falling=true;if(mode=="moving")Actor.IsMoving=true;if(mode=="movement-unknown")Actor.MovementKnown=false;if(mode=="range")Loot.WithinInteractRange=false;if(mode=="object-location")Loot.Location=new WoWPoint(12,10,10);};Stage="object-usability";Callback=mutation;
+    Once(LevelProbe.CreateLootBehavior());Check(reads==2&&Interactions==0,"final usability observation bypassed fresh movement/range/position checks");
    });
   }
   Add("stopping a pending descent releases its input",()=>{Actor.Mounted=true;Actor.IsFlying=true;Actor.Location=new WoWPoint(10,10,40);Loot.WithinInteractRange=false;
@@ -263,9 +278,9 @@ public static class HandoffCases {
    Check(Once(approach)==RunStatus.Running&&GroundMoves==1,"initial ground request missing");
    var clock=approach.GetType().GetField("_lastProgressUtc",BindingFlags.Instance|BindingFlags.NonPublic);
    clock.SetValue(approach,DateTime.UtcNow.AddSeconds(-16));
-   Check(Once(approach)==RunStatus.Running&&NavClears==1,"Moved without displacement did not replan");
+   Check(Once(approach)==RunStatus.Running&&NavClears==0&&(int)approach.GetType().GetField("_routeRetries",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(approach)==1,"Moved without displacement did not release its shared route exactly once");
    clock.SetValue(approach,DateTime.UtcNow.AddSeconds(-16));Once(approach);
-   Check(Clears==1&&Blacklisted.Contains(Loot.Guid)&&NavClears==1,"stationary route did not release after bounded recomputation");
+   Check(Clears==1&&Blacklisted.Contains(Loot.Guid)&&NavClears==0,"stationary route did not release after bounded recomputation or globally cleared successor navigation");
   });
   Add("an object consumed before interaction is not used",()=>{Actor.IsMoving=true;Stage="stop";Callback=()=>((WoWGameObject)Loot).CanLoot=false;Once(LevelProbe.CreateLootBehavior());Check(Interactions==0,"consumed object was interacted after setup");});
   Add("full inventory does not issue collection actions",()=>{ProfileManager.CurrentProfile=new Profile();Actor.FreeNormalBagSlots=0;Actor.Mounted=true;Once(LevelProbe.CreateLootBehavior());Check(Interactions==0&&Dismounts==0&&Moves==0&&Collected==0,"full inventory was treated as an acquisition receipt");});
@@ -435,7 +450,7 @@ public class ItemInfo {public int UniqueCount,BeginQuestId;}
  public class WoWUnit:WoWObject {public bool IsAlive=true,IsHostile=true,IsPlayer,IsMoving,Combat,CanSkin,CanLoot=true,Aggro;private bool withinLootRange=true;public bool WithinLootRange{get{bool observed=withinLootRange;HandoffCases.Event("loot-range");return observed;}set{withinLootRange=value;}}public bool Dead=>!IsAlive;public uint FactionId=1;public int Level=10,Race,Class;public WoWUnit OwnedByUnit,CurrentTarget;public double Range=5;public double Distance=>Range;public double DistanceSqr=>Range*Range;public double MyAggroRange=>15;public bool InLineOfSpellSight=true;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public WoWCreatureSkinType SkinType=>WoWCreatureSkinType.Leather;
   public void Target(){HandoffCases.Targets++;if(HandoffCases.Ack)StyxWoW.Me.CurrentTarget=this;HandoffCases.Event("target");}public void ClearTarget(){CurrentTarget=null;}
  }
- public class WoWGameObject:WoWObject {public bool IsHerb,IsMineral,CanLoot=true;}
+ public class WoWGameObject:WoWObject {public bool IsHerb,IsMineral,CanLoot=true;public bool CanUse()=>!IsDisabled&&CanLoot;public bool CanUseNow(){HandoffCases.Event("object-usability");return CanUse()&&WithinInteractRange;}}
  public class WoWItem:WoWObject {public global::ItemInfo ItemInfo=new();}
  public class LocalPlayer:WoWUnit {public List<WoWItem> CarriedItems=new();public uint MapId,FreeBagSlots=100,FreeNormalBagSlots=100;public bool Mounted,IsCasting,IsOnTransport,OnTaxi,IsFlying,Falling,MovementKnown=true;public ShapeshiftForm Shapeshift;public int ChanneledCastingSpellId,CanSkinLevel=450;/* ACTUAL_COMBAT_OBSERVATION */ public WoWUnit Pet;public bool PetInCombat=>Pet?.Combat==true;public bool GotAlivePet=>Pet?.IsAlive==true;public MoveState MovementInfo=new();public bool TryGetMovementState(out uint flags,out ulong transport){flags=(IsFlying?0x02000000u:0u)|(Falling?0x2000u:0u);transport=IsOnTransport?5UL:0UL;return MovementKnown;}}
  public class MoveState{public bool IsDescending;}
@@ -448,16 +463,40 @@ public class ItemInfo {public int UniqueCount,BeginQuestId;}
 /* Controlled POI effects. */ namespace Styx.Logic.POI {public enum PoiType{None,Kill,Loot,Skin,Harvest,Sell,Repair,Train,Buy,Mail,Fly,Hotspot,Quest,QuestPickUp,QuestTurnIn,InnKeeper}public class BotPoi{static BotPoi current;public static long CurrentGeneration,CurrentWorkGeneration;public PoiType Type;public ulong Guid;public uint Entry;public WoWObject AsObject;public WoWPoint Location;public BotPoi(PoiType type){Type=type;}public BotPoi(WoWObject obj,PoiType type){Type=type;Guid=obj.Guid;Entry=obj.Entry;AsObject=obj;Location=obj.Location;HandoffCases.Event("build");}public static BotPoi Current{get=>current;set{if(ReferenceEquals(current,value))return;current=value;CurrentGeneration++;CurrentWorkGeneration++;HandoffCases.Publications++;HandoffCases.Event("publish");}}public static void Seed(BotPoi value)=>current=value;public static void Clear(string reason){HandoffCases.Clears++;Current=new BotPoi(PoiType.None);}}}
 /* Controlled diagnostics/settings. */ namespace Styx.Helpers {public static class Logging{public static void Write(string text,params object[] args){if(text.StartsWith("Looting "))HandoffCases.Event("loot-log");else if(text.StartsWith("Blacklisting lootable to avoid"))HandoffCases.Event("attempt-log");else if(text.StartsWith("[LB] Loot object"))HandoffCases.Event("missing-log");}public static void WriteDebug(string text,params object[] args){}public static void WriteDiagnostic(string text,params object[] args){}}public class LevelbotSettings{public static LevelbotSettings Instance=new();public bool GroundMountFarmingMode;}public class CharacterSettings{public static CharacterSettings Instance=new();public bool SkinMobs,NinjaSkin;}}
 /* Controlled status. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot{public static string StatusText{set{HandoffCases.Event("status");}}}}
-/* Controlled navigation. */ namespace Styx.Logic.Pathing {
- public enum GroundTransitionState{Pending,Ready,Unavailable,Revoked}public enum GroundTransitionPurpose{Interaction,Combat}
- public sealed class GroundTransition:IDisposable{readonly GroundTransitionPurpose purpose;public GroundTransition(GroundTransitionPurpose purpose){this.purpose=purpose;}public GroundTransitionState Tick(WoWPoint destination,WoWObject subject,Func<bool> admitted)=>!admitted()?GroundTransitionState.Revoked:CanActUnmounted(admitted)?GroundTransitionState.Ready:GroundTransitionState.Pending;public void Cancel(){}public void Dispose(){}public static bool CanActUnmounted(Func<bool> admitted=null){admitted??=()=>true;var actor=ObjectManager.Me;return actor!=null&&admitted()&&!actor.Mounted&&!actor.IsFlying&&!actor.Falling&&!actor.OnTaxi&&!actor.IsOnTransport&&admitted();}}
- public static class Navigator{public static object NavigationProvider;public static void Clear(){HandoffCases.NavClears++;HandoffCases.Event("nav-clear");}public static MoveResult MoveTo(WoWPoint point){HandoffCases.GroundMoves++;HandoffCases.Event("ground-move");return MoveResult.Moved;}public static RunStatus GetRunStatusFromMoveResult(MoveResult value)=>RunStatus.Failure;}
- public static class Flightor{public static void MoveToGroundInteraction(WoWPoint point,Func<bool> admitted){if(admitted())MoveTo(point);}public static bool PreferFlightForGroundInteraction(WoWPoint point,float range)=>HandoffCases.PreferFlight;public static void MoveTo(WoWPoint point){HandoffCases.Moves++;HandoffCases.Event("move");}}
-}
+/* Controlled navigation. */ namespace Styx.Logic.Pathing {public static class Navigator{public static object NavigationProvider;public static void Clear(){HandoffCases.NavClears++;HandoffCases.Event("nav-clear");}public static MoveResult MoveTo(WoWPoint point){HandoffCases.GroundMoves++;HandoffCases.Event("ground-move");return MoveResult.Moved;}public static RunStatus GetRunStatusFromMoveResult(MoveResult value)=>RunStatus.Failure;}public static class Flightor{public static void MoveToGroundInteraction(WoWPoint point,Func<bool> admitted){if(admitted())MoveTo(point);}public static bool PreferFlightForGroundInteraction(WoWPoint point,float range)=>HandoffCases.PreferFlight;public static void MoveTo(WoWPoint point){HandoffCases.Moves++;HandoffCases.Event("move");}}}
 /* Controlled collision observations; the production owner interprets them. */ namespace Styx.WoWInternals.World {public static class GameWorld {public enum CGWorldFrameHitFlags{HitTestGroundAndStructures}public static bool TraceLine(WoWPoint from,WoWPoint to,CGWorldFrameHitFlags flags,out WoWPoint hit){HandoffCases.Event("ground-trace");hit=new WoWPoint(from.X,from.Y,HandoffCases.FloorZ);return HandoffCases.SupportKnown;}public static bool IsInLineOfSight(WoWPoint from,WoWPoint to){HandoffCases.Event("ground-los");return HandoffCases.LineClear;}}}
-/* Controlled statistics/combat landing. */ namespace Styx.Logic.Combat {
+/* Controlled statistics. */ namespace Styx.Logic.Combat {public static class GameStats{public static void LootedMob(){HandoffCases.Stats++;HandoffCases.Event("stats");}}}
+/* Controlled shared-transition API for the actual loot factory. Geometry, native ownership and landing are exercised together with this actual wrapper in GroundCollectionIntegrationRegressionTests; these fixture effects are not that proof. */ namespace Styx.Logic.Pathing {
+ public enum GroundTransitionState{Pending,Ready,Unavailable,Revoked} public enum GroundTransitionPurpose{Interaction,Combat}
+ public sealed class GroundTransition:IDisposable{
+  public GroundTransition(GroundTransitionPurpose purpose){}
+  public string Phase=>"controlled-ground-transition";private LocalPlayer actor;private ulong actorGuid;private bool ownsDescent;
+  public static readonly HashSet<LocalPlayer> PendingRemoval=new();
+  public static bool CanActUnmounted(Func<bool> admitted=null){var actor=StyxWoW.Me;return (admitted?.Invoke()??true)&&actor!=null&&actor.IsValid&&actor.IsAlive&&!actor.Mounted&&!actor.IsFlying&&!actor.Falling&&!actor.OnTaxi&&!actor.IsOnTransport&&actor.MovementKnown&&(admitted?.Invoke()??true);}
+  public static bool CanInteractWith(WoWObject target,Func<bool> admitted=null)=>target!=null&&target.IsValid&&target.WithinInteractRange&&CanActUnmounted(admitted)&&(target is WoWGameObject||HandoffCases.LineClear);
+  public static bool TryInteractWith(WoWObject target,Func<bool> admitted,bool ignoreTimer=false){if(!CanInteractWith(target,admitted))return false;HandoffCases.Event("interaction-prepare");if(!admitted()||!CanInteractWith(target,admitted))return false;target.Interact(ignoreTimer);return admitted();}
+  public GroundTransitionState Tick(WoWPoint destination,WoWObject subject,Func<bool> admitted){
+   if(!admitted()){Cancel();return GroundTransitionState.Revoked;}
+   if(!HandoffCases.GroundMode)return CanInteractWith(subject,admitted)?GroundTransitionState.Ready:GroundTransitionState.Pending;
+   actor??=StyxWoW.Me;actorGuid=actor.Guid;
+   if(!actor.MovementKnown||actor.Falling||!HandoffCases.SupportKnown||!HandoffCases.CorridorClear){Cancel();return GroundTransitionState.Pending;}
+   if(actor.IsFlying){Styx.WoWInternals.World.GameWorld.TraceLine(actor.Location,destination,Styx.WoWInternals.World.GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures,out var hit);
+    if(!admitted()||Math.Abs(hit.Z-destination.Z)>subject.InteractRange){Cancel();return GroundTransitionState.Pending;}
+    if(!ownsDescent){WoWMovement.Move(WoWMovement.MovementDirection.Descend);ownsDescent=true;}return GroundTransitionState.Pending;}
+   if(ownsDescent)Cancel();
+   if(actor.Location.Distance(destination)>Math.Max(20,subject.InteractRange*3)){if(HandoffCases.PreferFlight)Flightor.MoveTo(destination);else Navigator.MoveTo(destination);return GroundTransitionState.Pending;}
+   if(actor.Mounted){if(PendingRemoval.Add(actor))Mount.Dismount("controlled shared interaction removal");return GroundTransitionState.Pending;}
+   PendingRemoval.Remove(actor);
+   if(!subject.WithinInteractRange){Navigator.MoveTo(destination);return GroundTransitionState.Pending;}
+   if(actor.IsMoving)WoWMovement.MoveStop();
+   return admitted()?GroundTransitionState.Ready:GroundTransitionState.Revoked;
+  }
+  public void Cancel(){if(ownsDescent&&ReferenceEquals(StyxWoW.Me,actor)&&actor.Guid==actorGuid)WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);ownsDescent=false;}
+  public void Dispose()=>Cancel();
+ }
+}
+/* Retained standalone combat admission boundary. */ namespace Styx.Logic.Combat {
  public sealed class MountedCombatTransition{public static bool IsMountedOrFlying(LocalPlayer actor)=>actor!=null&&(actor.Mounted||actor.IsFlying||actor.Shapeshift is ShapeshiftForm.FlightForm or ShapeshiftForm.EpicFlightForm);public GroundTransitionState TickExplicit(WoWUnit subject,Func<bool> admitted)=>!admitted()?GroundTransitionState.Revoked:GroundTransition.CanActUnmounted(admitted)?GroundTransitionState.Ready:GroundTransitionState.Pending;public void Cancel(){}public static ActionLease CaptureActionLease(WoWObject subject,Func<bool> admitted)=>admitted()==true?new ActionLease(admitted):null;public sealed class ActionLease{readonly Func<bool> admitted;public ActionLease(Func<bool> admitted){this.admitted=admitted;}public bool Current=>GroundTransition.CanActUnmounted(admitted);}}
- public static class GameStats{public static void LootedMob(){HandoffCases.Stats++;HandoffCases.Event("stats");}}
 }
 /* Controlled frame observation and slot dispatch. */ namespace Styx.Logic.Inventory.Frames.LootFrame {public class LootFrame{public static readonly LootFrame Instance=new();public ulong LootingObjectGuid=>HandoffCases.FrameGuid;public bool IsVisible=>LootingObjectGuid!=0;public int LootItems=>2;public uint GetItemId(int slot)=>HandoffCases.GroundMode&&slot==0?28116u:(uint)(100+slot);public void Loot(int slot){if(HandoffCases.GroundMode&&slot==0&&LootingObjectGuid==HandoffCases.Loot.Guid&&!HandoffCases.Actor.Mounted&&!HandoffCases.Actor.IsFlying){if(HandoffCases.TrackCollection)HandoffCases.PendingCollectionGuid=LootingObjectGuid;else HandoffCases.Collected++;}HandoffCases.Slots++;HandoffCases.Event("slot");if(HandoffCases.AutoCloseFinalSlot&&(HandoffCases.GroundMode?slot==1:HandoffCases.Slots==2))HandoffCases.FrameGuid=0;}}}
 """;
