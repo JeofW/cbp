@@ -267,7 +267,7 @@ internal static class DirectGameObjectPipelineRegressionTests
 
     private sealed class LoadedObject : IDisposable
     {
-        private readonly IntPtr memory = Marshal.AllocHGlobal(4096);
+        private readonly IntPtr memory = QuestFixtureBuffer.Allocate(4096);
         private readonly UseGameObjectObjective owner;
         private readonly QuestInventorySnapshotRegressionTests.Fixture fixture;
         private readonly WoWPoint location;

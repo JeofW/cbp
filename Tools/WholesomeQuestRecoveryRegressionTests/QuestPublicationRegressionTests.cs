@@ -368,7 +368,7 @@ internal static class QuestPublicationRegressionTests
         private readonly Memory memory = (Memory)RuntimeHelpers.GetUninitializedObject(typeof(Memory));
         private readonly ThreadLocal<Dictionary<IntPtr, byte[]>> cache = new ThreadLocal<Dictionary<IntPtr, byte[]>>(() => new());
         private readonly ThreadLocal<bool> enabled = new ThreadLocal<bool>(() => true);
-        private readonly IntPtr storage = Marshal.AllocHGlobal(65536);
+        private readonly IntPtr storage = QuestFixtureBuffer.Allocate(65536);
         private IntPtr readHandle;
         private readonly uint descriptor;
         private readonly List<(FieldInfo Field, object? Value)> profileState = new();
@@ -438,7 +438,12 @@ internal static class QuestPublicationRegressionTests
           }
           catch { Dispose(); throw; }
         }
-        private void Bytes(uint address, byte[] bytes) => cache.Value![new IntPtr(unchecked((int)address))] = bytes;
+        private void Bytes(uint address, byte[] bytes)
+        {
+            if (address == 0 || bytes.Length == 0 || (ulong)address + (uint)bytes.Length > QuestFixtureBuffer.SyntheticGlobalLimit)
+                throw new InvalidOperationException("A fixed client observation escaped the fixture's reserved address range.");
+            cache.Value![new IntPtr(unchecked((int)address))] = bytes;
+        }
         private static void Write(uint address, uint value) => Marshal.WriteInt32(new IntPtr(unchecked((int)address)), unchecked((int)value));
         internal void SetLevel(uint level)
         {

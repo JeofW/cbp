@@ -203,7 +203,7 @@ internal static class QuestInventorySnapshotRegressionTests
         }
         private uint Allocate(int bytes)
         {
-            IntPtr address = Marshal.AllocHGlobal(bytes); allocations.Add(address); Marshal.Copy(new byte[bytes], 0, address, bytes);
+            IntPtr address = QuestFixtureBuffer.Allocate(bytes); allocations.Add(address); Marshal.Copy(new byte[bytes], 0, address, bytes);
             return unchecked((uint)address.ToInt32());
         }
         internal void MainSlot(int slot, ulong guid) => Write64(Main + (uint)slot * 8, guid);

@@ -6,7 +6,7 @@ if (IntPtr.Size != 4 || Styx.WoWInternals.ObjectManager.Executor != null)
 var assembly = Assembly.Load("WholesomeQuestRecoveryRegressionTests");
 string family = args.Length > 0 ? args[0] : "DirectGameObjectPipelineRegressionTests";
 int repeats = args.Length > 1 ? int.Parse(args[1]) : 3;
-if (family is not ("DirectGameObjectPipelineRegressionTests" or "QuestInventorySnapshotRegressionTests")
+if (family is not ("DirectGameObjectPipelineRegressionTests" or "QuestInventorySnapshotRegressionTests" or "QuestFixtureIsolationRegressionTests")
     || repeats < 1 || repeats > 20) throw new ArgumentOutOfRangeException(nameof(args));
 var method = assembly.GetType(family, true)!.GetMethod("Run", BindingFlags.NonPublic | BindingFlags.Static)!;
 for (int repeat = 1; repeat <= repeats; repeat++)
