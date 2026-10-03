@@ -48,6 +48,16 @@ extracts=[]
 def take(rel, marker):
     value=member(rel, marker); extracts.append({"path":rel,"marker":marker,"sha256":sha256(value.encode()).hexdigest()}); return value
 
+# The patrol admission member is expression-bodied. Copy it exactly up to its
+# terminator, independently of the controlled actor/quest/cache test boundary.
+patrol_source=text("Bots/Quest/QuestOrder/ForcedQuestTurnIn.cs")
+patrol_marker="private bool SearchCurrent() =>"
+if patrol_source.count(patrol_marker)!=1:
+    raise RuntimeError("ambiguous actual patrol admission")
+patrol_start=patrol_source.index(patrol_marker)
+patrol_member=patrol_source[patrol_start:patrol_source.index(";",patrol_start)+1]
+extracts.append({"path":"Bots/Quest/QuestOrder/ForcedQuestTurnIn.cs","marker":patrol_marker,"sha256":sha256(patrol_member.encode()).hexdigest()})
+
 published_source=text("Bots/Quest/PublishedQuestRoot.cs")
 extracts.append({"path":"Bots/Quest/PublishedQuestRoot.cs","marker":"<full-linked-source>","sha256":sha256(published_source.encode()).hexdigest()})
 level_parts=[
@@ -80,6 +90,7 @@ using Styx;using Styx.Combat.CombatRoutine;using Styx.Helpers;using Styx.Logic;u
 generated=header+f"""
 namespace Bots.Quest{{public partial class QuestBot{{public static Func<PrioritySelector> RootFactory;public static PrioritySelector CreateRoot()=>RootFactory?.Invoke()??new PrioritySelector();{chr(10).join(quest_parts)}}}}}
 namespace Bots.Grind{{public partial class LevelBot{{{chr(10).join(level_parts)}}}}}
+namespace Bots.Quest.QuestOrder{{public partial class ForcedQuestTurnIn{{{patrol_member}}}}}
 namespace Singular{{public partial class SingularRoutine:CombatRoutine{{
 private Composite _combatBehavior,_combatBuffsBehavior,_healBehavior,_preCombatBuffsBehavior,_pullBehavior,_pullBuffsBehavior,_restBehavior;private WoWClass _myClass=WoWClass.Paladin;
 private static LocalPlayer Me=>StyxWoW.Me;internal static event EventHandler<WoWContextEventArg> OnWoWContextChanged;internal static WoWContext LastWoWContext{{get;set;}}internal static WoWContext CurrentWoWContext=>WoWContext.Normal;

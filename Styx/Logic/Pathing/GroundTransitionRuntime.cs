@@ -22,7 +22,7 @@ public sealed record GroundTransitionDiagnostic(long Owner, long PoiGeneration, 
     int MeshPoints, string[] MeshAreas, int CandidateAttempts, double ElapsedSeconds,
     bool? ActorOutdoors, bool? Supported, bool? Descending, bool? InteractionReady,
     bool? OnTransport, bool? Immobilized, double? Displacement, double? SecondsWithoutDisplacement,
-    int FlightRequestId, int? MeshRequestId, IReadOnlyList<GroundApproachRayObservation> Rays);
+    int FlightRequestId, int? MeshRequestId, IReadOnlyList<GroundApproachRayObservation> Rays, string? TravelModeReason = null);
 
 internal static class GroundDismountDispatchContext
 {
@@ -60,6 +60,12 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     private GroundApproachSearch? _search;
     private GroundApproachQueries? _queries;
     private bool _held, _cancelled, _groundTravelSelected;
+    private bool _flightDepartureBlocked;
+    private WoWPoint _groundReviewPosition;
+    private double _nextFlightReview;
+    private bool _flightReviewStopPending;
+    private double _flightReviewStarted = double.NaN;
+    private string _travelModeReason = "not-evaluated";
     private readonly GroundTravelMount _groundMount = new();
     private float _radius, _height;
     private uint? _flags;
@@ -113,7 +119,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         && ReferenceEquals(Flightor.RequestIdentity, _flightToken)
         && (_mesh == null || ReferenceEquals(_mesh.RequestIdentity, _meshToken));
     public double Now => MonotonicClockOverride?.Invoke() ?? (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency;
-    public bool SearchExhausted => _search?.Exhausted == true;
+    public bool SearchExhausted => _flightDepartureBlocked || _search?.Exhausted == true;
     internal bool Matches(WoWPoint destination, WoWObject? subject)
     {
         if (!Current || !ReferenceEquals(_context.Subject, subject)) return false;
@@ -177,9 +183,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             && (_context.Subject != null
                 ? GroundTransition.CanInteractWith(_context.Subject, () => Current)
                 : interactionPosition.Distance2DSqr(_context.Destination) <= 2.25f && Math.Abs(interactionPosition.Z - _context.Destination.Z) <= .9f);
-        bool preferFlight = !_groundTravelSelected && _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 60
-            && !onTransport && !swimming && !immobile && (_actorOutdoors = actor.IsOutdoors) == true && !actor.Combat
-            && Flightor.PreferFlightForGroundInteraction(_context.Destination, 3f);
+        bool preferFlight = ReviewFlight(position, flying, onTransport, swimming, immobile);
         RequireCurrent();
         // Sample after optional Lua/travel observations. Sampling before them
         // makes ordinary forward motion stale the footprint on every tick.
@@ -201,11 +205,73 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         {
             _progressPosition = position; _progressAt = Now;
         }
-        bool groundTravel = _purpose == GroundTransitionPurpose.Transit
+        bool groundTravel = _purpose == GroundTransitionPurpose.Transit && !preferFlight
             || _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 12
                 && (_groundTravelSelected || !preferFlight);
         return new GroundMotion(position, mounted, flying, falling, swimming, onTransport, immobile, supported,
-            actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel);
+            actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel, _flightReviewStopPending);
+    }
+
+    private bool ReviewFlight(WoWPoint position, bool flying, bool onTransport, bool swimming, bool immobile)
+    {
+        var actor = _context.Actor;
+        if (_purpose == GroundTransitionPurpose.Combat || flying || position.Distance(_context.Destination) <= 60
+            || onTransport || swimming || immobile || actor.Combat
+            || _groundTravelSelected && _search?.Plan is { ProgressOnly: false })
+        {
+            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
+            return false;
+        }
+        bool reviewingGround = _groundTravelSelected;
+        double now = Now;
+        if (_flightReviewStopPending && now - _flightReviewStarted >= 3)
+        {
+            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
+            _groundTravelSelected = true; _groundReviewPosition = position; _nextFlightReview = now + 3;
+            _travelModeReason = "flight-decision-stop-unobserved; ground-owner-retained";
+            return false;
+        }
+        float reviewDistance = _flightDepartureBlocked ? 4 : 16;
+        if (reviewingGround && !_flightReviewStopPending
+            && (now < _nextFlightReview || position.Distance2DSqr(_groundReviewPosition) < reviewDistance * reviewDistance))
+            return false;
+        try
+        {
+            bool outdoors = actor.IsOutdoors;
+            if (outdoors && actor.IsMoving && Flightor.CanFly)
+            {
+                RequireCurrent();
+                // Travel cost owns an exact origin. A moving actor can invalidate
+                // that optional snapshot before it returns; observe a bounded
+                // stop before choosing a different travel owner.
+                if (!_flightReviewStopPending) _flightReviewStarted = now;
+                _flightReviewStopPending = true;
+                _travelModeReason = "flight-capable; decision-awaits-observed-stop";
+                return false;
+            }
+            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
+            bool eligible = outdoors && Flightor.PreferFlightForGroundInteraction(_context.Destination, 3f);
+            RequireCurrent();
+            _actorOutdoors = outdoors;
+            _travelModeReason = eligible ? "eligible-flight-awaiting-local-geometry"
+                : outdoors ? "flight-unavailable-or-uneconomical" : "indoor-ground-departure";
+            if (!eligible) _flightDepartureBlocked = false;
+            if (reviewingGround)
+            {
+                _groundReviewPosition = position; _nextFlightReview = now + (_flightDepartureBlocked ? 1 : 3);
+                if (eligible) _groundTravelSelected = false;
+            }
+            return eligible;
+        }
+        catch (ObservationUnavailableException) when (reviewingGround && Current)
+        {
+            // An optional mode review cannot park an already-authorized ground
+            // journey. UNKNOWN does not authorize a new flight or mount action.
+            _groundReviewPosition = position; _nextFlightReview = now + 3;
+            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
+            _travelModeReason = "optional-flight-review-unknown; ground-owner-retained";
+            return false;
+        }
     }
 
     private bool SupportedAt(WoWPoint position)
@@ -266,6 +332,25 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         if (_search == null)
         {
             WoWPoint position = _context.Actor.Location;
+            if (_purpose != GroundTransitionPurpose.Combat && (_flags.GetValueOrDefault() & 0x02000000u) == 0)
+            {
+                // Hold() precedes Search(). Wait for that stop observation before
+                // using the actor's current footprint as takeoff permission.
+                if (_context.Actor.IsMoving) return null;
+                var offsets = new[] { (0f, 0f), (_radius, 0f), (-_radius, 0f), (0f, _radius), (0f, -_radius) };
+                var columns = offsets.Select(offset => new WorldLine(position.Add(offset.Item1, offset.Item2, .25f),
+                    position.Add(offset.Item1, offset.Item2, Math.Max(40, _height + 1)))).ToArray();
+                var overhead = _queries.Trace(columns, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures);
+                RequireCurrent();
+                if (!_context.Actor.Location.Equals(position)) throw Unknown("actor moved during takeoff column observation");
+                _flightDepartureBlocked = overhead.Any(ray => ray.Hit);
+                if (_flightDepartureBlocked)
+                {
+                    _travelModeReason = "takeoff-column-blocked; walk-to-open-ground";
+                    return null;
+                }
+            }
+            else _flightDepartureBlocked = false;
             _actorOutdoors = _context.Actor.IsOutdoors;
             bool covered = _actorOutdoors == false;
             RequireCurrent();
@@ -274,7 +359,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             if (gameObject != null && (!float.IsFinite(objectRange) || objectRange <= 0))
                 throw Unknown("selected object's interaction range unavailable");
             _search = new GroundApproachSearch(position, _context.Destination, _radius, _height,
-                _purpose == GroundTransitionPurpose.Interaction, covered, _queries,
+                _purpose != GroundTransitionPurpose.Combat, covered, _queries,
                 () => Current && (gameObject == null || gameObject.InteractRange == objectRange), objectRange);
         }
         return _search.Step();
@@ -297,6 +382,30 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     {
         RequireCurrent();
         if (!Validate(plan)) throw Unknown("exterior approach observation changed");
+        var actor = _context.Actor;
+        if (!actor.IsFlying && WorldQueryObservation.ReadGroundUnitState(actor).Mounted
+            && !Flightor.MountHelper.Mounted)
+        {
+            RequireCurrent();
+            if (_purpose == GroundTransitionPurpose.Combat || actor.Combat) return;
+            // A ground mount cannot acknowledge preparation of the selected
+            // flying mount. Reuse the observed-support and actor/session lease
+            // for one removal, then await a later unmounted observation. This
+            // optional upgrade never authorizes dismounting for incidental aggro.
+            Hold();
+            RequireCurrent();
+            GroundDismountState state = DismountCore(() => !actor.Combat);
+            _travelModeReason = "ground-to-flight-upgrade; unmount-unobserved";
+            if (state is GroundDismountState.Expired or GroundDismountState.Rejected)
+            {
+                _groundReviewPosition = actor.Location; _nextFlightReview = Now + 3;
+                _groundTravelSelected = true;
+                _travelModeReason = "flight-upgrade-deferred; ground-owner-retained";
+                Walk();
+            }
+            return;
+        }
+        RequireCurrent();
         _held = false;
         Flightor.MoveToOwnedExterior(plan.AirWaypoint, () => Current, token => _flightToken = token, _routeLease);
         RequireCurrent();
@@ -342,9 +451,12 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         RequireCurrent();
     }
 
-    public GroundDismountState Dismount()
+    public GroundDismountState Dismount() => DismountCore(null);
+
+    private GroundDismountState DismountCore(Func<bool>? additionalAdmission)
     {
         RequireCurrent();
+        if (additionalAdmission?.Invoke() == false) return GroundDismountState.Rejected;
         double now = Now;
         if (!double.IsFinite(now)) throw Unknown("dismount monotonic clock unavailable");
         var pending = _pendingDismount;
@@ -372,7 +484,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             // Checking position is pure; a new collision query here would replace
             // the Lua action being prepared by the shared executor.
             submitted = Mount.TryDismountOwned("Ground transition: " + _purpose,
-                () => Current && actor.Location.Equals(position) && Current,
+                () => Current && actor.Location.Equals(position) && additionalAdmission?.Invoke() != false && Current,
                 () => _pendingDismount = new PendingDismountLease(leaseContext, now));
         }
         finally { GroundDismountDispatchContext.Owner = previousOwner; }
@@ -428,8 +540,13 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     {
         RequireCurrent();
         if (_mesh == null) throw Unknown("ground navigator unavailable");
+        if (!_groundTravelSelected)
+        {
+            _groundReviewPosition = _context.Actor.Location;
+            _nextFlightReview = Now + (_flightDepartureBlocked ? 1 : 3);
+        }
         _groundTravelSelected = true;
-        if (_purpose != GroundTransitionPurpose.Combat && _context.Actor.Location.Distance(_context.Destination) > 12
+        if (!_flightDepartureBlocked && _purpose != GroundTransitionPurpose.Combat && _context.Actor.Location.Distance(_context.Destination) > 12
             && _groundMount.Wait(_context, Now, () => Current, Hold)) return;
         var actor = _context.Actor;
         if (actor.IsCasting || actor.ChanneledCastingSpellId != 0) return;
@@ -466,7 +583,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             _actorOutdoors, observation?.Supported, observation?.Descending, observation?.InteractionReady,
             observation?.OnTransport, observation?.Immobilized, _displacement, _progressPosition == null ? null : Now - _progressAt,
             RuntimeHelpers.GetHashCode(_flightToken), _meshToken == null ? null : RuntimeHelpers.GetHashCode(_meshToken),
-            Array.AsReadOnly(_rays.ToArray()));
+            Array.AsReadOnly(_rays.ToArray()), _travelModeReason);
         RequireCurrent();
         _lastPhase = phase; _lastLog = Now;
         Volatile.Write(ref _lastObservation, record);

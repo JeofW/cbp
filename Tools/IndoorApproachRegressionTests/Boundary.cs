@@ -18,7 +18,7 @@ internal static class World
     internal static readonly List<(WorldLine Line, GameWorld.CGWorldFrameHitFlags Flags, bool Hit, WoWPoint Point)> Rays = new();
     internal static int Dismounts, Descents, Stops;
     internal static bool Sight, MissingMesh, PartialPath, WrongFloor, Liquid, BlockedDoor, MissingSupport;
-    internal static bool PreferFlight;
+    internal static bool PreferFlight, FlightMountObserved, FlightCostRequiresStop;
     internal static Exception? ObservationError;
     internal static System.Action<string>? Callback;
     internal static WoWPoint Door = new(205, 0, 0);
@@ -30,7 +30,7 @@ internal static class World
         Styx.BotEvents.Stop();
         RawFlights.Clear(); ExteriorFlights.Clear(); Walks.Clear(); Diagnostics.Clear(); Errors.Clear(); Rays.Clear(); Interactions.Clear();
         Dismounts = Descents = Stops = 0;
-        Sight = true; MissingMesh = PartialPath = WrongFloor = Liquid = BlockedDoor = MissingSupport = PreferFlight = false;
+        Sight = true; MissingMesh = PartialPath = WrongFloor = Liquid = BlockedDoor = MissingSupport = PreferFlight = FlightMountObserved = FlightCostRequiresStop = false;
         Door = new(205, 0, 0);
         Actor = new LocalPlayer { Guid = 1, BaseAddress = 100, Position = new(100, 10, 80), MountedValue = true, Flags = 0x02000000u };
         Target = new WoWUnit { Guid = 2, BaseAddress = 200, Entry = 70, Position = new(205, 15, 0), Outdoors = false };
@@ -179,6 +179,8 @@ namespace Styx.Logic.Pathing
     {
         public bool Succeeded, IsPartialPath, Aborted; public string Status = "controlled", FailStep = "none";
         public Vector3[] Points = Array.Empty<Vector3>(); public AreaType[] PolyTypes = Array.Empty<AreaType>();
+        public PolygonReference[] Polygons = Array.Empty<PolygonReference>();
+        public StraightPathFlags[] Flags = Array.Empty<StraightPathFlags>();
     }
     public sealed class MeshNavigator : NavigationProvider
     {
@@ -219,9 +221,18 @@ namespace Styx.Logic.Pathing
     }
     public static class Flightor
     {
+        public static bool CanFly => World.PreferFlight;
+        public static class MountHelper
+        {
+            public static bool Mounted
+            {
+                get { World.Event("flight-mount"); return World.FlightMountObserved || (World.Actor.Flags & 0x02000000u) != 0; }
+            }
+        }
         public static object RequestIdentity = new(); public static WoWPoint LastFlightWaypoint;
         public static void MoveTo(WoWPoint point) { World.RawFlights.Add(point); World.Event("raw-flight"); }
-        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range) => World.PreferFlight;
+        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range)
+            => World.PreferFlight && (!World.FlightCostRequiresStop || !World.Actor.IsMoving);
         public static bool ReleaseOwned(object expected, Func<bool> admitted, System.Action<object> registered)
         {
             if (!ReferenceEquals(expected, RequestIdentity) || !admitted()) return false;
@@ -242,6 +253,7 @@ namespace Styx.Logic
     {
         public static bool TryDismountOwned(string reason, Func<bool> admitted, System.Action? submitted)
         {
+            World.Event("dismount-prepare");
             if (!admitted() || (World.Actor.Flags & 0x02003000u) != 0 || !World.Actor.MountedValue) return false;
             submitted?.Invoke(); World.Dismounts++; World.Event("dismount"); return true;
         }

@@ -110,6 +110,8 @@ try
     }
     Save("nearest-polygons.json", nearest);
     if (args.Length == 3) QuestRouteReplay.Run(navigator, args[2], output);
+    if (File.Exists(Path.Combine(AppContext.BaseDirectory, "mmaps", "530.mmap")))
+        TravelIncidentReplay.Run(navigator, output);
     Save("result.json", new { game_attached = false, native_calls = samples.Count, paths_produced = pathsProduced,
         asset_compatibility_demonstrated = pathsProduced > 0, live_route_acceptance = false });
     if (pathsProduced == 0)

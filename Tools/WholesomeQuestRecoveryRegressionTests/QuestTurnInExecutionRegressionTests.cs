@@ -86,6 +86,17 @@ internal static class QuestTurnInExecutionRegressionTests
                 };
                 foreach (string name in files) File.Copy(Path.Combine(_root, name), Path.Combine(temporary, Path.GetFileName(name)));
                 File.WriteAllText(Path.Combine(temporary, "ControlledWorld.cs"), ControlledWorld);
+                // This dynamic assembly owns its controlled LocalPlayer type.
+                // Compile the exact production mount observation against that
+                // type instead of binding the host assembly's different player.
+                // The complete mounted transition is covered by the dedicated
+                // integration suite; no travel/attack decision is stubbed here.
+                var mounted = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(_root,
+                    "Styx/Logic/Combat/MountedCombatTransition.cs"))).GetRoot().DescendantNodes()
+                    .OfType<MethodDeclarationSyntax>().Single(method => method.Identifier.ValueText == "IsMountedOrFlying");
+                File.WriteAllText(Path.Combine(temporary, "MountedObservation.cs"),
+                    "#nullable disable\nusing Styx.WoWInternals.WoWObjects;\nnamespace Styx.Logic.Combat {public static class MountedCombatTransition {"
+                    + mounted.ToFullString() + "}}");
                 var pickup = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(_root,"Bots/Quest/QuestOrder/ForcedQuestPickUp.cs"))).GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c=>c.Identifier.ValueText=="ForcedQuestPickUp");
                 string pickupMembers=string.Join("\n",pickup.Members.Where(m=>m is FieldDeclarationSyntax || m is MethodDeclarationSyntax method && (method.Identifier.ValueText is "HandleQuestFrame" or "ResetMismatchTracking" or "RecordPickupDecision" or "CreateBehavior" or "InteractWithQuestGiver" or "BeginInteractionCycle" || method.Identifier.ValueText.StartsWith("CompleteObserved"))).Select(m=>m.ToString()));
                 // Keep the production run/session namespace: extracted reward
@@ -381,6 +392,14 @@ public static class TurnInDriver {
   Case("existing matching loot window is closed once after drain and acknowledged",()=>{var frame=Styx.Logic.Inventory.Frames.LootFrame.LootFrame.Instance;frame.LootingObjectGuid=88;Check(!CanRun(),"open frame preempted early");Age(5000);Check(!CanRun()&&frame.LootingObjectGuid==0,"close request treated as observed handoff");Check(CanRun(),"observed closed frame did not yield");});
   Case("another window is never closed by old corpse handoff",()=>{var frame=Styx.Logic.Inventory.Frames.LootFrame.LootFrame.Instance;frame.LootingObjectGuid=99;Check(!CanRun(),"fresh grace skipped");Age(5000);Check(CanRun()&&frame.LootingObjectGuid==99,"foreign loot window closed");});
   Case("new combat prevents residual POI mutation",()=>{Check(!CanRun(),"missing grace");Age(5000);StyxWoW.Me.Combat=true;Check(!CanRun()&&BotPoi.Current.Type==PoiType.Loot,"combat owner was overwritten");});
+  foreach(bool flightForm in new[]{false,true}){var form=flightForm;Case("mounted mandatory travel survives incidental combat, flightForm="+form,()=>{
+   BotPoi.Current=new BotPoi((TurnInNode)Bots.Quest.QuestState.Instance.Order.CurrentNode);
+   StyxWoW.Me.Combat=true;TurnInState.Mounted=!form;TurnInState.Flying=form;
+   Check(CanRun(),"selected mounted quest journey lost admission to incidental combat");
+   Check(TurnInState.Interactions==0&&TurnInState.ReadInt("CompletionRequests")==0,"travel admission fabricated interaction or quest completion");
+   TurnInState.Mounted=TurnInState.Flying=false;
+   Check(!CanRun(),"observed unmount did not yield mandatory work to combat");
+  });}
   Case("stale generation cannot drain replacement corpse",()=>{Check(!CanRun(),"missing grace");Age(5000);BotPoi.CurrentGeneration++;Check(!CanRun()&&BotPoi.Current.Type==PoiType.Loot,"replacement inherited expired timer");});
   Case("profile replacement starts independent grace",()=>{Check(!CanRun(),"missing grace");Age(5000);Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot=new object();Check(!CanRun(),"profile replacement inherited timer");});
   Case("same player wrapper base replacement starts independent grace",()=>{Check(!CanRun(),"missing grace");Age(5000);StyxWoW.Me.BaseAddress+=4096;Check(!CanRun()&&BotPoi.Current.Type==PoiType.Loot,"same-wrapper base replacement inherited expired timer");});
@@ -444,6 +463,7 @@ public static class TurnInDriver {
  public class WoWGameObject:WoWObject {public uint[] QuestItems=Array.Empty<uint>();public bool GetCachedInfo(out CacheInfo info){info=new(){QuestItems=QuestItems};return true;}}
  public class WoWItem:WoWObject {}
  public class LocalPlayer:WoWUnit {public uint MapId;public bool Combat;public bool OnTaxi,IsOnTransport,IsCasting,IsMoving;public uint ChanneledCastingSpellId;
+  public bool Mounted=>TurnInState.Mounted;public ShapeshiftForm Shapeshift=>TurnInState.Flying?ShapeshiftForm.FlightForm:(ShapeshiftForm)0;
   public string Name="turnin-fixture",RealmName="realm";
   public WoWUnit CurrentTarget;public bool GotTarget=>CurrentTarget!=null;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public Styx.Logic.Questing.QuestLog QuestLog=new();
   public List<WoWItem> CarriedItems=new();

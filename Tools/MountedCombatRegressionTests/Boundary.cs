@@ -157,7 +157,7 @@ namespace Styx.WoWInternals.WoWObjects
     public class WoWObject{public ulong Guid{get;set;}public uint Entry{get;set;}public uint BaseAddress{get;set;}=100;public bool IsValid{get;set;}=true;public virtual bool IsAlive{get;set;}=true;public WoWPoint Location{get;set;}public virtual WoWUnit ToUnit()=>this as WoWUnit;}
     public class WoWUnit:WoWObject{public bool Dead{get=>!IsAlive;set=>IsAlive=!value;}public bool Combat{get;set;}public bool IsPlayer{get;set;}public bool IsPet{get;set;}public WoWUnit OwnedByUnit{get;set;}public bool TaggedByOther{get;set;}public bool TaggedByMe{get;set;}public bool InLineOfSpellSight{get;set;}=true;public string Name{get;set;}="controlled";public int Level{get;set;}=60;public int Race{get;set;}public Styx.WoWClass Class{get;set;}=Styx.WoWClass.Paladin;public uint FactionId{get;set;}public double Distance=>Location.Distance(Styx.StyxWoW.Me?.Location??WoWPoint.Zero);public double DistanceSqr=>Location.DistanceSqr(Styx.StyxWoW.Me?.Location??WoWPoint.Zero);public void Target(){if(Styx.StyxWoW.Me!=null)Styx.StyxWoW.Me.CurrentTarget=this;Harness.Control.OnTarget?.Invoke(this);}}
     public class WoWPlayer:WoWUnit{}
-    public class LocalPlayer:WoWUnit
+    public partial class LocalPlayer:WoWUnit
     {
         public bool Mounted{get;set;}public bool IsFlying{get;set;}public bool IsGhost{get;set;}public uint MapId{get;set;}=1;public bool IsOnTransport{get;set;}public bool OnTaxi{get;set;}public bool InVehicle{get;set;}public bool Rooted{get;set;}public bool Stunned{get;set;}public double HealthPercent{get;set;}=100;public bool IsMoving{get;set;}public bool IsCasting{get;set;}public uint ChanneledCastingSpellId{get;set;}public WoWUnit Pet{get;set;}public bool GotAlivePet=>Pet!=null&&Pet.IsAlive;public WoWUnit CurrentTarget{get;set;}public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public bool IsInParty{get;set;}public bool IsInRaid{get;set;}public bool IsInInstance{get;set;}public Styx.ShapeshiftForm Shapeshift{get;set;}public bool MovementKnown{get;set;}=true;public uint ObservedMovementFlags{get;set;}public ulong ObservedTransportGuid{get;set;}
         public bool TryGetMovementState(out uint flags,out ulong transport){flags=ObservedMovementFlags;transport=ObservedTransportGuid;return MovementKnown;}public void ClearTarget()=>CurrentTarget=null;public bool HasPendingSpell(string name)=>false;
@@ -219,7 +219,7 @@ namespace Styx.Logic.BehaviorTree
 
 namespace Styx.Logic.Combat
 {
-    public static class RecoveryActions{public static void RethrowControlFlow(Exception e){if(e is OperationCanceledException||e is ThreadInterruptedException||e is Styx.InvalidProcessException||e is Styx.InvalidExecutorException)throw e;}}
+    public static partial class RecoveryActions{public static void RethrowControlFlow(Exception e){if(e is OperationCanceledException||e is ThreadInterruptedException||e is Styx.InvalidProcessException||e is Styx.InvalidExecutorException)throw e;}}
     public static class RoutineManager{public static Styx.Combat.CombatRoutine.CombatRoutine Current{get;set;}=new();}
 }
 
@@ -228,7 +228,7 @@ namespace Bots.Quest.QuestOrder
     public class OrderNode{}
     public class OrderNodeCollection:List<OrderNode>{}
     public class ForcedBehavior{public virtual bool SuppressServiceBehavior{get;set;}public virtual bool IsDone{get;set;}public virtual bool IsExecutionDeferred{get;set;}}
-    public sealed class QuestOrder{public OrderNodeCollection Nodes{get;set;}=new();public OrderNode CurrentNode=>Nodes.Count==0?null:Nodes[0];public ForcedBehavior CurrentBehavior{get;set;}}
+    public sealed class QuestOrder{public static QuestOrder Instance=>Bots.Quest.QuestState.Instance.Order;public OrderNodeCollection Nodes{get;set;}=new();public OrderNode CurrentNode=>Nodes.Count==0?null:Nodes[0];public ForcedBehavior CurrentBehavior{get;set;}}
 }
 namespace Bots.Quest
 {

@@ -10,5 +10,7 @@
   <ItemGroup>
     <Compile Include="../../Styx/Logic/Pathing/GroundApproachGeometry.cs" Link="Production/GroundApproachGeometry.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundApproachQueries.cs" Link="Production/GroundApproachQueries.cs" />
+    <Compile Include="../../Tripper/Navigation/PolygonReference.cs" Link="Production/PolygonReference.cs" />
+    <Compile Include="../../Tripper/Navigation/StraightPathFlags.cs" Link="Production/StraightPathFlags.cs" />
   </ItemGroup>
 </Project>

@@ -204,7 +204,8 @@ public class ForcedQuestTurnIn : ForcedBehavior
 
     private bool SearchCurrent() => !disposed && TreeRoot.IsRunning && ReferenceEquals(TreeRoot.RunIdentity, searchRun)
         && ReferenceEquals(Me, searchActor) && ReferenceEquals(BotPoi.Current, searchPoi)
-        && searchActor != null && searchActor.IsValid && searchActor.IsAlive && !searchActor.Combat
+        && searchActor != null && searchActor.IsValid && searchActor.IsAlive
+        && (!searchActor.Combat || Styx.Logic.Combat.MountedCombatTransition.IsMountedOrFlying(searchActor))
         && searchActor.Guid == searchActorGuid && searchActor.BaseAddress == searchActorAddress && searchActor.MapId == searchMap
         && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot, searchProfile)
         && ReferenceEquals(QuestOrder.Instance?.CurrentBehavior, searchBehavior)

@@ -182,6 +182,8 @@ namespace Styx.Logic.Pathing
     {
         public bool Succeeded, IsPartialPath, Aborted; public string Status = "controlled", FailStep = "none";
         public Vector3[] Points = Array.Empty<Vector3>(); public AreaType[] PolyTypes = Array.Empty<AreaType>();
+        public PolygonReference[] Polygons = Array.Empty<PolygonReference>();
+        public StraightPathFlags[] Flags = Array.Empty<StraightPathFlags>();
     }
     public sealed class MeshNavigator : NavigationProvider
     {
@@ -222,6 +224,8 @@ namespace Styx.Logic.Pathing
     }
     public static class Flightor
     {
+        public static bool CanFly => World.PreferFlight;
+        public static class MountHelper { public static bool Mounted => (World.Actor.Flags & 0x02000000u) != 0; }
         public static object RequestIdentity = new(); public static WoWPoint LastFlightWaypoint;
         public static void MoveTo(WoWPoint point) { World.RawFlights.Add(point); World.Event("raw-flight"); }
         public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range)

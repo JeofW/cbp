@@ -9,7 +9,7 @@ internal enum GroundDismountState { Rejected, Pending, Submitted, Expired }
 
 internal readonly record struct GroundMotion(WoWPoint Position, bool Mounted, bool Flying,
     bool Falling, bool Swimming, bool OnTransport, bool Immobilized, bool Supported,
-    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false);
+    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false, bool FlightReviewPending = false);
 
 internal interface IGroundTransitionRuntime
 {
@@ -86,11 +86,13 @@ internal sealed class GroundTransitionMachine
             if (!_runtime.Current) return GroundTransitionState.Revoked;
         }
         // Landing/approach time limits are not a maximum length for a useful
-        // ground journey. Actual displacement renews that budget; the existing
+        // ground journey or local flight leg. Actual displacement renews that budget; the existing
         // no-progress watchdog still bounds walls and rejected movement.
-        if (_purpose != GroundTransitionPurpose.Combat && observation.GroundTravel
-            && !observation.Flying && !observation.Falling && !observation.OnTransport
-            && !observation.Swimming && !observation.Immobilized && observation.Supported
+        if (_purpose != GroundTransitionPurpose.Combat
+            && (observation.GroundTravel && !observation.Flying && observation.Supported
+                || _plan?.ProgressOnly == true && observation.Flying)
+            && !observation.Falling && !observation.OnTransport
+            && !observation.Swimming && !observation.Immobilized
             && now == _lastProgress)
             _started = now;
         if (now - _started >= 120)
@@ -101,6 +103,25 @@ internal sealed class GroundTransitionMachine
             return Wait("landing", "falling-is-not-grounded-acknowledgement", observation, stop: true);
         if (observation.Immobilized)
             return Wait("blocked", "root-or-stun-prevents-owned-transition", observation, stop: true);
+        if (observation.FlightReviewPending)
+            return Wait("flight-preparation", "awaiting-observed-stop-for-flight-decision", observation, stop: true);
+
+        // A useful ground departure can expose a new flight opportunity. The
+        // runtime bounds these reviews by time and observed displacement; this
+        // owner releases the old ground route once before preparing the flight.
+        if (_purpose != GroundTransitionPurpose.Combat && observation.PreferFlight
+            && !observation.Flying && observation.Supported && !_descent && !observation.Descending && !_dismountPending
+            && !(_groundHandoff && _plan is { ProgressOnly: false }))
+        {
+            if (_groundHandoff)
+            {
+                _runtime.Hold();
+                if (!_runtime.Current) return GroundTransitionState.Revoked;
+                _runtime.ResetSearch(); _plan = null; _groundHandoff = false;
+                _flightSearchBatches = 0; _flightSearchStarted = double.NaN;
+            }
+            return Approach(observation, now, allowGroundFallback: true);
+        }
 
         // Mounted travel is not interaction readiness. Keep a ground mount for
         // the distant mesh leg; use the existing landing/unmount owner only for
@@ -123,14 +144,10 @@ internal sealed class GroundTransitionMachine
             if (!observation.Mounted)
             {
                 _dismountPending = false;
-                if (!_groundHandoff && observation.PreferFlight)
-                    return Approach(observation, now, allowGroundFallback: true);
                 _groundHandoff = true;
                 if (CommandDue(now)) _runtime.Walk();
                 return Progress("ground-mesh", "following-ground-route; interaction-unobserved", observation, now);
             }
-            if (!_groundHandoff && _purpose == GroundTransitionPurpose.Interaction && observation.PreferFlight)
-                return Approach(observation, now, allowGroundFallback: true);
             // A shared actor/session lease in the runtime additionally survives
             // target/POI replacement; this local pending flag owns this handoff.
             _groundHandoff = true;
@@ -199,6 +216,21 @@ internal sealed class GroundTransitionMachine
             return Result(GroundTransitionState.Pending, "replanning", "collision-or-onward-route-changed", observation);
         }
         if (!_runtime.Current) return GroundTransitionState.Revoked;
+        if (_plan.ProgressOnly)
+        {
+            if (observation.Flying && observation.Position.DistanceSqr(_plan.AirWaypoint) <= 64f)
+            {
+                _runtime.Hold();
+                if (!_runtime.Current) return GroundTransitionState.Revoked;
+                _runtime.ResetSearch(); _plan = null;
+                _flightSearchBatches = 0; _flightSearchStarted = double.NaN;
+                _started = _lastProgress = now; _progressOrigin = observation.Position;
+                _lastCommand = double.NegativeInfinity;
+                return Result(GroundTransitionState.Pending, "flight-leg-observed", "local-flight-progress; final-approach-unobserved", observation);
+            }
+            if (CommandDue(now)) _runtime.Fly(_plan);
+            return Progress("flight-travel", "local-flight-leg; descent-not-authorized", observation, now);
+        }
         bool aboveLanding = observation.Position.Distance2DSqr(_plan.Landing) <= .5625f
             && observation.Position.Z >= _plan.Landing.Z - .25f
             && (!_plan.OpenColumn || observation.Position.Z <= _plan.AirWaypoint.Z + 4);

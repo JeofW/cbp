@@ -23,6 +23,27 @@ internal static class GroundMountRequestTests
             var r=new GroundMountRequest();int n=0;
             Check(!r.Waiting(0,false,false,false,()=>true,()=>35022,_=>{n++;return false;},()=>{})&&n==1,"known rejection did not yield ground fallback");
         });
+        Case("leaving a rejected mount spot retries after one second",()=>{
+            var r=new GroundMountRequest();int requests=0;bool clear=false;
+            bool Tick(double t)=>r.Waiting(t,false,false,false,()=>true,()=>35022,_=>{requests++;return clear;},()=>{});
+            Check(!Tick(0)&&requests==1,"rejected preparation did not yield walking");
+            clear=true;
+            Check(!Tick(.2)&&requests==1,"known rejection retried on every pulse");
+            Check(Tick(1.01)&&requests==2,"an unsubmitted mount inherited the thirty-second request throttle");
+            Check(Tick(2)&&requests==2,"successful retry was not retained until observation");
+        });
+        Case("repeated preparation rejection stays bounded without parking travel",()=>{
+            var r=new GroundMountRequest();int requests=0;
+            for(int pulse=0;pulse<50;pulse++)
+                Check(!r.Waiting(pulse/10.0,false,false,false,()=>true,()=>35022,_=>{requests++;return false;},()=>{}),"rejection fabricated a pending mount");
+            Check(requests==5,"preparation retries did not use their one-second budget: "+requests);
+        });
+        Case("observed mount clears the old submission delay before a later remount",()=>{
+            var r=new GroundMountRequest();int requests=0;
+            bool Tick(double t,bool mounted)=>r.Waiting(t,mounted,false,false,()=>true,()=>35022,_=>{requests++;return true;},()=>{});
+            Check(Tick(0,false)&&!Tick(3,true)&&requests==1,"initial mounted observation was not accepted");
+            Check(Tick(4,false)&&requests==2,"a completed mount kept the next interaction's remount throttled");
+        });
         Case("missing candidate leaves navigation available",()=>{
             var r=new GroundMountRequest();Check(!r.Waiting(0,false,false,false,()=>true,()=>0,_=>throw new Exception("unexpected cast"),()=>throw new Exception("unexpected stop")),"unknown mount blocked walking");
         });

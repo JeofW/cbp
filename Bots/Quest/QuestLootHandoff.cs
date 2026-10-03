@@ -87,10 +87,21 @@ namespace Bots.Quest
             {
                 var actor = ObjectManager.Me;
                 var poi = BotPoi.Current;
-                if (!TreeRoot.IsRunning || actor == null || !actor.IsAlive || actor.Combat)
+                if (!TreeRoot.IsRunning || actor == null || !actor.IsAlive)
                 {
                     drain = null;
-                    return true; // Combat/death retain their higher-priority owners.
+                    return true;
+                }
+                if (actor.Combat)
+                {
+                    drain = null;
+                    // The combat root deliberately preserves incidental mounted
+                    // escape. Its selected mandatory travel must remain scheduled
+                    // until an observed unmount gives combat the higher owner.
+                    // This does not drain loot or admit an interaction/attack.
+                    return !(MountedCombatTransition.IsMountedOrFlying(actor)
+                        && poi.Type is PoiType.QuestPickUp or PoiType.QuestTurnIn
+                        && ReferenceEquals(ObjectManager.Me, actor) && ReferenceEquals(BotPoi.Current, poi));
                 }
                 if (poi.Type is not (PoiType.Loot or PoiType.Harvest or PoiType.Skin))
                 {
