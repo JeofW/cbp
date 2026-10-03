@@ -325,9 +325,15 @@ namespace Singular.Helpers
             if (target == null || !isCurrent())
                 return false;
             var owner = StyxWoW.Me;
-            if (owner == null || owner.IsCasting || !SpellManager.Spells.ContainsKey(name))
+            if (owner == null)
                 return false;
-            if (!requirements(ret) || !isCurrent() || !Unit.IsCombatActionSafe(name, target) || !isCurrent())
+            // Preserve the caller's cheap denial before any spellbook/cast-state
+            // observation. False requirements must not need a native spell owner.
+            if (!requirements(ret) || !isCurrent())
+                return false;
+            if (owner.IsCasting || !SpellManager.Spells.ContainsKey(name))
+                return false;
+            if (!Unit.IsCombatActionSafe(name, target) || !isCurrent())
                 return false;
             // Selection is deliberately cheap. Current range, movement, funnel,
             // usability and cooldown metadata are all re-observed by the strict
