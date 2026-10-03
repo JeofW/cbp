@@ -12,14 +12,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 // and mount observations are controlled leaves; this does not certify a route.
 internal static class FlightorWaitContinuityRegressionTests
 {
+#if !NETWORK_ENTRY_FOCUSED
     [ModuleInitializer]
+#endif
     internal static void Run()
         => Build().GetType("FlightWaitCases", true)!.GetMethod("Run")!.Invoke(null, null);
 
     internal static void RunRawAura(Func<string, bool> names, Func<int, bool> ids, bool unavailable)
         => Build(true).GetType("FlightWaitCases", true)!.GetMethod("RunRawAura")!.Invoke(null, new object[] { names, ids, unavailable });
 
-    private static Assembly Build(bool originalClientAura = false)
+    internal static Assembly Build(bool originalClientAura = false, string? managerOverride = null, string[]? additionalSources = null)
     {
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (root != null && !File.Exists(Path.Combine(root.FullName, "CopilotBuddy.csproj"))) root = root.Parent;
@@ -35,9 +37,22 @@ internal static class FlightorWaitContinuityRegressionTests
         if (originalClientAura)
             controls = controls.Replace("private static bool HasSeaLegs(LocalPlayer player)=>World.SeaLegs;",
                 owner.Members.OfType<MethodDeclarationSyntax>().Single(m => m.Identifier.ValueText == "HasSeaLegs").ToString());
-        string generated = Prefix + "\npublic static class FlightOwner {\n" + controls + "\n" + move + "\n" + unstuck + "\n" + invalidate + "\n}\n" + Cases;
+        string prefix = Prefix;
+        if (managerOverride != null)
+        {
+            int first = prefix.IndexOf("public static class SpellManager {", StringComparison.Ordinal);
+            int last = prefix.IndexOf("public static class RecoveryActions {", first, StringComparison.Ordinal);
+            if (first < 0 || last <= first) throw new InvalidOperationException("Exact controlled manager boundary is required");
+            prefix = prefix[..first] + managerOverride + "\n" + prefix[last..];
+            prefix = prefix.Replace("public static LocalPlayer Me=>World.Player;", "public static LocalPlayer Me=>World.Player; public static Styx.WoWInternals.Misc.WoWClient WoWClient=new();")
+                .Replace("public ulong Guid=123;", "public bool IsWithinMeleeRange=true; public double Distance=0; public bool InLineOfSpellSight=true; public ulong Guid=123;")
+                .Replace("public bool Mounted,IsOutdoors=true,Combat;", "public bool Mounted,IsOutdoors=true,Combat,IsCasting; public int ChanneledCastingSpellId;");
+        }
+        string generated = prefix + "\npublic static class FlightOwner {\n" + controls + "\n" + move + "\n" + unstuck + "\n" + invalidate + "\n}\n" + Cases;
+        var syntaxTrees = new[] { generated, File.ReadAllText(Path.Combine(root.FullName, "Styx/Helpers/ObservationUnavailableException.cs")) }
+            .Concat(additionalSources ?? Array.Empty<string>()).Select(text => CSharpSyntaxTree.ParseText(text));
         var compilation = CSharpCompilation.Create("W110FlightWait_" + Guid.NewGuid().ToString("N"),
-            new[] { CSharpSyntaxTree.ParseText(generated) },
+            syntaxTrees,
             trusted.Split(Path.PathSeparator).Distinct(StringComparer.OrdinalIgnoreCase).Select(p => MetadataReference.CreateFromFile(p)),
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
         using var output = new MemoryStream(); var emitted = compilation.Emit(output);
@@ -46,7 +61,7 @@ internal static class FlightorWaitContinuityRegressionTests
     }
     private const string Prefix = """
 #nullable disable
-using System;using System.Collections.Generic;
+using System;using System.Collections.Generic;using Styx.Helpers;
 public enum WoWClass {Paladin,Druid}
 public enum NavigationType {Fly,Run}
 public enum WoWSkill {Riding}
@@ -74,9 +89,16 @@ public static class GameWorld {
  public static bool IsInLineOfSight(WoWPoint a,WoWPoint b)=>true;
  public static bool TraceLine(WoWPoint a,WoWPoint b,CGWorldFrameHitFlags flags)=>true;
 }
-public static class SpellManager {public static bool CanCast(string name)=>World.TestCrusader;public static bool HasSpell(string name)=>true;public static bool Cast(string name){World.Record("cast");return true;}}
+public static class SpellManager {
+ public static bool CanCast(string name){World.CrusaderReads++;World.Hit("aura-readiness");if(World.CrusaderError!=null)throw World.CrusaderError;return World.TestCrusader;}
+ public static bool CanCast(string name,WoWUnit target){if(!ReferenceEquals(target,World.Player))throw new InvalidOperationException("travel aura must target the exact actor");return CanCast(name);}
+ public static bool HasSpell(string name)=>true;
+ public static bool Cast(string name){World.Hit("aura-submit");if(World.CrusaderSubmitError!=null)throw World.CrusaderSubmitError;World.Record("cast");return true;}
+ public static bool Cast(string name,WoWUnit target){if(!ReferenceEquals(target,World.Player))throw new InvalidOperationException("travel aura recipient changed");return Cast(name);}
+}
+public static class RecoveryActions {public static void ReportDeferral(Exception error,string owner){World.Deferrals++;World.Hit("aura-deferral");}}
 public static class Colors {public static readonly object Orange="orange",Red="red";}
-public static class Logging {public static void Write(string text,params object[] args)=>World.Hit("log");public static void Write(object color,string text,params object[] args)=>World.Hit("log");public static void WriteDiagnostic(string text,params object[] args)=>World.Hit("log");}
+public static class Logging {public static void WriteDebug(string text,params object[] args){}public static void Write(string text,params object[] args)=>World.Hit("log");public static void Write(object color,string text,params object[] args)=>World.Hit("log");public static void WriteDiagnostic(string text,params object[] args)=>World.Hit("log");}
 public static class WoWMathHelper {public static float CalculateNeededFacing(WoWPoint a,WoWPoint b)=>0;public static float DegreesToRadians(float value)=>value*MathF.PI/180;}
 public sealed class PlayerMover {
  public void MoveTowards(WoWPoint point){World.Record("towards");World.Hit("towards");}
@@ -100,10 +122,11 @@ public static class WoWMovement {
 public static class World {
  public static LocalPlayer Player;public static WoWUnit Mover;public static bool SeaLegs,Walk,EmptyPoint,FormSurface;public static int PathBuilds;
  public static Func<string,bool> ReadName;public static Func<int,bool> ReadId;public static bool TestCrusader;
+ public static Exception CrusaderError,CrusaderSubmitError;public static int CrusaderReads,Deferrals;
  public static readonly List<string> Commands=new List<string>();public static Action<string> OnBoundary;
  public static void Record(string command)=>Commands.Add(command+":"+(Player?.Guid??0));
  public static void Hit(string name)=>OnBoundary?.Invoke(name);
- public static void Reset(){ObjectManager.Wow=new object();ObjectManager.Executor=new object();Player=new LocalPlayer();Mover=Player;SeaLegs=Walk=EmptyPoint=FormSurface=false;PathBuilds=0;Commands.Clear();OnBoundary=null;BotPoi.Current=new BotPoi();BotPoi.CurrentGeneration++;BotPoi.CurrentWorkGeneration++;ProfileManager.CurrentProfileSnapshot=new object();Navigator.NavigationProvider=new object();}
+ public static void Reset(){ObjectManager.Wow=new object();ObjectManager.Executor=new object();Player=new LocalPlayer();Mover=Player;SeaLegs=Walk=EmptyPoint=FormSurface=false;PathBuilds=0;Commands.Clear();OnBoundary=null;ReadName=null;ReadId=null;TestCrusader=false;CrusaderError=CrusaderSubmitError=null;CrusaderReads=Deferrals=0;BotPoi.Current=new BotPoi();BotPoi.CurrentGeneration++;BotPoi.CurrentWorkGeneration++;ProfileManager.CurrentProfileSnapshot=new object();Navigator.NavigationProvider=new object();}
 }
 public class BotPoi {public static BotPoi Current=new BotPoi();public static long CurrentGeneration,CurrentWorkGeneration;public bool IsWorldSubjectBlacklisted;}
 public static class ProfileManager {public static object CurrentProfileSnapshot=new object();}
@@ -153,7 +176,7 @@ private static bool _antiStuckAlive,_antiStuckGhost;
 public static class FlightWaitCases {
  private sealed class Failure(string text):Exception(text){}
  private static void Check(bool condition,string text){if(!condition)throw new Failure(text);}
- private static void Configure(string route){World.Reset();FlightOwner.Reset(0);
+ internal static void Configure(string route){World.Reset();FlightOwner.Reset(0);
   switch(route){case "swim-rise":World.Player.IsSwimming=true;break;
    case "swim-form":World.Player.IsSwimming=true;World.Player.Class=WoWClass.Druid;World.SeaLegs=World.FormSurface=true;break;
    case "takeoff":World.Player.Mounted=true;break;
@@ -185,6 +208,38 @@ public static class FlightWaitCases {
    Check(World.Commands.Exists(c=>c.StartsWith("cast:"))!=ids(32223),"known Crusader presence was lost or absent aura blocked eligible cast");}
  }
  public static void Run(){var tests=new List<(string Name,Action Body)>();
+  foreach(string mode in new[]{"takeoff","flight"}){string route=mode;
+   foreach(string point in new[]{"aura-coverage","aura-readiness","aura-submit"}){string boundary=point;
+    tests.Add((route+" continues after optional Crusader observation failure/"+boundary,()=>{
+     Configure(route);World.TestCrusader=true;
+     var failure=new ObservationUnavailableException("network-latency","observed invalid ring");
+     if(boundary=="aura-readiness")World.CrusaderError=failure;
+     if(boundary=="aura-submit")World.CrusaderSubmitError=failure;
+     if(boundary=="aura-coverage")World.ReadId=id=>id==32223?throw failure:false;
+     Exception escaped=null;try{Move();}catch(Exception e){escaped=e;}
+     Check(escaped==null&&World.Commands.Exists(c=>c.StartsWith("towards:"))&&World.PathBuilds==1,
+       "optional travel aura stopped the actual mounted route before movement");
+     Check(!World.Commands.Exists(c=>c.StartsWith("cast:")),"unavailable aura was submitted");
+     if(route=="takeoff")Check(World.Commands.Exists(c=>c.StartsWith("move-Forward, JumpAscend:")),"grounded flying mount never acquired takeoff input");
+    }));
+   }
+  }
+  tests.Add(("observed Crusader aura skips unrelated readiness",()=>{
+   Configure("flight");World.ReadId=id=>id==32223;World.CrusaderError=new ObservationUnavailableException("network-latency","unavailable");
+   Exception escaped=null;try{Move();}catch(Exception e){escaped=e;}
+   Check(escaped==null&&World.CrusaderReads==0&&World.Commands.Exists(c=>c.StartsWith("towards:")),"already-present optional aura queried unavailable spell readiness");
+  }));
+  tests.Add(("optional aura cancellation still revokes the entire movement call",()=>{
+   Configure("takeoff");var stop=new OperationCanceledException("stop");World.CrusaderError=stop;
+   Exception escaped=null;try{Move();}catch(Exception e){escaped=e;}
+   Check(ReferenceEquals(stop,escaped)&&World.Commands.Count==0,"cancelled aura call became permission to move");
+  }));
+  tests.Add(("owner replacement during optional aura deferral cannot move the successor",()=>{
+   Configure("takeoff");World.CrusaderError=new ObservationUnavailableException("network-latency","unavailable");
+   World.OnBoundary=b=>{if(b=="aura-deferral")Change("replacement");};
+   Exception escaped=null;try{Move();}catch(Exception e){escaped=e;}
+   Check(escaped==null&&World.Deferrals==1&&World.Commands.Count==0,"optional-failure containment discarded the current movement owner");
+  }));
   tests.Add(("ground interaction selected flight bypasses legacy walk comparison",()=>{Configure("flight");World.Walk=true;FlightOwner.MoveToGroundInteraction(new WoWPoint(100,100,50),()=>true);Check(World.Commands.Exists(c=>c.StartsWith("towards:"))&&!World.Commands.Exists(c=>c.StartsWith("ground:")),"selected direct-object flight was changed back to walking");}));
   tests.Add(("ground interaction flight retains caller across takeoff wait",()=>{Configure("takeoff");bool current=true;World.OnBoundary=b=>{if(b=="sleep")current=false;};FlightOwner.MoveToGroundInteraction(new WoWPoint(100,100,50),()=>current);Check(!World.Commands.Exists(c=>c.StartsWith("towards:")),"revoked direct-object owner retained flight input");}));
   tests.Add(("POI revocation stops owned flight input once",()=>{Configure("flight");Move();World.Commands.Clear();BotPoi.Current=new BotPoi();FlightOwner.InvalidateRouteContext();

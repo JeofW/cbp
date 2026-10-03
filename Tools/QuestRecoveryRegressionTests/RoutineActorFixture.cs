@@ -42,10 +42,10 @@ internal sealed class RoutineActorFixture : IDisposable
             Bytes(0xBD0792, new byte[] { 1 }); Bytes(0xB6AA38, BitConverter.GetBytes(0u));
             Bytes(0xBD088C, BitConverter.GetBytes(1u));
             Bytes(12488416, BitConverter.GetBytes(0)); Bytes(12488476, BitConverter.GetBytes(0u));
-            // Common.CreateDismount constructs its wait eagerly. The actual
-            // WoWClient reader sees only our zeroed NetStats and timer pointer.
-            // Equal zero latency indices avoid consuming any external samples.
-            Bytes(0x00C7B1F4, BitConverter.GetBytes(start + 32768));
+            // Original build12340 NetClient getter 6B0970 reads C79CF4.
+            // The full reader sees only this allocated NetStats and timer pointer;
+            // equal zero indices avoid consuming external samples.
+            Bytes(0x00C79CF4, BitConverter.GetBytes(start + 32768));
             Bytes(0xD4159C, BitConverter.GetBytes(0u));
             typeof(ObjectManager).GetProperty("Wow")!.SetValue(null, memory);
             Player = new ObservedPlayer(start);

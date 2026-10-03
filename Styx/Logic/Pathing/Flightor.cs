@@ -559,11 +559,21 @@ namespace Styx.Logic.Pathing
                 // Already mounted — process flight using PolyNav path queue.
                 // Ported from WoD smethod_10 (Flightor.cs, HB 6.2.3).
 
-                // Crusader Aura for paladins
-                if (myLocation.Distance(destination) > 100.0 && me.IsAlive &&
-                    SpellManager.CanCast("Crusader Aura") && !me.HasAura(32223))
+                // Travel support is optional. It must not prevent an already
+                // mounted route from taking off when aura/readiness data is
+                // unavailable. Required flight and ownership checks stay below.
+                if (myLocation.Distance(destination) > 100.0 && me.IsAlive)
                 {
-                    if (CanContinue()) SpellManager.Cast("Crusader Aura");
+                    try
+                    {
+                        if (!me.HasAura(32223) && CanContinue()
+                            && SpellManager.CanCast("Crusader Aura", me) && CanContinue())
+                            SpellManager.Cast("Crusader Aura", me);
+                    }
+                    catch (ObservationUnavailableException error)
+                    {
+                        if (CanContinue()) RecoveryActions.ReportDeferral(error, "Flightor optional Crusader Aura");
+                    }
                 }
 
                 if (!CanContinue()) return;

@@ -31,8 +31,13 @@ namespace Styx.WoWInternals.Misc
 		{
 			get
 			{
-				// 3.3.5a offset: 0x00C7B1F4 = 13081844, sub offset 11860
-				return ObjectManager.Wow.Read<NetStats>(new uint[] { 0x00C7B1F4, 11860 });
+				// Original build12340 GetNetStats/510AC0 obtains NetClient via
+				// 6B0970 -> dword_C79CF4 (13081844), then 6320D0 reads +11860.
+				// C7B1F4 is unrelated memory, not an alternate client layout.
+				var memory = ObjectManager.Wow;
+				if (memory == null)
+					throw new Styx.Helpers.ObservationUnavailableException("network-latency", "NetClient memory owner unavailable.");
+				return memory.Read<NetStats>(new uint[] { 0x00C79CF4, 11860 });
 			}
 		}
 

@@ -29,5 +29,6 @@
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/ExecutorCommandGenerationRegressionTests.cs" Link="ExecutorCommandGenerationRegressionTests.cs" />
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/NetworkLatencyBoundRegressionTests.cs" Link="NetworkLatencyBoundRegressionTests.cs" />
     <Compile Include="../WholesomeQuestRecoveryRegressionTests/LagWaitConstructionRegressionTests.cs" Link="LagWaitConstructionRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/NetworkClientEntryRegressionTests.cs" Link="NetworkClientEntryRegressionTests.cs" />
   </ItemGroup>
 </Project>

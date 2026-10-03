@@ -792,27 +792,23 @@ namespace Styx.Logic.Combat
 			if (checkMovement && (castTime != 0U || isFunnel) && me.IsMoving)
 				return false;
 
-			// HB 4.3.4: Lag tolerance path
-			if (accountForLagTolerance && me.ChanneledCastingSpellId == 0)
-			{
-				uint lag = StyxWoW.WoWClient.Latency * 2U;
-				if (me.IsCasting)
+				if (me.IsCasting) return false;
+				// Network timing is an optional early-queue allowance, not evidence
+				// that a spell is ready. An unavailable measurement must not disable
+				// every cast. Fall back to the existing strict current cooldown and
+				// usability query; zero allowance is not a reported zero latency.
+				uint? lag = null;
+				if (accountForLagTolerance && me.ChanneledCastingSpellId == 0)
 				{
-					return false;
+					try
+					{
+						uint measured = StyxWoW.WoWClient.Latency;
+						if (measured <= uint.MaxValue / 2U) lag = measured * 2U;
+					}
+					catch (ObservationUnavailableException) { }
 				}
-
-				return IsSpellAvailable(spell, lag, true);
-			}
-			// HB 4.3.4: Non-lag-tolerance path
-			else if (!me.IsCasting)
-			{
-				return IsSpellAvailable(spell, 0U, false);
-			}
-			else
-			{
-				// IsCasting = true
-				return false;
-			}
+				if (!ReferenceEquals(StyxWoW.Me, me) || me.IsCasting) return false;
+				return IsSpellAvailable(spell, lag.GetValueOrDefault(), lag.HasValue);
 		}
 
 		public static bool Cast(string spellName) => Cast(spellName, StyxWoW.Me?.CurrentTarget);

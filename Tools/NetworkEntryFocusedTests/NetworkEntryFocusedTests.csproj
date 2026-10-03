@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseAppHost>false</UseAppHost>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);NETWORK_ENTRY_FOCUSED</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../CopilotBuddy.csproj" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/NetworkClientEntryRegressionTests.cs" Link="NetworkClientEntryRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/NetworkFlightIntegrationRegressionTests.cs" Link="NetworkFlightIntegrationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/FlightorWaitContinuityRegressionTests.cs" Link="FlightorWaitContinuityRegressionTests.cs" />
+  </ItemGroup>
+</Project>
