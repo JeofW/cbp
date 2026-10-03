@@ -25,7 +25,7 @@ namespace Styx.Logic.Pathing{
  public class NavigationProvider{}
  public interface IPlayerMover{}
  public sealed class PlayerMover:IPlayerMover{}
- public static class Navigator{public static NavigationProvider NavigationProvider=new();public static IPlayerMover PlayerMover=new PlayerMover();}
+ public static class Navigator{public static NavigationProvider NavigationProvider=new();public static IPlayerMover PlayerMover=new PlayerMover();public static float PathPrecision=1;public static bool CanNavigateFully(WoWPoint from,WoWPoint to)=>CorpseSearchCases.DirectPath;public static WoWPoint[] GeneratePath(WoWPoint from,WoWPoint to)=>CorpseSearchCases.Path(from,to);}
  public static class GroundApproachSearch{public static bool Finite(WoWPoint p)=>float.IsFinite(p.X)&&float.IsFinite(p.Y)&&float.IsFinite(p.Z);}
  internal static class GroundTransitionRuntime{internal static void ObserveUnmounted(GroundTransitionContext stamp){}}
 }

@@ -109,7 +109,14 @@ internal static class DirectGameObjectPipelineRegressionTests
         QuestScheduleResult Schedule()
         {
             var inventory = (QuestInventorySnapshot)observations.Capture();
-            Check(inventory.IsComplete && inventory.IsCurrent(), "Actual inventory observation is unavailable");
+            bool currentInventory = inventory.IsComplete && inventory.IsCurrent();
+            Check(currentInventory, "Actual inventory observation is unavailable; quest=" + id
+                + "; status=" + inventory.Status + "; complete=" + inventory.IsComplete
+                + "; current=" + currentInventory + "; cache=" + observations.CacheEnabled.Value
+                + "; world=" + ObjectManager.IsInGame + "; currentPlayer=" + ReferenceEquals(ObjectManager.Me, observations.Player)
+                + "; validPlayer=" + observations.Player.IsValid + "; guid=" + observations.Player.Guid
+                + "; base=0x" + observations.Player.BaseAddress.ToString("X")
+                + "; worldSeed=" + DescribeWorldSeed());
             bool accepted = observations.Player.QuestLog.ContainsQuest(id);
             QuestDescriptorData state = default;
             if (accepted) Check(((Quest)game.Quest).GetData(out state), "Actual native descriptor observation is missing");
@@ -294,6 +301,13 @@ internal static class DirectGameObjectPipelineRegressionTests
             }
         }
         public void Dispose(){foreach(ulong guid in added)fixture.Objects.Remove(guid);Marshal.FreeHGlobal(memory);}
+    }
+    private static string DescribeWorldSeed()
+    {
+        var cache = (System.Threading.ThreadLocal<Dictionary<IntPtr, byte[]>>)typeof(GreenMagic.Memory)
+            .GetField("_cache", Hidden)!.GetValue(ObjectManager.Wow)!;
+        return cache.Value!.TryGetValue(new IntPtr(0xBD0792), out byte[]? bytes)
+            ? Convert.ToHexString(bytes) : "missing";
     }
     private static string Root(){for(var d=new DirectoryInfo(AppContext.BaseDirectory);d!=null;d=d.Parent)if(File.Exists(Path.Combine(d.FullName,"CopilotBuddy.csproj")))return d.FullName;throw new InvalidOperationException("Tracked checkout required");}
     private static string Hash(string path)=>Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();

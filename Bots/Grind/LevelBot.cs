@@ -837,7 +837,10 @@ namespace Bots.Grind
             var traceLines = new List<WorldLine>();
             for (float degrees = 0.0f; degrees < 360.0f; degrees += 15f)
             {
-                for (float distance = 0.0f; distance <= 35.0f; distance += 5f)
+                // The original corpse point was evaluated above. A zero-length
+                // radial segment has no collision observation and would reject
+                // the entire batch before any alternative could be evaluated.
+                for (float distance = 5.0f; distance <= 35.0f; distance += 5f)
                 {
                     WoWPoint endPoint = raisedCorpse.RayCast((float)(degrees * Math.PI / 180.0), distance);
                     traceLines.Add(new WorldLine(raisedCorpse, endPoint));
