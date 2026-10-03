@@ -1,3 +1,13 @@
+# Current: shared travel, collection and Consecration — 3 October 2026
+
+Continue `D:/Dev/CB-RegressionAudit-20261003`, local branch `audit/next-regression-audit-20261003`, and PR97's remote head branch `audit/next-travel-efficiency-20261002`. The recovered deployed starting revision is `f1f045b50511e2ede7e97205c7175392ff01c208`; earlier worktrees and prior checkpoints below are preserved history. Do not restart PR61/94 or overwrite their dirty worktrees.
+
+Read `docs/audit/2026-10-03/shared-travel-collection/REPORT.md` and `D:/Dev/CopilotBuddy-Evidence/shared-travel-audit-20261003`. The complete 19:09 log snapshot reproduces incidental-aggro dismounts, premature ground-mount fallback and Ravager Egg model-centre line-of-sight stalls even after manual unmount. The repair removes incidental combat's authority to land, preserves partial flight planning, puts collection movement under GroundTransition and uses current native object usability plus owned interaction. Consecration now protects against unengaged and controlled targets in the open world, with cheap readiness checks and no speculative DPS/TTK policy.
+
+Focused causal and adjacent validations are retained. Full release, hosted checks, exact candidate identity, package and deployment must be recovered from this evidence directory and Git before repeating work. No live acceptance is implied. Do not launch or stop CB/WoW. Deploy only to the authorized idle `D:/World of Warcraft 3.3.5a/CB`, with exact hashes, protected settings/data and rollback. Preserve the 4,335-member dataset and its existing classification/proof limits.
+
+## Preserved previous checkpoint
+
 # Current: recovery action acknowledgement after deployed PR94 — 2 October 2026
 
 Recover Git, receipts and installed hashes before repeating any work. PR91 collision, PR92 spell observations, PR93 item observations and PR94 scalar observations are completed history. Last verified master/production is PR94 `2d123d63eec35b675822571396a067e68cb7d281`, with434payload hashes,2015protected files and13deployed runtime components compiled. Its manifest is `ReleaseData/Deployment-PR94-2d123d63-20261002.json`.

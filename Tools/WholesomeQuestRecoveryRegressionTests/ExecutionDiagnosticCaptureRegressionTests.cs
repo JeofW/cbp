@@ -15,6 +15,9 @@ internal static class ExecutionDiagnosticCaptureRegressionTests
         live.LoadProfile("<HBProfile><Name>Execution diagnostic</Name><MinLevel>1</MinLevel><MaxLevel>80</MaxLevel><Quest Id=\"10161\" Name=\"Debris\"><Objective Type=\"CollectItem\" ItemId=\"28116\" CollectCount=\"30\"><CollectFrom><GameObject Id=\"183394\" /><GameObject Id=\"183395\" /></CollectFrom><Hotspots><Hotspot X=\"10\" Y=\"10\" Z=\"10\" /></Hotspots></Objective></Quest><QuestOrder /></HBProfile>");
         using var objective=new CollectItemObjective(live.Quest,new(),live.Quest.GetObjectives().First(o=>o.ID==28116),new());
         using var behavior=new ForcedQuestObjective(objective);
+        // Deliberately incomplete inventory layout. Fixed client addresses are
+        // not guaranteed unmapped in a larger ASLR-enabled x86 test process.
+        System.Runtime.InteropServices.Marshal.WriteInt32(new IntPtr(unchecked((int)(live.Player.BaseAddress + 6384))),149);
         Type? type=typeof(PlayerQuest).Assembly.GetType("Styx.Logic.Questing.QuestExecutionDiagnostics");
         var method=type?.GetMethod("Capture");
         if(method==null)throw new InvalidOperationException("State-aware diagnostic capture is missing");
@@ -27,7 +30,7 @@ internal static class ExecutionDiagnosticCaptureRegressionTests
         if(root.GetProperty("declared_sources").GetArrayLength()!=2||root.GetProperty("static_coordinates").GetArrayLength()!=1)
             throw new InvalidOperationException("Diagnostic omitted declared source or ground coordinates");
         if(root.GetProperty("inventory_count").ValueKind!=JsonValueKind.Null)
-            throw new InvalidOperationException("Unmapped client inventory globals were reported as an authoritative zero");
+            throw new InvalidOperationException("Incomplete client inventory layout was reported as an authoritative zero");
         if(root.GetProperty("player_coordinates")[2].GetDouble()!=10)
             throw new InvalidOperationException("Diagnostic changed the actual player Z");
         var existing=typeof(ForcedBehavior).GetProperty("ExistingBranch")!.GetValue(behavior);

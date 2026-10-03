@@ -459,7 +459,7 @@ namespace Bots.Grind
                 new Decorator(
                     ctx => StyxWoW.Me.IsAlive && !StyxWoW.Me.IsGhost &&
                            !StyxWoW.Me.Combat &&
-                           ((CharacterSettings.Instance.RessAtSpiritHealers && StyxWoW.Me.HasAura("Resurrection Sickness")) ||
+                           ((CharacterSettings.Instance.RessAtSpiritHealers && StyxWoW.Me.HasAura(15007)) ||
                             (_waitingForHealerRecovery && DateTime.UtcNow - _healerResurrectedUtc < TimeSpan.FromSeconds(5))),
                     new TreeSharp.Action(ctx =>
                     {
@@ -597,7 +597,9 @@ namespace Bots.Grind
                     Flightor.Clear();
                     Logging.Write("[CorpseRecovery] Resurrected at spirit healer. Avoiding the death area and recalculating the next service route after recovery.");
                 }
-                if (_waitingForHealerRecovery && !me.HasAura("Resurrection Sickness") &&
+                // Original Resurrection Sickness has a fixed identity. An
+                // unrelated unresolved aura must not suspend corpse recovery.
+                if (_waitingForHealerRecovery && !me.HasAura(15007) &&
                     DateTime.UtcNow - _healerResurrectedUtc >= TimeSpan.FromSeconds(5))
                     _waitingForHealerRecovery = false;
                 if (BotPoi.Current.Type == PoiType.Corpse)
@@ -835,7 +837,10 @@ namespace Bots.Grind
             var traceLines = new List<WorldLine>();
             for (float degrees = 0.0f; degrees < 360.0f; degrees += 15f)
             {
-                for (float distance = 0.0f; distance <= 35.0f; distance += 5f)
+                // The original corpse point was evaluated above. A zero-length
+                // radial segment has no collision observation and would reject
+                // the entire batch before any alternative could be evaluated.
+                for (float distance = 5.0f; distance <= 35.0f; distance += 5f)
                 {
                     WoWPoint endPoint = raisedCorpse.RayCast((float)(degrees * Math.PI / 180.0), distance);
                     traceLines.Add(new WorldLine(raisedCorpse, endPoint));
@@ -1147,8 +1152,13 @@ namespace Bots.Grind
                                 || LootFrame.Instance.IsVisible || !CanLoot()
                                 || !GroundLootApproach.CanInteractNow(owner.Subject, Current) || !Current()) return false;
                             attempted = true;
-                            GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-issued", "native-request-not-acknowledged");
-                            owner.Subject.Interact(true);
+                            GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-preparing", "awaiting-owned-native-entry");
+                            if (owner.Subject is WoWGameObject)
+                            {
+                                if (!GroundTransition.TryInteractWith(owner.Subject, Current, true)) return false;
+                            }
+                            else owner.Subject.Interact(true);
+                            if (Current()) GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-issued", "native-request-not-acknowledged");
                             return Current();
                         },
                             new TreeSharp.Action(ctx =>
@@ -1487,9 +1497,9 @@ namespace Bots.Grind
                 ),
                 // Check flight paths
                 new Decorator(
-                    ctx => FlightPaths.Reason != FlightPathReason.None || 
-                           FlightPaths.NeedFlightPath || 
-                           FlightPaths.NeedNearbyUpdate(),
+                    ctx => FlightPaths.MayServiceCurrentWork && (FlightPaths.Reason != FlightPathReason.None ||
+                           FlightPaths.NeedFlightPath ||
+                           FlightPaths.NeedNearbyUpdate()),
                     new TreeSharp.Action(ctx => FlightPaths.SetPoi())
                 )
             );
@@ -2024,11 +2034,21 @@ namespace Bots.Grind
                     : true;
                 if (mountedPull
                     && unit.CurrentTargetGuid == 0
-                    && unit.MyReaction < WoWUnitReaction.Neutral
-                    && WoWMathHelper.IsInPath(unit, meLocation, pathDestination)
-                    && (Math.Abs(meLocation.Z - unit.Location.Z) <= 10f || unit.InLineOfSpellSight))
+                    && unit.MyReaction < WoWUnitReaction.Neutral)
                 {
-                    outgoingUnits.Add(obj);
+                    // This is an optional incidental pull, independent of the
+                    // profile and quest-source include filters. Unknown aggro
+                    // modifiers cannot authorize it or erase their candidates.
+                    bool inPath;
+                    try { inPath = WoWMathHelper.IsInPath(unit, meLocation, pathDestination); }
+                    catch (ObservationUnavailableException error)
+                    {
+                        RecoveryActions.RethrowControlFlow(error);
+                        ObservationFailureDiagnostics.Report(error, "LevelBot.OptionalTravelTarget");
+                        continue;
+                    }
+                    if (inPath && (Math.Abs(meLocation.Z - unit.Location.Z) <= 10f || unit.InLineOfSpellSight))
+                        outgoingUnits.Add(obj);
                 }
             }
         }

@@ -57,6 +57,9 @@ internal sealed class GroundApproachSearch
     private const float LocalSupportProbeDepth = 512f;
     private readonly WoWPoint _origin, _destination;
     private readonly float _radius, _height;
+    private readonly float _interactionRange;
+    private WoWPoint? _groundGoal;
+    private bool _goalObserved;
     private readonly bool _requireOnward, _allowCoveredBelowActor;
     private readonly IGroundApproachQueries _queries;
     private readonly Func<bool> _current;
@@ -69,14 +72,17 @@ internal sealed class GroundApproachSearch
     internal GroundApproachPlan? Plan { get; private set; }
 
     internal GroundApproachSearch(WoWPoint origin, WoWPoint destination, float radius, float height,
-        bool requireOnward, bool allowCoveredBelowActor, IGroundApproachQueries queries, Func<bool> current)
+        bool requireOnward, bool allowCoveredBelowActor, IGroundApproachQueries queries, Func<bool> current,
+        float interactionRange = 0)
     {
         if (!Finite(origin) || !Finite(destination) || !float.IsFinite(radius) || radius <= 0 || radius > 8
-            || !float.IsFinite(height) || height <= 0 || height > 24)
+            || !float.IsFinite(height) || height <= 0 || height > 24
+            || !float.IsFinite(interactionRange) || interactionRange < 0)
             throw Unknown("invalid actor/destination/body observation");
         _origin = origin; _destination = destination; _radius = Math.Max(.6f, radius);
         _height = Math.Max(1.5f, height); _requireOnward = requireOnward;
         _allowCoveredBelowActor = allowCoveredBelowActor; _queries = queries; _current = current;
+        _interactionRange = interactionRange;
     }
 
     internal GroundApproachPlan? Step(int candidateBudget = 4)
@@ -115,16 +121,20 @@ internal sealed class GroundApproachSearch
 
     private IEnumerable<(WoWPoint Point, string Source)> Seeds()
     {
+        ObserveGroundGoal();
+        // A selected object can be used from supported ground inside its actual
+        // range. Its model origin is not necessarily a walkable mesh endpoint.
+        if (_interactionRange > 0) yield return (_destination, "object-interaction-volume");
         // Combat can land near its current position without asserting that a
         // hostile target is reachable. Interaction requires the onward mesh leg.
         if (!_requireOnward) yield return (_origin, "actor-column");
         GroundSurface? originGround = Project(_origin);
         RequireCurrent();
-        if (_requireOnward && originGround != null)
+        if (_requireOnward && originGround != null && _groundGoal.HasValue)
         {
-            GroundPath path = LastPath = _queries.Path(originGround.Value.Position, _destination);
+            GroundPath path = LastPath = _queries.Path(originGround.Value.Position, _groundGoal.Value);
             RequireCurrent();
-            if (Usable(path, originGround.Value.Position, _destination))
+            if (Usable(path, originGround.Value.Position, _groundGoal.Value))
             {
                 // Work outward from the interior end along an actual full path.
                 // A roof hit or another floor is rejected again by projection,
@@ -149,6 +159,23 @@ internal sealed class GroundApproachSearch
                 yield return (_destination.Add(radius * (float)Math.Cos(angle), radius * (float)Math.Sin(angle), 0), "bounded-support-search");
             }
         yield return (_origin, "actor-column-fallback");
+    }
+
+    private void ObserveGroundGoal()
+    {
+        if (_goalObserved) return;
+        RequireCurrent();
+        if (_interactionRange == 0) _groundGoal = _destination;
+        else
+        {
+            var surface = _queries.Snap(_destination);
+            RequireCurrent();
+            if (surface != null && Finite(surface.Value.Position)
+                && surface.Value.Position.DistanceSqr(_destination) <= _interactionRange * _interactionRange
+                && (LandingArea(surface.Value.Area) || surface.Value.Area == AreaType.KnownBuilding))
+                _groundGoal = surface.Value.Position;
+        }
+        _goalObserved = true;
     }
 
     private GroundSurface? Project(WoWPoint seed)
@@ -197,11 +224,14 @@ internal sealed class GroundApproachSearch
         if (Trace(clearance, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures).Any(r => r.Hit))
         { LastReason = "landing-body-clearance-blocked"; return null; }
         GroundPath? onward = null;
-        if (_requireOnward)
+        bool inObjectRange = _interactionRange > 0 && p.DistanceSqr(_destination) <= _interactionRange * _interactionRange;
+        if (_requireOnward && !inObjectRange)
         {
-            onward = LastPath = _queries.Path(p, _destination);
+            ObserveGroundGoal();
+            if (!_groundGoal.HasValue) { LastReason = "no-observed-ground-goal-in-object-range"; return null; }
+            onward = LastPath = _queries.Path(p, _groundGoal.Value);
             RequireCurrent();
-            if (!Usable(onward, p, _destination)) { LastReason = "onward-mesh-incomplete-or-wrong-floor"; return null; }
+            if (!Usable(onward, p, _groundGoal.Value)) { LastReason = "onward-mesh-incomplete-or-wrong-floor"; return null; }
         }
         RequireCurrent();
         return new GroundApproachPlan(p, p.Add(0, 0, approachHeight), surface.Area, onward, open, source);

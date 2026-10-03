@@ -87,9 +87,8 @@ namespace Singular.ClassSpecific.Paladin
             // Pinned TC335 spell_pal_lay_on_hands applies these restrictions to
             // self-casts only. An ally's Forbearance must not suppress its rescue.
             // Numeric markers also work when their aura names are localized.
-            return !recipient.IsMe || !recipient.HasAura("Forbearance")
-                && !recipient.GetAllAuras().Any(a => a != null && a.IsActive
-                    && (a.SpellId == 61987 || a.SpellId == 61988));
+            return !recipient.IsMe || !recipient.GetRawAuras().Any(a => a != null && a.IsActive
+                && (a.SpellId == 25771 || a.SpellId == 61987 || a.SpellId == 61988));
         }
 
         [Class(WoWClass.Paladin)]

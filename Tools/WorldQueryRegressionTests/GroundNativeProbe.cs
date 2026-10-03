@@ -13,11 +13,19 @@ namespace Styx.Logic.POI{
  public sealed class BotPoi{public static BotPoi Current=new();public static long CurrentGeneration;public static long CurrentWorkGeneration=>CurrentGeneration;public bool IsWorldSubjectBlacklisted;public PoiType Type;public ulong Guid;public uint Entry;}
 }
 namespace Styx.WoWInternals{public static class WoWMovement{public static WoWUnit ActiveMover;}}
+namespace Styx.Logic{public static class Blacklist{public static readonly HashSet<ulong> Items=new();public static bool Contains(ulong guid)=>Items.Contains(guid);}}
+namespace Styx.WoWInternals.WoWObjects{
+ public sealed class WoWGameObject:WoWObject{
+  public bool IsDisabled,Usable=true;public float InteractRange=5;
+  public bool CanUse(){GroundProbe.PrepareUsability();return Usable;}
+  public bool CanUseNow(){GroundProbe.PrepareUsability();return Usable;}
+ }
+}
 namespace Styx.Logic.Pathing{
  public class NavigationProvider{}
  public interface IPlayerMover{}
  public sealed class PlayerMover:IPlayerMover{}
- public static class Navigator{public static NavigationProvider NavigationProvider=new();public static IPlayerMover PlayerMover=new PlayerMover();}
+ public static class Navigator{public static NavigationProvider NavigationProvider=new();public static IPlayerMover PlayerMover=new PlayerMover();public static float PathPrecision=1;public static bool CanNavigateFully(WoWPoint from,WoWPoint to)=>CorpseSearchCases.DirectPath;public static WoWPoint[] GeneratePath(WoWPoint from,WoWPoint to)=>CorpseSearchCases.Path(from,to);}
  public static class GroundApproachSearch{public static bool Finite(WoWPoint p)=>float.IsFinite(p.X)&&float.IsFinite(p.Y)&&float.IsFinite(p.Z);}
  internal static class GroundTransitionRuntime{internal static void ObserveUnmounted(GroundTransitionContext stamp){}}
 }
@@ -28,14 +36,21 @@ public static class GroundProbe{
  public static WoWObject Subject;public static string[] VehicleValues;public static Exception MovementError;
  public static uint MountDisplay,RawForm,UnitFlagsValue,DescriptorPointer;public static string DescriptorFailure;public static Exception DescriptorError;
  public static Action<string> DescriptorRead;public static ulong? DescriptorGuid;
- public static int Interactions,LuaDuringPreparedInteraction;public static string[] InteractionInstructions;
+ public static int Interactions,LuaDuringPreparedInteraction,UsabilityDuringPreparedInteraction,UsabilityReads;public static string[] InteractionInstructions;
+ public static Action DuringUsability;
  public static void Reset(LocalPlayer actor,WoWObject subject){
   Subject=subject;VehicleValues=new[]{"world-vehicle","0"};MovementError=null;Interactions=LuaDuringPreparedInteraction=0;InteractionInstructions=Array.Empty<string>();
+  UsabilityDuringPreparedInteraction=UsabilityReads=0;DuringUsability=null;Styx.Logic.Blacklist.Items.Clear();
   MountDisplay=RawForm=UnitFlagsValue=0;DescriptorPointer=0x60000;DescriptorFailure=null;DescriptorError=null;DescriptorRead=null;DescriptorGuid=null;
   Probe.Instructions.Clear();WoWMovement.ActiveMover=actor;actor.Position=new(10,10,0);subject.Position=new(11,10,0);
   Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot=new();
   Styx.Logic.POI.BotPoi.Current=new(){Type=Styx.Logic.POI.PoiType.QuestPickUp,Guid=subject.Guid,Entry=subject.Entry};
   Styx.Logic.POI.BotPoi.CurrentGeneration++;Navigator.NavigationProvider=new();Navigator.PlayerMover=new PlayerMover();GroundSight.Clear=true;
+ }
+ public static void PrepareUsability(){
+  UsabilityReads++;if(Probe.Instructions.Contains("call eax"))UsabilityDuringPreparedInteraction++;
+  Probe.Instructions.Clear();Probe.Instructions.Add("controlled-native-usability-query");
+  var callback=DuringUsability;DuringUsability=null;callback?.Invoke();
  }
  // Lua uses the same executor assembly storage in production. A final ground
  // guard which invokes it after preparing call-eax destroys that command.
@@ -89,6 +104,39 @@ public static class GroundNativeCases{
    check(GroundProbe.LuaDuringPreparedInteraction==0,"ground entry guard overwrote the prepared interaction with Lua");
    check(GroundProbe.InteractionInstructions.SequenceEqual(new[]{"mov ecx, 16384","mov eax, [ecx]","add eax, 176","mov eax, [eax]","call eax","retn"}),"ground admission changed the original interaction ABI");
   });
+  WoWGameObject ObjectSubject(){var prior=GroundProbe.Subject;var value=new WoWGameObject{Guid=prior.Guid,BaseAddress=prior.BaseAddress,Entry=prior.Entry,Position=prior.Position};GroundProbe.Subject=value;return value;}
+  test("usable ground object preserves native interaction despite a model-centre obstruction",()=>{
+   var subject=ObjectSubject();GroundSight.Clear=false;
+   check(GroundTransition.TryInteractWith(subject)&&GroundProbe.Interactions==1,"observed usable object was rejected by its model centre");
+   check(GroundProbe.UsabilityReads==2&&GroundProbe.UsabilityDuringPreparedInteraction==0&&GroundProbe.LuaDuringPreparedInteraction==0,
+    "object usability was missing or overwrote the prepared interaction");
+   check(GroundProbe.InteractionInstructions.SequenceEqual(new[]{"mov ecx, 16384","mov eax, [ecx]","add eax, 176","mov eax, [eax]","call eax","retn"}),"object interaction ABI was replaced by its usability query");
+  });
+  test("native object unusability denies submission",()=>{
+   var subject=ObjectSubject();subject.Usable=false;
+   check(!GroundTransition.TryInteractWith(subject)&&GroundProbe.Interactions==0,"unusable object reached native interaction");
+  });
+  foreach(string mutation in new[]{"position","actor","poi"}){
+   string change=mutation;test("object usability callback revokes changed "+change,()=>{
+    var subject=ObjectSubject();GroundProbe.DuringUsability=()=>{
+     if(change=="position")subject.Position=new(30,10,0);
+     if(change=="actor")ObjectManager.Me=new(){Guid=9};
+     if(change=="poi")Styx.Logic.POI.BotPoi.CurrentGeneration++;
+    };
+    check(!GroundTransition.TryInteractWith(subject)&&GroundProbe.Interactions==0,"usability callback donated stale object permission");
+   });
+  }
+  foreach(string mutation in new[]{"disabled","blacklisted","range","mount"}){
+   string change=mutation;test("object final native guard rejects "+change,()=>{
+    var subject=ObjectSubject();Probe.Stage="afk";Probe.StageAction=()=>{
+     if(change=="disabled")subject.IsDisabled=true;
+     if(change=="blacklisted")Styx.Logic.Blacklist.Items.Add(subject.Guid);
+     if(change=="range")ObjectManager.Me.Position=new(50,10,0);
+     if(change=="mount")GroundProbe.MountDisplay=123;
+    };
+    check(!GroundTransition.TryInteractWith(subject)&&GroundProbe.Interactions==0,"final object guard retained stale "+change+" permission");
+   });
+  }
   foreach(string condition in new[]{"vehicle","unknown","wrong-envelope","missing-value","oversized-envelope"}){
    string c=condition;test("ground vehicle observation/"+c,()=>{
     GroundProbe.VehicleValues=c switch{"vehicle"=>new[]{"world-vehicle","1"},"wrong-envelope"=>new[]{"other","0"},"missing-value"=>new[]{"world-vehicle"},"oversized-envelope"=>new[]{"world-vehicle","0","extra"},_=>Array.Empty<string>()};

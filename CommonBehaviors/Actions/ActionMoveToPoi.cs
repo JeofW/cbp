@@ -42,12 +42,16 @@ namespace CommonBehaviors.Actions
 				uint entry = poi?.Entry ?? 0;
 				bool ContextCurrent() => actor != null && actorGuid != 0 && mover != null && moverGuid != 0
 					&& ReferenceEquals(ObjectManager.Me, actor) && actor.Guid == actorGuid && actor.MapId == map
-					&& actor.IsValid && actor.IsAlive && !actor.OnTaxi && !actor.IsOnTransport
-					&& !actor.IsCasting && actor.ChanneledCastingSpellId == 0
+						&& actor.IsValid && actor.IsAlive && !actor.OnTaxi && !actor.IsOnTransport
+						&& ((!actor.IsCasting && actor.ChanneledCastingSpellId == 0)
+							|| _groundApproach != null && RequiresGroundApproach(type))
 					&& ReferenceEquals(WoWMovement.ActiveMover, mover) && mover.IsValid && mover.Guid == moverGuid
 					&& poi != null && ReferenceEquals(BotPoi.Current, poi) && poi.Type == type
 					&& poi.Guid == poiGuid && poi.Entry == entry && ReferenceEquals(Navigator.NavigationProvider, provider);
-				if (!ContextCurrent()) { _hasLoggedMove = false; return RunStatus.Failure; }
+					if (!ContextCurrent()) { _hasLoggedMove = false; return RunStatus.Failure; }
+					// A pending owned mount cast must yield, not retire the journey and
+					// cancel its navigation owner. Movement entry rechecks cast state.
+					if (actor.IsCasting || actor.ChanneledCastingSpellId != 0) return RunStatus.Running;
 
 				WoWObject? subject = poi.AsObject;
 				WoWUnit? unit = subject?.ToUnit();
@@ -58,7 +62,8 @@ namespace CommonBehaviors.Actions
 						&& ReferenceEquals(poi.AsObject, subject)
 					&& (subject == null || subjectGuid != 0 && subject.IsValid && subject.Guid == subjectGuid
 						&& (poiGuid == 0 || poiGuid == subjectGuid) && unit?.IsAlive == alive)
-					&& (subject != null ? subject.Location : poi.Location).Equals(destination) && ContextCurrent();
+						&& (RequiresGroundApproach(type) && unit != null
+							|| (subject != null ? subject.Location : poi.Location).Equals(destination)) && ContextCurrent();
 				if (!Finite(destination) || !Current()) { _hasLoggedMove = false; return RunStatus.Failure; }
 
 				if (!_hasLoggedMove || _lastGuid != subjectGuid || !_lastLocation.Equals(destination))

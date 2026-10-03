@@ -21,6 +21,9 @@ var player = Class("Styx/WoWInternals/WoWObjects/LocalPlayer.cs", "LocalPlayer")
 var unit = Class("Styx/WoWInternals/WoWObjects/WoWUnit.cs", "WoWUnit");
 var world = Class("Styx/WoWInternals/World/GameWorld.cs", "GameWorld");
 var ground = Class("Styx/Logic/Pathing/GroundTransition.cs", "GroundTransition");
+var levelBot = Class("Bots/Grind/LevelBot.cs", "LevelBot");
+string corpseMembers = string.Join("\n", levelBot.Members.OfType<MethodDeclarationSyntax>()
+    .Where(method => method.Identifier.ValueText is "FindSafeResPoint" or "IsResPointSafe" or "GetDistanceToNearestHostile"));
 string Property(ClassDeclarationSyntax type) => type.Members.OfType<PropertyDeclarationSyntax>()
     .Single(x => x.Identifier.ValueText == "IsOutdoors").ToString();
 string ray = world.Members.OfType<MethodDeclarationSyntax>().Single(x => x.Identifier.ValueText == "TraceLine"
@@ -28,6 +31,8 @@ string ray = world.Members.OfType<MethodDeclarationSyntax>().Single(x => x.Ident
 string flags = world.Members.OfType<EnumDeclarationSyntax>().Single(x => x.Identifier.ValueText == "CGWorldFrameHitFlags").ToString();
 string batch = world.Members.OfType<MethodDeclarationSyntax>().Single(x => x.Identifier.ValueText == "MassTraceLine"
     && x.ParameterList.Parameters.Count == 4 && x.ParameterList.Parameters[1].Type!.ToString() == "CGWorldFrameHitFlags[]").ToString();
+string batchWrappers = string.Join("\n", world.Members.OfType<MethodDeclarationSyntax>().Where(x => x.Identifier.ValueText == "MassTraceLine"
+    && x.ParameterList.Parameters.Count == 3 && x.ParameterList.Parameters[1].Type!.ToString().StartsWith("CGWorldFrameHitFlags")));
 string objectProperty = Property(obj);
 string playerProperty = Property(player);
 string vehicleProperty = player.Members.OfType<PropertyDeclarationSyntax>().Single(x => x.Identifier.ValueText == "InVehicle").ToString();
@@ -46,11 +51,12 @@ string interactionMembers = string.Join("\n", obj.Members.Where(member =>
     || member is FieldDeclarationSyntax field && field.Declaration.Variables.Any(v => v.Identifier.ValueText is "InteractVtableOffset" or "_interactTimer")));
 string source = Boundary.Prefix + "namespace Styx.WoWInternals.WoWObjects { public class WoWObject {"
     + Boundary.ObjectLeaves + GroundNativeProbe.ObjectLeaves + objectProperty + descriptorObservation + interactionMembers + "public bool SubmitInteraction()=>TryInteractCore(false);"
-    + "} public class WoWUnit:WoWObject {} public class LocalPlayer:WoWUnit {public uint MapId=530;" + playerProperty + vehicleProperty + GroundNativeProbe.PlayerLeaves + movementObservation + mountObservation + "}}\n"
-    + "namespace Styx.WoWInternals.World { public static class GameWorld {" + flags + ray + batch + Boundary.BatchFallback
+    + "} public class WoWUnit:WoWObject { public bool Dead,IsHostile=true;public float MyAggroRange=20; } public class LocalPlayer:WoWUnit {public uint MapId=530;public WoWPoint CorpsePoint;" + playerProperty + vehicleProperty + GroundNativeProbe.PlayerLeaves + movementObservation + mountObservation + "}}\n"
+    + "namespace Styx.WoWInternals.World { public static class GameWorld {" + flags + ray + batch + batchWrappers + Boundary.BatchFallback
     + " public static bool ReadRay(WoWPoint from,WoWPoint to,out WoWPoint hit)=>TraceLine(from,to,1f,CGWorldFrameHitFlags.HitTestGroundAndStructures,out hit); public static bool IsInLineOfSight(WoWPoint from,WoWPoint to)=>GroundSight.Clear; }}\n"
     + "namespace Styx.Logic.Pathing { public static class GroundTransition {" + groundMembers + "}}\n"
-    + GroundNativeProbe.Leaves + Boundary.Cases + GroundNativeProbe.Cases;
+    + "namespace Bots.Grind {public static class LevelBot {" + corpseMembers + "public static WoWPoint Find()=>FindSafeResPoint();}}\n"
+    + GroundNativeProbe.Leaves + Boundary.Cases + GroundNativeProbe.Cases + CorpseSearchProbe.Leaves;
 var trees = new List<SyntaxTree> { CSharpSyntaxTree.ParseText(source) };
 trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/Helpers/AllocatedMemory.cs")));
 trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/WoWInternals/World/WorldLine.cs")));
@@ -59,6 +65,7 @@ trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/Offsets/GlobalOffsets.cs")));
 string helper = "Styx/WoWInternals/World/WorldQueryObservation.cs";
 trees.Add(CSharpSyntaxTree.ParseText(Read(helper)));
 trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/Logic/Pathing/GroundTransitionContext.cs")));
+trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/Logic/GrindSafetyPolicy.cs")));
 trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/Offsets/WoWUnitFields.cs")));
 trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/Offsets/UnitFlags.cs")));
 trees.Add(CSharpSyntaxTree.ParseText(Read("Styx/ShapeshiftForm.cs")));
@@ -78,7 +85,7 @@ internal static class Boundary
     internal const string Prefix = """
 #nullable disable
 using System;using System.Collections.Generic;using System.Collections.Specialized;using System.Linq;using System.Reflection;using System.Threading;
-using GreenMagic;using Styx;using Styx.Helpers;using Styx.Logic.Combat;using Styx.Logic.Pathing;
+using GreenMagic;using Styx;using Styx.Helpers;using Styx.Logic;using Styx.Logic.Combat;using Styx.Logic.Pathing;
 using Styx.Offsets;using Styx.WoWInternals;using Styx.WoWInternals.World;using Styx.WoWInternals.WoWObjects;
 public static class Probe {
  public static byte Value;public static int Bytes,Calls;public static Exception Error;public static Action During,DuringRead;
@@ -110,9 +117,9 @@ namespace GreenMagic {
  }
  public sealed class EmptyScope:IDisposable{public void Dispose(){}}
  public sealed class ExecutorRand {
-  public Memory Memory;public bool IsOpen=true,IsInitialized=true;public uint ReturnPointer=8192,FrameCount=1;
+  public Memory Memory;public bool IsOpen=true,IsInitialized=true;public uint ReturnPointer=8192,FrameCount=1;public long ExecutionGeneration;
   public object AssemblyLock=new();public void Clear(){Probe.At("clear");Probe.Instructions.Clear();}
-  public void AddLine(string format,params object[] args){Probe.At("instruction");Probe.Instructions.Add(string.Format(format,args));}public void Execute()=>Probe.Execute();
+  public void AddLine(string format,params object[] args){Probe.At("instruction");Probe.Instructions.Add(string.Format(format,args));}public void Execute(){ExecutionGeneration++;Probe.Execute();}
  }
  public class InjectionSEHException:Exception{}
  public static class FastSize<T>where T:struct{public static readonly int Size=System.Runtime.InteropServices.Marshal.SizeOf<T>();}
@@ -120,17 +127,17 @@ namespace GreenMagic {
 namespace Styx.Helpers {
  public sealed class ObservationUnavailableException:InvalidOperationException {public string Observation;public ObservationUnavailableException(string observation,string reason):base(reason){Observation=observation;}}
  public sealed class WaitTimer{public WaitTimer(TimeSpan duration){}public bool IsFinished=>true;public void Reset()=>Probe.At("timer");}
- public static class Logging{public static void WriteDebug(string value,params object[] args)=>Probe.At("log");public static void WriteException(Exception e){}}
+ public static class Logging{public static void WriteDebug(string value,params object[] args)=>Probe.At("log");public static void Write(string value,params object[] args){}public static void WriteException(Exception e){}}
 }
 namespace Styx.Logic.Combat {
  public static class RecoveryActions{public static void RethrowControlFlow(Exception error){while(error is TargetInvocationException{InnerException:not null} wrapped)error=wrapped.InnerException;if(error is OperationCanceledException or ThreadInterruptedException or InvalidProcessException or InvalidExecutorException)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error).Throw();}}
 }
 namespace Styx.Logic.BehaviorTree {public static class TreeRoot {public static object RunIdentity=new(),Current=new();public static bool IsRunning=true;}}
 namespace Styx.Logic.Pathing {
- public readonly record struct WoWPoint(float X,float Y,float Z){public static readonly WoWPoint Zero=default,Empty=new(float.NaN,float.NaN,float.NaN);public WoWPoint Add(float x,float y,float z)=>new(X+x,Y+y,Z+z);public float DistanceSqr(WoWPoint p)=>(X-p.X)*(X-p.X)+(Y-p.Y)*(Y-p.Y)+(Z-p.Z)*(Z-p.Z);public float Distance(WoWPoint p)=>MathF.Sqrt(DistanceSqr(p));}
+ public record struct WoWPoint(float X,float Y,float Z){public static readonly WoWPoint Zero=default,Empty=new(float.NaN,float.NaN,float.NaN);public WoWPoint Add(float x,float y,float z)=>new(X+x,Y+y,Z+z);public float DistanceSqr(WoWPoint p)=>(X-p.X)*(X-p.X)+(Y-p.Y)*(Y-p.Y)+(Z-p.Z)*(Z-p.Z);public float Distance(WoWPoint p)=>MathF.Sqrt(DistanceSqr(p));public float Distance2DSqr(WoWPoint p)=>(X-p.X)*(X-p.X)+(Y-p.Y)*(Y-p.Y);public float Distance2D(WoWPoint p)=>MathF.Sqrt(Distance2DSqr(p));public WoWPoint RayCast(float angle,float distance)=>new(X+MathF.Cos(angle)*distance,Y+MathF.Sin(angle)*distance,Z);}
 }
 namespace Styx.WoWInternals {
- public static class ObjectManager {public static Memory Wow;public static ExecutorRand Executor;public static LocalPlayer Me;public static bool IsInGame=true;}
+ public static class ObjectManager {public static Memory Wow;public static ExecutorRand Executor;public static LocalPlayer Me;public static bool IsInGame=true;public static List<WoWUnit> Units=new();public static IEnumerable<T> GetObjectsOfType<T>(bool first,bool second)=>Units.OfType<T>();}
  public static class Lua {
   public static T GetReturnVal<T>(string code,int index){GroundProbe.PrepareLua(code);Probe.Execute();var values=code.Contains("UnitInVehicle")?GroundProbe.VehicleValues:Probe.LuaValues;return (T)(object)(values!=null&&values.Length>1&&values[1]=="1");}
   public static List<string> GetObservedReturnValues(string code){GroundProbe.PrepareLua(code);Probe.Execute();var values=code.Contains("UnitInVehicle")?GroundProbe.VehicleValues:Probe.LuaValues;return values?.ToList()??new();}
@@ -166,10 +173,12 @@ public static class WorldCases {
    }
   }
   foreach(string kind in new[]{"object","ray"}){string k=kind;
+   Case(k+" nested execution cannot relabel the returned buffer",()=>{Probe.During=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown(k);});
    Case(k+" short result remains UNKNOWN",()=>{Probe.Bytes=0;Unknown(k);});
    Case(k+" zero return pointer remains UNKNOWN",()=>{ObjectManager.Executor.ReturnPointer=0;Unknown(k);});
    Case(k+" invalid bool remains UNKNOWN",()=>{Probe.Value=2;Unknown(k);});
-   Case(k+" result epoch changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;Unknown(k);});
+   Case(k+" actual execution generation changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown(k);});
+   Case(k+" ordinary render frame does not replace a result",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;bool value=false;try{value=Read(k);}catch(ObservationUnavailableException){}Check(value,"normal render-frame progression invalidated completed native data");});
    Case(k+" result pointer changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.ReturnPointer++;Unknown(k);});
    Case(k+" executor closure is fatal",()=>{ObjectManager.Executor.IsOpen=false;Exception caught=null;try{_=Read(k);}catch(Exception e){caught=e;}Check(caught is InvalidExecutorException&&Probe.Calls==0,"closed executor produced geometry");});
    Case(k+" process closure is fatal",()=>{ObjectManager.Wow.ProcessHandle=IntPtr.Zero;Exception caught=null;try{_=Read(k);}catch(Exception e){caught=e;}Check(caught is InvalidProcessException&&Probe.Calls==0,"closed process produced geometry");});
@@ -196,7 +205,9 @@ public static class WorldCases {
   Case("batch invalid boolean remains UNKNOWN",()=>{Probe.BatchHits[0]=2;Unknown("batch");});
   Case("batch nonfinite hit remains UNKNOWN",()=>{Probe.BatchPoints[0]=new(1,2,float.NaN);Unknown("batch");});
   Case("batch off-segment hit remains UNKNOWN",()=>{Probe.BatchPoints[0]=new(10,20,5);Unknown("batch");});
-  Case("batch result frame changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;Unknown("batch");});
+  Case("batch execution generation changes during read",()=>{Probe.DuringRead=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown("batch");});
+  Case("batch nested execution cannot relabel outputs",()=>{Probe.During=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown("batch");});
+  Case("batch survives ordinary render frame progression",()=>{Probe.DuringRead=()=>ObjectManager.Executor.FrameCount++;bool value=false;try{value=Read("batch");}catch(ObservationUnavailableException){}Check(value,"render frame replaced a retained batch result without an execution");});
   Case("batch missing executor never invokes alternate provider",()=>{ObjectManager.Executor=null;try{_=Read("batch");}catch(ObservationUnavailableException){}Check(!Probe.FallbackUsed,"missing collision silently became another provider query");});
   Case("batch actor replacement before dispatch",()=>{Probe.Write=()=>ObjectManager.Me=new();Unknown("batch");Check(Probe.Calls==0,"batch wrote then dispatched under replaced actor");});
   Case("batch memory replacement frees original buffer",()=>{var original=ObjectManager.Wow;Probe.During=()=>{ObjectManager.Wow=new();ObjectManager.Executor=new(){Memory=ObjectManager.Wow};};Unknown("batch");Check(Probe.Freed.Count==1&&ReferenceEquals(Probe.Freed[0],original),"batch freed replacement memory");});
@@ -242,6 +253,7 @@ public static class WorldCases {
   Case("interaction native failure remains UNKNOWN",()=>{Probe.Error=new InjectionSEHException();Exception observed=null;try{subject.SubmitInteraction();}catch(Exception error){observed=error;}Check(observed is ObservationUnavailableException&&Probe.Calls==1,"ambiguous interaction dispatch became an ordinary false receipt");});
   Case("interaction missing executor remains UNKNOWN",()=>{ObjectManager.Executor=null;Exception observed=null;try{subject.SubmitInteraction();}catch(Exception error){observed=error;}Check(observed is ObservationUnavailableException&&Probe.Calls==0,"missing executor was silently replaced with a false receipt");});
   GroundNativeCases.Run(Case, Check);
+  CorpseSearchCases.Run(Case, Check);
   Console.WriteLine($"World query observations: {passed}/{total}; assertions={assertions}; unexpected={unexpected}; actual production outdoors/ray/ground admission/context/interaction members, controlled executor/memory/Lua only; no native or live collision proof.");
   if(assertions+unexpected!=0)throw new InvalidOperationException("world query regression");
  }

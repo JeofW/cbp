@@ -146,22 +146,24 @@ Case("ground mounted explicit pull waits for observed unmount", () =>
     AssertAttackAllowed("explicit-ground/ready");
 });
 
-Case("ground mounted protective aggro lands at actor and ignores unrelated travel churn", () =>
+Case("incidental ground aggro retains mount until separately observed forced removal", () =>
 {
     GroundedMounted();
     World.Actor.Combat = true;
     World.Actor.HealthPercent = 30;
     using var owner = new MountedCombatTransition();
-    Check(owner.TickCurrent(new WoWPoint(600, 0, 0)) == GroundTransitionState.Pending && World.Dismounts == 1,
-        "protective aggro did not acquire ground removal");
+    Check(owner.TickCurrent(new WoWPoint(600, 0, 0)) == GroundTransitionState.Revoked && World.Dismounts == 0,
+        "incidental aggro acquired voluntary ground removal");
     World.Target.Position = new WoWPoint(900, 900, 0);
-    Check(owner.TickCurrent(new WoWPoint(-600, 0, 0)) == GroundTransitionState.Pending && World.Dismounts == 1,
-        "unrelated target/travel churn revoked or duplicated protective landing");
+    Check(owner.TickCurrent(new WoWPoint(-600, 0, 0)) == GroundTransitionState.Revoked && World.Dismounts == 0,
+        "unrelated target/travel churn authorized dismount");
     AssertNoOrdinaryTravel("protective-ground");
     AssertAttackBlocked("protective-ground");
+    // A later client update reports hostile mount removal; no bot command caused it.
     World.Actor.MountedValue = false;
     Check(owner.TickCurrent(new WoWPoint(-600, 0, 0)) == GroundTransitionState.Ready,
-        "protective aggro did not wait for observed unmount");
+        "observed forced removal on supported ground did not release combat");
+    Check(World.Dismounts == 0,"forced removal emitted a redundant dismount");
     AssertAttackAllowed("protective-ground/ready");
 });
 
@@ -212,27 +214,37 @@ Case("flying committed kill uses actual target and ground transition", () =>
     ObserveLandingAndUnmount(Tick, "committed-flying");
 });
 
-Case("flying player protective threat reaches ready without borrowing travel target", () =>
+Case("flying incidental threat waits for actual mount loss and supported ground", () =>
 {
     World.Actor.Combat = true;
     World.Actor.HealthPercent = 30;
     using var owner = new MountedCombatTransition();
     GroundTransitionState Tick() => owner.TickCurrent(new WoWPoint(900, -400, 0));
-    ReachLandingCommand(Tick, "protective-flying");
-    ObserveExteriorArrivalIfNeeded(Tick, "protective-flying");
-    ObserveLandingAndUnmount(Tick, "protective-flying");
+    for(int i=0;i<5;i++)Check(Tick()==GroundTransitionState.Revoked,"incidental flying threat acquired a landing owner");
+    AssertAttackBlocked("incidental-flying");
+    World.Actor.MountedValue=false;
+    Check(Tick()==GroundTransitionState.Pending,"airborne mount loss admitted combat");
+    World.Actor.Flags=0x3000u;
+    Check(Tick()==GroundTransitionState.Pending,"falling after mount loss admitted combat");
+    World.Actor.Position=new WoWPoint(100,10,0);World.Actor.Flags=0;
+    Check(Tick()==GroundTransitionState.Ready,"supported forced removal failed to release combat");
+    Check(World.Dismounts+World.Descents+World.ExteriorFlights.Count==0,"incidental travel submitted a voluntary landing effect");
+    AssertAttackAllowed("forced-flying/ready");
 });
 
-Case("flying pet-only protective threat reaches ready with exact pet", () =>
+Case("flying pet-only aggro cannot land the rider", () =>
 {
     World.Actor.Combat = false;
     World.Actor.HealthPercent = 30;
     World.Actor.Pet = new WoWUnit { Guid = 30, BaseAddress = 300, Entry = 400, Position = new WoWPoint(101, 10, 0), Combat = true, IsAlive = true };
     using var owner = new MountedCombatTransition();
     GroundTransitionState Tick() => owner.TickCurrent(new WoWPoint(900, 400, 0));
-    ReachLandingCommand(Tick, "pet-only-flying");
-    ObserveExteriorArrivalIfNeeded(Tick, "pet-only-flying");
-    ObserveLandingAndUnmount(Tick, "pet-only-flying");
+    Check(Tick()==GroundTransitionState.Revoked,"pet-only aggro acquired mounted landing");
+    World.Actor.MountedValue=false;World.Actor.Flags=0x3000u;
+    Check(Tick()==GroundTransitionState.Pending,"forced mount loss did not retain falling protection");
+    World.Actor.Position=new WoWPoint(100,10,0);World.Actor.Flags=0;
+    Check(Tick()==GroundTransitionState.Ready,"exact pet threat could not resume after supported forced removal");
+    Check(World.Dismounts+World.Descents+World.ExteriorFlights.Count==0,"pet combat created an unsolicited landing effect");
 });
 
 foreach (string change in new[] { "actor", "run", "target", "poi", "caller-context" })
@@ -290,21 +302,22 @@ Case("cleared committed POI cancels current transition", () =>
         "cleared kill POI retained transition authority");
 });
 
-Case("pet replacement revokes exact threat ownership without duplicate dismount", () =>
+Case("pet replacement revokes falling threat ownership after forced removal", () =>
 {
     GroundedMounted();
+    World.Actor.MountedValue=false;World.Actor.Flags=0x3000u;World.Actor.Position=new WoWPoint(100,10,8);
     World.Actor.HealthPercent = 30;
     var original = new WoWUnit { Guid = 30, BaseAddress = 300, Entry = 400, Combat = true, IsAlive = true };
     World.Actor.Pet = original;
     using var owner = new MountedCombatTransition();
-    Check(owner.TickCurrent(new WoWPoint(500, 0, 0)) == GroundTransitionState.Pending && World.Dismounts == 1,
-        "pet-only threat did not acquire pending removal");
+    Check(owner.TickCurrent(new WoWPoint(500, 0, 0)) == GroundTransitionState.Pending && World.Dismounts == 0,
+        "pet-only threat did not retain falling protection");
     World.Actor.Pet = new WoWUnit { Guid = original.Guid, BaseAddress = original.BaseAddress, Entry = original.Entry, Combat = true, IsAlive = true };
-    Check(owner.TickCurrent(new WoWPoint(500, 0, 0)) == GroundTransitionState.Revoked && World.Dismounts == 1,
+    Check(owner.TickCurrent(new WoWPoint(500, 0, 0)) == GroundTransitionState.Revoked && World.Dismounts == 0,
         "same-numbers replacement pet inherited exact threat ownership");
-    Check(owner.TickCurrent(new WoWPoint(500, 0, 0)) == GroundTransitionState.Pending && World.Dismounts == 1,
-        "successor pet lifetime duplicated the unacknowledged actor/session dismount");
-    World.Actor.MountedValue = false;
+    Check(owner.TickCurrent(new WoWPoint(500, 0, 0)) == GroundTransitionState.Pending && World.Dismounts == 0,
+        "successor pet lifetime lost falling protection or invented a dismount");
+    World.Actor.Position=new WoWPoint(100,10,0);World.Actor.Flags=0;
     Check(owner.TickCurrent(new WoWPoint(500, 0, 0)) == GroundTransitionState.Ready,
         "successor pet lifetime did not accept later observed removal");
 });
@@ -350,5 +363,5 @@ Case("reentrant cleanup cannot clobber mounted-ground successor", () =>
         "predecessor cleanup clobbered reentrant successor state");
 });
 
-Console.WriteLine($"Mounted-ground integration: {passed}/{total}; linked actual MountedCombatTransition, MountedTravelProgress, GroundTransition/context/runtime/machine/geometry/query and TreeSharp guard; controlled client/native leaves only; no live game/native traversal proof.");
+Console.WriteLine($"Mounted-ground integration: {passed}/{total}; linked actual MountedCombatTransition, GroundTransition/context/runtime/machine/geometry/query and TreeSharp guard; controlled client/native leaves only; no live game/native traversal proof.");
 if (failures.Count != 0) throw new InvalidOperationException(string.Join(Environment.NewLine, failures));

@@ -70,6 +70,7 @@ public class Actor {
  public double HealthPercent{get{Cases.Observe("target");return 100;}}public int Level=>60;
 }
 public static class StyxWoW{public static Actor Me=new Actor();}
+public static class SpellManager{public static void BeginCastSelectionPulse(){}}
 public static class Spell{public static double MeleeRange=>5;public static Dictionary<string,DateTime> DoubleCastPreventionDict=new();}
 public static class Extensions{public static void RemoveAll(this Dictionary<string,DateTime> values,Func<DateTime,bool> filter){foreach(var key in values.Where(pair=>filter(pair.Value)).Select(pair=>pair.Key).ToArray())values.Remove(key);}}
 public static class PetManager{public static void Pulse(){Cases.Observe("pet");Cases.Pets++;}}

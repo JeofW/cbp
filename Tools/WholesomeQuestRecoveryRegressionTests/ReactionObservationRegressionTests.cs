@@ -28,12 +28,12 @@ internal static class ReactionObservationRegressionTests
  private const string Prefix="""
 #nullable disable
 using System;using System.Linq;using System.Collections.Generic;using System.Reflection;using System.Threading;using Styx;using Styx.Helpers;using Styx.Logic.Combat;
-public static class State{public static uint Value;public static int Calls,Bytes=4;public static Exception Error;public static Action During;public static List<string> Lines=new();}
+public static class State{public static uint Value;public static int Calls,Bytes=4;public static Exception Error;public static Action During,DuringRead;public static List<string> Lines=new();}
 public static class ObjectManager{public static Memory Wow;public static ExecutorRand Executor;public static WoWPlayer Me;}
 public static class StyxWoW{public static WoWPlayer Me=>ObjectManager.Me;public static Memory Memory=>ObjectManager.Wow;}
-public sealed class Memory{public IntPtr ProcessHandle=new(1);public byte[] ReadBytes(uint address,int count)=>BitConverter.GetBytes(State.Value).Take(State.Bytes).ToArray();public T Read<T>(uint address)=>(T)(object)State.Value;public IDisposable TemporaryCacheState(bool state)=>new Scope();}
+public sealed class Memory{public IntPtr ProcessHandle=new(1);public byte[] ReadBytes(uint address,int count){var bytes=BitConverter.GetBytes(State.Value).Take(State.Bytes).ToArray();var callback=State.DuringRead;State.DuringRead=null;callback?.Invoke();return bytes;}public T Read<T>(uint address)=>(T)(object)State.Value;public IDisposable TemporaryCacheState(bool state)=>new Scope();}
 public sealed class Scope:IDisposable{public void Dispose(){}}
-public sealed class ExecutorRand{public bool IsOpen=true,IsInitialized=true;public Memory Memory;public uint FrameCount=1,ReturnPointer=8192;public object AssemblyLock=new();public void Clear(){State.Lines.Clear();}public void AddLine(string value)=>State.Lines.Add(value);public void Execute(){State.Calls++;if(State.Error!=null)throw State.Error;var callback=State.During;State.During=null;callback?.Invoke();}}
+public sealed class ExecutorRand{public bool IsOpen=true,IsInitialized=true;public Memory Memory;public uint FrameCount=1,ReturnPointer=8192;public long ExecutionGeneration;public object AssemblyLock=new();public void Clear(){State.Lines.Clear();}public void AddLine(string value)=>State.Lines.Add(value);public void Execute(){ExecutionGeneration++;State.Calls++;if(State.Error!=null)throw State.Error;var callback=State.During;State.During=null;callback?.Invoke();}}
 public sealed class InjectionSEHException:Exception{public uint ExceptionCode=0xC0000005;}
 public static class Logging{public static void WriteDebug(string value){}public static void WriteException(Exception error){}}
 public class WoWPlayer:WoWUnit{}
@@ -45,12 +45,15 @@ public class WoWPlayer:WoWUnit{}
 public static class ReactionCases{
  private sealed class Failure(string reason):Exception(reason){}
  private static WoWUnit receiver,other;
- private static void Reset(){ObjectManager.Wow=new();ObjectManager.Executor=new(){Memory=ObjectManager.Wow};ObjectManager.Me=new(){Guid=1};receiver=new(){Guid=2,BaseAddress=12288};other=new(){Guid=3,BaseAddress=16384,Entry=100};State.Value=1;State.Calls=0;State.Bytes=4;State.Error=null;State.During=null;}
+ private static void Reset(){ObjectManager.Wow=new();ObjectManager.Executor=new(){Memory=ObjectManager.Wow};ObjectManager.Me=new(){Guid=1};receiver=new(){Guid=2,BaseAddress=12288};other=new(){Guid=3,BaseAddress=16384,Entry=100};State.Value=1;State.Calls=0;State.Bytes=4;State.Error=null;State.During=State.DuringRead=null;}
  private static WoWUnitReaction Read()=>receiver.GetReactionTowards(other);
  private static void Check(bool ok,string why){if(!ok)throw new Failure(why);}
  private static void Unknown(){bool unknown=false;try{_=Read();}catch(ObservationUnavailableException){unknown=true;}Check(unknown,"unavailable reaction became an ordinary faction value");}
  public static void Run(){int passed=0,total=0,failed=0;void Case(string name,Action test){total++;Reset();try{test();passed++;Console.WriteLine("PASS reaction observation: "+name);}catch(Exception e){failed++;Console.Error.WriteLine("FAIL reaction observation: "+name+": "+e);}}
  Case("complete hostile observation retains ABI",()=>{Check(Read()==WoWUnitReaction.Hostile,"reaction changed");Check(State.Lines.SequenceEqual(new[]{"push 16384","mov ecx, 12288","call 7492032","retn"}),"native ABI changed");});
+ Case("ordinary render progression does not corrupt a native reaction",()=>{State.DuringRead=()=>ObjectManager.Executor.FrameCount++;Check(Read()==WoWUnitReaction.Hostile,"render frame was mistaken for result replacement");});
+ Case("new command during result read remains UNKNOWN",()=>{State.DuringRead=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown();});
+ Case("nested execution cannot donate its result",()=>{State.During=()=>ObjectManager.Executor.ExecutionGeneration++;Unknown();});
  Case("native VEH is UNKNOWN",()=>{State.Error=new InjectionSEHException();Unknown();});
  Case("missing executor is UNKNOWN",()=>{ObjectManager.Executor=null;Unknown();});
  Case("missing result memory is UNKNOWN",()=>{ObjectManager.Executor.Memory=null;Unknown();});

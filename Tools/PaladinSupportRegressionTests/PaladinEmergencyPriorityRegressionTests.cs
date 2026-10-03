@@ -57,7 +57,7 @@ internal static class PaladinEmergencyPriorityRegressionTests
         Add("Holy another player's Forbearance does not reject Lay on Hands", () =>
         {
             var target = HolyTarget(10);
-            Fixture.Aura(target, "Forbearance", 99);
+            Fixture.Aura(target, "Forbearance", 99, 25771);
             Know("Beacon of Light", "Lay on Hands", "Holy Shock");
             Fixture.Tick(Holy.CreateHolyPaladinHealBehavior());
             Expect("Lay on Hands", target);
@@ -66,7 +66,7 @@ internal static class PaladinEmergencyPriorityRegressionTests
         {
             HolyTarget(10);
             StyxWoW.Me.HealthPercent = 10;
-            Fixture.Aura(StyxWoW.Me, "Forbearance", 99);
+            Fixture.Aura(StyxWoW.Me, "Forbearance", 99, 25771);
             Know("Lay on Hands", "Holy Shock");
             Fixture.Tick(Holy.CreatePaladinHealBehavior(true));
             Expect("Holy Shock", StyxWoW.Me);
@@ -135,6 +135,14 @@ internal static class PaladinEmergencyPriorityRegressionTests
             StyxWoW.Me.HealthPercent = 10;
             Know("Lay on Hands");
             Fixture.Tick(Holy.CreatePaladinHealBehavior(true));
+            Expect("Lay on Hands", StyxWoW.Me);
+        });
+        Add("Holy self emergency does not require unrelated aura metadata", () =>
+        {
+            HolyTarget(10); StyxWoW.Me.HealthPercent = 10;
+            Fixture.Aura(StyxWoW.Me, "", 99, 65000); StyxWoW.Me.MetadataUnknown = true;
+            Know("Lay on Hands");
+            TickWithCompleteRestrictionIds(Holy.CreatePaladinHealBehavior(true));
             Expect("Lay on Hands", StyxWoW.Me);
         });
         Add("Holy no selected recipient dispatches nothing", () =>
@@ -238,6 +246,23 @@ internal static class PaladinEmergencyPriorityRegressionTests
                 Setup(); Know("Lay on Hands", "Divine Protection", "Avenging Wrath");
                 Fixture.Tick(Build()); Expect("Lay on Hands", StyxWoW.Me);
             });
+            Add($"Protection/{entry}: Lay on Hands requires a heal receipt instead of a buff receipt", () =>
+            {
+                Setup(); Know("Lay on Hands"); Fixture.Tick(Build());
+                Check(Fixture.RecoveryRoutes.Single()==("Lay on Hands",false),
+                    "direct emergency healing requested an aura acknowledgement");
+            });
+            foreach (string readySpell in new[] { "Lay on Hands", "Divine Protection" })
+            {
+                string ready = readySpell;
+                Add($"Protection/{entry}: unrelated aura metadata does not block {ready}", () =>
+                {
+                    Setup(); Know(ready); Fixture.Aura(StyxWoW.Me, "", 99, 65000);
+                    StyxWoW.Me.MetadataUnknown = true;
+                    TickWithCompleteRestrictionIds(Build());
+                    Expect(ready, StyxWoW.Me);
+                });
+            }
             Add($"Protection/{entry}: emergency heal precedes a pending taunt", () =>
             {
                 Setup(); SingularSettings.Instance.EnableTaunting = true;
@@ -259,7 +284,7 @@ internal static class PaladinEmergencyPriorityRegressionTests
             });
             Add($"Protection/{entry}: Forbearance prohibits both protected defenses", () =>
             {
-                Setup(); Fixture.Aura(StyxWoW.Me, "Forbearance", 99);
+                Setup(); Fixture.Aura(StyxWoW.Me, "Forbearance", 99, 25771);
                 Know("Lay on Hands", "Divine Protection");
                 Fixture.Tick(Build()); None();
             });
@@ -332,6 +357,13 @@ internal static class PaladinEmergencyPriorityRegressionTests
         return target;
     }
     private static void Know(params string[] spells) => Fixture.Known.UnionWith(spells);
+    private static void TickWithCompleteRestrictionIds(Composite tree)
+    {
+        try { Fixture.Tick(tree); }
+        catch (InvalidOperationException error) when (error.Message.StartsWith(
+            "Swallowed exception: Styx.Helpers.ObservationUnavailableException", StringComparison.Ordinal))
+        { throw new AssertionFailure("complete raw restriction IDs were rejected because unrelated aura metadata was unavailable"); }
+    }
     private static void RejectState(WoWUnit unit, string state)
     {
         switch (state)

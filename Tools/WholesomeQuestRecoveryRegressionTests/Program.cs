@@ -1123,7 +1123,8 @@ void TestRecoveryActionFlushCountTracksActualMutations()
 
         (QuestRecoveryManager manager, RecoverySettingsController controller, Func<int> flushCount) LoadCounting()
         {
-            var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+            var diagnostics = new List<string>();
+            var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow), diagnostics.Add);
             manager.Configure(environment);
             int count = 0;
             var controller = new RecoverySettingsController(
@@ -1132,7 +1133,10 @@ void TestRecoveryActionFlushCountTracksActualMutations()
                 () =>
                 {
                     count++;
-                    return manager.TryFlush();
+                    bool flushed = manager.TryFlush();
+                    if (!flushed)
+                        Console.Error.WriteLine("Recovery flush diagnostic: " + string.Join(Environment.NewLine, diagnostics));
+                    return flushed;
                 });
             return (manager, controller, () => count);
         }

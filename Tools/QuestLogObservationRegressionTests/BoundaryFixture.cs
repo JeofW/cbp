@@ -9,7 +9,7 @@ namespace GreenMagic
  public sealed class Memory
  {
   public WoWDescriptorQuest[] Slots=Enumerable.Range(0,25).Select(_=>new WoWDescriptorQuest{ObjectivesDone=new ushort[4]}).ToArray();
-  public int ArrayReads; public bool CacheEnabled=true,ReadWhileCached; public Action? AfterArrayRead; public Exception? Failure;
+  public int ArrayReads,ScalarReads; public bool CacheEnabled=true,ReadWhileCached; public Action? AfterArrayRead; public Exception? Failure;
   public int ProcessId=1;
   // Models the existing Memory.ReadBytes full-length/null contract. These switches
   // are external observations, not production snapshot or readiness implementations.
@@ -40,6 +40,7 @@ namespace GreenMagic
   public T Read<T>(uint address) where T:struct
   {
    if(Failure!=null)throw Failure;
+   ScalarReads++;
    if(FailRawLogReads && ObjectManager.Me!=null && address>=ObjectManager.Me.Descriptor+632U && address<ObjectManager.Me.Descriptor+1132U)return default;
    object value;
    var me=ObjectManager.Me;

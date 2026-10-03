@@ -48,6 +48,7 @@ internal static class CastContinuationOwnershipRegressionTests
             string prefix = "using System;using System.Collections.Generic;using System.Linq;using CommonBehaviors.Actions;using Styx;using Styx.Logic.Combat;using Styx.WoWInternals.WoWObjects;using TreeSharp;using Action=TreeSharp.Action;namespace Singular.Helpers {public delegate WoWUnit UnitSelectionDelegate(object c);public delegate bool SimpleBooleanDelegate(object c);internal static " + "class Spell {private const float MeleeRange=5;\n";
             File.WriteAllText(Path.Combine(temporary, "Owners.cs"), prefix + source.Substring(first, end - first) + "}}");
             File.WriteAllText(Path.Combine(temporary, "Boundary.cs"), boundary);
+            SpellSightDispatchRegressionTests.WriteExorcismOwners(root, temporary);
             Type type = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(type, new object[] { temporary })!;
             foreach (string reference in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator))

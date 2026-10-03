@@ -1307,6 +1307,9 @@ namespace WholesomeAQ
             MaybeRequestTimedRetry();
             ObserveRecoveryActivation();
             ObserveQuestProgress();
+            if (!_restingPaused && StyxWoW.Me?.Combat != true
+                && QuestOrder.Instance?.CurrentBehavior is ForcedQuestTurnIn absent && absent.EndpointSearchExhausted)
+                TryDeferExhaustedTurnIn(absent, QuestRecoveryRuntime.Capture());
             CompleteCurrentStageBeforeTick();
             RunPendingRefresh();
             if (StyxWoW.IsInGame && StyxWoW.Me != null)
@@ -1645,12 +1648,15 @@ namespace WholesomeAQ
                 Navigator.PlayerMover.MoveStop();
                 if (!Current()) { _restingPaused = false; return; }
             }
-            if (actor.HealthPercent <= _settings.RestHealthPercent && !food && Current())
+            // The pause is already active. A declined/interrupted item must be
+            // retried until this owner's resume goal, even after passive recovery
+            // crosses the lower threshold that originally started the pause.
+            if (actor.HealthPercent < _settings.RestResumeHealthPercent && !food && Current())
             {
                 if (Rest.TryFeedImmediate() && Current())
                     Log("Rest food request submitted; awaiting its aura.");
             }
-            if (Current() && actor.MaxMana > 0 && actor.ManaPercent <= _settings.RestManaPercent
+            if (Current() && actor.MaxMana > 0 && actor.ManaPercent < _settings.RestResumeManaPercent
                 && TryObserveRestAuras(actor, out _, out drink) && !drink && Current())
             {
                 if (Rest.TryDrinkImmediate() && Current())
@@ -2125,6 +2131,17 @@ namespace WholesomeAQ
                 BotPoi.Current, () => BotPoi.Clear("Wholesome navigation retry deferred"));
             RequestRefresh($"Quest {key.QuestId} navigation is unresolved ({reason}); retry {result.Decision.RetryUtc:O}; selecting alternate eligible work without a failure episode.");
             return true;
+        }
+
+        internal bool TryDeferExhaustedTurnIn(ForcedQuestTurnIn behavior, QuestRecoveryContext context)
+        {
+            if (_stopped || !behavior.EndpointSearchExhausted
+                || !ReferenceEquals(QuestOrder.Instance?.CurrentBehavior, behavior)
+                || !_attemptOwnership.TryGet(behavior, out var key, out long generation)
+                || key.Stage != QuestRecoveryStage.TurnIn || key.QuestId != behavior.QuestId || key.NpcEntry != behavior.NpcId
+                || !IsOwnedRecoveryPoi(behavior, key, BotPoi.Current) || BotPoi.Current.AsObject != null)
+                return false;
+            return TryDeferCurrentNavigation(behavior, key, generation, context, RouteFailureReason.PathSearchFailed);
         }
 
         private void ProcessProgressUpdate(

@@ -34,6 +34,16 @@ WholesomeAutoQuest Bot()
 void NoSale()=>Check(MerchantFrame.Instance.Calls==0,"incomplete or changed quest observation authorized a sale");
 void CompletedHistory()=>QuestLog.TryGetAuthoritativeCompletedQuestsForIdentity("fixture","realm",()=>new List<uint>{867},out _);
 Test("legacy list visibly omits occupied cache-miss slot (reproduction control)",()=>{Accept(hydrate:false);Check(StyxWoW.Me!.QuestLog.GetQuestId(0)==867&&StyxWoW.Me.QuestLog.GetAllQuests().Count==0,"expected raw occupied identity and absent materialization");});
+Test("point quest identity lookup uses bounded block reads instead of slot-by-slot native probes",()=>
+{
+    Accept(867, slot:24);
+    var memory=ObjectManager.Wow!;
+    int scalarBefore=memory.ScalarReads,arrayBefore=memory.ArrayReads;
+    Check(StyxWoW.Me!.QuestLog.ContainsQuest(867),"occupied final quest slot was not found");
+    Check(StyxWoW.Me.QuestLog.GetIndexForQuest(867)==24,"final quest slot index changed");
+    Check(memory.ScalarReads-scalarBefore==2 && memory.ArrayReads-arrayBefore==2,
+        $"point lookup amplified two observations into {memory.ScalarReads-scalarBefore} scalar and {memory.ArrayReads-arrayBefore} block reads");
+});
 Test("cache miss preserves accepted identity in completion result",()=>{Accept(hydrate:false);CompletedHistory();var q=StyxWoW.Me!.QuestLog.GetQuestCompletionSnapshot(867);Check(q.IsAccepted&&q.State==QuestCompletionState.Unknown,"accepted cache miss fell back to completed history");});
 Test("occupied cache miss cannot authorize sale",()=>{Accept(hydrate:false);Bot().RunSale();NoSale();});
 Test("same-count replacement during inventory scan cannot authorize sale",()=>{Accept();Consumable.OnFood=()=>{ObjectManager.Wow!.Slots[0].Id=999;};Bot().RunSale();NoSale();});

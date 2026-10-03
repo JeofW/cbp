@@ -4,12 +4,12 @@ using Styx.Helpers;
 namespace Styx.Logic.Pathing;
 
 public enum GroundTransitionState { Pending, Ready, Unavailable, Revoked }
-public enum GroundTransitionPurpose { Interaction, Combat }
+public enum GroundTransitionPurpose { Interaction, Combat, Transit }
 internal enum GroundDismountState { Rejected, Pending, Submitted, Expired }
 
 internal readonly record struct GroundMotion(WoWPoint Position, bool Mounted, bool Flying,
     bool Falling, bool Swimming, bool OnTransport, bool Immobilized, bool Supported,
-    bool Descending, bool InteractionReady, bool PreferFlight);
+    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false);
 
 internal interface IGroundTransitionRuntime
 {
@@ -44,6 +44,8 @@ internal sealed class GroundTransitionMachine
     private double _started = double.NaN, _lastProgress, _lastCommand = double.NegativeInfinity;
     private WoWPoint _progressOrigin;
     private int _replans;
+    private int _flightSearchBatches;
+    private double _flightSearchStarted = double.NaN;
     private bool _dismountPending, _descent, _groundHandoff, _unavailable;
     internal string Phase { get; private set; } = "unobserved";
 
@@ -67,7 +69,7 @@ internal sealed class GroundTransitionMachine
 
         bool authoritativeReady = !observation.OnTransport && !observation.Swimming && !observation.Falling
             && !observation.Immobilized && !observation.Flying && observation.Supported && !observation.Mounted
-            && (_purpose == GroundTransitionPurpose.Combat || observation.InteractionReady);
+            && (_purpose == GroundTransitionPurpose.Combat || _purpose == GroundTransitionPurpose.Interaction && observation.InteractionReady);
         if (authoritativeReady)
         {
             _dismountPending = false;
@@ -83,6 +85,14 @@ internal sealed class GroundTransitionMachine
             ResetAfterRecovery(now, observation);
             if (!_runtime.Current) return GroundTransitionState.Revoked;
         }
+        // Landing/approach time limits are not a maximum length for a useful
+        // ground journey. Actual displacement renews that budget; the existing
+        // no-progress watchdog still bounds walls and rejected movement.
+        if (_purpose != GroundTransitionPurpose.Combat && observation.GroundTravel
+            && !observation.Flying && !observation.Falling && !observation.OnTransport
+            && !observation.Swimming && !observation.Immobilized && observation.Supported
+            && now == _lastProgress)
+            _started = now;
         if (now - _started >= 120)
             return Unavailable("ground-transition-deadline", observation, now);
         if (observation.OnTransport || observation.Swimming)
@@ -91,6 +101,17 @@ internal sealed class GroundTransitionMachine
             return Wait("landing", "falling-is-not-grounded-acknowledgement", observation, stop: true);
         if (observation.Immobilized)
             return Wait("blocked", "root-or-stun-prevents-owned-transition", observation, stop: true);
+
+        // Mounted travel is not interaction readiness. Keep a ground mount for
+        // the distant mesh leg; use the existing landing/unmount owner only for
+        // the final close approach (and for all combat transitions).
+        if (_purpose != GroundTransitionPurpose.Combat && observation.GroundTravel
+            && !observation.Flying && observation.Supported && !_descent && !observation.Descending)
+        {
+            _groundHandoff = true;
+            if (CommandDue(now)) _runtime.Walk();
+            return Progress("ground-travel", "owned-ground-travel; interaction-unobserved", observation, now);
+        }
 
         if (!observation.Flying && observation.Supported)
         {
@@ -103,13 +124,13 @@ internal sealed class GroundTransitionMachine
             {
                 _dismountPending = false;
                 if (!_groundHandoff && observation.PreferFlight)
-                    return Approach(observation, now);
+                    return Approach(observation, now, allowGroundFallback: true);
                 _groundHandoff = true;
                 if (CommandDue(now)) _runtime.Walk();
                 return Progress("ground-mesh", "following-ground-route; interaction-unobserved", observation, now);
             }
             if (!_groundHandoff && _purpose == GroundTransitionPurpose.Interaction && observation.PreferFlight)
-                return Approach(observation, now);
+                return Approach(observation, now, allowGroundFallback: true);
             // A shared actor/session lease in the runtime additionally survives
             // target/POI replacement; this local pending flag owns this handoff.
             _groundHandoff = true;
@@ -137,17 +158,37 @@ internal sealed class GroundTransitionMachine
         return Approach(observation, now);
     }
 
-    private GroundTransitionState Approach(GroundMotion observation, double now)
+    private GroundTransitionState Approach(GroundMotion observation, double now, bool allowGroundFallback = false)
     {
         if (_plan == null)
         {
+            // A partial batch is not evidence that flying is unsuitable. Retain
+            // the same search across pulses, while bounding planning separately
+            // from the much longer travel/landing lifetime. The time budget bounds
+            // repeated queries; an individual native query can still take longer.
+            if (allowGroundFallback)
+            {
+                if (double.IsNaN(_flightSearchStarted)) _flightSearchStarted = now;
+                if (_flightSearchBatches >= 8 || now - _flightSearchStarted >= 2)
+                    return GroundFallback(observation, now, "flight-planning-budget-exhausted");
+                _flightSearchBatches++;
+            }
             _runtime.Hold();
             if (!_runtime.Current) return GroundTransitionState.Revoked;
             _plan = _runtime.Search();
             if (!_runtime.Current) return GroundTransitionState.Revoked;
             if (_plan == null)
+            {
+                if (allowGroundFallback && _runtime.SearchExhausted)
+                    return GroundFallback(observation, now, "safe-flight-search-exhausted");
                 return _runtime.SearchExhausted ? Unavailable("no-proven-safe-approach", observation, now)
                     : Result(GroundTransitionState.Pending, "searching", "bounded-collision-and-mesh-candidate-search", observation);
+            }
+            if (allowGroundFallback)
+            {
+                _runtime.Hold();
+                if (!_runtime.Current) return GroundTransitionState.Revoked;
+            }
         }
         if (!_runtime.Validate(_plan))
         {
@@ -186,6 +227,15 @@ internal sealed class GroundTransitionMachine
         if (!_runtime.Current) return GroundTransitionState.Revoked;
         if (CommandDue(now)) _runtime.Fly(_plan);
         return Progress("exterior-approach", "flight-waypoint-is-validated-exterior-region", observation, now);
+    }
+
+    private GroundTransitionState GroundFallback(GroundMotion observation, double now, string reason)
+    {
+        _groundHandoff = true;
+        _runtime.ResetSearch();
+        if (!_runtime.Current) return GroundTransitionState.Revoked;
+        if (CommandDue(now)) _runtime.Walk();
+        return Progress("ground-mesh", reason + "; following-ground-route", observation, now);
     }
 
     private bool CommandDue(double now)
@@ -228,6 +278,7 @@ internal sealed class GroundTransitionMachine
         _plan = null;
         _descent = _groundHandoff = _dismountPending = _unavailable = false;
         _replans = 0;
+        _flightSearchBatches = 0; _flightSearchStarted = double.NaN;
         _started = _lastProgress = now;
         _lastCommand = double.NegativeInfinity;
         _progressOrigin = observation.Position;

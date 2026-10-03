@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup><PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" /></ItemGroup>
   <ItemGroup>
+    <Compile Include="../GroundTravelMountFixture.cs" Link="Boundary/GroundTravelMountFixture.cs" />
     <Compile Include="../../CommonBehaviors/Actions/ActionMoveToPoi.cs" Link="Production/ActionMoveToPoi.cs" />
     <Compile Include="../../CommonBehaviors/Actions/NavigationAction.cs" Link="Production/NavigationAction.cs" />
     <Compile Include="../../CommonBehaviors/Actions/GetPointDelegate.cs" Link="Production/GetPointDelegate.cs" />

@@ -27,6 +27,8 @@ internal static class FlightPathPublicOwnerRegressionTests
         if (!OperatingSystem.IsWindows() || IntPtr.Size != 4)
             throw new PlatformNotSupportedException("Public flight owner tests require Windows x86.");
         var cases = new List<(string Name, Action<Fixture> Test)>();
+        foreach (PoiType work in new[] { PoiType.QuestPickUp, PoiType.QuestTurnIn, PoiType.Quest, PoiType.Kill, PoiType.Loot })
+            cases.Add(($"opportunistic flight update cannot interrupt {work}", f => f.ProtectWork(work)));
         foreach (Owner owner in Enum.GetValues<Owner>())
         {
             cases.Add(($"{owner}: stable admitted merchant uses exactly one feasibility observation", f => f.Stable(owner)));
@@ -110,6 +112,16 @@ internal static class FlightPathPublicOwnerRegressionTests
         {
             if (owner == Owner.UpdatePoi) FlightPaths.Reason = FlightPathReason.Update;
             if (owner == Owner.LearnPoi) FlightPaths.Reason = FlightPathReason.Learn;
+        }
+        internal void ProtectWork(PoiType type)
+        {
+            var work = new BotPoi(new WoWPoint(10, 20, 30), type) { Entry = 20159 };
+            BotPoi.Current = work;
+            FlightPaths.Reason = FlightPathReason.Update;
+            Check(!FlightPaths.NeedNearbyUpdate(), "nearby refresh was admitted over committed quest/combat work");
+            FlightPaths.SetPoi();
+            Check(ReferenceEquals(BotPoi.Current, work) && probe.Calls == 0,
+                "flight refresh performed optional route work or replaced the protected POI");
         }
         private static object? Invoke(Owner owner)
         {

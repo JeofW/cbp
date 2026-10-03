@@ -16,15 +16,18 @@ internal static class Fixture
     internal static readonly Dictionary<string, WoWSpell> Metadata = new();
     internal static readonly List<string> LuaQueries = new();
     internal static Func<string, List<string>>? LuaResult;
-    internal static int DefaultRestCalls;
+    internal static int DefaultRestCalls, NearbyReads, SupportReadinessReads;
+    internal static Exception? NearbyError;
     internal static RunStatus DefaultRestResult = RunStatus.Failure;
     internal static bool GlobalCooldown;
+    internal static TimeSpan ConsecrationCooldown;
     internal static void Reset()
     {
         Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear(); Metadata.Clear(); RecoveryRoutes.Clear(); RosterObservation=null;
         LuaQueries.Clear(); LuaResult = null; Styx.WoWInternals.ObjectManager.Wow=new(); Styx.WoWInternals.ObjectManager.Resolve=null;
         DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
         GlobalCooldown = false;
+        ConsecrationCooldown = TimeSpan.Zero;
         Singular.Managers.TankManager.Instance.FirstUnit = null;
         Singular.Managers.TankManager.Instance.NeedToTaunt.Clear();
         Singular.Managers.HealerManager.Instance.FirstUnit = null;
@@ -37,7 +40,10 @@ internal static class Fixture
         Singular.Settings.SingularSettings.Instance.Rogue = new();
         Singular.Managers.TalentManager.Glyphs.Clear();
         Singular.Managers.TalentManager.CurrentSpec = Singular.Managers.TalentSpec.RetributionPaladin;
+        NearbyError = null;
         Singular.Helpers.Unit.NearbyUnfriendlyUnits.Clear();
+        NearbyReads = 0;
+        SupportReadinessReads = 0;
     }
     internal static WoWPlayer Add(WoWClass kind = WoWClass.Warrior, bool raid = false)
     {
@@ -102,11 +108,12 @@ namespace Styx.Logic.Combat
     }
     public static class SpellManager
     {
+        private static bool CountReadiness() { Fixture.SupportReadinessReads++; return true; }
         public static Dictionary<string, WoWSpell> Spells => Fixture.Metadata;
         public static bool HasSpell(string name) => Fixture.Known.Contains(name);
         public static bool CanCast(string name) => CanCast(name, Styx.StyxWoW.Me.CurrentTarget ?? Styx.StyxWoW.Me);
         public static bool CanCast(string name, WoWUnit target, bool checkRange = true, bool checkMovement = false)
-            => HasSpell(name) && !Fixture.Unavailable.Contains(name) && target.IsValid && target.IsAlive &&
+            => CountReadiness() && HasSpell(name) && !Fixture.Unavailable.Contains(name) && target.IsValid && target.IsAlive &&
                 (target.IsMe || target.Distance < 40 && target.InLineOfSpellSight);
     }
 }
@@ -168,14 +175,15 @@ namespace Styx.WoWInternals.WoWObjects
         public Dictionary<string, WoWAura> ActiveAuras => Auras;
         public Dictionary<string, WoWAura> Debuffs => Auras.Where(a => a.Value.IsHarmful).ToDictionary(a => a.Key, a => a.Value);
         public bool RawUnknown, MetadataUnknown;
-        public IEnumerable<WoWAura> GetRawAuras() => RawUnknown ? throw new InvalidOperationException("raw observation unavailable") : ObservedAuras;
-        public IEnumerable<WoWAura> GetAllAuras() => MetadataUnknown ? throw new InvalidOperationException("metadata unavailable") : GetRawAuras();
+        public IEnumerable<WoWAura> GetRawAuras() => RawUnknown ? throw new Styx.Helpers.ObservationUnavailableException("auras", "raw observation unavailable") : ObservedAuras;
+        public IEnumerable<WoWAura> GetAllAuras() => MetadataUnknown ? throw new Styx.Helpers.ObservationUnavailableException("auras", "metadata unavailable") : GetRawAuras();
         public bool HasAura(string name) => ObservedAuras.Any(a => a.Name == name && a.IsActive);
         public bool HasMyAura(string name) => ObservedAuras.Any(a => a.Name == name && a.IsActive && a.CreatorGuid == Styx.StyxWoW.Me.Guid) ? true : MetadataUnknown ? throw new InvalidOperationException("metadata unavailable") : false;
         public TimeSpan GetAuraTimeLeft(string name, bool mine) => ObservedAuras
             .FirstOrDefault(a => a.Name == name && a.IsActive && (!mine || a.CreatorGuid == Styx.StyxWoW.Me.Guid))?.TimeLeft ?? TimeSpan.Zero;
         public bool IsStunned() => StunnedObservation;
         public bool HasAuraWithMechanic(params WoWSpellMechanic[] _) => false;
+        public bool HasHarmfulAuraWithMechanic(params WoWSpellMechanic[] _) => false;
         public bool IsImmune(Styx.WoWSpellSchool school) => false;
         public bool IsCrowdControlled() => false;
         public bool IsBoss() => false;
@@ -357,8 +365,10 @@ namespace Singular.Helpers
     public static class Item { public static bool RangedIsType(Styx.WoWItemWeaponClass kind) => false; }
     public static class Unit
     {
-        public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new();
+        private static readonly List<WoWUnit> Nearby = new();
+        public static List<WoWUnit> NearbyUnfriendlyUnits { get { Fixture.NearbyReads++; if (Fixture.NearbyError != null) throw Fixture.NearbyError; return Nearby; } }
         public static IEnumerable<WoWUnit> UnfriendlyUnitsNearTarget(float range) => NearbyUnfriendlyUnits;
+        public static IEnumerable<WoWUnit> UnfriendlyUnitsWithin(float range) => NearbyUnfriendlyUnits.Where(unit => unit.Distance <= range);
         public static bool IsAreaEffectSafe(string name, WoWUnit target) => true;
         public static IEnumerable<WoWPlayer> NearbyFriendlyPlayers => Styx.StyxWoW.Me.PartyMembers.Concat(Styx.StyxWoW.Me.RaidMembers);
     }
@@ -390,6 +400,8 @@ namespace Singular.Helpers
         public static Composite WaitForCast(bool _ = true, bool __ = true) => Fixture.Nothing();
         public static Composite WaitForCastOrChannel() => Fixture.Nothing();
         public static bool IsGlobalCooldown() => Fixture.GlobalCooldown;
+        public static TimeSpan GetSpellCooldown(string name) => name == "Consecration"
+            ? Fixture.ConsecrationCooldown : throw new InvalidOperationException("Unconfigured fixture cooldown: " + name);
         public static Composite Resurrect(string _) => Fixture.Nothing();
         public static Composite Cast(string name, Func<object, bool>? requires = null) => Fixture.Submit(name, _ => Styx.StyxWoW.Me.CurrentTarget, requires);
         public static Composite Cast(string name, Func<object, WoWUnit?> select, Func<object, bool> requires) => Fixture.Submit(name, select, requires);

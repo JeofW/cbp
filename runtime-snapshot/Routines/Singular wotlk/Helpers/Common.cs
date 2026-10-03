@@ -215,7 +215,9 @@ namespace Singular.Helpers
                             {
                                 if (!((DismountRequest)ret).CanContinue) return RunStatus.Failure;
                                 WoWMovement.MoveStop();
-                                return RunStatus.Success;
+                                // A stop callback can replace the actor. Do not
+                                // start a lag wait or any setup for its successor.
+                                return ((DismountRequest)ret).CanContinue ? RunStatus.Success : RunStatus.Failure;
                             }),
                             CreateWaitForLagDuration())
                     ),   // Land if we're flying
@@ -250,7 +252,31 @@ namespace Singular.Helpers
         /// <returns></returns>
         public static Composite CreateWaitForLagDuration()
         {
-            return new WaitContinue(TimeSpan.FromMilliseconds((StyxWoW.WoWClient.Latency * 2) + 150), ret => false, new ActionAlwaysSucceed());
+            return new LagWait();
+        }
+
+        private sealed class LagWait : WaitContinue
+        {
+            internal LagWait() : base(TimeSpan.Zero, _ => false, new ActionAlwaysSucceed()) { }
+
+            public override void Start(object context)
+            {
+                // Constructing every class tree must not query client memory or
+                // freeze the startup latency into every future activation.
+                // This is scheduling grace only: callers still reobserve their
+                // actual actor, cooldown and acknowledgement after the wait.
+                try
+                {
+                    Timeout = TimeSpan.FromMilliseconds(Math.Min(2000.0,
+                        (double)StyxWoW.WoWClient.Latency * 2 + 150));
+                }
+                catch (ObservationUnavailableException)
+                {
+                    Logging.WriteDebug("Network timing unavailable; using bounded scheduling grace, not action acknowledgement.");
+                    Timeout = TimeSpan.FromMilliseconds(500);
+                }
+                base.Start(context);
+            }
         }
 
         private static readonly WaitTimer InterruptTimer = new WaitTimer(TimeSpan.FromMilliseconds(500));

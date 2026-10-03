@@ -77,10 +77,10 @@ internal static class SpellMetadataAdmissionRegressionTests
     }
     private const string Prefix = """
 #nullable disable
-using System;using System.Collections.Generic;using System.Globalization;using System.Linq;
-public class WoWUnit {public bool InLineOfSpellSight=true,IsWithinMeleeRange=true;public double Distance=10;}
+using System;using System.Collections.Generic;using System.Globalization;using System.Linq;using Styx.Helpers;
+public class WoWUnit {public bool Sight=true,ThrowOnSight,IsWithinMeleeRange=true;public int SightReads;public double Distance=10;public bool InLineOfSpellSight {get {SightReads++;if(ThrowOnSight)throw new InvalidOperationException("invalid zero-length collision segment");return Sight;}set=>Sight=value;}}
 public sealed class LocalPlayer:WoWUnit {public bool IsMoving,IsCasting;public int ChanneledCastingSpellId;public ulong Guid=7;}
-public sealed class Client {public uint Latency=35;}
+public sealed class Client {public uint Value=35;public int Reads;public Exception Error;public uint Latency{get{Reads++;if(Error!=null)throw Error;return Value;}}}
 public static class StyxWoW {public static LocalPlayer Me=new LocalPlayer();public static Client WoWClient=new Client();}
 public static class World {public static bool Known=true,Available=true;public static int AvailabilityReads;public static uint Lag;public static bool LagPath;}
 public static class Lua {
@@ -127,6 +127,41 @@ public static class MetadataCases {
    catch(Failure e){assertions++;Console.Error.WriteLine("FAIL spell metadata admission: "+name+": "+e.Message);}
    catch(Exception e){unexpected++;Console.Error.WriteLine("ERROR spell metadata admission: "+name+": "+e);}}
   string[] invalid={"null","empty","short","missing-name","nil-name","bad-cost","negative-cost","bad-funnel","missing-funnel","bad-cast","negative-cast","bad-min","negative-min","nan-min","infinite-max","negative-max","inverted-range"};
+  foreach(bool available in new[]{false,true}) Case("unavailable optional latency retains strict current readiness/"+available,()=>{
+   var spell=Reset();World.Available=available;
+   StyxWoW.WoWClient.Error=new ObservationUnavailableException("network-latency","original observed invalid ring");
+   bool admitted=false;Exception escaped=null;try{admitted=Admit(spell);}catch(Exception e){escaped=e;}
+   Check(escaped==null&&admitted==available&&World.AvailabilityReads==1&&World.Lag==0&&!World.LagPath,
+     "optional network timing blocked admission instead of consulting strict current spell readiness");
+  });
+  Case("active cast rejects without querying optional network timing",()=>{
+   var spell=Reset();StyxWoW.Me.IsCasting=true;
+   StyxWoW.WoWClient.Error=new ObservationUnavailableException("network-latency","unavailable");
+   bool admitted=false;Exception escaped=null;try{admitted=Admit(spell);}catch(Exception e){escaped=e;}
+   Check(escaped==null&&!admitted&&StyxWoW.WoWClient.Reads==0&&World.AvailabilityReads==0,
+     "already-casting guard depends on unrelated network timing");
+  });
+  Case("unrepresentable lag allowance uses strict admission rather than overflow",()=>{
+   var spell=Reset();StyxWoW.WoWClient.Value=uint.MaxValue;Check(Admit(spell),"ready spell lost strict admission");
+   Check(World.AvailabilityReads==1&&World.Lag==0&&!World.LagPath,"overflowing latency created a permissive cast window");
+  });
+  Case("latency cancellation is not a strict-admission fallback",()=>{
+   var spell=Reset();var stop=new OperationCanceledException("cancel");StyxWoW.WoWClient.Error=stop;
+   Exception escaped=null;try{_=Admit(spell);}catch(Exception e){escaped=e;}
+   Check(ReferenceEquals(escaped,stop)&&World.AvailabilityReads==0,"cancellation became permission to continue casting");
+  });
+  foreach(bool available in new[]{false,true}) Case("self support never traces a zero-length segment/"+available,()=>{
+   var spell=Reset();Lua.Values=Valid(cast:"0",min:"0",max:"30");World.Available=available;
+   var self=StyxWoW.Me;self.Distance=0;self.ThrowOnSight=true;
+   bool admitted=false;Exception escaped=null;
+   try{admitted=SpellManager.CanCast(spell,self,true,true,true);}catch(Exception e){escaped=e;}
+   Check(escaped==null&&self.SightReads==0&&admitted==available&&World.AvailabilityReads==1,
+     "self-target blessing/aura admission queried invalid collision geometry instead of current spell readiness");
+  });
+  Case("distinct nearby recipient still needs observed sight",()=>{
+   var spell=Reset();Lua.Values=Valid(cast:"0",min:"0",max:"30");var other=new WoWUnit{Distance=0,Sight=false};
+   Check(!SpellManager.CanCast(spell,other,true,true,true)&&other.SightReads==1,"coincident foreign target borrowed self visibility");
+  });
   foreach(string mode in invalid)
   foreach(string property in new[]{"PowerCost","IsFunnel","CastTime","MinRange","MaxRange"}){
    Case("invalid-then-valid/"+mode+"/"+property,()=>{

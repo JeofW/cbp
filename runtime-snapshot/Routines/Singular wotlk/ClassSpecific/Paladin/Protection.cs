@@ -31,12 +31,16 @@ namespace Singular.ClassSpecific.Paladin
 
         // Only instant defenses are admitted during combat. Hard-cast recovery
         // remains out of combat, and every entrypoint shares the same defenses.
-        private static bool CanRecoverOutOfCombat()
+        private static bool CanRecoverOutOfCombat() => CanContinueRecoveryOutOfCombat()
+            && !StyxWoW.Me.IsCasting && !StyxWoW.Me.IsChanneling;
+
+        private static bool CanContinueRecoveryOutOfCombat()
         {
             var me = StyxWoW.Me;
             return me != null && me.IsValid && me.IsAlive && !me.IsGhost
                 && !me.Combat && !me.Mounted && !me.IsOnTransport && !me.IsMoving
-                && !me.IsCasting && !me.IsChanneling && !me.HasAura("Food") && !me.HasAura("Drink");
+                && double.IsFinite(me.HealthPercent) && me.HealthPercent >= 0 && me.HealthPercent <= 100
+                && Styx.Logic.Common.Rest.TryObserveActivity(me, out bool food, out bool drink) && !food && !drink;
         }
 
         [Class(WoWClass.Paladin)]
@@ -48,12 +52,13 @@ namespace Singular.ClassSpecific.Paladin
             return new PrioritySelector(
                 new Decorator(ret => StyxWoW.Me != null && StyxWoW.Me.Combat,
                     CreateProtectionEmergencyDefenses()),
-                Spell.Heal("Holy Light", ret => StyxWoW.Me,
-                    ret => CanRecoverOutOfCombat()
-                        && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.HolyLightHealth),
-                Spell.Heal("Flash of Light", ret => StyxWoW.Me,
-                    ret => CanRecoverOutOfCombat()
-                        && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.FlashOfLightHealth),
+                new Decorator(ret => CanRecoverOutOfCombat(), new PrioritySelector(
+                    Spell.Heal("Holy Light", ret => StyxWoW.Me,
+                        ret => CanContinueRecoveryOutOfCombat()
+                            && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.HolyLightHealth),
+                    Spell.Heal("Flash of Light", ret => StyxWoW.Me,
+                        ret => CanContinueRecoveryOutOfCombat()
+                            && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.FlashOfLightHealth))),
                 // Do not impose the healing penalty while health recovery is needed.
                 Spell.BuffSelf("Divine Plea", ret => CanRecoverOutOfCombat()
                     && StyxWoW.Me.HealthPercent >= 95
@@ -66,22 +71,23 @@ namespace Singular.ClassSpecific.Paladin
             return me != null && me.IsValid && me.IsAlive && !me.IsGhost
                 && !me.Mounted && !me.IsOnTransport && !me.IsCasting && !me.IsChanneling
                 && double.IsFinite(me.HealthPercent) && me.HealthPercent >= 0 && me.HealthPercent <= 100
-                && !me.HasAura("Forbearance")
                 // Pinned TC335 immunities/LoH scripts: recent Avenging Wrath
                 // blocks both; Immune Shield Marker additionally blocks self LoH.
-                && !me.GetAllAuras().Any(a => a != null && a.IsActive
-                    && (a.SpellId == 61987 || layOnHands && a.SpellId == 61988));
+                && !me.GetRawAuras().Any(a => a != null && a.IsActive
+                    && (a.SpellId == 25771 || a.SpellId == 61987 || layOnHands && a.SpellId == 61988));
         }
 
         private static Composite CreateProtectionEmergencyDefenses()
         {
             return new PrioritySelector(
-                Spell.BuffSelf("Lay on Hands", ret => CanUseProtectionEmergencyDefense(true)
+                Spell.Heal("Lay on Hands", _ => StyxWoW.Me, ret => CanUseProtectionEmergencyDefense(true)
                     && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth),
                 // Ardent Defender is passive in this client era. Keep the learned
                 // active defense and the existing configured threshold instead.
-                Spell.BuffSelf("Divine Protection", ret => CanUseProtectionEmergencyDefense(false)
-                    && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthProt));
+                Spell.Buff("Divine Protection", false, _ => StyxWoW.Me,
+                    ret => CanUseProtectionEmergencyDefense(false)
+                        && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthProt
+                        && !Common.HasSupportedAura(StyxWoW.Me, "Divine Protection"), new string[0]));
         }
 
 
@@ -111,7 +117,7 @@ namespace Singular.ClassSpecific.Paladin
 
                 // Defensive
                 Spell.BuffSelf("Hand of Freedom",
-                    ret => StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Dazed,
+                    ret => StyxWoW.Me.HasHarmfulAuraWithMechanic(WoWSpellMechanic.Dazed,
                                                           WoWSpellMechanic.Disoriented,
                                                           WoWSpellMechanic.Frozen,
                                                           WoWSpellMechanic.Incapacitated,
@@ -132,7 +138,7 @@ namespace Singular.ClassSpecific.Paladin
                     new PrioritySelector(
 			Spell.Cast("Divine Plea", ret => StyxWoW.Me.ManaPercent < 75),
                         Spell.Cast("Hammer of the Righteous"),
-                        Spell.Cast("Consecration", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ProtConsecrationCount 
+                        Spell.Cast("Consecration", ret => Unit.UnfriendlyUnitsWithin(8).Count() >= SingularSettings.Instance.Paladin.ProtConsecrationCount
                             || StyxWoW.Me.CurrentTarget?.IsBoss() == true),
                         Spell.Cast("Holy Wrath"),
                         Spell.Cast("Avenger's Shield", ret => !SingularSettings.Instance.Paladin.AvengersPullOnly),

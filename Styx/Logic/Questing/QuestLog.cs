@@ -158,15 +158,22 @@ namespace Styx.Logic.Questing
 		/// </summary>
 		public int GetIndexForQuest(uint questId)
 		{
-			for (int i = 0; i < 25; i++)
-			{
-				uint offset = (uint)(158 + i * 5);
-				uint id = ObjectManager.Me.ReadDescriptor<uint>(offset);
-				if (id == questId)
-					return i;
+				WoWDescriptorQuest[] quests = ReadQuestDescriptorEntries();
+				for (int i = 0; i < quests.Length; i++)
+					if (quests[i].Id == questId)
+						return i;
+				return -1;
 			}
-			return -1;
-		}
+
+			private static WoWDescriptorQuest[] ReadQuestDescriptorEntries()
+			{
+				// The 25 quest slots are one contiguous 500-byte descriptor block. Point
+				// membership/index queries must not turn that into 25 independent descriptor
+				// pointer reads plus 25 process-memory reads on the synchronous bot root.
+				// PlayerQuest.GetData uses the same original-client layout and bulk primitive.
+				uint descriptorPtr = ObjectManager.Wow.Read<uint>(ObjectManager.Me.BaseAddress + 8U);
+				return ObjectManager.Wow.ReadStructArray<WoWDescriptorQuest>(descriptorPtr + 632U, 25);
+			}
 
 		/// <summary>
 		/// Gets all quests in the log.
@@ -218,17 +225,10 @@ namespace Styx.Logic.Questing
 		/// <summary>
 		/// Checks if a quest is in the log.
 		/// </summary>
-		public bool ContainsQuest(uint questId)
-		{
-			for (int i = 0; i < 25; i++)
+			public bool ContainsQuest(uint questId)
 			{
-				uint offset = (uint)(158 + i * 5);
-				uint id = ObjectManager.Me.ReadDescriptor<uint>(offset);
-				if (id == questId)
-					return true;
+				return GetIndexForQuest(questId) >= 0;
 			}
-			return false;
-		}
 
 		/// <summary>
 		/// Gets a quest by ID.

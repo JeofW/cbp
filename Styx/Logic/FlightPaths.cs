@@ -604,6 +604,7 @@ namespace Styx.Logic
         public static void SetPoi(XmlFlightNode node = null)
         {
             var nextReason = Reason;
+            if (!MayServiceCurrentWork) return;
             if (nextReason != FlightPathReason.Learn && nextReason != FlightPathReason.Update &&
                 nextReason != FlightPathReason.Use)
                 return;
@@ -639,6 +640,7 @@ namespace Styx.Logic
         /// </summary>
         public static bool NeedNearbyUpdate()
         {
+            if (!MayServiceCurrentWork) return false;
             if ((!CharacterSettings.Instance.UseFlightPaths && !CharacterSettings.Instance.LearnFlightPaths) ||
                 StyxWoW.Me == null ||
                 StyxWoW.Me.IsOnTransport ||
@@ -664,6 +666,11 @@ namespace Styx.Logic
 
             return needsUpdate;
         }
+
+        /// <summary>Optional network maintenance must not steal committed work.</summary>
+        public static bool MayServiceCurrentWork => Reason == FlightPathReason.Use
+            || BotPoi.Current.Type is not (PoiType.QuestPickUp or PoiType.QuestTurnIn
+                or PoiType.Quest or PoiType.Kill or PoiType.Loot);
 
         /// <summary>
         /// Check if flight path would be faster than running

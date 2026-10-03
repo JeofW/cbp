@@ -58,7 +58,7 @@ namespace Styx.Logic.Combat
                 if (!ReferenceEquals(_context, this) || !ReferenceEquals(StyxWoW.Me, Actor)
                     || !Actor.IsValid || !Actor.IsAlive || Actor.Guid != ActorGuid || Actor.MapId != Map
                     || !ReferenceEquals(RoutineManager.Current, Routine)
-                    || !ReferenceEquals(ProfileManager.CurrentProfile, Profile)
+                    || !ReferenceEquals(ProfileManager.CurrentProfileSnapshot, Profile)
                     || ObjectManager.Wow.ProcessHandle != ProcessHandle || ProcessHandle == IntPtr.Zero)
                     throw Unavailable("The recovery action owner changed.");
             }
@@ -72,7 +72,7 @@ namespace Styx.Logic.Combat
                 var currentObservation = SpellManager.CaptureSpellObservation();
                 var actor = StyxWoW.Me;
                 var routine = RoutineManager.Current;
-                var profile = ProfileManager.CurrentProfile;
+                var profile = ProfileManager.CurrentProfileSnapshot;
                 currentObservation.RequireCurrent();
                 if (!ReferenceEquals(_context, this) || actor == null)
                     return false;
@@ -183,9 +183,12 @@ namespace Styx.Logic.Combat
                     || spell == null || !spell.IsValid || requestedId > 0 && spell.Id != requestedId)
                     return false;
                 var effects = spell.SpellEffects;
-                if (effects == null || effects.Length != 3 || effects.Any(e => e == null))
+                if (effects == null || effects.Length != 3)
                     throw Unavailable("The spell's complete effect metadata is unavailable.");
-                heal |= effects.Any(e => IsDirectHeal(e.EffectType));
+                // Spell.dbc exposes exactly three fixed effect slots. A zero
+                // Effect value is an authoritative unused slot and WoWSpell
+                // represents it as null; it is not missing metadata.
+                heal |= effects.Any(e => e != null && IsDirectHeal(e.EffectType));
                 if (!heal && !aura)
                 {
                     context.Require();
@@ -293,12 +296,12 @@ namespace Styx.Logic.Combat
                     if (effectSpell == null || !effectSpell.IsValid)
                         throw Unavailable("A carried item effect could not be resolved. Spell=" + id);
                     var effects = effectSpell.SpellEffects;
-                    if (effects == null || effects.Length != 3 || effects.Any(e => e == null))
+                    if (effects == null || effects.Length != 3)
                         throw Unavailable("A carried item effect is incomplete. Spell=" + id);
-                    if (effects.Any(e => IsDirectHeal(e.EffectType))) { health = true; healEffects.Add(id); }
+                    if (effects.Any(e => e != null && IsDirectHeal(e.EffectType))) { health = true; healEffects.Add(id); }
                     // Uninterpreted effects cannot establish that a mana candidate
                     // has no health consequence. Reserve health conservatively.
-                    if (!resting && effects.Any(e => e.EffectType != WoWSpellEffectType.None
+                    if (!resting && effects.Any(e => e != null && e.EffectType != WoWSpellEffectType.None
                         && e.EffectType != WoWSpellEffectType.Energize && e.EffectType != WoWSpellEffectType.EnergizePct
                         && !IsDirectHeal(e.EffectType))) health = true;
                     if (resting)
@@ -374,6 +377,20 @@ namespace Styx.Logic.Combat
                     Prune(context);
                 }
             }, owner);
+        }
+
+        /// <summary>
+        /// Advisory admission before a rest caller spends an inventory query or
+        /// retry interval. This reads only the current owner and pending ledger;
+        /// the shared pulse maintains effects and final item admission is atomic.
+        /// </summary>
+        public static bool CanPrepareRestConsumable(bool health, bool mana)
+        {
+            if (!health && !mana) return false;
+            var resources = (health ? RecoveryResource.Health : RecoveryResource.None)
+                | (mana ? RecoveryResource.Mana : RecoveryResource.None);
+            return Run(context => Ledger.CanPrepare(context, RecoveryActionKind.Consumable, 0,
+                context.ActorGuid, resources, Environment.TickCount64), "rest admission");
         }
 
         /// <summary>Maintain acknowledgements from the shared pulse even when a routine yields.</summary>
@@ -469,7 +486,7 @@ namespace Styx.Logic.Combat
             var observation = SpellManager.CaptureSpellObservation();
             var actor = StyxWoW.Me;
             var routine = RoutineManager.Current;
-            var profile = ProfileManager.CurrentProfile;
+            var profile = ProfileManager.CurrentProfileSnapshot;
             observation.RequireCurrent();
             var old = _context;
             if (old != null && old.Observation.SameOwner(observation) && ReferenceEquals(old.Actor, actor)

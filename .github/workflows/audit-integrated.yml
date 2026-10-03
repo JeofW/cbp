@@ -87,6 +87,7 @@ jobs:
             @{project='IndoorApproachRegressionTests'; suite='IndoorApproachRegressionTests'},
             @{project='MountedCombatRegressionTests'; suite='MountedCombatRegressionTests'},
             @{project='MountedGroundIntegrationRegressionTests'; suite='MountedGroundIntegrationRegressionTests'},
+            @{project='GroundCollectionIntegrationRegressionTests'; suite='GroundCollectionIntegrationRegressionTests'},
             @{project='GroundDismountRecoveryRegressionTests'; suite='GroundDismountRecoveryRegressionTests'},
             @{project='CombatPoiTransitionRegressionTests'; suite='CombatPoiTransitionRegressionTests'}
           )

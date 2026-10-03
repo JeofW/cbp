@@ -65,8 +65,8 @@ internal sealed class QuestDatasetObservationFixture : IDisposable
             var field = typeof(QuestLog).GetField(name, Hidden)!; completionState.Add((field, field.GetValue(null)));
         }
         nodeSize = 24 + Marshal.SizeOf<WoWCache.QuestCacheEntry>();
-        nodeStorage = Marshal.AllocHGlobal(nodeSize); node = unchecked((uint)nodeStorage.ToInt32());
-        itemStorage = Marshal.AllocHGlobal(8192);
+        nodeStorage = QuestFixtureBuffer.Allocate(nodeSize); node = unchecked((uint)nodeStorage.ToInt32());
+        itemStorage = QuestFixtureBuffer.Allocate(8192);
         Marshal.Copy(new byte[nodeSize], 0, nodeStorage, nodeSize);
         Marshal.Copy(new byte[8192], 0, itemStorage, 8192);
         // The reused minimal fixture accepted any nonzero low ID byte at offset

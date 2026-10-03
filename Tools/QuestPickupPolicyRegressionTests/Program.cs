@@ -2,6 +2,8 @@ using Bots.Quest.QuestOrder;
 using Styx;
 using Styx.Logic;
 using Styx.Logic.Pathing;
+using Styx.Logic.POI;
+using Styx.Logic.Profiles.Quest;
 using Styx.Logic.Questing;
 using Styx.Logic.Questing.Recovery;
 using Styx.WoWInternals.WoWObjects;
@@ -24,6 +26,7 @@ try
     TestWaitAfterUnavailablePreservesFailureOutcome();
     TestAuthorizedAdvanceResetsMismatchLifecycle();
     TestOutcomeIsTaggedAndConsumedOnceByItsProducingInteraction();
+    TestCompletedPickupDisposalRetiresOnlyItsOwnPoi();
     TestLoadedOfferListMissingTargetIsNotUnavailableAmbiguity();
     TestEmptyGossipStopsAfterThreeInteractions();
     TestFullQuestLogDefersPickup();
@@ -34,6 +37,24 @@ catch (Exception ex)
 {
     Console.Error.WriteLine(ex);
     global::System.Environment.ExitCode = 1;
+}
+
+static void TestCompletedPickupDisposalRetiresOnlyItsOwnPoi()
+{
+    var location = new WoWPoint(20, 30, 40);
+    var pickup = new ForcedQuestPickUp(876, "A Final Blow", 123, "Giver", location, QuestObjectType.Npc);
+    var owned = new BotPoi(new PickUpNode(location, 123, "Giver", QuestObjectType.Npc, 876, "A Final Blow"));
+    BotPoi.Current = owned;
+
+    pickup.Dispose();
+    Assert(BotPoi.Current.Type == PoiType.None,
+        "retiring an accepted pickup must release the QuestPickUp POI that would otherwise block the next objective");
+
+    var successor = new BotPoi(new PickUpNode(location, 124, "Replacement", QuestObjectType.Npc, 877, "Replacement Quest"));
+    BotPoi.Current = successor;
+    pickup.Dispose();
+    Assert(ReferenceEquals(BotPoi.Current, successor) && BotPoi.Current.Type == PoiType.QuestPickUp,
+        "pickup disposal must not clear a successor POI published for different work");
 }
 
 static void TestEmptyGossipStopsAfterThreeInteractions()

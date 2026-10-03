@@ -34,8 +34,9 @@ namespace Styx.Helpers
         private int _logoutInactivityTimer = 10;
         private bool _logoutInactivityUseForceQuit = false;
         private bool _profileDebuggingMode = false;
-        // HB 5.4.8/6.2.3 default: true (UseFrameLock enabled by default)
-        private bool _useFrameLock = true;
+        // A whole-tick hard lock is opt-in; individual native observations and
+        // action-entry guards retain their own synchronization and ownership.
+        private bool _useFrameLock = false;
 
         /// <summary>
         /// <summary>
@@ -149,11 +150,11 @@ namespace Styx.Helpers
 
         /// <summary>
         /// Whether to use the memory frame lock during bot ticks.
-        /// When enabled (HB 5.4.8/6.2.3 default), the entire tick runs inside a
+        /// When enabled, the entire tick runs inside a
         /// hard AcquireFrame — all game reads are consistent within one frame.
         /// </summary>
         [Setting(Explanation = "Whether or not to use the frame lock when reading game memory.")]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool UseFrameLock
         {
             get { return _useFrameLock; }

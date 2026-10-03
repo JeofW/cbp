@@ -33,16 +33,19 @@ internal static class HunterTrapDispatchRegressionTests
             throw new InvalidOperationException("The complete existing Hunter overload set is required");
         var spell = CSharpSyntaxTree.ParseText(Load("runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs")).GetRoot();
         var spellMethods = spell.DescendantNodes().OfType<MethodDeclarationSyntax>().Where(m =>
-            m.Identifier.ValueText is "MeleeRangeFor" or "CanCastNamedSpell" || m.Identifier.ValueText is "Cast" or "CastWithRecovery"
+            m.Identifier.ValueText is "MeleeRangeFor" or "CanCastNamedSpell" or "CanSelectNamedSpell" || m.Identifier.ValueText is "Cast" or "CastWithRecovery"
             && m.ParameterList.Parameters.FirstOrDefault()?.Type?.ToString() == "string").ToArray();
-        if (spellMethods.Length != 8) throw new InvalidOperationException("Complete named cast overload/admission/recovery region required");
+        if (spellMethods.Count(m => m.Identifier.ValueText != "CanSelectNamedSpell") != 8)
+            throw new InvalidOperationException("Complete named cast overload/admission/recovery region required");
         var manager = CSharpSyntaxTree.ParseText(Load("Styx/Logic/Combat/SpellManager.cs")).GetRoot();
         var names = new HashSet<string> { "HasSpell", "GetSpellByName", "Cast", "CastSpellById", "TryCastSpellById",
-            "CaptureSpellObservation", "PrepareCooldownContext", "TrackDeadline" };
+            "CaptureSpellObservation", "PrepareCooldownContext", "TrackDeadline", "BeginCastSelectionPulse",
+            "TryClaimCastCandidate", "RecordCastCandidateResult" };
         var managerMethods = manager.DescendantNodes().OfType<MethodDeclarationSyntax>()
             .Where(m => names.Contains(m.Identifier.ValueText)).ToArray();
         var fields = new HashSet<string> { "_knownSpells", "_cooldownSync", "_castVerificationUntilTicks", "CastAttemptVerificationDelayMs",
-            "_cooldownReadyAtTicks", "_readinessProbeNotBeforeTicks", "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks" };
+            "_cooldownReadyAtTicks", "_readinessProbeNotBeforeTicks", "_cooldownContext", "_cooldownEpoch", "_lastCooldownObservationTicks",
+            "_failedCastCandidates", "_seenCastCandidates", "_castSelectionClaimed", "_claimedCastCandidateId", "_castSelectionBot", "_castSelectionRun" };
         string managerState = string.Join("\n", manager.DescendantNodes().OfType<FieldDeclarationSyntax>()
             .Where(f => f.Declaration.Variables.Any(v => fields.Contains(v.Identifier.ValueText))).Select(f => f.ToFullString()));
         managerState += manager.DescendantNodes().OfType<PropertyDeclarationSyntax>().Single(p => p.Identifier.ValueText == "Spells").ToFullString();
@@ -177,7 +180,7 @@ public static class Unit
     public static IEnumerable<WoWUnit> UnfriendlyUnitsNearTarget(float range)=>NearbyUnfriendlyUnits;
     public static bool IsCombatActionSafe(string name,WoWUnit target)=>World.Safe&&target!=null&&target.IsValid;
 }
-public static class Logger { public static void Write(string message){var callback=World.DuringLog;World.DuringLog=null;callback?.Invoke();} }
+public static class Logger { public static void Write(string message){var callback=World.DuringLog;World.DuringLog=null;callback?.Invoke();} public static void WriteDebug(string message)=>Write(message); }
 public sealed class SetupAction:Composite
 {
     protected override IEnumerable<RunStatus> Execute(object context)
@@ -199,7 +202,7 @@ public static partial class Movement
     private const string ManagerBoundary = """
 public static void FixtureReset(string name,int id)
 {
-    _knownSpells.Clear();lock(_cooldownSync)_castVerificationUntilTicks.Clear();
+    _knownSpells.Clear();lock(_cooldownSync){_castVerificationUntilTicks.Clear();_failedCastCandidates.Clear();_seenCastCandidates.Clear();_castSelectionClaimed=false;_claimedCastCandidateId=0;_castSelectionBot=null;_castSelectionRun=null;}
     _knownSpells[name]=new WoWSpell{Id=id,Name=name};
 }
 public static bool CanCast(string name,WoWUnit target,bool range,bool movement)
@@ -228,7 +231,7 @@ public static class HunterCases
             foreach(int id in trap.Ids)
             foreach(int overload in Enumerable.Range(0,5))
                 Case($"{trap.Name}/{id}/overload{overload} uses learned rank",()=>{
-                    Reset(trap.Name,id);Tick(Build(trap.Name,overload));Expect(id);
+                    Reset(trap.Name,id);Tick(Build(trap.Name,overload));Expect(id);Check(World.Admissions==1,"one cast decision crossed strict admission more than once");
                 });
             foreach(int overload in new[]{0,4})
             {
@@ -296,6 +299,26 @@ public static class HunterCases
         Case("no add does not borrow current target",()=>{
             Reset("Freezing Trap",1499);Unit.NearbyUnfriendlyUnits.Clear();Tick(HunterTrapOwner.CreateHunterTrapOnAddBehavior("Freezing Trap"));Expect();
         });
+        Case("failed fallback candidates do not amplify strict admission in one pulse",()=>{
+            Reset("Freezing Trap",1499);World.Ready=false;
+            SpellManager.Spells["Steady Shot"]=new WoWSpell{Id=56641,Name="Steady Shot"};
+            Tick(new PrioritySelector(Spell.Cast("Freezing Trap"),Spell.Cast("Steady Shot")));
+            Expect();Check(World.Admissions==1,"one tree pulse performed strict admission for multiple fallback candidates");
+        });
+        Case("failed priority pass advances and wraps without an idle pulse",()=>{
+            Reset("Freezing Trap",1499);World.Ready=false;
+            SpellManager.Spells["Steady Shot"]=new WoWSpell{Id=56641,Name="Steady Shot"};
+            var choices=new PrioritySelector(Spell.Cast("Freezing Trap"),Spell.Cast("Steady Shot"));
+            Tick(choices);Expect();Check(World.Admissions==1,"first pulse did not bound strict admission");
+            Tick(choices);Expect();Check(World.Admissions==2,"lower priority did not receive the next pulse");
+            World.Ready=true;Tick(choices);Expect(1499);
+            Check(World.Admissions==3,"exhausted pass inserted an idle pulse or repeated admission");
+        });
+        Case("run replacement cannot inherit failed candidate suppression",()=>{
+            Reset("Freezing Trap",1499);World.Ready=false;Tick(Spell.Cast("Freezing Trap"));Expect();
+            TreeRoot.RunIdentity=new object();World.Ready=true;
+            Tick(Spell.Cast("Freezing Trap"));Expect(1499);
+        });
         var owners=new (string Name,Func<Composite> Create,string Trap)[]{
             ("BM/normal",BeastMaster.CreateBeastMasterHunterNormalPullAndCombat,"Freezing Trap"),
             ("BM/battleground",BeastMaster.CreateBeastMasterHunterPvPPullAndCombat,"Freezing Trap"),
@@ -312,13 +335,13 @@ public static class HunterCases
         {
             Case(owner.Name+" complete caller learned rank="+rank,()=>{
                 Reset(owner.Trap,rank);StyxWoW.Me.CurrentTarget!.Distance=20;
-                Tick(owner.Create());Expect(rank);
+                TickUntilSubmission(owner.Create());Expect(rank);
             });
             Case(owner.Name+" complete caller cooldown fallback rank="+rank,()=>{
                 Reset(owner.Trap,rank);StyxWoW.Me.CurrentTarget!.Distance=20;
                 SpellManager.Spells[owner.Trap].Cooldown=true;
                 SpellManager.Spells["Steady Shot"]=new WoWSpell{Id=56641,Name="Steady Shot"};
-                Tick(owner.Create());Expect(56641);
+                TickUntilSubmission(owner.Create());Expect(56641);
             });
             Case(owner.Name+" complete caller global cooldown rank="+rank,()=>{
                 Reset(owner.Trap,rank);StyxWoW.Me.CurrentTarget!.Distance=20;World.Gcd=true;
@@ -353,7 +376,11 @@ public static class HunterCases
         _=>HunterTrapOwner.CreateHunterTrapOnAddBehavior(name)};
     private static void Tick(Composite root)
     {
-        root.Start(null!);try{int ticks=0;while(root.Tick(null!)==RunStatus.Running)if(++ticks>20)throw new Failure("unbounded cast setup");}finally{root.Stop(null!);}
+        root.Start(null!);try{int ticks=0;while(true){typeof(SpellManager).GetMethod("BeginCastSelectionPulse")?.Invoke(null,null);if(root.Tick(null!)!=RunStatus.Running)break;if(++ticks>20)throw new Failure("unbounded cast setup");}}finally{root.Stop(null!);}
+    }
+    private static void TickUntilSubmission(Composite root)
+    {
+        for(int decision=0;decision<64&&ObjectManager.Executor?.Completed.Count==0;decision++)Tick(root);
     }
     private static void Expect(params int[] ids)
     {

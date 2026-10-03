@@ -1583,8 +1583,12 @@ namespace Styx.WoWInternals.WoWObjects
                     executor.AddLine($"call {7492032}");
                     executor.AddLine("retn");
                     ReactionRequireCurrent(observation);
+                    long beforeExecution = executor.ExecutionGeneration;
                     executor.Execute();
                     ReactionRequireCurrent(observation);
+                    long completedExecution = unchecked(beforeExecution + 1);
+                    if (executor.ExecutionGeneration != completedExecution)
+                        throw new ObservationUnavailableException("reaction", "native reaction command was replaced");
                     // Execute may advance the frame. Keep the return buffer under the ASM lock.
                     observation.Frame = executor.FrameCount;
                     uint returnPointer = executor.ReturnPointer;
@@ -1594,7 +1598,7 @@ namespace Styx.WoWInternals.WoWObjects
                     using (observation.Memory.TemporaryCacheState(false))
                         bytes = observation.Memory.ReadBytes(returnPointer, sizeof(uint));
                     ReactionRequireCurrent(observation);
-                    if (executor.FrameCount != observation.Frame || executor.ReturnPointer != returnPointer || bytes == null || bytes.Length != sizeof(uint))
+                    if (executor.ExecutionGeneration != completedExecution || executor.ReturnPointer != returnPointer || bytes == null || bytes.Length != sizeof(uint))
                         throw new ObservationUnavailableException("reaction", "native reaction result incomplete or changed");
                     uint value = BitConverter.ToUInt32(bytes, 0);
                     if (value > (uint)WoWUnitReaction.Exalted)

@@ -265,6 +265,8 @@ namespace Singular.Helpers
                 return false;
             if (target == null || !isCurrent())
                 return false;
+            if (!SpellManager.TryClaimCastCandidate(name))
+                return false;
             var minReqs = requirements(ret) && isCurrent() && Unit.IsCombatActionSafe(name, target) && isCurrent();
             var canCast = false;
             var inRange = false;
@@ -313,6 +315,30 @@ namespace Singular.Helpers
             }
 
             return minReqs && canCast && inRange && isCurrent();
+        }
+
+        private static bool CanSelectNamedSpell(string name, WoWUnit target,
+            SimpleBooleanDelegate checkMovement, SimpleBooleanDelegate requirements, object ret, Func<bool> isCurrent)
+        {
+            if (string.IsNullOrWhiteSpace(name) || requirements == null || checkMovement == null)
+                return false;
+            if (target == null || !isCurrent())
+                return false;
+            var owner = StyxWoW.Me;
+            if (owner == null)
+                return false;
+            // Preserve the caller's cheap denial before any spellbook/cast-state
+            // observation. False requirements must not need a native spell owner.
+            if (!requirements(ret) || !isCurrent())
+                return false;
+            if (owner.IsCasting || !SpellManager.Spells.ContainsKey(name))
+                return false;
+            if (!Unit.IsCombatActionSafe(name, target) || !isCurrent())
+                return false;
+            // Selection is deliberately cheap. Current range, movement, funnel,
+            // usability and cooldown metadata are all re-observed by the strict
+            // CanCastNamedSpell immediately before native submission.
+            return SpellManager.TryClaimCastCandidate(name) && isCurrent();
         }
 
         /// <summary>
@@ -418,7 +444,7 @@ namespace Singular.Helpers
                         return false;
                     selected = onUnit(ret);
                     selectedGuid = selected?.Guid ?? 0;
-                    return IsCurrent() && CanCastNamedSpell(name, selected, checkMovement, requirements, ret, IsCurrent)
+                    return IsCurrent() && CanSelectNamedSpell(name, selected, checkMovement, requirements, ret, IsCurrent)
                         && retainedSelection(ret) != null && IsCurrent();
                 },
                 new Sequence( 
@@ -438,17 +464,22 @@ namespace Singular.Helpers
                             var target = retainedSelection(ret);
                             if (target == null || !Unit.IsCombatActionSafe(name, target))
                                 return RunStatus.Failure;
-                            Logger.Write("Casting " + name + " on " + target.SafeName());
+                            string targetName = target.SafeName();
+                            Logger.WriteDebug("Evaluating cast candidate: " + name + " on " + targetName);
                             // Dismount/target setup and logging may have changed sight,
                             // range, availability or caller requirements. Do not reselect
                             // a different recipient between this check and submission.
                             if (retainedSelection(ret) == null ||
                                 !CanCastNamedSpell(name, target, checkMovement, requirements, ret, IsCurrent) ||
                                 retainedSelection(ret) == null || !IsCurrent())
+                            {
+                                SpellManager.RecordCastCandidateResult(name, false);
                                 return RunStatus.Failure;
-                            return RecoveryActions.TryCast(name, target, healing, aura, "Singular.Cast") && IsCurrent()
-                                ? RunStatus.Success
-                                : RunStatus.Failure;
+                            }
+                            bool submitted = RecoveryActions.TryCast(name, target, healing, aura, "Singular.Cast") && IsCurrent();
+                            SpellManager.RecordCastCandidateResult(name, submitted);
+                            if (submitted) Logger.Write("Cast request submitted: " + name + " on " + targetName);
+                            return submitted && IsCurrent() ? RunStatus.Success : RunStatus.Failure;
 
                             //WoWSpell spell;
                             //if (SpellManager.Spells.TryGetValue(name, out spell))
@@ -584,15 +615,16 @@ namespace Singular.Helpers
                             var target = retainedSelection(ret);
                             if (target == null || !Unit.IsCombatActionSafe(spellId, target))
                                 return RunStatus.Failure;
-                            Logger.Write("Casting " + spellId + " on " + target.SafeName());
+                            string targetName = target.SafeName();
+                            Logger.WriteDebug("Evaluating cast candidate: " + spellId + " on " + targetName);
                             // The ID overload retains the host's range/LOS policy.
                             if (retainedSelection(ret) == null || requirements == null || !requirements(ret) || !IsCurrent() ||
                                 !Unit.IsCombatActionSafe(spellId, target) ||
                                 !SpellManager.CanCast(spellId, target, true) || retainedSelection(ret) == null || !IsCurrent())
                                 return RunStatus.Failure;
-                            return RecoveryActions.TryCast(spellId, target, healing, aura, "Singular.CastId") && IsCurrent()
-                                ? RunStatus.Success
-                                : RunStatus.Failure;
+                            bool submitted = RecoveryActions.TryCast(spellId, target, healing, aura, "Singular.CastId") && IsCurrent();
+                            if (submitted) Logger.Write("Cast request submitted: " + spellId + " on " + targetName);
+                            return submitted && IsCurrent() ? RunStatus.Success : RunStatus.Failure;
                         }))
                 );
         }
@@ -740,8 +772,9 @@ namespace Singular.Helpers
             {
                 if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || buffNames == null)
                     return null;
+                if (!SpellManager.Spells.ContainsKey(name)) return null;
                 var target = onUnit(ret);
-                return target != null && !DoubleCastPreventionDict.ContainsKey(name) &&
+                return target != null && requirements(ret) && !DoubleCastPreventionDict.ContainsKey(name) &&
                        buffNames.All(b => myBuff ? !target.HasMyAura(b) : !target.HasAura(b))
                     ? target : null;
             };

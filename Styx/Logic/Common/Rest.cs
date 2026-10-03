@@ -258,6 +258,12 @@ public static class Rest
             return false;
         }
 
+        if (!Styx.Logic.Combat.RecoveryActions.CanPrepareRestConsumable(!drinking, drinking))
+        {
+            ReportAdmissionDenial(drinking, "recovery-owner-pending-or-unavailable");
+            return false;
+        }
+        if (!StillAdmitted()) return false;
         var observation = configuredName != null ? Consumable.ObserveNamedRestItem(drinking, configuredName)
             : drinking ? Consumable.ObserveBestDrink(false) : Consumable.ObserveBestFood(false);
         WoWItem? item = observation.Item;
@@ -276,7 +282,7 @@ public static class Rest
                 return false;
             // A previous empty or unhydrated observation is not permanent.
             if (drinking) NoDrink = false; else NoFood = false;
-            Logging.Write(drinking ? "Drinking {0}" : "Eating {0}", name);
+            Logging.Write(drinking ? "Requesting drink: {0}" : "Requesting food: {0}", name);
             // Logging/inventory observation can reenter or change the world.
             if (!StillAdmitted()) return false;
             bool submitted = Styx.Logic.Combat.RecoveryActions.TryUseRestConsumable(item, !drinking, drinking,

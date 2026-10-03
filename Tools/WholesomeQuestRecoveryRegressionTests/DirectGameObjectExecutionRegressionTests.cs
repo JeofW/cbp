@@ -84,7 +84,7 @@ public static class DirectGoCases
         });
         foreach(string reason in new[]{"invalid-object","zero-guid","descriptor-guid","wrong-entry","disabled-object","blacklisted", "invalid-actor","dead-actor","zero-actor-guid",
                  "combat","pet-combat","taxi","transport","casting","channeling","falling","swimming","unknown-movement","unknown-progress","failed-quest","completed-quest",
-                 "cannot-use","cannot-use-now","zero-range","not-in-range","no-line-of-sight","foreign-poi"})
+                 "cannot-use","cannot-use-now","zero-range","not-in-range","foreign-poi"})
         {
             Case("admission / "+reason,()=>{
                 using var f=new Scene();
@@ -115,13 +115,16 @@ public static class DirectGoCases
                     case "cannot-use-now":World.CanUseNow=false;break;
                     case "zero-range":f.Target.InteractRange=0;break;
                     case "not-in-range":f.Target.InteractRange=1;break;
-                    case "no-line-of-sight":World.LineOfSight=false;break;
                     case "foreign-poi":BotPoi.Current=new BotPoi(f.Target,PoiType.Loot);break;
                 }
                 f.Tick();Check(World.Interactions.Count==0,"unsafe/unknown state dispatched interaction");
             });
         }
-        foreach(string mutation in new[]{"actor","actor-guid","map","mover","provider","behavior","target-ref","target-guid","entry","descriptor","range","sight","combat","progress-unknown","poi"})
+        Case("model-centre collision does not veto current native object usability",()=>{
+            using var f=new Scene();World.LineOfSight=false;f.Tick();
+            Check(World.Interactions.Count==1&&World.Progress==0&&!f.Owner.IsCompleted,"model origin blocked use or request invented objective credit");
+        });
+        foreach(string mutation in new[]{"actor","actor-guid","map","mover","provider","behavior","target-ref","target-guid","entry","descriptor","range","became-unusable","combat","progress-unknown","poi"})
         {
             Case("native-readiness callback / "+mutation,()=>{
                 using var f=new Scene();World.DuringReadiness=()=>{
@@ -138,7 +141,7 @@ public static class DirectGoCases
                         case "entry":f.Target.Entry++;break;
                         case "descriptor":f.Target.DescriptorGuid++;break;
                         case "range":f.Target.Location=new WoWPoint(30,10,10);break;
-                        case "sight":World.LineOfSight=false;break;
+                        case "became-unusable":World.CanUseNow=false;break;
                         case "combat":ObjectManager.Me.IsActuallyInCombat=true;break;
                         case "progress-unknown":World.ProgressKnown=false;break;
                         case "poi":BotPoi.Current=new BotPoi(f.Target,PoiType.Harvest);break;
@@ -160,7 +163,7 @@ public static class DirectGoCases
                 using var f=new Scene();ObjectManager.Me.Location=new WoWPoint(12,10,30);ObjectManager.Me.IsFlying=true;ObjectManager.Me.Mounted=true;World.MovementFlags=0x02000000;
                 if(scenario=="missing-support")World.Support=false;
                 if(scenario=="wrong-floor")World.SupportZ=25;
-                if(scenario=="blocked-descent")World.LineOfSight=false;
+                if(scenario=="blocked-descent")World.CorridorClear=false;
                 if(scenario=="late-remount") {ObjectManager.Me.IsFlying=false;World.MovementFlags=0;World.DuringReadiness=()=>ObjectManager.Me.Mounted=true;}
                 f.Tick();Check(World.Interactions.Count==0,"unsafe landing dispatched interaction");
                 if(scenario!="late-remount")Check(World.DescentRequests==0,"unsupported descent was issued");

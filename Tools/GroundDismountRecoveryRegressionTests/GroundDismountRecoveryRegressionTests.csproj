@@ -10,6 +10,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Boundary.cs" />
+    <Compile Include="../GroundTravelMountFixture.cs" Link="Boundary/GroundTravelMountFixture.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundTransitionContext.cs" Link="Production/GroundTransitionContext.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundTransitionRuntime.cs" Link="Production/GroundTransitionRuntime.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundApproachGeometry.cs" Link="Production/GroundApproachGeometry.cs" />

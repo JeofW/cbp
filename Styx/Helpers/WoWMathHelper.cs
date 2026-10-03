@@ -209,9 +209,6 @@ namespace Styx.Helpers
             if (unit == null || unit.Dead)
                 return false;
 
-            WoWPoint center = unit.Location;
-            float radius = unit.MyAggroRange;
-
             float dx = destination.X - start.X;
             float dy = destination.Y - start.Y;
             float dz = destination.Z - start.Z;
@@ -219,6 +216,9 @@ namespace Styx.Helpers
             float segmentLength = (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
             if (segmentLength <= 0f)
                 return false;
+
+            WoWPoint center = unit.Location;
+            float radius = unit.MyAggroRange;
 
             float invLen = 1f / segmentLength;
             float dirX = dx * invLen;
