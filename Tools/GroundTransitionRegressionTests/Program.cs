@@ -165,6 +165,24 @@ Case("grounded flight selection is retained until landing handoff", (r, m) =>
 {
     r.Motion = r.Motion with { Mounted = false, PreferFlight = true }; Pending(m); Check(r.Flights == 1 && r.Walks == 0, "long travel flight selection lost");
 }, GroundTransitionPurpose.Interaction);
+Case("grounded pending flight search falls back to ground motion instead of parking", (r, m) =>
+{
+    r.Motion = r.Motion with { Mounted = false, PreferFlight = true };
+    r.Plan = null;
+    Pending(m);
+    Check(r.Walks == 1 && r.Flights == 0,
+        "an incremental safe-flight search parked an already grounded interaction owner");
+
+    // Once the bounded first attempt could not produce a safe exterior plan, keep
+    // useful ground progress rather than re-running collision/mesh search every tick.
+    r.Plan = new(new(50, 10, 0), new(50, 10, 4), AreaType.Ground,
+        new GroundPath(true, "complete", new[] { new WoWPoint(50, 10, 0), new WoWPoint(80, 10, 0) },
+            new[] { AreaType.Ground, AreaType.Ground }), true, "late-plan-must-not-repark-ground-owner");
+    r.Time += .3;
+    Pending(m);
+    Check(r.Walks == 2 && r.Flights == 0,
+        "ground fallback restarted expensive flight planning after useful motion was selected");
+}, GroundTransitionPurpose.Interaction);
 foreach (string boundary in new[] { "observe", "search", "validate", "hold", "fly", "descend", "dismount", "walk", "report" })
     Case("owner replacement at " + boundary, (r, m) =>
     {

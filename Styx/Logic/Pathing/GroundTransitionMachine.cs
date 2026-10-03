@@ -103,7 +103,7 @@ internal sealed class GroundTransitionMachine
             {
                 _dismountPending = false;
                 if (!_groundHandoff && observation.PreferFlight)
-                    return Approach(observation, now);
+                    return Approach(observation, now, allowGroundFallback: true);
                 _groundHandoff = true;
                 if (CommandDue(now)) _runtime.Walk();
                 return Progress("ground-mesh", "following-ground-route; interaction-unobserved", observation, now);
@@ -137,17 +137,39 @@ internal sealed class GroundTransitionMachine
         return Approach(observation, now);
     }
 
-    private GroundTransitionState Approach(GroundMotion observation, double now)
+    private GroundTransitionState Approach(GroundMotion observation, double now, bool allowGroundFallback = false)
     {
         if (_plan == null)
         {
-            _runtime.Hold();
-            if (!_runtime.Current) return GroundTransitionState.Revoked;
+            // An already-grounded actor has a safe useful fallback: keep making
+            // ground progress if the first bounded exterior-flight search cannot
+            // prove a landing/onward plan. Do not park the bot and spend later
+            // pulses repeating expensive collision/mesh candidate searches.
+            if (!allowGroundFallback)
+            {
+                _runtime.Hold();
+                if (!_runtime.Current) return GroundTransitionState.Revoked;
+            }
             _plan = _runtime.Search();
             if (!_runtime.Current) return GroundTransitionState.Revoked;
             if (_plan == null)
+            {
+                if (allowGroundFallback)
+                {
+                    _groundHandoff = true;
+                    _runtime.ResetSearch();
+                    if (!_runtime.Current) return GroundTransitionState.Revoked;
+                    if (CommandDue(now)) _runtime.Walk();
+                    return Progress("ground-mesh", "safe-flight-plan-not-proven; following-ground-route", observation, now);
+                }
                 return _runtime.SearchExhausted ? Unavailable("no-proven-safe-approach", observation, now)
                     : Result(GroundTransitionState.Pending, "searching", "bounded-collision-and-mesh-candidate-search", observation);
+            }
+            if (allowGroundFallback)
+            {
+                _runtime.Hold();
+                if (!_runtime.Current) return GroundTransitionState.Revoked;
+            }
         }
         if (!_runtime.Validate(_plan))
         {
