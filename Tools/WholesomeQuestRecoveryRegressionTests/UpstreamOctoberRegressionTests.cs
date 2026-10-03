@@ -139,7 +139,7 @@ public static class Cases {
     private const string FramePrefix = """
 using System;using System.Collections.Generic;using System.ComponentModel;using System.Diagnostics;using System.Threading;using System.Linq;using System.Reflection;using System.Xml.Linq;
 using Styx;using Styx.Helpers;using Styx.WoWInternals;
-namespace Styx.Helpers {
+/* Controlled settings storage; actual readers are inserted below. */ namespace Styx.Helpers {
  public class SettingAttribute:Attribute{public string Explanation{get;set;}public string ElementName{get;set;}}
  public class Settings {public static string SettingsDirectory="unused-fixture-directory";public static bool? LoadedFrameSetting;
   public Settings(string path){InitializeDefaultValues();if(LoadedFrameSetting is bool value)LoadFromXML(new XElement("StyxSettings",new XElement("UseFrameLock",value)));}
@@ -149,7 +149,7 @@ namespace Styx.Helpers {
  public static class Logging{public static LogLevel LoggingLevel;public static void WriteDiagnostic(string text){}public static void WriteDebug(string text,params object[] args){}public static void Write(string text,params object[] args){}}
  public class CharacterSettings{public static CharacterSettings Instance=new();public byte TicksPerSecond=100;}
 }
-namespace Styx {
+/* Controlled frame scopes. */ namespace Styx {
  public static class StyxWoW{public static ControlledMemory Memory=new();}
  public class ControlledMemory {
   public int Acquires,Holds,CacheScopes;public IDisposable AcquireFrame(bool hard){Acquires++;Holds++;return new Scope(()=>Holds--);}
@@ -157,7 +157,7 @@ namespace Styx {
  }
  public class Scope:IDisposable{Action action;public Scope(Action action){this.action=action;}public void Dispose(){action();}}
 }
-namespace Styx.WoWInternals {public static class ObjectManager{public static Executor Executor;}
+/* Controlled executor state. */ namespace Styx.WoWInternals {public static class ObjectManager{public static Executor Executor;}
  public class Executor{public bool IsExecutingContinuously;public object AssemblyLock=new();public int Ends;public void EndExecute(){Ends++;IsExecutingContinuously=false;}}
 }
 public enum TreeRootState{Stopped,Running,Paused}
