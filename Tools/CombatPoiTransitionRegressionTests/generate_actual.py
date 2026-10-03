@@ -75,7 +75,6 @@ for rel in (
     "Styx/Logic/POI/BotPoi.cs",
     "Styx/Logic/POI/PoiType.cs",
     "Styx/Logic/Combat/MountedCombatTransition.cs",
-    "Styx/Logic/MountedTravelProgress.cs",
     "Styx/Logic/Pathing/GroundTransition.cs",
     "Styx/Logic/Pathing/GroundTransitionContext.cs",
     "Styx/Logic/Pathing/GroundTransitionMachine.cs",

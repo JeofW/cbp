@@ -18,7 +18,6 @@ namespace Styx.Logic.Combat
     /// </summary>
     public sealed class MountedCombatTransition : IDisposable
     {
-        private static readonly MountedTravelProgress EscapeProgress = new();
         private readonly GroundTransition _ground = new(GroundTransitionPurpose.Combat);
         private Func<bool> _admitted;
         private WoWObject _subject;
@@ -38,8 +37,9 @@ namespace Styx.Logic.Combat
 
         /// <summary>
         /// Returns true when mounted travel must yield to the combat transition.
-        /// A committed Kill always yields. Incidental aggro retains the existing
-        /// bounded progress/health escape policy until that policy says stop.
+        /// A committed Kill always yields. Incidental combat flags cannot create
+        /// mounted attack intent; after observed mount loss, ground admission owns
+        /// any remaining falling/UNKNOWN transition before combat may resume.
         /// </summary>
         public static bool RequiresProtectiveHandoff(WoWPoint travelDestination)
         {
@@ -48,33 +48,13 @@ namespace Styx.Logic.Combat
             var poi = BotPoi.Current;
             bool committed = poi != null && poi.Type == PoiType.Kill;
             bool threat = HasProtectiveCombat(actor);
-            if (!committed && !threat)
-            {
-                EscapeProgress.Reset();
-                return false;
-            }
+            if (!committed && !threat) return false;
 
             // Known unmounted ground state can use the ordinary combat owner.
             // UNKNOWN/flying/falling remains a transition concern, never attack permission.
             if (!IsMountedOrFlying(actor))
                 return !CanActUnmounted();
-            if (committed) return true;
-
-            object memory = ObjectManager.Wow;
-            ulong guid = actor.Guid;
-            uint address = actor.BaseAddress;
-            uint map = actor.MapId;
-            int processId = ObjectManager.Wow?.ProcessId ?? 0;
-            if (memory == null || guid == 0 || address == 0 || !actor.TryGetMovementState(out _, out _))
-                return true;
-
-            bool stop = EscapeProgress.ShouldStop(actor, memory, guid, map, Environment.TickCount64,
-                actor.Location, travelDestination, actor.HealthPercent, actor.Rooted, actor.Stunned, out _);
-            // Observation callbacks/native reads cannot transfer this result to a
-            // replacement actor or process epoch.
-            return !ReferenceEquals(ObjectManager.Me, actor) || !ReferenceEquals(ObjectManager.Wow, memory)
-                || actor.Guid != guid || actor.BaseAddress != address || actor.MapId != map
-                || ObjectManager.Wow?.ProcessId != processId || stop;
+            return committed;
         }
 
         /// <summary>Transition the current committed Kill or protective threat.</summary>
@@ -110,9 +90,9 @@ namespace Styx.Logic.Combat
             }
             else
             {
-                // Protective/incidental combat has no proven enemy destination.
-                // Land around the actor's observed handoff point and let ordinary
-                // combat targeting decide the enemy only after ground admission.
+                // After observed mount loss, protective combat has no proven
+                // enemy destination. Wait for supported ground at the actor's
+                // handoff point before ordinary combat targeting can resume.
                 // The travel destination and an unrelated displayed target are
                 // neither landing evidence nor threat ownership.
                 ulong actorGuid = actor.Guid;
@@ -127,9 +107,9 @@ namespace Styx.Logic.Combat
                 bool PetThreatCurrent() => petThreat && petGuid != 0 && petAddress != 0
                     && ReferenceEquals(actor.Pet, protectivePet) && protectivePet.IsValid && protectivePet.IsAlive
                     && protectivePet.Guid == petGuid && protectivePet.BaseAddress == petAddress && protectivePet.Combat;
-                _admitted = () => ActorCurrent()
+                _admitted = () => ActorCurrent() && !IsMountedOrFlying(actor)
                     && ((playerThreat && actor.Combat) || PetThreatCurrent())
-                    && ActorCurrent();
+                    && ActorCurrent() && !IsMountedOrFlying(actor);
             }
             unchecked { _lifetime++; }
             _active = true;

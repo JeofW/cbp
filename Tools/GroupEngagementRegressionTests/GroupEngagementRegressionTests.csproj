@@ -5,5 +5,6 @@
   <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Helpers/DungeonEngagementPolicy.cs" Link="Production/DungeonEngagementPolicy.cs" />
   <Compile Include="../../Styx/Logic/Combat/GroupCombatSafety.cs" Link="Production/GroupCombatSafety.cs" Condition="Exists('../../Styx/Logic/Combat/GroupCombatSafety.cs')" />
   <Compile Include="../../Styx/Helpers/ObservationUnavailableException.cs" Link="Production/ObservationUnavailableException.cs" />
+  <Compile Include="../../Styx/Logic/Combat/WoWSpellMechanic.cs" Link="Production/WoWSpellMechanic.cs" />
  </ItemGroup>
 </Project>

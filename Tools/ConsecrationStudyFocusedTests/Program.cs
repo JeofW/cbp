@@ -1,0 +1,1 @@
+IntegratedConsecrationAreaTests.Run();

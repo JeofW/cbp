@@ -162,7 +162,14 @@ namespace Styx.WoWInternals.WoWObjects
     public class WoWPlayer : WoWUnit { }
     public class WoWItem : WoWObject { }
     public enum WoWGameObjectType { Mailbox }
-    public class WoWGameObject : WoWObject { public WoWGameObjectType SubType; }
+    public class WoWGameObject : WoWObject
+    {
+        public WoWGameObjectType SubType;
+        public float InteractRange = 5;
+        public bool Usable = true;
+        public bool CanUse() => Usable && !IsDisabled;
+        public bool CanUseNow() => CanUse() && WithinInteractRange;
+    }
     public sealed class Movement { public bool IsDescending; }
     public sealed class LocalPlayer : WoWUnit
     {
@@ -211,7 +218,7 @@ namespace Styx.Logic
     public static class Blacklist
     {
         public static readonly HashSet<ulong> Entries = new();
-        public static bool Contains(ulong guid, bool flush) => Entries.Contains(guid);
+        public static bool Contains(ulong guid, bool flush = false) => Entries.Contains(guid);
         public static void Add(ulong guid, TimeSpan duration) => Entries.Add(guid);
     }
     public static class VendorSafetyPolicy { public static bool IsService(Styx.Logic.POI.PoiType type) => false; }

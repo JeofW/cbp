@@ -14,7 +14,6 @@
     <Compile Include="../../Styx/Logic/POI/BotPoi.cs" Link="Production/BotPoi.cs" />
     <Compile Include="../../Styx/Logic/POI/PoiType.cs" Link="Production/PoiType.cs" />
     <Compile Include="../../Styx/Logic/Combat/MountedCombatTransition.cs" Link="Production/MountedCombatTransition.cs" />
-    <Compile Include="../../Styx/Logic/MountedTravelProgress.cs" Link="Production/MountedTravelProgress.cs" />
     <Compile Include="../../Bots/Grind/Levelbot/Actions/Combat/ActionPull.cs" Link="Production/ActionPull.cs" />
     <Compile Include="../../Bots/Grind/Levelbot/Actions/Combat/ActionSetTarget.cs" Link="Production/ActionSetTarget.cs" />
     <Compile Include="../../Styx/Logic/Pathing/GroundTransition.cs" Link="Production/GroundTransition.cs" />

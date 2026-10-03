@@ -268,7 +268,8 @@ public sealed class QuestGameObjectInteraction : TreeSharp.Action
             _attempts[_guid] = _attempts.TryGetValue(_guid, out int attempts) ? attempts + 1 : 1;
             _lastInteraction = "native-request-not-quest-acknowledgement";
             _lastInteractionUtc = now;
-            _subject.Interact(true);
+            if (!GroundTransition.TryInteractWith(_subject, Current, true))
+                _lastInteraction = "owned-native-entry-unavailable; awaiting-separate-credit-before-retry";
             return Report("interaction-issued-not-acknowledged", "native-return-is-not-typed-quest-credit", count);
         }
         catch (Exception error) when (error is not OperationCanceledException && error is not ThreadInterruptedException)

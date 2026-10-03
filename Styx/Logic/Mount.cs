@@ -20,7 +20,6 @@ namespace Styx.Logic
 		private static CanMountDelegate? _defaultCanMount;
 		private static bool _wasMounted;
 		private static LocationRetriever? _currentDestinationRetriever;
-			private static readonly MountedTravelProgress _mountedTravelProgress = new();
 			private const string GroundDismountReceipt = "cb-ground-dismount-submitted";
 			private const string GroundDismountPendingReceipt = "cb-ground-dismount-pending";
 			private const int GroundDismountLeaseSeconds = 12;
@@ -40,7 +39,6 @@ namespace Styx.Logic
 		static Mount()
 		{
 			BotEvents.Player.OnMobKilled += OnMobKilled;
-			BotEvents.OnBotStop += _ => _mountedTravelProgress.Reset();
 		}
 
 		private static void OnMobKilled(BotEvents.Player.MobKilledEventArgs args)
@@ -676,7 +674,7 @@ return '" + GroundDismountReceipt + "'";
 		public static bool ShouldDismount(WoWPoint travelingTo)
 		{
 			LocalPlayer? me = Me;
-			if (me == null || !me.Mounted) { _mountedTravelProgress.Reset(); return false; }
+			if (me == null || !me.Mounted) return false;
 			ulong guid = me.Guid;
 			uint map = me.MapId;
 			object memory = ObjectManager.Wow;
@@ -687,21 +685,10 @@ return '" + GroundDismountReceipt + "'";
 				&& !me.IsOnTransport && !me.OnTaxi && !me.InVehicle
 				&& ReferenceEquals(ObjectManager.Wow, memory)
 				&& ReferenceEquals(BotPoi.Current, poi) && poi.Type == kind;
-			if (!Current() || me.IsFlying) { _mountedTravelProgress.Reset(); return false; }
+			if (!Current() || me.IsFlying) return false;
 
-			if (me.Combat)
-			{
-				bool stop = _mountedTravelProgress.ShouldStop(me, memory, guid, map,
-					Environment.TickCount64, me.Location, travelingTo, me.HealthPercent,
-					me.Rooted, me.Stunned, out string reason);
-				if (!Current()) return false;
-				if (stop)
-				{
-					Logging.WriteDebug("Mounted escape yielded to combat: {0}.", reason);
-					return Current();
-				}
-			}
-			else _mountedTravelProgress.Reset();
+			// Only an explicit destination action can authorize mount removal.
+			// Combat flags, damage and navigation delays do not change travel intent.
 
 			if (travelingTo == WoWPoint.Empty)
 				return false;

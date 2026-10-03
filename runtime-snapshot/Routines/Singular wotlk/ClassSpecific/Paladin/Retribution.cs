@@ -437,12 +437,16 @@ namespace Singular.ClassSpecific.Paladin
         {
             var me = StyxWoW.Me;
             var target = me?.CurrentTarget;
+            var settings = SingularSettings.Instance.Paladin;
             if (me == null || target == null || !me.IsValid || !me.IsAlive
                 || !target.IsValid || !target.IsAlive || me.Mounted || me.IsOnTransport
                 || me.IsMoving || target.IsMoving || me.IsCasting || me.IsChanneling
                 || target.Distance > Spell.MeleeRange
-                || me.ManaPercent <= SingularSettings.Instance.Paladin.DivinePleaMana
+                || !double.IsFinite(me.ManaPercent) || me.ManaPercent < 0 || me.ManaPercent > 100
+                || settings.DivinePleaMana < 0 || settings.DivinePleaMana > 100 || settings.ConsecrationCount < 1
+                || me.ManaPercent <= settings.DivinePleaMana
                 || !SpellManager.HasSpell("Consecration")
+                || Spell.IsGlobalCooldown() || Spell.GetSpellCooldown("Consecration") > TimeSpan.Zero
                 || !Unit.IsAreaEffectSafe("Consecration", target))
                 return null;
 
@@ -451,7 +455,7 @@ namespace Singular.ClassSpecific.Paladin
             // Keep the configured pack threshold and reserve recovery mana; the
             // real spell layer still checks current cost, cooldown and safety.
             int nearby = Unit.UnfriendlyUnitsWithin(8).Count(u => u.IsValid && u.IsAlive);
-            return target.IsBoss() || nearby >= SingularSettings.Instance.Paladin.ConsecrationCount
+            return target.IsBoss() || nearby >= settings.ConsecrationCount
                 ? "Consecration" : null;
         }
 

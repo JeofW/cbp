@@ -134,6 +134,15 @@ namespace Styx.WoWInternals.WoWObjects
         }
     }
     public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving; }
+    // This suite exercises NPC approaches; GO effects have a separate actual
+    // collection integration suite and must not be silently simulated here.
+    public sealed class WoWGameObject : WoWObject
+    {
+        public bool IsDisabled;
+        public float InteractRange = 5;
+        public bool CanUse() => throw new InvalidOperationException("Unexpected game-object usability in NPC suite");
+        public bool CanUseNow() => throw new InvalidOperationException("Unexpected game-object usability in NPC suite");
+    }
     public sealed class Movement { public bool IsDescending; }
     public sealed class LocalPlayer : WoWUnit
     {
@@ -228,6 +237,7 @@ namespace Styx.Logic.Pathing
 }
 namespace Styx.Logic
 {
+    public static class Blacklist { public static bool Contains(ulong guid) => false; }
     public static class Mount
     {
         public static bool TryDismountOwned(string reason, Func<bool> admitted, System.Action? submitted)

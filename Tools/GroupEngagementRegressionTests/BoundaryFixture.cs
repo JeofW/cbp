@@ -19,7 +19,6 @@ namespace Styx.Logic.Pathing
 namespace Styx.Logic.Combat
 {
  public enum WoWCreatureType { Humanoid, Undead, Demon }
- public enum WoWSpellMechanic { None, Banished, Charmed, Horrified, Incapacitated, Polymorphed, Sapped, Shackled, Asleep, Frozen, Invulnerable, Invulnerable2, Turned }
  public enum WoWApplyAuraType { None, ModResistancePct, ModDamagePercentDone, ModMechanicDamageTakenPercent }
  public sealed class SpellEffect { public WoWApplyAuraType AuraType; public int MiscValueA; public int BasePoints; }
  public sealed class WoWSpell { public static WoWSpell FromId(int id) => new() { Name = id == 53385 ? "Divine Storm" : "Crusader Strike" }; public string Name = ""; public WoWSpellMechanic Mechanic; public SpellEffect? GetSpellEffect(int _) => null; }

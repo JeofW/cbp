@@ -18,12 +18,8 @@ internal static class MountedTravelRegressionTests
         if(root==null)throw new InvalidOperationException("Tracked source required.");
         var owner=CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root.FullName,"Styx/Logic/Mount.cs")))
             .GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>().Single(x=>x.Identifier.ValueText=="ShouldDismount");
-        string policyPath=Path.Combine(root.FullName,"Styx/Logic/MountedTravelProgress.cs");
-        string policy=File.Exists(policyPath)?CSharpSyntaxTree.ParseText(File.ReadAllText(policyPath)).GetRoot()
-            .DescendantNodes().OfType<ClassDeclarationSyntax>().Single(x=>x.Identifier.ValueText=="MountedTravelProgress").ToString()
-            :"internal sealed class MountedTravelProgress{public void Reset(){}}";
-        string source=Prefix+policy+"\npublic static class Mount {private static LocalPlayer? Me=>ObjectManager.Me;"+
-            "private static readonly MountedTravelProgress _mountedTravelProgress=new();public static void Reset()=>_mountedTravelProgress.Reset();\n"+
+        string source=Prefix+"\npublic static class Mount {private static LocalPlayer? Me=>ObjectManager.Me;"+
+            "public static void Reset(){}\n"+
             owner+"}\n"+Cases;
         var trusted=(string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")??throw new InvalidOperationException("References missing.");
         var compilation=CSharpCompilation.Create("MountedTravel_"+Guid.NewGuid().ToString("N"),new[]{CSharpSyntaxTree.ParseText(source)},
@@ -57,15 +53,15 @@ public static class MountedCases{
  public static void Run(){int passed=0;var errors=new List<string>();
  void Case(string name,Action test){Reset();try{test();passed++;Console.WriteLine("PASS mounted travel: "+name);}catch(Exception e){errors.Add(name+": "+e.Message);Console.Error.WriteLine("FAIL mounted travel: "+errors[^1]);}}
  Case("brief navigation pause retains mount",()=>{ObjectManager.Me!.IsMoving=false;Check(!Observe(),"one stationary combat tick forced combat");});
- Case("stationary route expires after bounded recovery",()=>{ObjectManager.Me!.IsMoving=false;Observe();Environment.TickCount64+=3100;Check(Observe(),"blocked escape did not hand over to combat");});
- Case("moving flag without positional progress cannot escape forever",()=>{Check(!Observe(),"initial escape rejected");Environment.TickCount64+=3100;Check(Observe(),"moving into a wall kept suppressing combat");});
+ Case("stationary route cannot grant incidental combat intent",()=>{ObjectManager.Me!.IsMoving=false;Observe();Environment.TickCount64+=3100;Check(!Observe(),"blocked escape granted voluntary combat dismount");});
+ Case("moving flag without progress does not authorize dismount",()=>{Check(!Observe(),"initial escape rejected");Environment.TickCount64+=3100;Check(!Observe(),"wall stall became combat intent");});
  Case("healthy actual progress tolerates passing aggro",()=>{for(int i=0;i<8;i++){ObjectManager.Me!.Location=new(1+15*i,2,3);Environment.TickCount64+=1000;Check(!Observe(),"progressing travel voluntarily dismounted");}});
  Case("slow snared but progressing travel remains mounted",()=>{for(int i=0;i<7;i++){ObjectManager.Me!.Location=new(1+3*i,2,3);Environment.TickCount64+=1000;Check(!Observe(),"movement reduction alone forced combat");}});
- Case("movement away from the destination has a bounded escape",()=>{bool stopped=false;for(int i=0;i<8;i++){ObjectManager.Me!.Location=new(1-10*i,2,3);Environment.TickCount64+=1000;stopped|=Observe();}Check(stopped,"movement without route progress suppressed combat indefinitely");});
- Case("rooted ground rider yields immediately",()=>{ObjectManager.Me!.Rooted=true;Check(Observe(),"rooted actor cannot flee");});
- Case("stunned ground rider yields immediately",()=>{ObjectManager.Me!.Stunned=true;Check(Observe(),"stunned actor cannot flee");});
- Case("critical health while moving yields to defenses",()=>{ObjectManager.Me!.HealthPercent=30;Check(Observe(),"critical health did not yield");});
- Case("rapid incoming damage yields before critical health",()=>{Observe();ObjectManager.Me!.HealthPercent=75;ObjectManager.Me.Location=new(16,2,3);Environment.TickCount64+=500;Check(Observe(),"rapidly deteriorating escape was retained");});
+ Case("route detour cannot grant incidental combat intent",()=>{bool stopped=false;for(int i=0;i<8;i++){ObjectManager.Me!.Location=new(1-10*i,2,3);Environment.TickCount64+=1000;stopped|=Observe();}Check(!stopped,"detour became voluntary combat dismount");});
+ Case("rooted ground rider retains travel mount",()=>{ObjectManager.Me!.Rooted=true;Check(!Observe(),"root granted voluntary combat dismount");});
+ Case("stunned ground rider retains travel mount",()=>{ObjectManager.Me!.Stunned=true;Check(!Observe(),"stun granted voluntary combat dismount");});
+ Case("critical health does not grant incidental combat intent",()=>{ObjectManager.Me!.HealthPercent=30;Check(!Observe(),"low health granted voluntary combat dismount");});
+ Case("incoming damage does not grant incidental combat intent",()=>{Observe();ObjectManager.Me!.HealthPercent=75;ObjectManager.Me.Location=new(16,2,3);Environment.TickCount64+=500;Check(!Observe(),"damage granted voluntary combat dismount");});
  Case("an airborne rider is never dropped by combat admission",()=>{ObjectManager.Me!.IsFlying=true;ObjectManager.Me.IsMoving=false;ObjectManager.Me.Rooted=true;ObjectManager.Me.HealthPercent=20;Check(!Observe(),"combat admission removed a flying mount");});
  Case("forced dismount hands control to the existing ground combat owner",()=>{Observe();ObjectManager.Me!.Mounted=false;Check(!Observe(),"already dismounted actor got a duplicate removal request");});
  Case("no combat does not inherit an escape timeout",()=>{Observe();Environment.TickCount64+=10000;ObjectManager.Me!.Combat=false;Check(!Observe(),"ended combat retained timeout");ObjectManager.Me.Combat=true;Check(!Observe(),"new encounter inherited old grace");});
@@ -77,8 +73,8 @@ public static class MountedCases{
  Case("explicit nearby Kill POI remains authoritative",()=>{BotPoi.Current.Type=PoiType.Kill;BotPoi.Current.Location=new(20,2,3);Check(Observe(),"explicit kill did not dismount");});
  Case("remote Kill POI retains travel",()=>{BotPoi.Current.Type=PoiType.Kill;Check(!Observe(),"remote kill was pulled early");});
  foreach(PoiType type in new[]{PoiType.Loot,PoiType.Harvest,PoiType.Sell,PoiType.Repair,PoiType.Train,PoiType.Mail}){var t=type;Case("arrival/"+t,()=>{ObjectManager.Me!.Combat=false;BotPoi.Current.Type=t;BotPoi.Current.Location=new(5,2,3);Check(Observe(),"ordinary interaction arrival stopped dismounting");});}
- Case("missing travel destination cannot strand combat",()=>{BotPoi.Current.Location=WoWPoint.Empty;ObjectManager.Me!.IsMoving=false;Check(Observe(),"no escape route suppressed combat");});
- Case("logging replacement revokes the old decision",()=>{ObjectManager.Me!.HealthPercent=20;ObjectManager.Me.IsMoving=false;Logging.After=()=>ObjectManager.Me=new();Check(!Observe(),"old decision transferred dismount to a replacement actor");});
+ Case("missing destination cannot grant incidental combat intent",()=>{BotPoi.Current.Location=WoWPoint.Empty;ObjectManager.Me!.IsMoving=false;Check(!Observe(),"missing route granted voluntary combat dismount");});
+ Case("logging replacement revokes the old decision",()=>{BotPoi.Current.Type=PoiType.Kill;BotPoi.Current.Location=new(20,2,3);Logging.After=()=>ObjectManager.Me=new();Check(!Observe(),"old decision transferred dismount to a replacement actor");});
  Case("transport is not a voluntary mount removal target",()=>{ObjectManager.Me!.IsOnTransport=true;ObjectManager.Me.IsMoving=false;Check(!Observe(),"transport actor admitted dismount");});
  Console.WriteLine($"Mounted travel scenarios: {passed}/{passed+errors.Count}; actual dismount and progress owners; synthetic clock and observations.");
  if(errors.Count!=0)throw new InvalidOperationException(string.Join("; ",errors));}

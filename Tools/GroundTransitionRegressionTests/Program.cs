@@ -195,24 +195,42 @@ Case("grounded flight selection is retained until landing handoff", (r, m) =>
 {
     r.Motion = r.Motion with { Mounted = false, PreferFlight = true }; Pending(m); Check(r.Flights == 1 && r.Walks == 0, "long travel flight selection lost");
 }, GroundTransitionPurpose.Interaction);
-Case("grounded pending flight search falls back to ground motion instead of parking", (r, m) =>
+Case("pending flight search does not commit a partial batch to ground travel", (r, m) =>
 {
     r.Motion = r.Motion with { Mounted = false, PreferFlight = true };
     r.Plan = null;
     Pending(m);
-    Check(r.Walks == 1 && r.Flights == 0,
-        "an incremental safe-flight search parked an already grounded interaction owner");
+    Check(r.Walks == 0 && r.Flights == 0 && r.Resets == 0,
+        "an incomplete flight-search batch was discarded and committed to ground travel");
 
-    // Once the bounded first attempt could not produce a safe exterior plan, keep
-    // useful ground progress rather than re-running collision/mesh search every tick.
+    // A later candidate from the same bounded search can prove safe flight.
     r.Plan = new(new(50, 10, 0), new(50, 10, 4), AreaType.Ground,
         new GroundPath(true, "complete", new[] { new WoWPoint(50, 10, 0), new WoWPoint(80, 10, 0) },
-            new[] { AreaType.Ground, AreaType.Ground }), true, "late-plan-must-not-repark-ground-owner");
+            new[] { AreaType.Ground, AreaType.Ground }), true, "later-candidate-proves-flight");
     r.Time += .3;
     Pending(m);
-    Check(r.Walks == 2 && r.Flights == 0,
-        "ground fallback restarted expensive flight planning after useful motion was selected");
+    Check(r.Walks == 0 && r.Flights == 1,
+        "a later valid candidate could not preserve the selected flying mount");
 }, GroundTransitionPurpose.Interaction);
+Case("exhausted grounded flight search retains useful ground fallback", (r,m)=>
+{
+    r.Motion=r.Motion with { Mounted=false, PreferFlight=true };r.Plan=null;r.Exhausted=true;
+    Pending(m);Check(r.Walks==1&&r.Flights==0,"exhausted flight planning parked supported ground travel");
+    r.Time=.3;Pending(m);Check(r.Walks==2,"ground fallback was not retained");
+},GroundTransitionPurpose.Interaction);
+foreach(bool mounted in new[]{false,true})
+Case("ground flight planning has a bounded batch budget / mounted="+mounted, (r,m)=>
+{
+    r.Motion=r.Motion with { Mounted=mounted, PreferFlight=true };r.Plan=null;r.Exhausted=false;
+    for(int i=0;i<8;i++){r.Time=i*.21;Pending(m);Check(r.Walks==0&&r.Dismounts==0,"incomplete planning discarded flight preference prematurely");}
+    r.Time=1.9;Pending(m);Check(r.Walks==1&&r.Dismounts==0,"planning budget failed to yield a supported ground fallback");
+},GroundTransitionPurpose.Interaction);
+Case("ground flight planning has a monotonic time budget", (r,m)=>
+{
+    r.Motion=r.Motion with { Mounted=false, PreferFlight=true };r.Plan=null;r.Exhausted=false;
+    Pending(m);Check(r.Walks==0,"initial incomplete search selected ground prematurely");
+    r.Time=2.1;Pending(m);Check(r.Walks==1,"elapsed flight planning budget parked the actor");
+},GroundTransitionPurpose.Interaction);
 foreach (string boundary in new[] { "observe", "search", "validate", "hold", "fly", "descend", "dismount", "walk", "report" })
     Case("owner replacement at " + boundary, (r, m) =>
     {

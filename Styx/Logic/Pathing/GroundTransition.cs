@@ -117,7 +117,7 @@ public sealed class GroundTransition : IDisposable
             && finalFlags == flags && finalTransport == transport && stamp.Current;
     }
 
-    /// <summary>Current interaction geometry, including targets across a wall or roof.</summary>
+    /// <summary>Current grounded interaction range. NPCs also require sight to their origin.</summary>
     public static bool CanInteractWith(WoWObject? subject, Func<bool>? admitted = null)
     {
         try
@@ -131,6 +131,14 @@ public sealed class GroundTransition : IDisposable
             var actor = stamp.Actor;
             WoWPoint position = actor.Location;
             if (!GroundApproachSearch.Finite(position) || !GroundApproachSearch.Finite(destination)) return false;
+            // A GameObject's model origin can be inside opaque geometry or below
+            // its usable surface. The original GO-use contract is identity/range,
+            // not a collision ray into that model. Native usability is observed
+            // separately before interaction; landing still needs real support.
+            if (subject is WoWGameObject gameObject)
+                return !gameObject.IsDisabled && !Styx.Logic.Blacklist.Contains(gameObject.Guid)
+                    && float.IsFinite(gameObject.InteractRange) && gameObject.InteractRange > 0
+                    && stamp.Current && actor.Location.Equals(position);
             // Coincident finite points have no segment to trace. The native
             // collision contract deliberately rejects zero-length queries.
             bool sight = position.Equals(destination)
@@ -158,11 +166,16 @@ public sealed class GroundTransition : IDisposable
             var stamp = new GroundTransitionContext(subject, subject.Location, true, admitted ?? (() => true));
             WoWPoint position = stamp.Actor.Location;
             if (!CanInteractWith(subject, () => stamp.Current)) return false;
+            if (subject is WoWGameObject gameObject
+                && (!gameObject.CanUse() || !stamp.Current || !gameObject.CanUseNow() || !stamp.Current)) return false;
 
             // The native entry guard must not trace collision or execute Lua:
             // either would overwrite the interaction's prepared native command.
             bool Current() => stamp.Current && stamp.Actor.Location.Equals(position)
-                && IsUnmountedActorCurrent(stamp) && stamp.Actor.Location.Equals(position) && stamp.Current;
+                && IsUnmountedActorCurrent(stamp) && subject.WithinInteractRange
+                && (subject is not WoWGameObject currentObject || !currentObject.IsDisabled
+                    && !Styx.Logic.Blacklist.Contains(currentObject.Guid))
+                && stamp.Actor.Location.Equals(position) && stamp.Current;
             if (!Current()) return false;
             return subject.TryInteractOwned(Current, ignoreTimer);
         }

@@ -166,6 +166,8 @@ namespace Singular.Helpers
     public static partial class Spell
     {
         public const float MeleeRange = 5;
+        public static bool IsGlobalCooldown() => false;
+        public static TimeSpan GetSpellCooldown(string name) => Fixture.Ready.Contains(name) ? TimeSpan.Zero : TimeSpan.FromSeconds(4);
         public static Composite WaitForCast(bool _ = true, bool __ = true) => Fixture.Nothing();
         public static Composite Resurrect(string _) => Fixture.Nothing();
         public static Composite Cast(string name, Func<object, bool>? requires = null) =>

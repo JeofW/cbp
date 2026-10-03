@@ -269,8 +269,13 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             _actorOutdoors = _context.Actor.IsOutdoors;
             bool covered = _actorOutdoors == false;
             RequireCurrent();
+            var gameObject = _context.Subject as WoWGameObject;
+            float objectRange = gameObject?.InteractRange ?? 0;
+            if (gameObject != null && (!float.IsFinite(objectRange) || objectRange <= 0))
+                throw Unknown("selected object's interaction range unavailable");
             _search = new GroundApproachSearch(position, _context.Destination, _radius, _height,
-                _purpose == GroundTransitionPurpose.Interaction, covered, _queries, () => Current);
+                _purpose == GroundTransitionPurpose.Interaction, covered, _queries,
+                () => Current && (gameObject == null || gameObject.InteractRange == objectRange), objectRange);
         }
         return _search.Step();
     }

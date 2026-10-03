@@ -8,7 +8,6 @@
     <Compile Include="../../TreeSharp/*.cs" Link="TreeSharp/%(Filename)%(Extension)" />
     <Compile Include="../../Styx/Logic/Combat/MountedCombatTransition.cs" Link="Actual/MountedCombatTransition.cs" />
     <Compile Include="../../Bots/Quest/PublishedQuestRoot.cs" Link="Actual/PublishedQuestRoot.cs" />
-    <Compile Include="../../Styx/Logic/MountedTravelProgress.cs" Link="Actual/MountedTravelProgress.cs" />
     <Compile Include="../../CommonBehaviors/Actions/ActionAlwaysSucceed.cs" Link="Actual/ActionAlwaysSucceed.cs" />
     <Compile Include="../../CommonBehaviors/Actions/ActionClearPoi.cs" Link="Actual/ActionClearPoi.cs" />
     <Compile Include="../../CommonBehaviors/Actions/ActionDebugString.cs" Link="Actual/ActionDebugString.cs" />

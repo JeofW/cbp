@@ -69,7 +69,7 @@ namespace Singular.Helpers
         // remains possible without a hostile target; self-centered AoE is still checked.
         public static bool IsCombatActionSafe(string spellName, WoWUnit target)
         {
-            if (!IsDungeonCombatBotTargetingRestricted) return true;
+            if (!IsDungeonCombatBotTargetingRestricted) return IsAreaEffectSafe(spellName, target);
             return target != null
                 && (target.IsMe || target.IsFriendly || target.IsEligibleDungeonCombatTarget())
                 && IsAreaEffectSafe(spellName, target);
@@ -77,7 +77,6 @@ namespace Singular.Helpers
 
         public static bool IsCombatActionSafe(int spellId, WoWUnit target)
         {
-            if (!IsDungeonCombatBotTargetingRestricted) return true;
             var spell = WoWSpell.FromId(spellId);
             return spell != null && IsCombatActionSafe(spell.Name, target);
         }
@@ -85,11 +84,12 @@ namespace Singular.Helpers
         public static bool IsAreaEffectSafe(string spellName, WoWUnit target)
         {
             float radius;
-            bool restricted = IsDungeonCombatBotTargetingRestricted;
+            bool groundPatch = string.Equals(spellName, "Consecration", StringComparison.OrdinalIgnoreCase);
+            bool restricted = IsDungeonCombatBotTargetingRestricted || groundPatch;
             if (!restricted || !DungeonEngagementPolicy.TryGetAreaEffectRadius(spellName, out radius))
                 return true;
 
-            bool hasUnengagedEnemy = HasUnengagedEnemyNear(StyxWoW.Me.Location, radius);
+            bool hasUnengagedEnemy = HasUnengagedEnemyNear(StyxWoW.Me.Location, radius, groundPatch);
             bool centeredOnActor = string.Equals(spellName, "Consecration", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(spellName, "Divine Storm", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(spellName, "Holy Wrath", StringComparison.OrdinalIgnoreCase);
@@ -102,22 +102,31 @@ namespace Singular.Helpers
         public static bool IsAreaEffectSafe(string spellName, WoWPoint location)
         {
             float radius;
-            bool restricted = IsDungeonCombatBotTargetingRestricted;
+            bool groundPatch = string.Equals(spellName, "Consecration", StringComparison.OrdinalIgnoreCase);
+            bool restricted = IsDungeonCombatBotTargetingRestricted || groundPatch;
             if (!restricted || !DungeonEngagementPolicy.TryGetAreaEffectRadius(spellName, out radius))
                 return true;
 
             return DungeonEngagementPolicy.ShouldAllowAreaEffect(
                 restricted,
-                HasUnengagedEnemyNear(location, radius));
+                HasUnengagedEnemyNear(location, radius, groundPatch));
         }
 
-        private static bool HasUnengagedEnemyNear(WoWPoint location, float radius)
+        private static bool HasUnengagedEnemyNear(WoWPoint location, float radius, bool requireObservedEngagement = false)
         {
             float radiusSqr = radius * radius;
             return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Any(unit =>
                 unit != null && unit.Location.DistanceSqr(location) <= radiusSqr &&
                 IsBasicHostileUnit(unit) &&
-                !unit.IsEligibleDungeonCombatTarget());
+                // A persistent ground patch can pull an untouched pack in the
+                // open world too. A selected/attackable unit is not observed
+                // engagement, even when the ordinary bot target gate permits it.
+                (requireObservedEngagement ? !GroupCombatSafety.IsEngagedWithGroup(unit)
+                    || unit.HasHarmfulAuraWithMechanic(WoWSpellMechanic.Polymorphed, WoWSpellMechanic.Sapped,
+                        WoWSpellMechanic.Asleep, WoWSpellMechanic.Shackled, WoWSpellMechanic.Incapacitated,
+                        WoWSpellMechanic.Disoriented, WoWSpellMechanic.Fleeing, WoWSpellMechanic.Turned,
+                        WoWSpellMechanic.Banished, WoWSpellMechanic.Frozen)
+                    : !unit.IsEligibleDungeonCombatTarget()));
         }
 
         private static bool IsBasicHostileUnit(WoWUnit unit)

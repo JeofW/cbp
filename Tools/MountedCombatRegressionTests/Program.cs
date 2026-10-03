@@ -41,10 +41,14 @@ internal static class Program
         Case("healthy ground-mounted incidental aggro keeps escape",HealthyGroundEscape);
         Case("healthy ascending flying aggro keeps escape",()=>HealthyFlyingFlagEscape(0x02400000u));
         Case("healthy descending flying aggro keeps escape",()=>HealthyFlyingFlagEscape(0x02800000u));
-        Case("critical flying aggro preempts",CriticalFlyingAggro);
-        Case("flying no-progress aggro preempts",FlyingNoProgress);
-        Case("rooted ground aggro preempts",RootedAggro);
-        Case("stunned ground aggro preempts",StunnedAggro);
+        foreach(string state in new[]{"critical-health","rooted","stunned","stalled","unknown-movement","missing-destination"})
+            foreach(bool flying in new[]{false,true})
+                Case("incidental travel never grants mounted combat / "+state+" / flying="+flying,()=>IncidentalTravelRetainsMount(state,flying));
+        Case("protective falling owner revokes after remount",ProtectiveRemountRevokes);
+        Case("critical flying aggro retains travel intent",()=>IncidentalTravelRetainsMount("critical-health",true));
+        Case("flying no-progress aggro retains travel intent",()=>IncidentalTravelRetainsMount("stalled",true));
+        Case("rooted ground aggro retains travel intent",()=>IncidentalTravelRetainsMount("rooted",false));
+        Case("stunned ground aggro retains travel intent",()=>IncidentalTravelRetainsMount("stunned",false));
         Case("ascending flying Kill remains transition-pending",()=>FlyingFlagPending(0x02400000u));
         Case("descending flying Kill remains transition-pending",()=>FlyingFlagPending(0x02800000u));
         Case("airborne observation after forced unmount remains pending",AirborneAfterForcedUnmount);
@@ -130,15 +134,42 @@ internal static class Program
     private static int Protective()=> (int)typeof(PublishedQuestRoot).GetMethod("ProtectivePriority",Hidden).Invoke(NewRoot(),null);
 
     private static bool GroundKillTransition(){var w=World(true,false,false,true);return Protective()==1&&Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running&&Control.DismountSubmissions==1;}
+    private static bool IncidentalTravelRetainsMount(string state,bool flying)
+    {
+        var world=World(true,flying,true,false);
+        WoWPoint destination=BotPoi.Current.Location;
+        if(state=="critical-health")world.Me.HealthPercent=20;
+        if(state=="rooted")world.Me.Rooted=true;
+        if(state=="stunned")world.Me.Stunned=true;
+        if(state=="unknown-movement")world.Me.MovementKnown=false;
+        if(state=="missing-destination")destination=WoWPoint.Empty;
+        if(state=="stalled")
+        {
+            MountedCombatTransition.RequiresProtectiveHandoff(destination);
+            var progress=typeof(MountedCombatTransition).GetField("EscapeProgress",Hidden)?.GetValue(null);
+            if(progress!=null)
+                foreach(string field in new[]{"movedAt","approachedAt"})
+                    progress.GetType().GetField(field,Hidden).SetValue(progress,Environment.TickCount64-10000);
+        }
+        Check(!MountedCombatTransition.RequiresProtectiveHandoff(destination),"incidental "+state+" was promoted to mounted combat intent");
+        using var owner=new MountedCombatTransition();
+        Check(owner.TickCurrent(destination)==GroundTransitionState.Revoked,"incidental mounted travel acquired a landing owner");
+        return Control.TransitionTicks==0&&Control.DismountSubmissions==0;
+    }
+    private static bool ProtectiveRemountRevokes()
+    {
+        var world=World(false,false,true,false);
+        world.Me.ObservedMovementFlags=0x00003000u;
+        using var owner=new MountedCombatTransition();
+        Check(owner.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"falling protective observation did not remain pending");
+        world.Me.Mounted=true;world.Me.ObservedMovementFlags=0;
+        return owner.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Revoked&&Control.DismountSubmissions==0;
+    }
     private static bool FullRootKillPreemption(){var w=World(true,false,false,false);BotPoi.Current=new BotPoi(new WoWPoint(120,0,10),PoiType.QuestTurnIn);var root=NewRoot();root.Start(null);Check(root.Tick(null)==RunStatus.Running&&Control.RootQuest.Ticks==1,"root quest did not enter Running");BotPoi.Current=new BotPoi(w.Target,PoiType.Kill);Control.RootCombatEnabled=true;var status=root.Tick(null);root.Stop(null);return Control.RootQuest.Stops>=1&&Control.RootCombat.Ticks>=2&&status==RunStatus.Success;}
     private static bool FlyingKillTransition(){var w=World(true,true,false,true);var pull=new CountingLeaf(RunStatus.Success);RoutineManager.Current=Routine(pull:pull);return Protective()==1&&Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running&&pull.Ticks==0&&Control.DismountSubmissions==0;}
     private static bool HealthyFlyingEscape(){var w=World(true,true,true,false);return Protective()==int.MaxValue&&MountedCombatTransition.RequiresProtectiveHandoff(BotPoi.Current.Location)==false;}
     private static bool HealthyGroundEscape(){var w=World(true,false,true,false);return Protective()==int.MaxValue&&!MountedCombatTransition.RequiresProtectiveHandoff(BotPoi.Current.Location);}
     private static bool HealthyFlyingFlagEscape(uint flags){var w=World(true,true,true,false);w.Me.ObservedMovementFlags=flags;return Protective()==int.MaxValue&&!MountedCombatTransition.RequiresProtectiveHandoff(BotPoi.Current.Location);}
-    private static bool CriticalFlyingAggro(){var w=World(true,true,true,false);w.Me.HealthPercent=20;return Protective()==1&&MountedCombatTransition.RequiresProtectiveHandoff(BotPoi.Current.Location);}
-    private static bool FlyingNoProgress(){var w=World(true,true,true,false);Check(!MountedCombatTransition.RequiresProtectiveHandoff(BotPoi.Current.Location),"initial escape should be healthy");var p=typeof(MountedCombatTransition).GetField("EscapeProgress",Hidden).GetValue(null);foreach(var n in new[]{"movedAt","approachedAt"})p.GetType().GetField(n,Hidden).SetValue(p,Environment.TickCount64-10000);return MountedCombatTransition.RequiresProtectiveHandoff(BotPoi.Current.Location)&&Protective()==1;}
-    private static bool RootedAggro(){var w=World(true,false,true,false);w.Me.Rooted=true;return Protective()==1;}
-    private static bool StunnedAggro(){var w=World(true,false,true,false);w.Me.Stunned=true;return Protective()==1;}
     private static bool FlyingFlagPending(uint flags){var w=World(true,true,false,true);w.Me.ObservedMovementFlags=flags;return Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running&&Control.DismountSubmissions==0;}
     private static bool AirborneAfterForcedUnmount(){var w=World(false,false,false,true);w.Me.ObservedMovementFlags=0x02000000u;var pull=new CountingLeaf(RunStatus.Success);RoutineManager.Current=Routine(pull:pull);return Protective()==1&&Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running&&pull.Ticks==0;}
     private static bool AlreadyGroundedCurrent(bool committed)
@@ -238,10 +269,10 @@ internal static class Program
         int ticks=Control.TransitionTicks;
         return nested==GroundTransitionState.Pending&&t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending&&Control.TransitionTicks==ticks+1;
     }
-    private static bool ProtectiveOnly(bool pet){var w=World(true,true,!pet,false);if(pet){w.Me.Combat=false;w.Me.Pet=new WoWUnit{Guid=3,BaseAddress=300,IsAlive=true,Combat=true};}w.Me.HealthPercent=20;return Protective()==1&&Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running;}
+    private static bool ProtectiveOnly(bool pet){var w=World(false,false,!pet,false);w.Me.ObservedMovementFlags=0x3000u;if(pet){w.Me.Combat=false;w.Me.Pet=new WoWUnit{Guid=3,BaseAddress=300,IsAlive=true,Combat=true};}w.Me.HealthPercent=20;return Protective()==1&&Tick(LevelBot.CreateCombatBehavior())==RunStatus.Running&&Control.DismountSubmissions==0;}
     private static (LocalPlayer Me,WoWUnit Display,WoWUnit Pet,MountedCombatTransition Owner) ProtectiveWorld(string source,bool display=true)
     {
-        var w=World(true,false,false,false);w.Me.HealthPercent=20;
+        var w=World(false,false,false,false);w.Me.HealthPercent=20;w.Me.ObservedMovementFlags=0x3000u;
         w.Me.Combat=source is "player" or "both";
         var pet=new WoWUnit{Guid=3,BaseAddress=300,Entry=416,IsAlive=true,Combat=source is "pet" or "both",Location=new WoWPoint(3,4,10)};
         w.Me.Pet=pet;
@@ -301,7 +332,7 @@ internal static class Program
         if(source=="player")p.Me.Combat=false;else p.Pet.Combat=false;
         return owner.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Revoked;
     }
-    private static bool ClearThreatRevokes(){var w=World(true,false,true,false);w.Me.Rooted=true;using var t=new MountedCombatTransition();Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"protective transition missing");w.Me.Combat=false;w.Me.Rooted=false;return t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Revoked;}
+    private static bool ClearThreatRevokes(){var w=World(false,false,true,false);w.Me.ObservedMovementFlags=0x3000u;using var t=new MountedCombatTransition();Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"protective transition missing");w.Me.Combat=false;return t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Revoked;}
     private static bool ChangedIntentNoRepeatDismount(){var w=World(true,false,false,true);using var t=new MountedCombatTransition();Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending&&Control.DismountSubmissions==1,"initial pending dismount missing");var next=new WoWUnit{Guid=4,BaseAddress=400,Entry=99,IsAlive=true,Location=new WoWPoint(9,0,10)};Targeting.Instance.FirstUnit=next;w.Me.CurrentTarget=next;BotPoi.Current=new BotPoi(next,PoiType.Kill);Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Revoked,"old intent not revoked");Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"replacement did not acquire transition");return Control.DismountSubmissions==1;}
     private static bool SameIntentNoRepeatDismount(){var w=World(true,false,false,true);using var t=new MountedCombatTransition();Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"initial transition missing");Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"pending transition did not persist");return Control.DismountSubmissions==1;}
     private static bool DeadTargetRevokes(){var w=World(true,false,false,true);using var t=new MountedCombatTransition();Check(t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Pending,"initial transition missing");w.Target.IsAlive=false;return t.TickCurrent(BotPoi.Current.Location)==GroundTransitionState.Revoked;}

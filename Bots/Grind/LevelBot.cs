@@ -1149,8 +1149,13 @@ namespace Bots.Grind
                                 || LootFrame.Instance.IsVisible || !CanLoot()
                                 || !GroundLootApproach.CanInteractNow(owner.Subject, Current) || !Current()) return false;
                             attempted = true;
-                            GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-issued", "native-request-not-acknowledged");
-                            owner.Subject.Interact(true);
+                            GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-preparing", "awaiting-owned-native-entry");
+                            if (owner.Subject is WoWGameObject)
+                            {
+                                if (!GroundTransition.TryInteractWith(owner.Subject, Current, true)) return false;
+                            }
+                            else owner.Subject.Interact(true);
+                            if (Current()) GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-issued", "native-request-not-acknowledged");
                             return Current();
                         },
                             new TreeSharp.Action(ctx =>

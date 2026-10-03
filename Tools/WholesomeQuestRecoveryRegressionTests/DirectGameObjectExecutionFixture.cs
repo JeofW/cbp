@@ -10,6 +10,7 @@ using System.Threading;
 using TreeSharp;
 using CommonBehaviors.Actions;
 using CommonBehaviors.Decorators;
+using Styx.Logic.Combat;
 using DateTime=Clock;
 public readonly struct Clock
 {
@@ -94,6 +95,45 @@ public static class WoWMovement
     public static void MoveStop(MovementDirection direction){World.DescentStops++;ObjectManager.Me.MovementInfo.IsDescending=false;}
 }
 public static class Mount{public static void Dismount(string reason){World.DismountRequests++;}}
+// The objective factory receives a controlled shared-transition contract here.
+// GroundCollectionIntegrationRegressionTests links the actual controller,
+// transition, geometry and native admission together instead of this boundary.
+public enum GroundTransitionState{Pending,Ready,Unavailable,Revoked}
+public enum GroundTransitionPurpose{Interaction,Combat}
+public sealed class GroundTransition:IDisposable
+{
+    private bool descent,dismount;private LocalPlayer actor;
+    public string Phase=>"controlled-ground-transition";
+    public GroundTransition(GroundTransitionPurpose purpose){}
+    public GroundTransitionState Tick(WoWPoint destination,WoWObject subject,Func<bool> admitted)
+    {
+        if(!admitted()){Cancel();return GroundTransitionState.Revoked;}
+        actor??=ObjectManager.Me;
+        if(!World.MovementKnown||World.Transport!=0||(World.MovementFlags&0x3000u)!=0||!World.Support||!World.CorridorClear)
+        {Cancel();return GroundTransitionState.Pending;}
+        if(actor.IsFlying||(World.MovementFlags&0x02000000u)!=0)
+        {
+            if(Math.Abs(World.SupportZ-destination.Z)>subject.InteractRange){Cancel();return GroundTransitionState.Pending;}
+            if(!descent){WoWMovement.Move(WoWMovement.MovementDirection.Descend);descent=true;}
+            return GroundTransitionState.Pending;
+        }
+        if(descent)Cancel();
+        if(actor.Location.Distance(destination)>Math.Max(20,subject.InteractRange*3))
+        {Navigator.MoveTo(destination);return GroundTransitionState.Pending;}
+        if(actor.Mounted){if(!dismount){Mount.Dismount("controlled shared interaction removal");dismount=true;}return GroundTransitionState.Pending;}
+        dismount=false;
+        if(!subject.WithinInteractRange){Navigator.MoveTo(destination);return GroundTransitionState.Pending;}
+        if(actor.IsMoving)WoWMovement.MoveStop();
+        return admitted()?GroundTransitionState.Ready:GroundTransitionState.Revoked;
+    }
+    public static bool CanInteractWith(WoWObject subject,Func<bool> admitted)
+        =>admitted()&&subject.IsValid&&subject.WithinInteractRange&&!ObjectManager.Me.Mounted&&!ObjectManager.Me.IsFlying
+        &&World.MovementKnown&&World.Transport==0&&(World.MovementFlags&0x02003000u)==0&&admitted();
+    public static bool TryInteractWith(WoWObject subject,Func<bool> admitted,bool ignoreTimer=false)
+    {if(!CanInteractWith(subject,admitted))return false;subject.Interact(ignoreTimer);return admitted();}
+    public void Cancel(){if(descent&&ReferenceEquals(actor,ObjectManager.Me))WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);descent=false;}
+    public void Dispose()=>Cancel();
+}
 public static class GameWorld
 {
     public enum CGWorldFrameHitFlags{HitTestGroundAndStructures}
@@ -148,7 +188,7 @@ public sealed class ActionIdle:TreeSharp.Action{public ActionIdle():base(_=>RunS
 public sealed class DecoratorIsNotPoiType:Decorator{public DecoratorIsNotPoiType(IEnumerable<PoiType> types,Composite child):base(_=>!types.Contains(BotPoi.Current.Type),child){}}
 public static class World
 {
-    public static int Progress;public static bool ProgressKnown=true,MovementKnown=true,Support=true,LineOfSight=true,CanUse=true,CanUseNow=true;
+    public static int Progress;public static bool ProgressKnown=true,MovementKnown=true,Support=true,LineOfSight=true,CanUse=true,CanUseNow=true,CorridorClear=true;
     public static uint MovementFlags;public static ulong Transport;public static float SupportZ=10;
     public static int GroundRequests,FlightRequests,DescentRequests,DismountRequests,DescentStops,Stops,RouteClears,PoiClears,Sleeps;
     public static WoWPoint LastDestination;public static MoveResult NavigationResult=MoveResult.Moved;
@@ -156,7 +196,7 @@ public static class World
     public static Func<int?> ExternalProgress;public static System.Action<string> ExternalEvent;
     public static void Reset()
     {
-        Progress=0;ProgressKnown=MovementKnown=Support=LineOfSight=CanUse=CanUseNow=true;MovementFlags=0;Transport=0;SupportZ=10;
+        Progress=0;ProgressKnown=MovementKnown=Support=LineOfSight=CanUse=CanUseNow=CorridorClear=true;MovementFlags=0;Transport=0;SupportZ=10;
         NavigationResult=MoveResult.Moved;
         GroundRequests=FlightRequests=DescentRequests=DismountRequests=DescentStops=Stops=RouteClears=PoiClears=Sleeps=0;
         Interactions.Clear();ObjectManager.Objects.Clear();Blacklist.Entries.Clear();DuringReadiness=null;Clock.Seconds=1000;
