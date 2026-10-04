@@ -139,7 +139,7 @@ namespace Styx.WoWInternals.WoWObjects
             return true;
         }
     }
-    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat; }
+    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat, IsQuestGiver; }
     // Object identity participates in the shared runtime's interaction-volume
     // selection. This dismount suite continues to exercise actual unit targets.
     public sealed class WoWGameObject : WoWObject { }

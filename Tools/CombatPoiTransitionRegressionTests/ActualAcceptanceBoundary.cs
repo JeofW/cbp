@@ -148,7 +148,7 @@ namespace Styx.WoWInternals.WoWObjects
     }
     public class WoWUnit : WoWObject
     {
-        public bool IsAlive = true, IsMoving, Combat, IsPlayer, TaggedByOther, TaggedByMe;
+        public bool IsAlive = true, IsMoving, Combat, IsPlayer, TaggedByOther, TaggedByMe, IsQuestGiver;
         public WoWUnit? OwnedByUnit;
         public int Level = 60, Race;
         public Styx.WoWClass Class = Styx.WoWClass.Paladin;

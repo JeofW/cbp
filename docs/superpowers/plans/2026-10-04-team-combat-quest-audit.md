@@ -66,6 +66,10 @@
 
 ## Task 5: Integrated verification and delivery
 
+- [x] Review the 12,396-line production append through 16:00:52. Reproduce and repair the Lethyn pickup water-departure deadlock using the existing mesh route; prove wet-state rejection at final interaction.
+- [x] Review pinned dead-questgiver relations across the dataset (19 endpoints, 35 quests). Reproduce and repair source-selected feign-dead recipient admission without broad corpse or combat exceptions.
+- [x] Reproduce and repair the aggregate flight fixture coordinate binding; preserve its failed release and focused receipts.
+
 - [x] Review the complete diff against every user scenario and test limitations.
 - [ ] Commit a clean candidate; run complete canonical Windows/x86 integration, source/catalogue/strategy closure and applicable native replay.
 - [ ] Complete authorized GitHub integration and prepare/verify deployment with rollback only while the production installation is idle.

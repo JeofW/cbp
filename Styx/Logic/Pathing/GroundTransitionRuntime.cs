@@ -590,18 +590,20 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             _nextFlightReview = Now + (_flightDepartureBlocked ? 1 : 3);
         }
         _groundTravelSelected = true;
-        if (!_flightDepartureBlocked && !RetainsPreferredDeparture(Now) && _purpose != GroundTransitionPurpose.Combat
+        if (!_context.Actor.IsSwimming && !_flightDepartureBlocked && !RetainsPreferredDeparture(Now) && _purpose != GroundTransitionPurpose.Combat
             && _context.Actor.Location.Distance(_context.Destination) > 12
             && _groundMount.Wait(_context, Now, () => Current, Hold)) return;
         var actor = _context.Actor;
         if (actor.IsCasting || actor.ChanneledCastingSpellId != 0) return;
         if (WorldQueryObservation.ReadLocalVehicle(actor)) throw Unknown("ground route belongs to a vehicle");
         var state = WorldQueryObservation.ReadGroundUnitState(actor);
+        bool swimming = actor.IsSwimming;
         WoWPoint travelDestination = _context.Destination;
         // One complete preflight, then pure memory/identity predicates. Calling
         // CanActUnmounted in every route predicate repeated Lua dozens of times
         // and could overwrite a prepared native movement command.
         bool Admitted() => Current && _context.Destination.Equals(travelDestination) && !actor.IsCasting && actor.ChanneledCastingSpellId == 0
+            && actor.IsSwimming == swimming && (!swimming || !state.Mounted)
             && (!state.Mounted || _purpose == GroundTransitionPurpose.Transit
                 || _purpose == GroundTransitionPurpose.Interaction && actor.Location.Distance(_context.Destination) > 12)
             && actor.TryGetMovementState(out uint flags, out ulong transport) && transport == 0

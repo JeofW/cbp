@@ -138,7 +138,7 @@ public sealed class GroundTransition : IDisposable
         {
             var actor = Context.Actor;
             var subject = Context.Subject!;
-            if (!Context.Current || !IsUnmountedActorCurrent(Context)) return false;
+            if (!Context.Current || actor.IsSwimming || !IsUnmountedActorCurrent(Context)) return false;
             var position = actor.Location;
             var destination = subject.Location;
             // Walking changes a live NPC's endpoint without replacing its GUID,
@@ -171,7 +171,7 @@ public sealed class GroundTransition : IDisposable
                 admitted ?? (() => true), journeyRoute: walkingSubject);
             if (!stamp.Current || !CanActUnmounted(() => stamp.Current)) return false;
             var actor = stamp.Actor;
-            if (requireStopped && actor.IsMoving) return false;
+            if (actor.IsSwimming || requireStopped && actor.IsMoving) return false;
             // Vehicle/native admission can advance an otherwise unchanged NPC's
             // patrol. Sample geometry after that query, not before it.
             WoWPoint position = actor.Location;

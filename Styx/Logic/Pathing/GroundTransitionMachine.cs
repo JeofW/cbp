@@ -93,19 +93,38 @@ internal sealed class GroundTransitionMachine
         // no-progress watchdog still bounds walls and rejected movement.
         if (_purpose != GroundTransitionPurpose.Combat
             && (observation.GroundTravel && !observation.Flying && observation.Supported
+                || observation.Swimming && !observation.Flying && !observation.Mounted
                 || _plan?.ProgressOnly == true && observation.Flying)
             && !observation.Falling && !observation.OnTransport
-            && !observation.Swimming && !observation.Immobilized
+            && !observation.Immobilized
             && now == _lastProgress)
             _started = now;
         if (now - _started >= 120)
             return Unavailable("ground-transition-deadline", observation, now);
-        if (observation.OnTransport || observation.Swimming)
+        if (observation.OnTransport)
             return Wait("unresolved", "transport-or-liquid-requires-separate-owner", observation, stop: true);
         if (observation.Falling)
             return Wait("landing", "falling-is-not-grounded-acknowledgement", observation, stop: true);
         if (observation.Immobilized)
             return Wait("blocked", "root-or-stun-prevents-owned-transition", observation, stop: true);
+
+        if (observation.Swimming)
+        {
+            if (_purpose == GroundTransitionPurpose.Combat || observation.Flying || observation.Mounted)
+                return Wait("unresolved", "transport-or-liquid-requires-separate-owner", observation, stop: true);
+            // A selected land destination still needs a route out of water.
+            // Reuse the mesh navigator's existing water-aware path pipeline;
+            // this request supplies neither dry support nor interaction proof.
+            if (_plan != null || _descent)
+            {
+                _runtime.Hold();
+                if (!_runtime.Current) return GroundTransitionState.Revoked;
+                _runtime.ResetSearch(); _plan = null; _descent = false;
+            }
+            _groundHandoff = true;
+            if (CommandDue(now)) _runtime.Walk();
+            return Progress("water-mesh", "owned-water-route; ground-and-interaction-unobserved", observation, now);
+        }
 
         if (_purpose == GroundTransitionPurpose.Interaction && observation.InteractionApproachReady
             && !observation.Flying && !observation.Mounted && observation.Supported)

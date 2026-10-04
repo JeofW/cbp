@@ -147,7 +147,7 @@ namespace Styx.WoWInternals.WoWObjects
             return true;
         }
     }
-    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving; }
+    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, IsQuestGiver; }
     // This suite exercises NPC approaches; GO effects have a separate actual
     // collection integration suite and must not be silently simulated here.
     public sealed class WoWGameObject : WoWObject
@@ -215,7 +215,7 @@ namespace Styx.Logic.Pathing
         public void MoveToOwned(WoWPoint target, float precision, string reason, Func<bool> admitted, System.Action<object> registered, Func<bool>? routeLease = null)
         {
             if (!admitted()) return;
-            RequestIdentity = new(); registered(RequestIdentity); if (!admitted()) return;
+            RequestIdentity = new(); registered(RequestIdentity); World.Event("mesh-prepare"); if (!admitted()) return;
             World.Walks.Add(target); World.Event("walk");
         }
     }

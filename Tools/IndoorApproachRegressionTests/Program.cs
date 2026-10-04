@@ -218,6 +218,8 @@ Case("post-entry revocation does not claim a current interaction receipt", actio
 
 GroundRuntimeCases.Run((name, body) => Case(name, _ => body()));
 FlightCorridorCases.Run((name, body) => Case(name, body));
+WaterDepartureCases.Run((name, body) => Case(name, body));
+QuestRecipientLifeCases.Run((name, body) => Case(name, body));
 
 var vendor = new VendorApproachProbe(Directory.GetCurrentDirectory());
 foreach (PoiType type in new[] { PoiType.Buy, PoiType.Sell, PoiType.Repair, PoiType.Train, PoiType.Mail, PoiType.Fly })
