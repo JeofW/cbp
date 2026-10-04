@@ -30,6 +30,14 @@ public class ForcedWhile : ForcedBehavior
 
     internal QuestOrder ActiveOrder => this.whileComposite?.ActiveOrder;
 
+    public override void Dispose()
+    {
+        var retiring = whileComposite?.ActiveOrder;
+        whileComposite = null;
+        retiring?.RetireCurrentBehavior();
+        base.Dispose();
+    }
+
     protected override Composite CreateBehavior()
     {
         return (Composite)(this.whileComposite ?? (this.whileComposite = new WhileComposite(this.WhileNode)));

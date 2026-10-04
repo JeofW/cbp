@@ -89,7 +89,8 @@ jobs:
             @{project='MountedGroundIntegrationRegressionTests'; suite='MountedGroundIntegrationRegressionTests'},
             @{project='GroundCollectionIntegrationRegressionTests'; suite='GroundCollectionIntegrationRegressionTests'},
             @{project='GroundDismountRecoveryRegressionTests'; suite='GroundDismountRecoveryRegressionTests'},
-            @{project='CombatPoiTransitionRegressionTests'; suite='CombatPoiTransitionRegressionTests'}
+            @{project='CombatPoiTransitionRegressionTests'; suite='CombatPoiTransitionRegressionTests'},
+            @{project='QuestSourceExecutionRegressionTests'; suite='QuestSourceExecutionRegressionTests'}
           )
           $expectedSuites = @($projects.suite) + @('Singular', 'Analyzers')
           if (@($expectedSuites | Select-Object -Unique).Count -ne $expectedSuites.Count) { throw 'Duplicate validation suite' }

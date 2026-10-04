@@ -33,6 +33,10 @@ namespace Styx.Logic.Inventory.Frames.Gossip
         /// Whether this entry is valid.
         /// </summary>
         public bool IsValid => _pointer != 0U;
+        // Recheck the captured physical row without enumerating gossip through
+        // the executor while another native command is already prepared.
+        public bool IsCurrent => _pointer != 0U && ObjectManager.Wow != null
+            && ObjectManager.Wow.Read<int>(_pointer) == Id;
 
         /// <summary>
         /// Quest ID.

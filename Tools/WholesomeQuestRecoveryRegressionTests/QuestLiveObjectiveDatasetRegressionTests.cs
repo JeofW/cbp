@@ -37,7 +37,7 @@ internal static class QuestLiveObjectiveDatasetRegressionTests
         Check(rows.Select(r => (r.GetProperty("quest_id").GetInt32(), r.GetProperty("objective_row").GetInt32())).Distinct().Count() == rows.Length,
             "duplicate source objective fixture");
         using var world = new QuestDatasetObservationFixture();
-        int passed = 0, failed = 0, unexpected = 0;
+        int passed = 0, failed = 0, unexpected = 0, sourceHeld = 0;
         foreach (var row in rows)
         {
             int id = row.GetProperty("quest_id").GetInt32(), ordinal = row.GetProperty("objective_row").GetInt32();
@@ -69,7 +69,20 @@ internal static class QuestLiveObjectiveDatasetRegressionTests
                 bool Selected(QuestScheduleResult result) => result.Plan.Any(p => p.Quest.Id == id && p.ObjectiveIndex == objective.Index && p.Stage == QuestWorkStage.Objective);
                 if (row.GetProperty("existing_credit_hint_records").GetInt32() == 0)
                     Check(!Selected(Plan(false)), "missing static objective unexpectedly has an unrecorded route");
-                var selected = Plan(true); Check(Selected(selected), "source-matching live direct actor did not reach scheduling");
+                var selected = Plan(true);
+                if (!QuestExecutionPolicy.CanExecutePrimitive(quest, objective))
+                {
+                    Check(!Selected(selected) && !Selected(Plan(true, count - 1)) && !Selected(Plan(true, count)),
+                        "live position promoted scripted credit to ordinary killing");
+                    var attempted = new[] { new QuestPlanEntry { Quest=quest,Stage=QuestWorkStage.Objective,
+                        ObjectiveIndex=objective.Index,Hotspots=new[]{new SpawnPoint{Map=1,X=12,Y=10,Z=10}} } };
+                    bool refused=false;
+                    try { new ProfileBuilder().BuildProfileXml(attempted,isolated,"Source-held live fixture","Fixture",60); }
+                    catch(InvalidDataException){refused=true;}
+                    Check(refused,"source-held live actor bypassed the materializer's mechanism guard");
+                    sourceHeld++;passed++;continue;
+                }
+                Check(Selected(selected), "source-matching live direct actor did not reach scheduling");
                 Check(Selected(Plan(true, count - 1)), "partial source objective lost work");
                 Check(!Selected(Plan(true, count)), "completed source objective was rescheduled");
                 var plans = selected.Plan.Where(p => p.Quest.Id == id && p.ObjectiveIndex == objective.Index).ToArray();
@@ -92,7 +105,7 @@ internal static class QuestLiveObjectiveDatasetRegressionTests
             catch (Exception error) { unexpected++; Console.Error.WriteLine($"ERROR live source row {id}/{ordinal}: {error}"); }
             finally { world.ReleaseOwners(); }
         }
-        Console.WriteLine($"Live objective source rows: {passed}/{rows.Length}; assertions={failed}; unexpected={unexpected}; actual scheduler/profile/behavior/progress; controlled live positions; no quest classification promotion.");
+        Console.WriteLine($"Live objective source rows: {passed}/{rows.Length}; assertions={failed}; unexpected={unexpected}; source-held={sourceHeld}; actual scheduler/profile/behavior/progress; controlled live positions do not override mechanism requirements; no quest classification promotion.");
         if (failed + unexpected != 0) throw new InvalidOperationException("Live objective source-row regression");
     }
     private static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();

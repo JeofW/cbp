@@ -82,7 +82,8 @@ public class ForcedCodeBehavior : ForcedBehavior
     public override bool IsExecutionDeferred => _doneState == QuestConditionEvaluationState.Unknown;
 
     public override bool SuppressServiceBehavior =>
-        string.Equals(customBehavior.GetType().Name, "UseTransport", StringComparison.Ordinal);
+        string.Equals(customBehavior.GetType().Name, "UseTransport", StringComparison.Ordinal)
+        || string.Equals(customBehavior.GetType().Name, "ArelionsMistress", StringComparison.Ordinal);
 
     public override void OnStart()
     {

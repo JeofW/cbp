@@ -88,7 +88,7 @@ internal static class QuestTypedStrategyPackRegressionTests
     internal static DataLoader? Load(QuestDataRepairPackRegressionTests.Fixture f,JsonObject p)
     {
         f.Write();File.WriteAllText(Path.Combine(f.Folder,"quest_strategies.json"),p.ToJsonString());
-        var loader=new DataLoader(f.DataPath);try{loader.Load();return loader;}catch(InvalidDataException){return null;}
+        var loader=new DataLoader(f.DataPath);try{ControlledExecutionCatalogFixture.Prepare(f.DataPath);loader.Load();return loader;}catch(InvalidDataException){return null;}
     }
     internal static QuestScheduleResult Schedule(DataLoader loader,bool accepted,int count=0,bool failed=false,bool authority=true)
     {

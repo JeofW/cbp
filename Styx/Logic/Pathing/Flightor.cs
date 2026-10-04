@@ -620,13 +620,17 @@ namespace Styx.Logic.Pathing
                 }
                 if (!CanContinue()) return;
 
-                // Step 5: Advance ONE waypoint per pulse (WoD: single dequeue, not while-loop)
-                Vector2 waypointVec = _flightPath.Waypoints.Peek();
-                if (_flightPath.Waypoints.Count > 1 &&
-                    myLocation.Distance2DSqr(new WoWPoint(waypointVec.X, waypointVec.Y, 0)) <= 900f)
+                // Consumed vertices are not new movement destinations. Advance
+                // the finite queue in this dispatch and select its next point;
+                // retain the final vertex for the exact destination below.
+                while (_flightPath.Waypoints.Count > 1)
                 {
-                    waypointVec = _flightPath.Waypoints.Dequeue();
+                    Vector2 reached = _flightPath.Waypoints.Peek();
+                    if (myLocation.Distance2DSqr(new WoWPoint(reached.X, reached.Y, 0)) > 900f)
+                        break;
+                    _flightPath.Waypoints.Dequeue();
                 }
+                Vector2 waypointVec = _flightPath.Waypoints.Peek();
 
                 // Step 6: Smart Z + dispatch by remaining queue depth
                 WoWPoint flightPoint;

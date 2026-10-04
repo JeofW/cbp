@@ -358,6 +358,33 @@ internal static class QuestStrategySchedulerRegressionTests
                     };
                     File.WriteAllBytes(Path.Combine(root, "quest_strategies.json"), JsonSerializer.SerializeToUtf8Bytes(pack));
                 }
+                // The external source mechanism is controlled in this fixture,
+                // just like its synthetic data and recipe. Supply an explicit
+                // bound catalog rather than treating a missing catalog as
+                // permission to execute. Source extraction itself is verified
+                // against all shipped members in QuestSourceExecutionRegressionTests.
+                var contracts = quest.Objectives.Select((row, ordinal) => new
+                {
+                    RowIndex = ordinal, ObjectiveIndex = row.Index, Type = row.Type.ToString(), row.MobId, row.ItemId,
+                    row.GameObjectId, row.KillCount, row.CollectCount,
+                    Driver = ordinal == 0 && kind != null ? "DeclaredStrategy" : ordinal == 0 && castCredit ? "Unsupported" : "Primitive",
+                    Reasons = ordinal == 0 && castCredit ? new[] { "controlled-cast-source" } : Array.Empty<string>(),
+                    PrimaryActorSha256 = new string('a', 64), CreditEvidenceSha256 = new string('b', 64)
+                }).ToArray();
+                string strategyPath = Path.Combine(root, "quest_strategies.json");
+                string catalogStatus = contracts.Any(row => row.Driver == "Unsupported") ? "HandlerOrSourceRequired"
+                    : contracts.Any(row => row.Driver != "Primitive") ? "ImplementedStrategy" : "PrimitiveCandidate";
+                File.WriteAllBytes(Path.Combine(root, "quest_execution_contracts.json"), JsonSerializer.SerializeToUtf8Bytes(new
+                {
+                    SchemaVersion = 1, ClientBuild = 12340, SourceCore = "TrinityCore", SourceBranch = "3.3.5",
+                    SourceRevision = "95657f54779467effea8a1749a61ff93abc1d707", DatabaseRevision = "TDB335.25101",
+                    QuestDataSha256 = Convert.ToHexString(SHA256.HashData(data)).ToLowerInvariant(),
+                    QuestDataRepairsSha256 = Convert.ToHexString(SHA256.HashData(Array.Empty<byte>())).ToLowerInvariant(),
+                    StrategyPackSha256 = Convert.ToHexString(SHA256.HashData(File.Exists(strategyPath) ? File.ReadAllBytes(strategyPath) : Array.Empty<byte>())).ToLowerInvariant(),
+                    PrimarySqlSha256 = "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9", QuestCount = 1,
+                    Quests = new[] { new { QuestId = 867, Status = catalogStatus, PrimaryQuestSha256 = new string('c', 64),
+                        PrimaryAddonSha256 = new string('d', 64), Objectives = contracts } }
+                }));
                 loader = new DataLoader(dataPath);
                 loader.Load();
                 Scheduler = new QuestScheduler(loader, new ProfileBuilder(output), new WholesomeAQSettings());

@@ -44,6 +44,10 @@ public class ForcedQuestPickUp : ForcedBehavior
     private IReadOnlyList<uint> _currentInteractionOfferedQuestIds = Array.Empty<uint>();
     private bool _shownTitleUniquelyResolved;
     private QuestCompletionState _completionState = QuestCompletionState.Unknown;
+    private BotPoi _ownedPickupPoi;
+
+    private BotPoi CreatePickupPoi() => _ownedPickupPoi = new BotPoi(new PickUpNode(
+        this.GiverLocation, this.GiverId, this.GiverName, this.GiverType, this.QuestId, this.QuestName));
 
     public ForcedQuestPickUp(
         uint questId,
@@ -162,8 +166,10 @@ public class ForcedQuestPickUp : ForcedBehavior
         // before cleanup must remain untouched. BotPoi.Clear's flight cleanup is
         // itself compare-and-current guarded across its callback boundaries.
         var current = BotPoi.Current;
+        var owned = _ownedPickupPoi;
+        _ownedPickupPoi = null;
         var pickup = current?.AsPickUp;
-        if (current != null && current.Type == PoiType.QuestPickUp && pickup != null
+        if (current != null && ReferenceEquals(current, owned) && current.Type == PoiType.QuestPickUp && pickup != null
             && pickup.QuestId == this.QuestId && pickup.GiverId == this.GiverId
             && pickup.GiverType == this.GiverType && pickup.GiverLocation.Equals(this.GiverLocation)
             && ReferenceEquals(BotPoi.Current, current))
@@ -203,7 +209,7 @@ public class ForcedQuestPickUp : ForcedBehavior
     {
         return (Composite)new Decorator(_ => QuestLootHandoff.CanRunMandatory(this), (Composite)new PrioritySelector(new Composite[4]
         {
-            (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => new BotPoi(new PickUpNode(this.GiverLocation, this.GiverId, this.GiverName, this.GiverType, this.QuestId, this.QuestName))))),
+            (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => CreatePickupPoi()))),
             (Composite)new Decorator((CanRunDecoratorDelegate)(context =>
             {
                 QuestObjectType? giverType = this.GiverType;

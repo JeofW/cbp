@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Styx.Logic.Questing.Recovery;
 
 namespace WholesomeAQ
@@ -51,7 +52,8 @@ namespace WholesomeAQ
     {
         UseItemOn,
         GossipEvent,
-        Escort
+        Escort,
+        ArelionsMistress
     }
 
     public enum QuestStrategyTargetType
@@ -147,6 +149,11 @@ namespace WholesomeAQ
 
     public class QuestEntry
     {
+        // Only the separately validated catalog can publish mechanism authority.
+        // Null remains the legacy in-memory API used by explicit profile callers;
+        // DataLoader always installs a bound or explicitly unavailable contract.
+        [System.Text.Json.Serialization.JsonIgnore]
+        public QuestSourceExecutionContract SourceExecution { get; internal set; }
         // Only a validated repair pack may supply this server-side contract.
         // Base JSON cannot inject availability predicates or observed quest state.
         [System.Text.Json.Serialization.JsonIgnore]
@@ -343,5 +350,105 @@ namespace WholesomeAQ
         None,
         ValidatedGrind,
         TimedIdle
+    }
+
+    public sealed class QuestSourceExecutionContract
+    {
+        public bool IsBound { get; init; }
+        public string Status { get; init; } = "SourceUnresolved";
+        public IReadOnlyList<QuestObjectiveExecutionContract> Objectives { get; init; }
+            = Array.Empty<QuestObjectiveExecutionContract>();
+    }
+
+    public sealed class QuestObjectiveExecutionContract
+    {
+        public int RowIndex { get; init; }
+        public int ObjectiveIndex { get; init; }
+        public ObjectiveType Type { get; init; }
+        public int MobId { get; init; }
+        public int ItemId { get; init; }
+        public int GameObjectId { get; init; }
+        public int KillCount { get; init; }
+        public int CollectCount { get; init; }
+        public string Driver { get; init; } = "Unsupported";
+        public IReadOnlyList<string> Reasons { get; init; } = Array.Empty<string>();
+        internal QuestStrategyRecipe BuiltInRecipe { get; init; }
+        internal bool Matches(QuestObjective objective) => objective != null && ObjectiveIndex == objective.Index
+            && Type == objective.Type && MobId == objective.MobId && ItemId == objective.ItemId
+            && GameObjectId == objective.GameObjectId && KillCount == objective.KillCount && CollectCount == objective.CollectCount;
+    }
+
+    /// <summary>One mechanism decision shared by scheduler and profile materializer.</summary>
+    public static class QuestExecutionPolicy
+    {
+        private static QuestObjectiveExecutionContract Contract(QuestEntry quest, QuestObjective objective)
+        {
+            if (quest?.SourceExecution?.IsBound != true) return null;
+            int ordinal = quest.Objectives.FindIndex(row => ReferenceEquals(row, objective));
+            if (ordinal < 0 || ordinal >= quest.SourceExecution.Objectives.Count) return null;
+            var contract = quest.SourceExecution.Objectives[ordinal];
+            return contract.RowIndex == ordinal && contract.Matches(objective) ? contract : null;
+        }
+
+        public static QuestStrategyRecipe[] Strategies(QuestEntry quest, QuestObjective objective, QuestStrategyPack pack)
+        {
+            var declared = pack?.Recipes?.Where(recipe => recipe != null && recipe.QuestId == quest.Id
+                && recipe.ObjectiveIndex == objective.Index).Take(2).ToArray() ?? Array.Empty<QuestStrategyRecipe>();
+            if (declared.Length != 0) return declared;
+            var generated = Contract(quest, objective)?.BuiltInRecipe;
+            return generated == null ? Array.Empty<QuestStrategyRecipe>() : new[] { generated };
+        }
+
+        public static bool CanExecutePrimitive(QuestEntry quest, QuestObjective objective)
+        {
+            if (quest == null || objective == null) return false;
+            if (quest.SourceExecution != null && Contract(quest, objective)?.Driver != "Primitive") return false;
+            return (objective.Type == ObjectiveType.KillMob && objective.MobId > 0 && (quest.SpecialFlags & 0x20) == 0)
+                || (objective.Type == ObjectiveType.CollectItem && objective.ItemId > 0 && objective.MobId > 0)
+                || (objective.Type == ObjectiveType.CollectFromGameObject && objective.GameObjectId > 0)
+                || objective.Type == ObjectiveType.TurnInOnly;
+        }
+
+        public static bool CanExecuteStrategy(QuestEntry quest, QuestObjective objective,
+            QuestStrategyPack pack, QuestStrategyRecipe recipe)
+        {
+            if (quest == null || objective == null || recipe == null) return false;
+            var contract = Contract(quest, objective);
+            if (quest.SourceExecution != null && (contract == null || contract.Driver == "Unsupported")) return false;
+            bool generated = contract?.BuiltInRecipe != null && ReferenceEquals(contract.BuiltInRecipe, recipe);
+            if (!generated && (pack?.Status != QuestStrategyPackStatus.DeclaredAndBound || pack.ClientBuild != 12340)) return false;
+            if (contract?.Driver == "ArelionsMistress" && recipe.Kind != QuestStrategyKind.ArelionsMistress) return false;
+            bool typedCredit = (generated || pack?.SchemaVersion == 2)
+                && recipe.Kind is QuestStrategyKind.UseItemOn or QuestStrategyKind.ArelionsMistress
+                && recipe.SuccessEvidence == QuestStrategySuccessEvidence.ObjectiveProgress
+                && objective.Type == ObjectiveType.KillMob && recipe.CreditId == objective.MobId
+                && recipe.CreditCount == objective.KillCount && recipe.CreditCount > 0 && recipe.CreditCount <= ushort.MaxValue
+                && recipe.WaitTime >= 0 && recipe.WaitTime <= 60000;
+            if (recipe.QuestId != quest.Id || recipe.ObjectiveIndex != objective.Index
+                || (recipe.SuccessEvidence != QuestStrategySuccessEvidence.QuestComplete && !typedCredit)
+                || recipe.TargetType != QuestStrategyTargetType.Creature || recipe.TargetId <= 0 || recipe.TargetId != objective.MobId
+                || (objective.Type != ObjectiveType.KillMob && objective.Type != ObjectiveType.CollectItem)
+                || !double.IsFinite(recipe.Range) || recipe.Range <= 0 || recipe.Range > 100
+                || recipe.MaxAttempts < 1 || recipe.MaxAttempts > 20) return false;
+            if (recipe.Kind == QuestStrategyKind.ArelionsMistress)
+                return generated && quest.Id == 9472 && objective.Type == ObjectiveType.KillMob
+                    && objective.MobId == 17226 && objective.KillCount == 1 && recipe.ItemId == 23693
+                    && recipe.TargetState == QuestStrategyTargetState.Alive && typedCredit;
+            if (recipe.Kind == QuestStrategyKind.UseItemOn)
+                return recipe.ItemId > 0 && recipe.TargetState is QuestStrategyTargetState.Alive or QuestStrategyTargetState.Dead or QuestStrategyTargetState.DontCare;
+            if (recipe.Kind == QuestStrategyKind.GossipEvent)
+                return recipe.GossipOptionIndex >= 0 && recipe.GossipOptionIndex <= 64;
+            return false;
+        }
+
+        public static string Rejection(QuestEntry quest, QuestObjective objective, QuestStrategyPack pack)
+        {
+            var recipes = Strategies(quest, objective, pack);
+            if (recipes.Length == 1 && CanExecuteStrategy(quest, objective, pack, recipes[0])) return null;
+            if (recipes.Length == 0 && CanExecutePrimitive(quest, objective)) return null;
+            var contract = Contract(quest, objective);
+            return contract == null ? "source-execution-contract-unavailable"
+                : string.Join(",", contract.Reasons.Prepend("source-executor-" + contract.Driver));
+        }
     }
 }

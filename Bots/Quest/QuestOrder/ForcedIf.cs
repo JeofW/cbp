@@ -31,6 +31,15 @@ public class ForcedIf : ForcedBehavior
 
     internal QuestOrder ActiveOrder => this.conditionalOrder;
 
+    public override void Dispose()
+    {
+        var retiring = conditionalOrder;
+        conditionalOrder = null;
+        conditionResolved = true;
+        retiring?.RetireCurrentBehavior();
+        base.Dispose();
+    }
+
     protected override Composite CreateBehavior()
     {
         return this.behaviorExecutor ??= new ConditionalComposite(this);

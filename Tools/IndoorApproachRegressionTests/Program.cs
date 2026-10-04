@@ -116,7 +116,7 @@ Case("Stop invalidates retained exterior admission", action =>
     Check(Tick(action) == RunStatus.Failure && World.ExteriorFlights.Count == count, "stopped action dispatched another route");
     Check(World.Stops > 0, "Stop left the transition's owned input running");
 });
-foreach (string change in new[] { "actor", "map", "profile", "provider", "poi", "run", "subject", "target-move", "dead" })
+foreach (string change in new[] { "actor", "map", "profile", "provider", "poi", "run", "subject", "dead" })
     Case("retained route revoked by " + change, action =>
     {
         ReachExterior(action); int dispatched = World.ExteriorFlights.Count;
@@ -129,11 +129,17 @@ foreach (string change in new[] { "actor", "map", "profile", "provider", "poi", 
             case "poi": BotPoi.CurrentGeneration++; break;
             case "run": TreeRoot.RunIdentity = new(); break;
             case "subject": World.Target.Guid++; break;
-            case "target-move": World.Target.Position = World.Target.Position.Add(0, 1, 0); break;
             case "dead": World.Actor.IsAlive = false; break;
         }
         Check(Tick(action) == RunStatus.Failure && World.ExteriorFlights.Count == dispatched, "stale approach retained movement/arrival authority");
     });
+Case("same NPC movement retains travel while final interaction remains unacknowledged", action =>
+{
+    ReachExterior(action);int stops=World.Stops;
+    World.Target.Position=World.Target.Position.Add(0,1,0);
+    Check(Tick(action)==RunStatus.Running&&World.Stops==stops,"same NPC coordinate movement revoked the continuing travel owner");
+    Check(World.Interactions.Count==0&&World.Dismounts==0,"coordinate update acknowledged final interaction or landing");
+});
 Case("unknown mount observation holds the approach", action =>
 {
     World.ObservationError = new ObservationUnavailableException("mount", "unavailable");

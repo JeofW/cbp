@@ -32,11 +32,11 @@ internal sealed class GroundTransitionContext
     private readonly uint _moverAddress, _poiEntry;
     private readonly PoiType _poiType;
     private readonly object _profile;
-    private readonly bool _bindDestination, _combatRoute, _running, _transitRoute;
+    private readonly bool _bindDestination, _combatRoute, _running, _transitRoute, _journeyRoute;
     private readonly Func<bool> _admitted;
 
     internal GroundTransitionContext(WoWObject? subject, WoWPoint destination, bool bindDestination, Func<bool> admitted,
-        bool combatRoute = false, bool transitRoute = false)
+        bool combatRoute = false, bool transitRoute = false, bool journeyRoute = false)
     {
         Actor = ObjectManager.Me ?? throw Unknown("player unavailable");
         Mover = WoWMovement.ActiveMover ?? throw Unknown("active mover unavailable");
@@ -44,7 +44,7 @@ internal sealed class GroundTransitionContext
         Executor = ObjectManager.Executor ?? throw Unknown("executor unavailable");
         Provider = Navigator.NavigationProvider;
         Input = Navigator.PlayerMover;
-        Subject = subject; Destination = destination; _bindDestination = bindDestination; _combatRoute = combatRoute; _transitRoute = transitRoute; _admitted = admitted;
+        Subject = subject; Destination = destination; _bindDestination = bindDestination; _combatRoute = combatRoute; _transitRoute = transitRoute; _journeyRoute = journeyRoute; _admitted = admitted;
         ActorGuid = Actor.Guid; ActorAddress = Actor.BaseAddress; Map = Actor.MapId;
         SubjectGuid = subject?.Guid ?? 0; SubjectAddress = subject?.BaseAddress ?? 0; SubjectEntry = subject?.Entry ?? 0;
         _moverGuid = Mover.Guid; _moverAddress = Mover.BaseAddress;
@@ -83,7 +83,7 @@ internal sealed class GroundTransitionContext
     private bool WorldCurrent => InputCurrent && _running && TreeRoot.IsRunning && Actor.IsAlive && !Actor.IsGhost
         && ReferenceEquals(ProfileManager.CurrentProfileSnapshot, _profile)
         && ReferenceEquals(BotPoi.Current, Poi)
-        && (_combatRoute ? BotPoi.CurrentWorkGeneration == PoiWorkGeneration : BotPoi.CurrentGeneration == PoiGeneration)
+        && (_combatRoute || _journeyRoute ? BotPoi.CurrentWorkGeneration == PoiWorkGeneration : BotPoi.CurrentGeneration == PoiGeneration)
         && !Poi.IsWorldSubjectBlacklisted
         && Poi.Type == _poiType && Poi.Guid == _poiGuid && Poi.Entry == _poiEntry
         && (Subject == null || SubjectGuid != 0 && SubjectAddress != 0 && Subject.IsValid
