@@ -15,6 +15,7 @@ namespace Bots.Quest
     /// </summary>
     public class QuestState
     {
+        private long profileInitialization;
         /// <summary>
         /// Global singleton instance.
         /// </summary>
@@ -39,25 +40,27 @@ namespace Bots.Quest
         /// </summary>
         internal void InitializeFromProfile(Profile profile)
         {
-            if (profile == null)
+            long initialization = ++profileInitialization;
+            var order = Order;
+            var previousNodes = order.Nodes;
+            var nextNodes = new OrderNodeCollection(profile?.QuestOrder?.Count ?? 0);
+            if (profile?.QuestOrder != null)
             {
-                Order.Nodes = new OrderNodeCollection();
-                return;
+                nextNodes.AddRange(profile.QuestOrder);
+                nextNodes.IgnoreCheckpoints = profile.QuestOrder.IgnoreCheckpoints;
             }
-
-            Order.Nodes = new OrderNodeCollection(profile.QuestOrder?.Count ?? 0);
-            
-            if (profile.QuestOrder != null)
-            {
-                Order.Nodes.AddRange(profile.QuestOrder);
-                Order.Nodes.IgnoreCheckpoints = profile.QuestOrder.IgnoreCheckpoints;
-            }
-
-            if (Order.Nodes.Count > 0)
+            // Publication can precede the executor's next IsDone/Dispose pulse.
+            // Retire its complete nested lifetime before replacing the order.
+            order.RetireCurrentBehavior();
+            bool Current() => profileInitialization == initialization && ReferenceEquals(Order, order)
+                && order.CurrentBehavior == null;
+            if (!Current() || !ReferenceEquals(order.Nodes, previousNodes)) return;
+            order.Nodes = nextNodes;
+            if (nextNodes.Count > 0)
             {
                 ObjectManager.Update();
-                Order.UpdateNodes();
-                Order.CurrentBehavior = null;
+                if (Current() && ReferenceEquals(order.Nodes, nextNodes))
+                    order.UpdateNodes();
             }
         }
 

@@ -106,7 +106,7 @@ public static class Colors {public static readonly object Orange="orange",Red="r
 public static class Logging {public static void WriteDebug(string text,params object[] args){}public static void Write(string text,params object[] args)=>World.Hit("log");public static void Write(object color,string text,params object[] args)=>World.Hit("log");public static void WriteDiagnostic(string text,params object[] args)=>World.Hit("log");}
 public static class WoWMathHelper {public static float CalculateNeededFacing(WoWPoint a,WoWPoint b)=>0;public static float DegreesToRadians(float value)=>value*MathF.PI/180;}
 public sealed class PlayerMover {
- public void MoveTowards(WoWPoint point){World.Record("towards");World.Hit("towards");}
+ public void MoveTowards(WoWPoint point){World.Destinations.Add(point);World.Record("towards");World.Hit("towards");}
  public void MoveStop(){World.Record("player-stop");World.Hit("stop");}
 }
 public static class Navigator {
@@ -129,9 +129,10 @@ public static class World {
  public static Func<string,bool> ReadName;public static Func<int,bool> ReadId;public static bool TestCrusader;
  public static Exception CrusaderError,CrusaderSubmitError;public static int CrusaderReads,Deferrals;
  public static readonly List<string> Commands=new List<string>();public static Action<string> OnBoundary;
+ public static readonly List<WoWPoint> Destinations=new();public static Vector2[] PathPoints;
  public static void Record(string command)=>Commands.Add(command+":"+(Player?.Guid??0));
  public static void Hit(string name)=>OnBoundary?.Invoke(name);
- public static void Reset(){ObjectManager.Wow=new object();ObjectManager.Executor=new object();Player=new LocalPlayer();Mover=Player;SeaLegs=Walk=EmptyPoint=FormSurface=false;PathBuilds=0;Commands.Clear();OnBoundary=null;ReadName=null;ReadId=null;TestCrusader=false;CrusaderError=CrusaderSubmitError=null;CrusaderReads=Deferrals=0;BotPoi.Current=new BotPoi();BotPoi.CurrentGeneration++;BotPoi.CurrentWorkGeneration++;ProfileManager.CurrentProfileSnapshot=new object();Navigator.NavigationProvider=new object();}
+ public static void Reset(){ObjectManager.Wow=new object();ObjectManager.Executor=new object();Player=new LocalPlayer();Mover=Player;SeaLegs=Walk=EmptyPoint=FormSurface=false;PathBuilds=0;Commands.Clear();Destinations.Clear();PathPoints=null;OnBoundary=null;ReadName=null;ReadId=null;TestCrusader=false;CrusaderError=CrusaderSubmitError=null;CrusaderReads=Deferrals=0;BotPoi.Current=new BotPoi();BotPoi.CurrentGeneration++;BotPoi.CurrentWorkGeneration++;ProfileManager.CurrentProfileSnapshot=new object();Navigator.NavigationProvider=new object();}
 }
 public class BotPoi {public static BotPoi Current=new BotPoi();public static long CurrentGeneration,CurrentWorkGeneration;public bool IsWorldSubjectBlacklisted;}
 public static class ProfileManager {public static object CurrentProfileSnapshot=new object();}
@@ -158,7 +159,7 @@ private static bool ShouldAttemptGroundMount(bool canFly,bool mounted,bool allow
 private static WoWObject FindTakeoffCandidate(WoWPoint location,float range)=>null;
 private static void NavigateToTakeoffSpot()=>Navigator.MoveTo(_takeoffSpot);
 private static WoWPoint GetPointInDirection(WoWPoint p,float distance,float facing,float pitch)=>p;
-private static FlightPath BuildPath(Vector2 a,Vector2 b){int id=++World.PathBuilds;World.Hit("path");return new FlightPath{Id=id};}
+private static FlightPath BuildPath(Vector2 a,Vector2 b){int id=++World.PathBuilds;World.Hit("path");var result=new FlightPath{Id=id};if(World.PathPoints!=null)result.Waypoints=new Queue<Vector2>(World.PathPoints);return result;}
 private static WoWPoint CalculateFlightPoint(WoWPoint point,float height){World.Hit("point");return World.EmptyPoint?WoWPoint.Empty:point;}
 private static class MountHelper {
  public static bool Mounted=>World.Player?.Mounted==true;
@@ -213,6 +214,25 @@ public static class FlightWaitCases {
    Check(World.Commands.Exists(c=>c.StartsWith("cast:"))!=ids(32223),"known Crusader presence was lost or absent aura blocked eligible cast");}
  }
  public static void Run(){var tests=new List<(string Name,Action Body)>();
+  foreach(int reached in new[]{1,2,5}){int count=reached;
+   tests.Add(("continuous flight skips "+count+" reached queue vertices in the same dispatch",()=>{
+    Configure("flight");World.Player.Location=new WoWPoint(10,10,50);
+    var path=new List<Vector2>();for(int i=0;i<count;i++)path.Add(new Vector2(10+i*2,10));
+    path.Add(new Vector2(100,10));path.Add(new Vector2(200,10));World.PathPoints=path.ToArray();
+    FlightOwner.MoveTo(new WoWPoint(200,10,50),4);
+    Check(World.Destinations.Count==1&&World.Destinations[0].X==100&&World.Destinations[0].Y==10,
+      "reached path vertex was reissued instead of the next forward waypoint");
+    Check(!World.Commands.Exists(c=>c.StartsWith("stop")||c.StartsWith("player-stop")||c.StartsWith("sleep")),
+      "ordinary waypoint advancement introduced stop or wait input");
+   }));
+  }
+  tests.Add(("continuous queue advancement retains the actual final destination",()=>{
+   Configure("flight");World.Player.Location=new WoWPoint(10,10,50);
+   World.PathPoints=new[]{new Vector2(10,10),new Vector2(12,10),new Vector2(25,10)};
+   FlightOwner.MoveTo(new WoWPoint(25,10,55),4);
+   Check(World.Destinations.Count==1&&World.Destinations[0]==new WoWPoint(25,10,55),
+     "nearby intermediate points hid or skipped the final destination");
+  }));
   foreach(string mode in new[]{"takeoff","flight"}){string route=mode;
    foreach(string point in new[]{"aura-coverage","aura-readiness","aura-submit"}){string boundary=point;
     tests.Add((route+" continues after optional Crusader observation failure/"+boundary,()=>{

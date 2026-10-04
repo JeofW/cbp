@@ -20,13 +20,14 @@ internal static class World
     internal static bool Sight, MissingMesh, PartialPath, WrongFloor, Liquid, BlockedDoor, MissingSupport;
     internal static bool PreferFlight, FlightMountObserved, FlightCostRequiresStop;
     internal static Exception? ObservationError;
+    internal static float? FutureGeometryUnavailableAfterX;
     internal static System.Action<string>? Callback;
     internal static WoWPoint Door = new(205, 0, 0);
 
     internal static void Event(string stage) => Callback?.Invoke(stage);
     internal static void Reset()
     {
-        Callback = null; ObservationError = null;
+        Callback = null; ObservationError = null; FutureGeometryUnavailableAfterX = null;
         Styx.BotEvents.Stop();
         RawFlights.Clear(); ExteriorFlights.Clear(); Walks.Clear(); Diagnostics.Clear(); Errors.Clear(); Rays.Clear(); Interactions.Clear();
         Dismounts = Descents = Stops = 0;
@@ -51,6 +52,8 @@ internal static class World
     internal static (bool Hit, WoWPoint Point) Trace(WorldLine line, GameWorld.CGWorldFrameHitFlags flags)
     {
         Event("trace"); if (ObservationError != null) throw ObservationError;
+        if (FutureGeometryUnavailableAfterX is float frontier && line.Start.X > frontier)
+            throw new Styx.Helpers.ObservationUnavailableException("future-flight-region", "controlled unavailable lookahead observation");
         bool liquid = (flags & (GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2)) != 0;
         bool hit = false; WoWPoint point = WoWPoint.Empty;
         if (liquid) { hit = Liquid; point = line.End; }

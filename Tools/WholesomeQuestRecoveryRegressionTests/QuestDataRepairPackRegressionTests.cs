@@ -68,9 +68,16 @@ internal static class QuestDataRepairPackRegressionTests
             """)!.AsObject();
             Pack["QuestDataSha256"]=BaseHash;
         }
-        internal void Write()=>File.WriteAllText(Path.Combine(Folder,"quest_data.repairs.json"),Pack.ToJsonString());
-        internal QuestDatabase Load()=>new DataLoader(DataPath).Load();
-        internal DataLoader Loader() { var l=new DataLoader(DataPath); l.Load(); return l; }
+        internal void Write()
+        {
+            File.WriteAllText(Path.Combine(Folder,"quest_data.repairs.json"),Pack.ToJsonString());
+            // Invalid repair-input tests still exercise the real loader's error;
+            // valid synthetic source updates also replace their own mechanism observation.
+            try { ControlledExecutionCatalogFixture.Prepare(DataPath); }
+            catch (InvalidDataException) { }
+        }
+        internal QuestDatabase Load(){ControlledExecutionCatalogFixture.Prepare(DataPath);return new DataLoader(DataPath).Load();}
+        internal DataLoader Loader() { ControlledExecutionCatalogFixture.Prepare(DataPath);var l=new DataLoader(DataPath); l.Load(); return l; }
         internal void SetBase(Action<JsonNode> edit) { var data=JsonNode.Parse(File.ReadAllText(DataPath))!;edit(data);Rebase(data); }
         internal void Corrupt(string fault)
         {

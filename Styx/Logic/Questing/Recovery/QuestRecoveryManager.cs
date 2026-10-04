@@ -149,6 +149,15 @@ public sealed class QuestRecoveryManager
         long attemptGeneration,
         QuestRecoveryContext context,
         string evidence)
+        => TryDeferOwnedAttempt(key, attemptGeneration, context, evidence, QuestFailureReason.NavigationUnavailable);
+
+    /// <summary>Bounded retry for an unacknowledged owned action; does not consume failure/quarantine budgets.</summary>
+    public QuestRecoveryReportResult TryDeferBehaviorAttempt(QuestRecoveryKey key, long attemptGeneration,
+        QuestRecoveryContext context, string evidence)
+        => TryDeferOwnedAttempt(key, attemptGeneration, context, evidence, QuestFailureReason.NoObjectiveProgress);
+
+    private QuestRecoveryReportResult TryDeferOwnedAttempt(QuestRecoveryKey key, long attemptGeneration,
+        QuestRecoveryContext context, string evidence, QuestFailureReason reason)
     {
         ArgumentNullException.ThrowIfNull(key);
         ArgumentNullException.ThrowIfNull(context);
@@ -170,11 +179,11 @@ public sealed class QuestRecoveryManager
             DateTime now = _clock.UtcNow;
             var deferred = Copy(current,
                 state: QuestRecoveryState.CoolingDown,
-                reason: QuestFailureReason.NavigationUnavailable,
+                reason: reason,
                 cooldownUntilUtc: now.AddSeconds(30), replaceCooldownUntilUtc: true,
                 nextHalfOpenUtc: null, replaceNextHalfOpenUtc: true,
                 failureContext: normalized);
-            deferred = WithEvidence(deferred, QuestFailureReason.NavigationUnavailable,
+            deferred = WithEvidence(deferred, reason,
                 evidence ?? "Navigation evidence is incomplete.", now, coalesce: true);
             _records[key] = deferred;
             _dirty = true;

@@ -33,8 +33,10 @@ internal static class QuestKnowledgeBundleRegressionTests
         CheckCase("reloading unchanged knowledge retains execution identity",()=>{var second=new DataLoader(Path.Combine(folder,"quest_data.json"));second.Load();Check(second.ExecutionFingerprint==loader.ExecutionFingerprint,"unstable content identity");});
         CheckCase("external metadata stays outside schedulable collection",()=>Check(effective.DependencyMetadata.Count>0 && effective.DependencyMetadata.Values.Any(r=>effective.Quests.All(q=>q.Id!=r.QuestId)),"catalog missing or merged into executable quests"));
         CheckCase("tracked base and knowledge bytes remain unchanged after load",()=>Check(files.All(pair=>Hash(Path.Combine(folder,pair.Key))==pair.Value),"load modified source knowledge"));
-        Console.WriteLine($"Tracked knowledge bundle scenarios: {passed}/10; actual 4335-row DataLoader, three source recipes, manifest SHA256; no game or production mutation.");
-        if(passed!=10)throw new InvalidOperationException("Knowledge bundle scenario accounting changed");
+        CheckCase("all mechanism contracts are bound to effective objective rows",()=>Check(effective.Quests.All(q=>q.SourceExecution?.IsBound==true
+            &&q.SourceExecution.Objectives.Count==q.Objectives.Count),"source mechanism catalog is absent or partial"));
+        Console.WriteLine($"Tracked knowledge bundle scenarios: {passed}/12; actual 4335-row DataLoader, three source recipes plus bound compound catalog, manifest SHA256; no game or production mutation.");
+        if(passed!=12)throw new InvalidOperationException("Knowledge bundle scenario accounting changed");
     }
     private static string Hash(string path)=>Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))).ToLowerInvariant();
     private static void Check(bool value,string reason){if(!value)throw new Failure(reason);}

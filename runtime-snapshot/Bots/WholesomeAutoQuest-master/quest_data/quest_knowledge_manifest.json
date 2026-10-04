@@ -8,7 +8,8 @@
   "files": {
     "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
     "quest_data.repairs.json": "80b61339b259a7fdb5be7d50dc8bd13af7681f4f959de3f040557b4edec3918a",
-    "quest_strategies.json": "e4598474ce607cde2301cded9c2d5b9bd721ab5c8feaaeb0b655a46212ec401a"
+    "quest_strategies.json": "e4598474ce607cde2301cded9c2d5b9bd721ab5c8feaaeb0b655a46212ec401a",
+    "quest_execution_contracts.json": "67639e65f8e90d4b08531aa8756527797a9511c22bcc04221656e73f38fcf8d5"
   },
   "quest_count": 4335,
   "strategy_quests": [
@@ -21,5 +22,23 @@
   "realm_equivalence_proven": false,
   "live_completion_proven": false,
   "production_replaced": false,
-  "closure_evidence_directory": "docs/audit/2026-10-01/required-stock"
+  "closure_evidence_directory": "docs/audit/2026-10-01/required-stock",
+  "source_execution_catalog": {
+    "schema_version": 1,
+    "quest_count": 4335,
+    "effective_objective_rows": 5771,
+    "exclusive_quest_status_counts": {
+      "PrimitiveCandidate": 3729,
+      "HandlerOrSourceRequired": 603,
+      "ImplementedStrategy": 3
+    },
+    "objective_driver_counts": {
+      "Primitive": 4836,
+      "Unsupported": 931,
+      "DeclaredStrategy": 3,
+      "ArelionsMistress": 1
+    },
+    "full_execution_certification": false,
+    "live_completion_proven": false
+  }
 }

@@ -154,11 +154,7 @@ public class QuestBot : BotBase
     public override void Stop()
     {
         QuestState.Instance.Order.OnNoMoreNodes -= OnNoMoreNodes;
-        if (QuestState.Instance.Order.CurrentBehavior != null)
-        {
-            QuestState.Instance.Order.CurrentBehavior.Dispose();
-            QuestState.Instance.Order.CurrentBehavior = (ForcedBehavior)null;
-        }
+        QuestState.Instance.Order.RetireCurrentBehavior();
         LootTargeting.Instance.IncludeTargetsFilter -= new IncludeTargetsFilterDelegate(LevelBot.LevelbotIncludeLootsFilter);
         Targeting.Instance.IncludeTargetsFilter -= new IncludeTargetsFilterDelegate(LevelBot.LevelBotIncludeTargetsFilter);
     }

@@ -9,7 +9,7 @@ internal enum GroundDismountState { Rejected, Pending, Submitted, Expired }
 
 internal readonly record struct GroundMotion(WoWPoint Position, bool Mounted, bool Flying,
     bool Falling, bool Swimming, bool OnTransport, bool Immobilized, bool Supported,
-    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false, bool FlightReviewPending = false);
+    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false);
 
 internal interface IGroundTransitionRuntime
 {
@@ -17,6 +17,7 @@ internal interface IGroundTransitionRuntime
     double Now { get; }
     GroundMotion Observe();
     GroundApproachPlan? Search();
+    GroundApproachPlan? PrepareNextFlightLeg(GroundApproachPlan active) => null;
     bool SearchExhausted { get; }
     bool Validate(GroundApproachPlan plan);
     void ResetSearch();
@@ -103,8 +104,6 @@ internal sealed class GroundTransitionMachine
             return Wait("landing", "falling-is-not-grounded-acknowledgement", observation, stop: true);
         if (observation.Immobilized)
             return Wait("blocked", "root-or-stun-prevents-owned-transition", observation, stop: true);
-        if (observation.FlightReviewPending)
-            return Wait("flight-preparation", "awaiting-observed-stop-for-flight-decision", observation, stop: true);
 
         // A useful ground departure can expose a new flight opportunity. The
         // runtime bounds these reviews by time and observed displacement; this
@@ -216,18 +215,30 @@ internal sealed class GroundTransitionMachine
             return Result(GroundTransitionState.Pending, "replanning", "collision-or-onward-route-changed", observation);
         }
         if (!_runtime.Current) return GroundTransitionState.Revoked;
-        if (_plan.ProgressOnly)
+        if (_plan.ProgressOnly && observation.Flying
+            && observation.Position.DistanceSqr(_plan.AirWaypoint) <= 32f * 32f)
         {
-            if (observation.Flying && observation.Position.DistanceSqr(_plan.AirWaypoint) <= 64f)
+            // Prepare the successor while the current, positively observed leg
+            // still has forward runway. A completed local point is not a stop,
+            // a landing, or a reason to yield an otherwise ready command pulse.
+            var next = _runtime.PrepareNextFlightLeg(_plan);
+            if (!_runtime.Current) return GroundTransitionState.Revoked;
+            if (next != null)
             {
-                _runtime.Hold();
-                if (!_runtime.Current) return GroundTransitionState.Revoked;
-                _runtime.ResetSearch(); _plan = null;
+                _plan = next;
                 _flightSearchBatches = 0; _flightSearchStarted = double.NaN;
                 _started = _lastProgress = now; _progressOrigin = observation.Position;
                 _lastCommand = double.NegativeInfinity;
-                return Result(GroundTransitionState.Pending, "flight-leg-observed", "local-flight-progress; final-approach-unobserved", observation);
             }
+            else if (observation.Position.DistanceSqr(_plan.AirWaypoint) <= 4f)
+            {
+                // No safe successor has been observed. Keep the last endpoint
+                // as the movement limit; never extrapolate into unknown space.
+                return Progress("flight-successor-pending", "next-flight-leg-unobserved; current-endpoint-retained", observation, now);
+            }
+        }
+        if (_plan.ProgressOnly)
+        {
             if (CommandDue(now)) _runtime.Fly(_plan);
             return Progress("flight-travel", "local-flight-leg; descent-not-authorized", observation, now);
         }

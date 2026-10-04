@@ -99,9 +99,12 @@ namespace WholesomeAQ
             byte[] repairSnapshot = File.Exists(repairPath) ? File.ReadAllBytes(repairPath) : null;
             QuestStrategyPack strategyPack = QuestStrategyPackLoader.Load(strategyPath, Digest(snapshot),
                 Digest(repairSnapshot ?? Array.Empty<byte>()), out string strategyContentSha256);
+            string catalogPath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(_dataFile)), "quest_execution_contracts.json");
+            byte[] catalogSnapshot = File.Exists(catalogPath) ? File.ReadAllBytes(catalogPath) : null;
             var identityFiles = new List<(string Role, string Digest)> { (LogicalRole(_dataFile), FingerprintDigest(snapshot)) };
             if (provenanceSnapshot != null) identityFiles.Add((LogicalRole(provenancePath), FingerprintDigest(provenanceSnapshot)));
             if (repairSnapshot != null) identityFiles.Add((LogicalRole(repairPath), FingerprintDigest(repairSnapshot)));
+            if (catalogSnapshot != null) identityFiles.Add((LogicalRole(catalogPath), FingerprintDigest(catalogSnapshot)));
             string fingerprint = FingerprintManifest(identityFiles);
             string json;
             using (var stream = new MemoryStream(snapshot, writable: false))
@@ -116,6 +119,8 @@ namespace WholesomeAQ
             string repairSource = "absent";
             if (repairSnapshot != null)
                 database = QuestDataRepairPackLoader.Apply(repairSnapshot, Digest(snapshot), database, out repairSource);
+            QuestExecutionCatalogLoader.Apply(catalogSnapshot, database, Digest(snapshot), Digest(repairSnapshot ?? Array.Empty<byte>()),
+                string.IsNullOrEmpty(strategyContentSha256) ? Digest(Array.Empty<byte>()) : strategyContentSha256);
 
             // If prerequisite validation/publication throws, a later Load must retry
             // rather than returning a partially initialized cached database.
@@ -319,6 +324,118 @@ namespace WholesomeAQ
             string manifest = "quest-dataset-content-v2\n" + string.Join("\n", ordered.Select(entry =>
                 Convert.ToBase64String(Encoding.UTF8.GetBytes(entry.Role)) + ":" + entry.Digest));
             return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(manifest))).ToLowerInvariant();
+        }
+    }
+
+    public static class QuestExecutionCatalogLoader
+    {
+        private const string Revision = "95657f54779467effea8a1749a61ff93abc1d707";
+        private static readonly HashSet<string> Drivers = new(StringComparer.Ordinal)
+            { "Primitive", "DeclaredStrategy", "ArelionsMistress", "Unsupported" };
+
+        public static void Apply(byte[] bytes, QuestDatabase database, string datasetSha, string repairSha, string strategySha)
+        {
+            if (database?.Quests == null) throw new InvalidDataException("Execution catalog requires a loaded quest population.");
+            if (bytes == null)
+            {
+                foreach (var quest in database.Quests)
+                    quest.SourceExecution = new QuestSourceExecutionContract();
+                return;
+            }
+            using var document = JsonDocument.Parse(bytes);
+            var root = document.RootElement;
+            Fields(root, "SchemaVersion", "ClientBuild", "SourceCore", "SourceBranch", "SourceRevision", "DatabaseRevision",
+                "QuestDataSha256", "QuestDataRepairsSha256", "StrategyPackSha256", "PrimarySqlSha256", "QuestCount", "Quests");
+            if (Integer(root, "SchemaVersion") != 1 || Integer(root, "ClientBuild") != 12340
+                || Text(root, "SourceCore") != "TrinityCore" || Text(root, "SourceBranch") != "3.3.5"
+                || Text(root, "SourceRevision") != Revision || Text(root, "DatabaseRevision") != "TDB335.25101"
+                || !SameHash(Text(root, "QuestDataSha256"), datasetSha)
+                || !SameHash(Text(root, "QuestDataRepairsSha256"), repairSha)
+                || !SameHash(Text(root, "StrategyPackSha256"), strategySha)
+                || !SameHash(Text(root, "PrimarySqlSha256"), "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9"))
+                throw new InvalidDataException("Execution catalog does not match the dataset, strategy, repairs or pinned original-335 source.");
+            var declared = root.GetProperty("Quests");
+            if (declared.ValueKind != JsonValueKind.Array || Integer(root, "QuestCount") != database.Quests.Count
+                || declared.GetArrayLength() != database.Quests.Count || database.Quests.Select(q => q.Id).Distinct().Count() != database.Quests.Count)
+                throw new InvalidDataException("Execution catalog must cover the exact unique quest population.");
+            var byId = database.Quests.ToDictionary(q => q.Id);
+            var staged = new Dictionary<QuestEntry, QuestSourceExecutionContract>();
+            foreach (var record in declared.EnumerateArray())
+            {
+                Fields(record, "QuestId", "Status", "PrimaryQuestSha256", "PrimaryAddonSha256", "Objectives");
+                int id = Integer(record, "QuestId");
+                if (!byId.TryGetValue(id, out var quest) || staged.ContainsKey(quest))
+                    throw new InvalidDataException("Execution catalog has duplicate or foreign quest membership.");
+                string primary = Text(record, "PrimaryQuestSha256");
+                if (primary.Length != 0 && !Hash(primary)) throw new InvalidDataException("Invalid primary quest evidence digest.");
+                string addon = Text(record, "PrimaryAddonSha256");
+                if (addon.Length != 0 && !Hash(addon)) throw new InvalidDataException("Invalid primary addon evidence digest.");
+                var rows = record.GetProperty("Objectives");
+                if (rows.ValueKind != JsonValueKind.Array || rows.GetArrayLength() != quest.Objectives.Count)
+                    throw new InvalidDataException("Execution catalog objective population differs from its loaded quest.");
+                var contracts = new List<QuestObjectiveExecutionContract>();
+                int ordinal = 0;
+                foreach (var row in rows.EnumerateArray())
+                {
+                    Fields(row, "RowIndex", "ObjectiveIndex", "Type", "MobId", "ItemId", "GameObjectId", "KillCount", "CollectCount",
+                        "Driver", "Reasons", "PrimaryActorSha256", "CreditEvidenceSha256");
+                    string kind = Text(row, "Type"), driver = Text(row, "Driver");
+                    if (Integer(row, "RowIndex") != ordinal || !Enum.TryParse<ObjectiveType>(kind, false, out var type)
+                        || !Enum.IsDefined(typeof(ObjectiveType), type) || !Drivers.Contains(driver)
+                        || !Hash(Text(row, "CreditEvidenceSha256")))
+                        throw new InvalidDataException("Execution catalog has an invalid objective identity, driver or source digest.");
+                    string actor = Text(row, "PrimaryActorSha256");
+                    if (actor.Length != 0 && !Hash(actor)) throw new InvalidDataException("Invalid objective actor source digest.");
+                    var reasonRows = row.GetProperty("Reasons");
+                    if (reasonRows.ValueKind != JsonValueKind.Array || reasonRows.GetArrayLength() > 64)
+                        throw new InvalidDataException("Invalid execution obligation population.");
+                    var reasons = reasonRows.EnumerateArray().Select(r => r.ValueKind == JsonValueKind.String ? r.GetString() : null).ToArray();
+                    if (reasons.Any(r => string.IsNullOrWhiteSpace(r) || r.Length > 160) || reasons.Distinct().Count() != reasons.Length
+                        || driver == "Primitive" && reasons.Length != 0 || driver != "Unsupported" && primary.Length == 0)
+                        throw new InvalidDataException("Execution catalog obligations do not match its admitted mechanism.");
+                    var contract = new QuestObjectiveExecutionContract
+                    {
+                        RowIndex = ordinal, ObjectiveIndex = Integer(row, "ObjectiveIndex"), Type = type,
+                        MobId = Integer(row, "MobId"), ItemId = Integer(row, "ItemId"), GameObjectId = Integer(row, "GameObjectId"),
+                        KillCount = Integer(row, "KillCount"), CollectCount = Integer(row, "CollectCount"), Driver = driver,
+                        Reasons = Array.AsReadOnly(reasons),
+                        BuiltInRecipe = driver == "ArelionsMistress" ? new QuestStrategyRecipe
+                        {
+                            QuestId = 9472, ObjectiveIndex = Integer(row, "ObjectiveIndex"), Kind = QuestStrategyKind.ArelionsMistress,
+                            ItemId = 23693, TargetId = 17226, TargetType = QuestStrategyTargetType.Creature, TargetState = QuestStrategyTargetState.Alive,
+                            CreditId = 17226, CreditCount = 1, SuccessEvidence = QuestStrategySuccessEvidence.ObjectiveProgress,
+                            Range = 5, MaxAttempts = 3, RequireLos = true,
+                            SourceRef = "TrinityCore:3.3.5:" + Revision + ":quest9472:quest9483:SmartAI17226:spell30077"
+                        } : null
+                    };
+                    if (!contract.Matches(quest.Objectives[ordinal]) || driver == "ArelionsMistress"
+                        && (id != 9472 || type != ObjectiveType.KillMob || contract.MobId != 17226 || contract.KillCount != 1))
+                        throw new InvalidDataException($"Execution contract {id}/{ordinal} cannot borrow another quest/objective's runtime data.");
+                    contracts.Add(contract); ordinal++;
+                }
+                string expectedStatus = contracts.Count == 0 ? "SourceUnresolved"
+                    : contracts.Any(c => c.Driver == "Unsupported") ? "HandlerOrSourceRequired"
+                    : contracts.Any(c => c.Driver != "Primitive") ? "ImplementedStrategy" : "PrimitiveCandidate";
+                if (Text(record, "Status") != expectedStatus) throw new InvalidDataException("Execution catalog classification accounting is inconsistent.");
+                staged.Add(quest, new QuestSourceExecutionContract
+                    { IsBound = true, Status = expectedStatus, Objectives = Array.AsReadOnly(contracts.ToArray()) });
+            }
+            foreach (var pair in staged) pair.Key.SourceExecution = pair.Value;
+        }
+
+        private static bool Hash(string value) => value != null && value.Length == 64 && value.All(Uri.IsHexDigit);
+        private static bool SameHash(string left, string right) => Hash(left) && Hash(right) && string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
+        private static string Text(JsonElement row, string key) => row.TryGetProperty(key, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString() : throw new InvalidDataException("Execution catalog requires string " + key);
+        private static int Integer(JsonElement row, string key) => row.TryGetProperty(key, out var value) && value.TryGetInt32(out int number)
+            ? number : throw new InvalidDataException("Execution catalog requires integer " + key);
+        private static void Fields(JsonElement row, params string[] expected)
+        {
+            if (row.ValueKind != JsonValueKind.Object) throw new InvalidDataException("Execution catalog record must be an object.");
+            var fields = row.EnumerateObject().Select(p => p.Name).ToArray();
+            if (fields.Length != expected.Length || fields.Distinct(StringComparer.Ordinal).Count() != fields.Length
+                || fields.Except(expected, StringComparer.Ordinal).Any())
+                throw new InvalidDataException("Execution catalog contains missing, duplicate or unknown fields.");
         }
     }
 

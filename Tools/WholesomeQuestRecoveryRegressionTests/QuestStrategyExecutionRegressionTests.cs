@@ -244,7 +244,7 @@ internal static class QuestStrategyExecutionRegressionTests
                 new SpawnPoint { Map = 1, X = 10, Y = 20, Z = 30, IsKnownReachable = true, IsKnownSafe = true }
             };
             File.WriteAllText(DataPath, JsonSerializer.Serialize(scenario.Database), Encoding.UTF8);
-            if (!includeEscort) return;
+            if (!includeEscort) { ControlledExecutionCatalogFixture.Prepare(DataPath); return; }
             string sha = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(DataPath))).ToLowerInvariant();
             File.WriteAllText(StrategyPath, JsonSerializer.Serialize(new
             {
@@ -256,6 +256,7 @@ internal static class QuestStrategyExecutionRegressionTests
                     MaxAttempts = 3, SuccessEvidence = "QuestComplete"
                 } }
             }), Encoding.UTF8);
+            ControlledExecutionCatalogFixture.Prepare(DataPath);
         }
 
         public void Dispose()
