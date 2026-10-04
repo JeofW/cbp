@@ -65,7 +65,7 @@
 
 **Files:** `docs/audit/2026-10-04/navigation-lifecycle/REPORT.md`; evidence receipts under the dedicated navigation review directory; release integration files only as needed.
 
-- [ ] Review the full production diff and the original request, including hostile-base clearance, moving NPC updates, mesh/tile continuation, and all adjacent transitions.
+- [x] Review the full production diff and the original request, including hostile-base clearance, moving NPC updates, mesh/tile continuation, and all adjacent transitions.
 - [ ] Run the canonical Windows/x86 integrated gate on settled source; run native route/catalog/routine checks required by the release contract.
 - [ ] Record exact source, binaries, tests, failures repaired and live proof limits. Perform authorized GitHub/release work using the actual verified candidate and current installation state.
 - [ ] Call session_finish at the requested boundary, complete any delivered extension, and leave a self-contained final report.

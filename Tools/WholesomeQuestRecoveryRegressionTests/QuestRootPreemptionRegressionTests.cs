@@ -41,6 +41,13 @@ internal static class QuestRootPreemptionRegressionTests
         var cases = new List<(string Name, Action Test)>
         {
             ("controlled root session exposes a live run identity without worker loop", () => With(c => c.AssertSession())),
+            ("unavailable loot observation cannot become known empty scheduling", () => With(c =>
+            {
+                typeof(Styx.Logic.Targeting).GetField("_observationFailure", I)!.SetValue(c.Loot, "controlled missing corpse observation");
+                c.Step();
+                Check(c.Behavior.Body.Effects == 0 && c.Roam.Effects == 0,
+                    "unavailable collection observation silently authorized quest or patrol effects");
+            })),
             ("unchanged running root retains one nested lifetime", () => With(c =>
             {
                 c.StartQuest(); c.Step(); c.Step();
@@ -312,6 +319,9 @@ internal static class QuestRootPreemptionRegressionTests
         private readonly OrderNodeCollection previousNodes;
         private readonly ForcedBehavior? previousBehavior;
         private readonly BotPoi previousPoi;
+        private readonly FieldInfo lootSingleton = typeof(Styx.Logic.LootTargeting).GetField("_instance", S)!;
+        private readonly object? previousLoot = typeof(Styx.Logic.LootTargeting).GetField("_instance", S)!.GetValue(null);
+        internal Styx.Logic.LootTargeting? Loot;
         private readonly Queue<string> scanDiagnostics = new();
         private readonly Styx.Helpers.Logging.LogMessageDelegate diagnosticListener;
         internal readonly List<string> Events = new();
@@ -346,6 +356,13 @@ internal static class QuestRootPreemptionRegressionTests
             Combat = new ProbeLeaf("combat", Events); Service = new ProbeLeaf("service", Events); Roam = new ProbeLeaf("roam", Events) { Status = RunStatus.Success };
             try
             {
+                // This fixture replaces the collection branch with a counted
+                // support leaf. Supply its independent scheduling observation as
+                // explicitly empty; do not inherit another group's publication
+                // or confuse a never-observed registry with an empty one.
+                Loot = (Styx.Logic.LootTargeting)Activator.CreateInstance(typeof(Styx.Logic.LootTargeting), true)!;
+                typeof(Styx.Logic.Targeting).GetProperty("ObjectList", I)!.SetValue(Loot, new List<WoWObject>());
+                lootSingleton.SetValue(null, Loot);
                 BotPoi.Current = new BotPoi(PoiType.None);
                 // The raw-publication fixture zeroes unrelated fields. A running
                 // quest control must be alive, not a zero-health death observation.
@@ -442,7 +459,14 @@ internal static class QuestRootPreemptionRegressionTests
             finally
             {
                 try { treeSession?.Dispose(); }
-                finally { Styx.Helpers.Logging.OnLogMessage -= diagnosticListener; Gate?.Stop(); Order.Nodes = previousNodes; Order.CurrentBehavior = previousBehavior; sharedRoot.SetValue(null, previousRoot); BotPoi.Current = previousPoi; ((IDisposable)fixture).Dispose(); }
+                finally
+                {
+                    Styx.Helpers.Logging.OnLogMessage -= diagnosticListener; Gate?.Stop();
+                    Order.Nodes = previousNodes; Order.CurrentBehavior = previousBehavior;
+                    sharedRoot.SetValue(null, previousRoot); BotPoi.Current = previousPoi;
+                    if (ReferenceEquals(lootSingleton.GetValue(null), Loot)) lootSingleton.SetValue(null, previousLoot);
+                    ((IDisposable)fixture).Dispose();
+                }
             }
         }
     }

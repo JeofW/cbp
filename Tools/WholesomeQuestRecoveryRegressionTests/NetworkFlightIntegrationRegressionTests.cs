@@ -64,8 +64,9 @@ public static class NetworkFlightCases {
  static void Check(bool value,string reason){if(!value)throw new InvalidOperationException(reason);}
  public static void Run(){int total=0,passed=0;
   void Case(string name,Action body){total++;try{body();passed++;Console.WriteLine("PASS network to flight: "+name);}catch(Exception e){Console.Error.WriteLine("FAIL network to flight: "+name+": "+e.Message);}}
-  foreach(string mode in new[]{"ready","invalid-timing-ready","invalid-timing-cooldown","missing-client-ready","unknown-readiness","present-aura"}){
-   string scenario=mode;Case(scenario,()=>{
+  foreach(string mode in new[]{"ready","invalid-timing-ready","invalid-timing-cooldown","missing-client-ready","unknown-readiness","present-aura"})
+  foreach(bool acknowledged in new[]{false,true}){
+   string scenario=mode;bool lifted=acknowledged;Case(scenario+(lifted?"/observed-lift-off":"/pending-lift-off"),()=>{
     FlightWaitCases.Configure("takeoff");NetworkEntryCases.Reset();ReadinessReads=0;Lag=0;AllowLag=ReadinessUnknown=false;Remaining=0;
     var memory=Styx.WoWInternals.ObjectManager.Wow;
     if(scenario.StartsWith("invalid-timing"))BitConverter.GetBytes(5000U).CopyTo(memory.Blocks[0x12340000U+11860],68);
@@ -73,9 +74,12 @@ public static class NetworkFlightCases {
     if(scenario=="missing-client-ready")memory.Blocks.Remove(0xC79CF4);
     if(scenario=="unknown-readiness")ReadinessUnknown=true;
     if(scenario=="present-aura"){World.ReadId=id=>id==32223;memory.Blocks.Remove(0xC79CF4);}
+    // Native ascent is an effect, not movement state. Supply the client update
+    // separately, and retain the negative control where that update never comes.
+    World.OnBoundary=stage=>{if(lifted&&stage=="sleep")World.Player.IsFlying=true;};
     Exception escaped=null;try{FlightOwner.MoveTo(new WoWPoint(100,100,50),15);}catch(Exception e){escaped=e;}
-    Check(escaped==null&&World.Commands.Exists(c=>c.StartsWith("towards:"))&&World.PathBuilds==1,
-     "real network reader/admission chain prevented mounted movement: "+escaped?.Message);
+    Check(escaped==null&&World.Commands.Exists(c=>c.StartsWith("towards:"))==lifted&&World.PathBuilds==(lifted?1:0),
+     "network/flight chain violated separately observed lift-off: "+escaped?.Message);
     Check(World.Commands.Exists(c=>c.StartsWith("move-Forward, JumpAscend:")),"takeoff never followed observed mounting");
     bool expectedCast=scenario is "ready" or "invalid-timing-ready" or "missing-client-ready";
     Check(World.Commands.Exists(c=>c.StartsWith("cast:"))==expectedCast,"cooldown/unknown readiness was treated as aura permission");

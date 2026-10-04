@@ -10,7 +10,7 @@ public bool IsSwimming=>(MovementFlags&0x00200000u)!=0;
     internal const string Leaves = """
 namespace Styx.Logic.Profiles{public static class ProfileManager{public static object CurrentProfileSnapshot=new();}}
 namespace Styx.Logic.POI{
- public enum PoiType{None,QuestPickUp,QuestTurnIn,Kill}
+ public enum PoiType{None,QuestPickUp,QuestTurnIn,Kill,Loot,Skin}
  public sealed class BotPoi{public static BotPoi Current=new();public static long CurrentGeneration;public static long CurrentWorkGeneration=>CurrentGeneration;public bool IsWorldSubjectBlacklisted;public PoiType Type;public ulong Guid;public uint Entry;public WoWObject AsObject;}
 }
 namespace Styx.WoWInternals{public static class WoWMovement{public static WoWUnit ActiveMover;}}
