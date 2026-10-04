@@ -524,6 +524,11 @@ public class CollectItemObjective : QuestObjective
         }
     }
 
+    public override bool IsRequiredCombatTarget(WoWUnit unit)
+    {
+        return DonePrerequisites && !IsCompleted && IsValidMobTarget(unit);
+    }
+
     private bool IsValidMobTarget(WoWUnit unit)
     {
         // This predicate establishes a known item source, not attack permission.

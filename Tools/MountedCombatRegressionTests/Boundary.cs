@@ -154,7 +154,7 @@ namespace Styx
 namespace Styx.WoWInternals.WoWObjects
 {
     using Styx.Logic.Pathing;
-    public class WoWObject{public ulong Guid{get;set;}public uint Entry{get;set;}public uint BaseAddress{get;set;}=100;public bool IsValid{get;set;}=true;public virtual bool IsAlive{get;set;}=true;public WoWPoint Location{get;set;}public virtual WoWUnit ToUnit()=>this as WoWUnit;}
+    public class WoWObject{public ulong Guid{get;set;}public uint Entry{get;set;}public uint BaseAddress{get;set;}=100;public bool IsValid{get;set;}=true;public bool CanSelect=true,Attackable=true;public virtual bool IsAlive{get;set;}=true;public WoWPoint Location{get;set;}public virtual WoWUnit ToUnit()=>this as WoWUnit;}
     public class WoWUnit:WoWObject{public bool Dead{get=>!IsAlive;set=>IsAlive=!value;}public bool Combat{get;set;}public bool IsPlayer{get;set;}public bool IsPet{get;set;}public WoWUnit OwnedByUnit{get;set;}public bool TaggedByOther{get;set;}public bool TaggedByMe{get;set;}public bool InLineOfSpellSight{get;set;}=true;public string Name{get;set;}="controlled";public int Level{get;set;}=60;public int Race{get;set;}public Styx.WoWClass Class{get;set;}=Styx.WoWClass.Paladin;public uint FactionId{get;set;}public double Distance=>Location.Distance(Styx.StyxWoW.Me?.Location??WoWPoint.Zero);public double DistanceSqr=>Location.DistanceSqr(Styx.StyxWoW.Me?.Location??WoWPoint.Zero);public void Target(){if(Styx.StyxWoW.Me!=null)Styx.StyxWoW.Me.CurrentTarget=this;Harness.Control.OnTarget?.Invoke(this);}}
     public class WoWPlayer:WoWUnit{}
     public partial class LocalPlayer:WoWUnit
@@ -209,7 +209,7 @@ namespace Styx.Helpers
     public sealed class LevelbotSettings{public static LevelbotSettings Instance{get;}=new();public bool GroundMountFarmingMode{get;set;}}
     public sealed class CharacterSettings{public static CharacterSettings Instance{get;}=new();public float PullDistance{get;set;}=30;}
     public static class Logging{public static void Write(string f,params object[] a){}public static void WriteDebug(string f,params object[] a){}public static void WriteDiagnostic(string f,params object[] a){}public static void WriteException(Exception e){}}
-    public static class Blacklist{public static void Add(ulong guid,TimeSpan duration){}}
+    public static class Blacklist{public static void Add(ulong guid,TimeSpan duration){}public static bool Contains(ulong guid)=>false;}
 }
 
 namespace Styx.Logic.BehaviorTree
@@ -221,6 +221,7 @@ namespace Styx.Logic.Combat
 {
     public static partial class RecoveryActions{public static void RethrowControlFlow(Exception e){if(e is OperationCanceledException||e is ThreadInterruptedException||e is Styx.InvalidProcessException||e is Styx.InvalidExecutorException)throw e;}}
     public static class RoutineManager{public static Styx.Combat.CombatRoutine.CombatRoutine Current{get;set;}=new();}
+    public static class GroupCombatSafety{public static bool MayAttack(Styx.WoWInternals.WoWObjects.WoWUnit target)=>target!=null&&target.IsAlive&&!target.IsPlayer;}
 }
 
 namespace Bots.Quest.QuestOrder

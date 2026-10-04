@@ -149,6 +149,66 @@ namespace Styx.Logic
             }
         }
 
+        /// <summary>
+        /// Complete raw build12340 membership for prepared-action admission. This
+        /// reads no Lua, resolves no names, and includes unloaded group members.
+        /// Missing bytes are UNKNOWN, never proof that a player is outside the group.
+        /// </summary>
+        public static bool TryReadMemberGuids(LocalPlayer player, out ulong[] members)
+        {
+            members = Array.Empty<ulong>();
+            var memory = ObjectManager.Wow;
+            if (player == null || memory == null || !ReferenceEquals(player, StyxWoW.Me)) return false;
+            try
+            {
+                using var uncached = memory.TemporaryCacheState(false);
+                ulong owner = player.Guid;
+                uint address = player.BaseAddress, map = player.MapId;
+                bool Current() => owner != 0 && address != 0 && ReferenceEquals(memory, ObjectManager.Wow)
+                    && ReferenceEquals(player, StyxWoW.Me) && player.IsValid && player.Guid == owner
+                    && player.DescriptorGuid == owner && player.BaseAddress == address && player.MapId == map;
+                if (!Current()) return false;
+                // Same original addresses used by LocalPlayer.GetPartyMemberGuid,
+                // GetRaidMemberGuid and NumRaidMembers; bulk reads require every byte.
+                byte[] counts = memory.ReadBytes(12498440, 4);
+                if (counts == null || counts.Length != 4) return false;
+                int raidCount = BitConverter.ToInt32(counts, 0);
+                if (raidCount < 0 || raidCount > 40) return false;
+                uint vectorAddress = raidCount == 0 ? 12392776u : 12498280u;
+                int vectorSize = raidCount == 0 ? 32 : 160;
+                byte[] vector = memory.ReadBytes(vectorAddress, vectorSize);
+                if (vector == null || vector.Length != vectorSize) return false;
+                var guids = new HashSet<ulong>();
+                if (raidCount == 0) guids.Add(owner);
+                for (int index = 0; index < (raidCount == 0 ? 4 : 40); index++)
+                {
+                    ulong guid;
+                    if (raidCount == 0) guid = BitConverter.ToUInt64(vector, index * 8);
+                    else
+                    {
+                        uint pointer = BitConverter.ToUInt32(vector, index * 4);
+                        if (pointer == 0) continue;
+                        if (pointer > uint.MaxValue - 7) return false;
+                        byte[] value = memory.ReadBytes(pointer, 8);
+                        if (value == null || value.Length != 8) return false;
+                        guid = BitConverter.ToUInt64(value, 0);
+                        if (guid == 0) return false;
+                    }
+                    if (guid != 0 && !guids.Add(guid)) return false;
+                }
+                if (!guids.Contains(owner) || raidCount > 0 && guids.Count != raidCount
+                    || !Current() || !counts.SequenceEqual(memory.ReadBytes(12498440, 4))
+                    || !vector.SequenceEqual(memory.ReadBytes(vectorAddress, vectorSize))) return false;
+                members = guids.OrderBy(guid => guid).ToArray();
+                return Current();
+            }
+            catch (Exception error)
+            {
+                RecoveryActions.RethrowControlFlow(error);
+                return false;
+            }
+        }
+
         private static bool SetUnknown(out ulong value) { value = 0; return false; }
     }
 }

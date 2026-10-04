@@ -10,6 +10,11 @@ namespace Singular.Helpers
             {
                 { "Consecration", 8f },
                 { "Divine Storm", 8f },
+                // Original 3.3.5 melee chain selection searches five yards from
+                // its primary recipient (TrinityCore Spell::SearchChainTargets).
+                { "Cleave", 5f },
+                { "Hammer of the Righteous", 5f },
+                { "Seal of Command", 5f },
                 { "Holy Wrath", 10f },
                 { "Thunder Clap", 8f },
                 { "Whirlwind", 8f },

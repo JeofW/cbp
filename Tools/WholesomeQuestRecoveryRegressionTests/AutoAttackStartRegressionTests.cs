@@ -48,7 +48,8 @@ internal static class AutoAttackStartRegressionTests
                 finally { luaApi.GetField("Observe")!.SetValue(null, null); safety.GetField("DuringCheck")!.SetValue(null, null); }
             }
             void Scenario(bool nativeActive, bool observedActive, bool autoShot, int pulses, bool safe = true,
-                bool duringSafety = false, bool pet = false, bool includePet = false, bool petMatches = false)
+                bool duringSafety = false, bool pet = false, bool includePet = false, bool petMatches = false,
+                string finalState = "npc")
             {
                 using var session = lua.BeginSession("nativeActive=" + (nativeActive ? "true" : "false") + "\n" + Setup);
                 List<string> Execute(string script)
@@ -58,6 +59,7 @@ internal static class AutoAttackStartRegressionTests
                     return result.Values;
                 }
                 int requests = 0;
+                Execute("finalState='" + finalState + "'");
                 luaApi.GetField("Observe")!.SetValue(null, new Action<string>(script => { requests++; Execute(script); }));
                 safety.GetField("Allowed")!.SetValue(null, safe);
                 if (duringSafety) safety.GetField("DuringCheck")!.SetValue(null, new Action(() => Execute("nativeActive=true")));
@@ -67,7 +69,8 @@ internal static class AutoAttackStartRegressionTests
                 bool alreadyStarted = nativeActive || duringSafety && expectedRequests > 0;
                 var native = Execute("return starts,stops,nativeActive and 1 or 0");
                 Check(requests == expectedRequests, "managed startup/pet policy changed its request count");
-                Check(native.SequenceEqual(new[] { !alreadyStarted && expectedRequests > 0 ? "1" : "0", "0", alreadyStarted || expectedRequests > 0 ? "1" : "0" }),
+                bool nativePermitted = finalState == "npc" || finalState == "outdoor-player";
+                Check(native.SequenceEqual(new[] { !alreadyStarted && expectedRequests > 0 && nativePermitted ? "1" : "0", "0", alreadyStarted || expectedRequests > 0 && nativePermitted ? "1" : "0" }),
                     "native starts/stops/active=" + string.Join("/", native) + "; stale startup must not toggle an active attack off");
                 Check(counts[0] == pulses, "startup swallowed the remaining spell rotation");
                 Check(counts[1] == (safe && pet && includePet && !petMatches ? pulses : 0), "pet attack admission changed");
@@ -92,6 +95,8 @@ internal static class AutoAttackStartRegressionTests
             Case("different pet target is still assigned", () => Scenario(false, false, false, 1, pet: true, includePet: true));
             Case("matching pet target is left alone", () => Scenario(false, false, false, 1, pet: true, includePet: true, petMatches: true));
             Case("pet inclusion remains optional", () => Scenario(false, false, false, 1, pet: true));
+            foreach (string finalState in new[] { "instance-player", "raid-instance-player", "party-player", "raid-player", "target-replaced", "actor-replaced", "outdoor-player" })
+                Case("native startup recipient " + finalState, () => Scenario(false, false, false, 1, finalState: finalState));
             Case("legacy explicit toggle retains its own contract", () =>
             {
                 using var session = lua.BeginSession("nativeActive=true\n" + Setup);
@@ -137,6 +142,13 @@ public static class GroupCombatSafety {
  public static bool Allowed=true;public static System.Action DuringCheck;
  public static bool MayAttackCurrentTarget(){var a=DuringCheck;DuringCheck=null;a?.Invoke();return Allowed;}
 }
+public static class CombatAttackSafety {
+ public static bool TryStartAttack(Unit target){
+  var type=typeof(Styx.StyxWoW).Assembly.GetType("Styx.Logic.Combat.CombatAttackSafety",true);
+  var script=(string)type.GetMethod("BuildAttackLua",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)
+   .Invoke(null,new object[]{1UL,2UL,0UL,"target","StartAttack()",false});Lua.DoString(script);return true;
+ }
+}
 public static class PetManager { public static int Attacks;public static void CastPetAction(string name){if(name!="Attack")throw new InvalidOperationException("Unexpected pet command");Attacks++;} }
 public static class Probe {
  public static int[] Run(bool observed,bool autoShot,int pulses,bool pet,bool includePet,bool petMatches){
@@ -160,5 +172,17 @@ end
 function StartAttack()
  if not nativeActive then AttackTarget() end
 end
+finalState='npc'
+function UnitGUID(unit)
+ if unit=='player' then return finalState=='actor-replaced' and '0x0000000000000099' or '0x0000000000000001' end
+ if unit=='target' then return finalState=='target-replaced' and '0x0000000000000099' or '0x0000000000000002' end
+ if unit=='party1' or unit=='raid2' then return '0x0000000000000002' end
+ if unit=='raid1' then return '0x0000000000000001' end
+end
+function UnitIsPlayer(unit) return finalState~='npc' and finalState~='target-replaced' and finalState~='actor-replaced' end
+function UnitCanAttack(from,to) return true end
+function IsInInstance() if finalState=='instance-player' then return true,'party' elseif finalState=='raid-instance-player' then return true,'raid' else return false,'none' end end
+function GetNumPartyMembers() return finalState=='party-player' and 1 or 0 end
+function GetNumRaidMembers() return finalState=='raid-player' and 2 or 0 end
 """;
 }

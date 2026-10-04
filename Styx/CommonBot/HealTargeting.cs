@@ -11,6 +11,7 @@ namespace Styx.CommonBot
     public class HealTargeting : Targeting
     {
         private static HealTargeting _instance;
+        protected override bool SelectsCombatTargets => false;
 
         public new static HealTargeting Instance
         {

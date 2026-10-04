@@ -74,6 +74,11 @@ quest_parts=[
     take("Bots/Quest/QuestBot.cs","internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType)"),
     take("Bots/Quest/QuestBot.cs","internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType, bool mounted)"),
 ]
+for marker in ["internal static bool HasRequiredCombatTarget()", "private static Composite CreateRequiredTargetingBehavior()"]:
+    if marker in text("Bots/Quest/QuestBot.cs"):
+        quest_parts.append(take("Bots/Quest/QuestBot.cs", marker))
+required_objective = "public override bool IsRequiredCombatTarget(WoWUnit unit)"
+grind_required = take("Bots/Quest/Objectives/GrindObjective.cs", required_objective) if required_objective in text("Bots/Quest/Objectives/GrindObjective.cs") else "public override bool IsRequiredCombatTarget(WoWUnit unit)=>DonePrerequisites&&!IsCompleted&&IsMobObjective(unit);"
 singular_parts=[
     take("runtime-snapshot/Routines/Singular wotlk/SingularRoutine.cs","private static bool IsMounted"),
     take("runtime-snapshot/Routines/Singular wotlk/SingularRoutine.cs","public bool CreateBehaviors()"),
@@ -88,6 +93,7 @@ using Singular.Dynamics;using Singular.Helpers;using Singular.Managers;using Sin
 using Styx;using Styx.Combat.CombatRoutine;using Styx.Helpers;using Styx.Logic;using Styx.Logic.BehaviorTree;using Styx.Logic.Combat;using Styx.Logic.Pathing;using Styx.Logic.POI;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using TreeSharp;
 """
 generated=header+f"""
+namespace Bots.Quest.Objectives{{public sealed partial class GrindObjective{{{grind_required}}}}}
 namespace Bots.Quest{{public partial class QuestBot{{public static Func<PrioritySelector> RootFactory;public static PrioritySelector CreateRoot()=>RootFactory?.Invoke()??new PrioritySelector();{chr(10).join(quest_parts)}}}}}
 namespace Bots.Grind{{public partial class LevelBot{{{chr(10).join(level_parts)}}}}}
 namespace Bots.Quest.QuestOrder{{public partial class ForcedQuestTurnIn{{{patrol_member}}}}}

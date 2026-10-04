@@ -11,6 +11,7 @@ using Styx.Logic.Profiles;
 using Styx.Logic.Profiles.Quest;
 using Styx.Logic.Questing;
 using Styx.WoWInternals;
+using Styx.WoWInternals.WoWObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,6 +69,10 @@ public abstract class QuestObjective : IDisposable, IEquatable<QuestObjective>
     }
 
     public abstract Composite CreateBranch();
+
+    // Only the active typed objective can establish required combat. Ordinary
+    // movement, gossip, game objects and scripted work grant no pull permission.
+    public virtual bool IsRequiredCombatTarget(WoWUnit unit) => false;
 
     public abstract WoWPoint GetObjectiveLocation();
 

@@ -1055,6 +1055,9 @@ namespace Styx.Logic.Combat
 			{
 				var observation = CaptureSpellObservation();
 				PrepareCooldownContext(observation);
+				var combatAdmission = CombatRecipientSafety.PrepareSpell(spellId, targetGuid);
+				if (combatAdmission == null || !combatAdmission()) return false;
+				observation.RequireCurrent();
 				Logging.WriteDebug("Spell_C::CastSpell({0}, 0, 0x{1:X}, 0)", spellId, targetGuid);
 				lock (executor.AssemblyLock)
 				{
@@ -1073,7 +1076,8 @@ namespace Styx.Logic.Combat
 					executor.AddLine("add esp, 0x20");         // cdecl cleanup: 8 * 4 = 32 = 0x20
 					executor.AddLine("retn");
 					observation.RequireCurrent();
-					if (!RecoveryActions.BeforeSpellSubmission(spellId, targetGuid)) return false;
+					if (!RecoveryActions.BeforeSpellSubmission(spellId, targetGuid) || !combatAdmission()) return false;
+					observation.RequireCurrent();
 					executor.Execute();
 				}
 

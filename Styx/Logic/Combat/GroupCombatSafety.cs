@@ -10,11 +10,28 @@ namespace Styx.Logic.Combat
     /// </summary>
     public static class GroupCombatSafety
     {
+        public static bool IsInInstance => StyxWoW.Me != null
+            && (StyxWoW.Me.CurrentMap.IsDungeon || StyxWoW.Me.CurrentMap.IsRaid);
+
         public static bool IsRestricted =>
             string.Equals(BotManager.Current?.Name, "Combat Bot", StringComparison.OrdinalIgnoreCase)
-            && StyxWoW.Me != null && StyxWoW.Me.CurrentMap.IsDungeon;
+            && IsInInstance;
 
-        public static bool MayAttack(WoWUnit target) => target != null
+        /// <summary>
+        /// Combat membership is independent of current faction/reaction. Instance
+        /// players are protected even when they are not in the visible group roster.
+        /// Membership uses complete raw observations and never queries Lua.
+        /// </summary>
+        public static bool IsProtectedPlayer(WoWUnit target)
+        {
+            if (target == null || !(target is WoWPlayer || target.IsPlayer)) return false;
+            var me = StyxWoW.Me;
+            return me == null || target.IsMe || IsInInstance
+                || !GroupObservation.TryReadMemberGuids(me, out var members) || members.Contains(target.Guid);
+        }
+
+        public static bool MayAttack(WoWUnit target) => target != null && target.IsValid && target.IsAlive
+            && !IsProtectedPlayer(target)
             && (!IsRestricted || IsEngagedWithGroup(target));
 
         public static bool MayAttackCurrentTarget() => MayAttack(StyxWoW.Me?.CurrentTarget);
@@ -23,7 +40,7 @@ namespace Styx.Logic.Combat
         {
             var me = StyxWoW.Me;
             if (me == null || !me.IsValid || !me.IsAlive
-                || target == null || !target.IsValid || !target.IsAlive
+                || target == null || !target.IsValid || !target.IsAlive || IsProtectedPlayer(target)
                 || target.IsFriendly || !target.CanSelect || !target.Attackable || !target.Combat)
                 return false;
 

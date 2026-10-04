@@ -9,7 +9,8 @@ internal enum GroundDismountState { Rejected, Pending, Submitted, Expired }
 
 internal readonly record struct GroundMotion(WoWPoint Position, bool Mounted, bool Flying,
     bool Falling, bool Swimming, bool OnTransport, bool Immobilized, bool Supported,
-    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false);
+    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false,
+    bool InteractionApproachReady = false);
 
 internal interface IGroundTransitionRuntime
 {
@@ -47,6 +48,7 @@ internal sealed class GroundTransitionMachine
     private int _replans;
     private int _flightSearchBatches;
     private double _flightSearchStarted = double.NaN;
+    private double _interactionStopStarted = double.NaN;
     private bool _dismountPending, _descent, _groundHandoff, _unavailable;
     internal string Phase { get; private set; } = "unobserved";
 
@@ -104,6 +106,16 @@ internal sealed class GroundTransitionMachine
             return Wait("landing", "falling-is-not-grounded-acknowledgement", observation, stop: true);
         if (observation.Immobilized)
             return Wait("blocked", "root-or-stun-prevents-owned-transition", observation, stop: true);
+
+        if (_purpose == GroundTransitionPurpose.Interaction && observation.InteractionApproachReady
+            && !observation.Flying && !observation.Mounted && observation.Supported)
+        {
+            if (double.IsNaN(_interactionStopStarted)) _interactionStopStarted = now;
+            if (now - _interactionStopStarted >= 5)
+                return Unavailable("interaction-stop-acknowledgement-timeout", observation, now);
+            return Wait("interaction-stop", "usable-range-and-sight; awaiting-observed-stop", observation, stop: true);
+        }
+        _interactionStopStarted = double.NaN;
 
         // A useful ground departure can expose a new flight opportunity. The
         // runtime bounds these reviews by time and observed displacement; this
@@ -322,6 +334,7 @@ internal sealed class GroundTransitionMachine
         _descent = _groundHandoff = _dismountPending = _unavailable = false;
         _replans = 0;
         _flightSearchBatches = 0; _flightSearchStarted = double.NaN;
+        _interactionStopStarted = double.NaN;
         _started = _lastProgress = now;
         _lastCommand = double.NegativeInfinity;
         _progressOrigin = observation.Position;

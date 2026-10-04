@@ -71,6 +71,7 @@ jobs:
             @{project='ElevatorSafetyRegressionTests'; suite='Elevator'},
             @{project='PaladinDecisionRegressionTests'; suite='PaladinDecisions'},
             @{project='GroupEngagementRegressionTests'; suite='GroupEngagement'},
+            @{project='CombatProtectionFocusedTests'; suite='CombatProtectionFocusedTests'},
             @{project='PaladinSupportRegressionTests'; suite='PaladinSupport'},
             @{project='WholesomeSaleRegressionTests'; suite='WholesomeSale'},
             @{project='QuestLogObservationRegressionTests'; suite='QuestLogObservationRegressionTests'},

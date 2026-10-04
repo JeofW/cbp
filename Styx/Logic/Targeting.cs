@@ -220,13 +220,27 @@ namespace Styx.Logic
             }
         }
 
+        protected virtual bool SelectsCombatTargets => true;
+
+        private bool IsAllowedCombatCandidate(WoWObject candidate)
+        {
+            if (!SelectsCombatTargets) return true;
+            using var uncached = ObjectManager.Wow?.TemporaryCacheState(false);
+            return candidate is WoWUnit unit && unit.IsValid && unit.IsAlive && unit.Guid != 0
+                && unit.DescriptorGuid == unit.Guid && !GroupCombatSafety.IsProtectedPlayer(unit);
+        }
+
         protected List<WoWObject> ObjectList
         {
             get
             {
                 if (_observationFailure != null)
                     throw new ObservationUnavailableException("targeting", _observationFailure);
-                return this._objectList;
+                // A retained wrapper may change after publication or during a
+                // callback. Every combat consumer sees current identity and
+                // membership; healing and loot retain their separate policies.
+                return SelectsCombatTargets ? this._objectList.Where(IsAllowedCombatCandidate).ToList()
+                    : this._objectList;
             }
             private set { this._objectList = value; _observationFailure = null; }
         }
@@ -430,7 +444,11 @@ namespace Styx.Logic
                         {
                             Targeting._getScoreFunc = new Func<TargetPriority, double>(GetScore);
                         }
-                        list = source2.OrderByDescending(Targeting._getScoreFunc).Take(this.MaxTargets).ToList<TargetPriority>();
+                        // Include/weight callbacks are extensible. They cannot
+                        // reinsert protected players or consume the retained
+                        // target limit before a legitimate NPC is considered.
+                        list = source2.Where(target => IsAllowedCombatCandidate(target.Object))
+                            .OrderByDescending(Targeting._getScoreFunc).Take(this.MaxTargets).ToList<TargetPriority>();
                         IEnumerable<TargetPriority> source3 = list;
                         if (Targeting._targetToObjectSelector == null)
                         {

@@ -36,7 +36,60 @@ Test("AoE does not veto unrelated enemies outside effect range",()=>{var fresh=E
 Test("eligibility is revoked when enemy resets between decisions",()=>{var e=Enemy(true);e.IsTargetingMyPartyMember=true;Check(e.IsEligibleDungeonCombatTarget(),"setup");e.Combat=false;Check(!e.IsEligibleDungeonCombatTarget(),"permission survived reset");});
 Test("departed member's historical threat is not group evidence",()=>{var e=Enemy(true);var p=Member();e.Threats[p.Guid]=1;StyxWoW.Me.PartyMembers.Clear();Check(!e.IsEligibleDungeonCombatTarget(),"left roster retained permission");});
 Test("null target is denied",()=>Check(!Unit.IsEligibleDungeonCombatTarget(null!),"null allowed"));
+foreach (string bot in new[] { "Combat Bot", "Wholesome Auto Quest", "Grind Bot" })
+    foreach (bool raid in new[] { false, true })
+    {
+        Test("hostile instance player is never a combat target: " + bot + "/raid=" + raid, () =>
+        {
+            BotManager.Current.Name = bot;
+            StyxWoW.Me.CurrentMap.IsDungeon = !raid; StyxWoW.Me.CurrentMap.IsRaid = raid;
+            var controlled = new WoWPlayer { Guid = 40, Combat = true, Aggro = true, IsTargetingMyPartyMember = true };
+            ObjectManager.Objects.Add(controlled);
+            Check(!controlled.IsEligibleDungeonCombatTarget(), "hostile player became an eligible instance combat target");
+            Check(!Unit.IsCombatActionSafe("Crusader Strike", controlled), "single-target attack admitted an instance player");
+        });
+        foreach (string spell in new[] { "Consecration", "Divine Storm", "Holy Wrath", "Cleave", "Hammer of the Righteous", "Seal of Command" })
+            Test("protected player vetoes secondary damage: " + bot + "/raid=" + raid + "/" + spell, () =>
+            {
+                BotManager.Current.Name = bot;
+                StyxWoW.Me.CurrentMap.IsDungeon = !raid; StyxWoW.Me.CurrentMap.IsRaid = raid;
+                var active = Enemy(true); active.Aggro = true;
+                var controlled = new WoWPlayer { Guid = 40, Combat = true, Aggro = true, IsTargetingMyPartyMember = true,
+                    Location = new WoWPoint(2, 0, 0), OwnedByRoot = active };
+                StyxWoW.Me.PartyMembers.Add(controlled); ObjectManager.Objects.Add(controlled);
+                Check(!Unit.IsAreaEffectSafe(spell, active), "secondary effect ignored a hostile controlled player with an owner");
+            });
+    }
+Test("outdoor charmed party member cannot become an enemy", () =>
+{
+    StyxWoW.Me.CurrentMap.IsDungeon = false; var member = Member(); member.IsFriendly = false; member.Aggro = true;
+    ObjectManager.Objects.Add(member);
+    Check(!member.IsEligibleDungeonCombatTarget(), "reaction change overrode actual party membership");
+});
+Test("friendly support remains allowed for instance members", () =>
+{
+    var member = Member(); ObjectManager.Objects.Add(member);
+    Check(Unit.IsCombatActionSafe("Holy Light", member), "player protection blocked friendly support");
+});
+Test("three mobs engaged by the tank are safe Consecration recipients without player aggro", () =>
+{
+    var tank = Member(true);
+    for (int n = 0; n < 3; n++) { var mob = Enemy(true); mob.Guid += (ulong)n; mob.Threats[tank.Guid] = 1; }
+    Check(Unit.UnfriendlyUnitsWithin(8).Count() == 3 && Unit.IsAreaEffectSafe("Consecration", StyxWoW.Me),
+        "group threat did not authorize the nearby pack");
+});
+Test("unavailable roster cannot authorize attacking an outdoor player", () =>
+{
+    StyxWoW.Me.CurrentMap.IsDungeon = false; GroupObservation.Unavailable = true;
+    var player = new WoWPlayer { Guid = 40, Combat = true, Aggro = true };
+    Check(!player.IsEligibleDungeonCombatTarget(), "unknown membership became proof of a non-party player");
+});
+Test("complete solo roster preserves ordinary outdoor player targeting", () =>
+{
+    StyxWoW.Me.CurrentMap.IsDungeon = false; StyxWoW.Me.IsInParty = false;
+    Check(new WoWPlayer { Guid = 40, Combat = true, Aggro = true }.IsEligibleDungeonCombatTarget(), "player protection prohibited ordinary outdoor PvP");
+});
 var failed=new List<string>();
-foreach(var t in cases){StyxWoW.Me=new LocalPlayer{Guid=1,IsFriendly=true};BotManager.Current=new();RaFHelper.Leader=null;Group.Tanks.Clear();ObjectManager.Objects.Clear();try{t.Run();Console.WriteLine("PASS engagement: "+t.Name);}catch(Exception e){failed.Add(t.Name+": "+e.Message);Console.Error.WriteLine("FAIL engagement: "+failed[^1]);}}
+foreach(var t in cases){StyxWoW.Me=new LocalPlayer{Guid=1,IsFriendly=true};BotManager.Current=new();RaFHelper.Leader=null;GroupObservation.Unavailable=false;Group.Tanks.Clear();ObjectManager.Objects.Clear();try{t.Run();Console.WriteLine("PASS engagement: "+t.Name);}catch(Exception e){failed.Add(t.Name+": "+e.Message);Console.Error.WriteLine("FAIL engagement: "+failed[^1]);}}
 Console.WriteLine($"Group engagement: {cases.Count-failed.Count}/{cases.Count}; actual linked Unit/policy; controlled observations; no client attached.");
 if(failed.Count!=0)Environment.ExitCode=1;

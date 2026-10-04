@@ -70,6 +70,8 @@ namespace Styx
 					TreeRoot.VerifyPulseOwner(owner, workerOwned);
 					stageTimer.Restart();
 					RecoveryActions.Pulse();
+					TreeRoot.VerifyPulseOwner(owner, workerOwned);
+					CombatAttackSafety.StopUnsafeAttacks();
 					long recoveryMilliseconds = stageTimer.ElapsedMilliseconds;
 
 				TreeRoot.VerifyPulseOwner(owner, workerOwned);

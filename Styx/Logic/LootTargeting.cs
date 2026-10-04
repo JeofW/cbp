@@ -13,6 +13,7 @@ namespace Styx.Logic
     public class LootTargeting : Targeting
     {
         private static LootTargeting _instance;
+        protected override bool SelectsCombatTargets => false;
         // Tracks GUIDs we've already processed so the bot doesn't re-attempt them.
         // These are public so plugins/bots can register entries externally.
         public Dictionary<ulong, DateTime> AlreadySkinned = new Dictionary<ulong, DateTime>();

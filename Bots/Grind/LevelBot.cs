@@ -225,8 +225,8 @@ namespace Bots.Grind
                             // combat or revoke its still-live destination. Keep the
                             // self-heal/combat branch reachable while selection recovers.
                             ctx => Targeting.Instance.TargetList.Count == 0
-                                && (!IsPlayerOrPetInCombat()
-                                    || BotPoi.Current.AsObject is not WoWUnit { IsValid: true, IsAlive: true }),
+                                && (BotPoi.Current.AsObject is not WoWUnit { IsValid: true, IsAlive: true } retained
+                                    || Blacklist.Contains(retained.Guid) || !GroupCombatSafety.MayAttack(retained)),
                             new ActionClearPoi("No targets in target list - POI.Kill Sanity Checks")
                         ),
                         new Decorator(

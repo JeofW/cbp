@@ -257,20 +257,28 @@ namespace Styx.Logic.Combat
         {
             private readonly Func<bool> _admitted;
             private ActionLease _lease;
+            private long _version;
             internal UnmountedActionGuard(Composite child, Func<bool> admitted) : base(child) => _admitted = admitted;
 
             public override void Start(object context)
             {
+                unchecked { _version++; }
                 _lease = CaptureActionLease(null, _admitted);
                 base.Start(context);
             }
 
             public override RunStatus Tick(object context)
             {
-                if (_lease?.Current == true)
+                var lease = _lease;
+                long version = _version;
+                if (lease?.Current == true)
                 {
                     RunStatus result = base.Tick(context);
-                    if (_lease?.Current == true) return result;
+                    // Composite.Tick invokes Stop on terminal results. That
+                    // normal cleanup must not turn a successful pull into a
+                    // failure and let the parent execute a travel fallback.
+                    if (_version == version && lease.Current
+                        && (ReferenceEquals(_lease, lease) || result != RunStatus.Running)) return result;
                 }
                 LastStatus = RunStatus.Failure;
                 base.Stop(context);
@@ -279,6 +287,10 @@ namespace Styx.Logic.Combat
 
             public override void Stop(object context)
             {
+                // An explicit stop of a running/starting lifetime still revokes
+                // it; a successor Start gets a different version independently.
+                if (!LastStatus.HasValue || LastStatus == RunStatus.Running)
+                    unchecked { _version++; }
                 _lease = null;
                 base.Stop(context);
             }

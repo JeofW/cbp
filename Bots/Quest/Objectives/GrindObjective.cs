@@ -232,6 +232,11 @@ public class GrindObjective : QuestObjective
         return this.QuestArea.Hotspots.Count > 0;
     }
 
+    public override bool IsRequiredCombatTarget(WoWUnit unit)
+    {
+        return DonePrerequisites && !IsCompleted && IsMobObjective(unit);
+    }
+
     private bool IsMobObjective(WoWUnit unit)
     {
         if (unit is WoWPlayer)

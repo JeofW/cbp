@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Styx;
 using Styx.Logic;
+using Styx.Logic.Combat;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
 using Styx.WoWInternals;
@@ -18,11 +19,13 @@ namespace CommonBehaviors.Actions
     {
         private readonly Func<bool> canContinue;
         private readonly bool clearNavigation;
+        private readonly bool requiredMountedTarget;
 
-        internal OwnedTargetHandoff(Func<bool> canContinue, bool clearNavigation = false)
+        internal OwnedTargetHandoff(Func<bool> canContinue, bool clearNavigation = false, bool requiredMountedTarget = false)
         {
             this.canContinue = canContinue ?? throw new ArgumentNullException(nameof(canContinue));
             this.clearNavigation = clearNavigation;
+            this.requiredMountedTarget = requiredMountedTarget;
         }
 
         protected override IEnumerable<RunStatus> Execute(object context)
@@ -47,7 +50,8 @@ namespace CommonBehaviors.Actions
 
             bool ParticipantsCurrent() => actor != null && actorGuid != 0 && actor.IsValid && actor.IsAlive
                 && ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == actorGuid && actor.MapId == map
-                && !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true)
+                && (requiredMountedTarget && MountedCombatTransition.IsMountedOrFlying(actor)
+                    || !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true))
                 && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport
                 && mover != null && moverGuid != 0 && mover.IsValid && mover.Guid == moverGuid
                 && ReferenceEquals(WoWMovement.ActiveMover, mover)
@@ -57,7 +61,9 @@ namespace CommonBehaviors.Actions
             bool InRange()
             {
                 if (!ParticipantsCurrent()) return false;
-                double distance = selected.Distance, range = Targeting.PullDistance;
+                double distance = requiredMountedTarget && MountedCombatTransition.IsMountedOrFlying(actor)
+                    ? Math.Sqrt(actor.Location.Distance2DSqr(selected.Location)) : selected.Distance;
+                double range = Targeting.PullDistance;
                 return double.IsFinite(distance) && distance >= 0 && double.IsFinite(range) && range >= 0
                     && distance <= range && ParticipantsCurrent();
             }

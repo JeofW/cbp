@@ -106,6 +106,16 @@ internal static class Program
         Case("process loss propagates from resumed attack admission",ProcessLossPropagates);
         Case("executor loss propagates from resumed attack admission",ExecutorLossPropagates);
         Case("session Stop propagates from resumed attack admission",SessionStopPropagates);
+        foreach(bool resumed in new[]{false,true}) foreach(var result in new[]{RunStatus.Success,RunStatus.Failure})
+            Case("terminal attack guard preserves child outcome / "+resumed+" / "+result,()=>
+            {
+                World(false,false,false,true);
+                var child=new CountingLeaf(tick=>resumed&&tick==1?RunStatus.Running:result);
+                var guard=MountedCombatTransition.GuardAction(child,()=>true);
+                var first=Tick(guard);
+                if(resumed){Check(first==RunStatus.Running,"controlled child did not yield first");return Tick(guard,false)==result;}
+                return first==result;
+            });
         Console.WriteLine($"Mounted combat scenarios: {passed}/{passed+failed+unexpected}; assertions={failed}; unexpected={unexpected}; exact extracted combat/root/routine branches + actual actions/helper; controlled GroundTransition/world leaves; no game/native calls.");
         if(failed+unexpected!=0)Environment.ExitCode=1;
     }

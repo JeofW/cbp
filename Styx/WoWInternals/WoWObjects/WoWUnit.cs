@@ -1502,6 +1502,39 @@ namespace Styx.WoWInternals.WoWObjects
             internal uint ActorAddress, ReceiverAddress, OtherAddress, Frame;
             internal WoWUnitReaction Value;
             internal string? Failure;
+            internal ReactionRelation ActorRelation = null!, ReceiverRelation = null!, OtherRelation = null!;
+        }
+
+        // Native faction/charm changes can occur within one render frame, and a
+        // cached wrapper can survive address reuse. None of these observations
+        // performs Lua or a native query, including at the prepared ASM boundary.
+        private sealed class ReactionRelation
+        {
+            private readonly WoWUnit _unit;
+            private readonly ulong _descriptor, _charmer, _summoner;
+            private readonly uint _type, _faction;
+            private readonly bool _controlled;
+            internal ReactionRelation(WoWUnit unit)
+            {
+                using var uncached = ObjectManager.Wow?.TemporaryCacheState(false);
+                _unit = unit; _descriptor = unit.DescriptorGuid; _type = (uint)unit.Type;
+                _faction = unit.FactionId; _charmer = unit.CharmedByGuid;
+                _summoner = unit.SummonedByGuid; _controlled = unit.PlayerControlled;
+            }
+            internal bool Current
+            {
+                get
+                {
+                    using var uncached = ObjectManager.Wow?.TemporaryCacheState(false);
+                    return _descriptor != 0 && _descriptor == _unit.Guid
+                        && _unit.DescriptorGuid == _descriptor && (uint)_unit.Type == _type
+                        && _unit.FactionId == _faction && _unit.CharmedByGuid == _charmer
+                        && _unit.SummonedByGuid == _summoner && _unit.PlayerControlled == _controlled;
+                }
+            }
+            internal bool Same(ReactionRelation other) => ReferenceEquals(_unit, other._unit)
+                && _descriptor == other._descriptor && _type == other._type && _faction == other._faction
+                && _charmer == other._charmer && _summoner == other._summoner && _controlled == other._controlled;
         }
 
         private ReactionObservation ReactionCapture(WoWUnit other)
@@ -1522,7 +1555,9 @@ namespace Styx.WoWInternals.WoWObjects
                 ActorGuid = actor.Guid, ActorAddress = actor.BaseAddress,
                 ReceiverGuid = Guid, ReceiverAddress = BaseAddress,
                 OtherGuid = other.Guid, OtherAddress = other.BaseAddress,
-                Frame = executor.FrameCount
+                Frame = executor.FrameCount,
+                ActorRelation = new ReactionRelation(actor), ReceiverRelation = new ReactionRelation(this),
+                OtherRelation = new ReactionRelation(other)
             };
             ReactionRequireCurrent(observation);
             return observation;
@@ -1544,7 +1579,8 @@ namespace Styx.WoWInternals.WoWObjects
                 !observation.Receiver.IsValid || observation.Receiver.Guid != observation.ReceiverGuid ||
                 observation.ReceiverGuid == 0 || observation.Receiver.BaseAddress != observation.ReceiverAddress || observation.ReceiverAddress == 0 ||
                 !observation.Other.IsValid || observation.Other.Guid != observation.OtherGuid ||
-                observation.OtherGuid == 0 || observation.Other.BaseAddress != observation.OtherAddress || observation.OtherAddress == 0)
+                observation.OtherGuid == 0 || observation.Other.BaseAddress != observation.OtherAddress || observation.OtherAddress == 0
+                || !observation.ActorRelation.Current || !observation.ReceiverRelation.Current || !observation.OtherRelation.Current)
                 throw new ObservationUnavailableException("reaction", "reaction participant or context changed");
         }
 
@@ -1556,7 +1592,9 @@ namespace Styx.WoWInternals.WoWObjects
                 ReferenceEquals(cached.Other, current.Other) && cached.Process == current.Process &&
                 cached.ActorGuid == current.ActorGuid && cached.ActorAddress == current.ActorAddress &&
                 cached.ReceiverGuid == current.ReceiverGuid && cached.ReceiverAddress == current.ReceiverAddress &&
-                cached.OtherGuid == current.OtherGuid && cached.OtherAddress == current.OtherAddress;
+                cached.OtherGuid == current.OtherGuid && cached.OtherAddress == current.OtherAddress
+                && cached.ActorRelation.Same(current.ActorRelation) && cached.ReceiverRelation.Same(current.ReceiverRelation)
+                && cached.OtherRelation.Same(current.OtherRelation);
         }
 
         /// <summary>Observe the original native reaction without fabricating Neutral on failure.</summary>

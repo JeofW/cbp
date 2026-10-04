@@ -5,7 +5,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 // Connect Ret's actual selector with actual AoE and hostility enumeration. The
-// engagement and reaction reads are explicit native leaves with a query budget.
+// group policy is also actual production code; only world, reaction and threat
+// observations are controlled. Object enumeration honors its inheritance flag.
 internal static class IntegratedConsecrationAreaTests
 {
     internal static void Run()
@@ -19,7 +20,11 @@ internal static class IntegratedConsecrationAreaTests
         methods += string.Join("\n", syntax.DescendantNodes().OfType<MethodDeclarationSyntax>()
             .Where(method => method.Identifier.ValueText == "IsCombatActionSafe"));
         string select = IntegratedRegressionFixture.Methods("runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs", "SelectConsecration");
+        string group = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(IntegratedRegressionFixture.Root,
+            "Styx/Logic/Combat/GroupCombatSafety.cs"))).GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>()
+            .Single(type => type.Identifier.ValueText == "GroupCombatSafety").ToFullString();
         IntegratedRegressionFixture.Run("Consecration area", Boundary
+            + group
             + "public static class Unit {public static HashSet<uint> IgnoreMobs=new();" + properties + methods + "}\n"
             + "public static class Ret {public static string Select()=>SelectConsecration();" + select + "}\n" + Scenarios,
             "runtime-snapshot/Routines/Singular wotlk/Helpers/DungeonEngagementPolicy.cs", "Styx/Logic/Combat/WoWSpellMechanic.cs");
@@ -31,17 +36,29 @@ using System;using System.Collections.Generic;using System.Linq;using Singular.H
 public sealed class AuraSpell {public WoWSpellMechanic Mechanic;}
 public sealed class RawAura {public bool IsHarmful,IsActive=true;public AuraSpell Spell;}
 public readonly record struct WoWPoint(float X,float Y,float Z){public float DistanceSqr(WoWPoint other)=>(X-other.X)*(X-other.X)+(Y-other.Y)*(Y-other.Y)+(Z-other.Z)*(Z-other.Z);}
-public sealed class WoWUnit {
- public ulong Guid;public uint Entry;public bool IsValid=true,IsAlive=true,Mounted,IsOnTransport,IsMoving,IsCasting,IsChanneling,CanSelect=true,Attackable=true,IsPet,IsNonCombatPet,IsCritter,Boss,Dummy,Engaged=true,Friendly,UnknownReaction;
+public class WoWUnit {
+ public ulong Guid;public uint Entry;public bool IsValid=true,IsAlive=true,Mounted,IsOnTransport,IsMoving,IsCasting,IsChanneling,CanSelect=true,Attackable=true,IsPet,IsNonCombatPet,IsCritter,Boss,Dummy,Friendly,UnknownReaction;
+ private bool combat=true; public bool Aggro=true,PetAggro,IsTargetingMeOrPet,IsTargetingAnyMinion,IsTargetingMyPartyMember,IsTargetingMyRaidMember,TaggedByMe;
+ public bool Combat {get{Cases.EngagementReads++;return combat;}set=>combat=value;}
+ public bool Engaged {get=>combat;set{combat=value;Aggro=value;}}
+ public bool IsPlayer=>this is WoWPlayer;
+ public bool IsInMyPartyOrRaid=>IsMe||StyxWoW.Me.PartyMembers.Concat(StyxWoW.Me.RaidMembers).Any(p=>p.Guid==Guid);
+ public Dictionary<ulong,uint> Threats=new();public UnitThreatInfo GetThreatInfoFor(WoWUnit member){Cases.EngagementReads++;return new(){ThreatValue=Threats.GetValueOrDefault(member.Guid)};}
  public double ManaPercent=100;public bool Dead=>!IsAlive;public WoWPoint Location;public WoWUnit CurrentTarget,OwnedByRoot;
  public bool IsMe=>ReferenceEquals(this,StyxWoW.Me);public float DistanceSqr=>Location.DistanceSqr(StyxWoW.Me.Location);public float Distance=>MathF.Sqrt(DistanceSqr);
  public bool IsFriendly {get{Cases.ReactionReads++;if(UnknownReaction)throw new ObservationUnavailableException("reaction","out-of-area participant unavailable");return Friendly;}}
  public bool IsBoss()=>Boss;public bool IsTrainingDummy()=>Dummy;
  public List<RawAura> Auras=new();public bool RawUnknown;public IEnumerable<RawAura> GetRawAuras()=>RawUnknown?throw new ObservationUnavailableException("raw-auras","controlled coverage unavailable"):Auras;
 }
-public static class StyxWoW {public static WoWUnit Me;}
-public static class ObjectManager {public static List<WoWUnit> Units=new();public static IEnumerable<T> GetObjectsOfType<T>(bool a,bool b)=>Units.Cast<T>();}
-public static class GroupCombatSafety {public static bool IsRestricted;public static bool MayAttack(WoWUnit unit){Cases.EngagementReads++;return !IsRestricted||unit.Engaged;}public static bool IsEngagedWithGroup(WoWUnit unit){Cases.EngagementReads++;return unit.Engaged;}}
+public struct UnitThreatInfo {public uint ThreatValue;}
+public class WoWPlayer:WoWUnit {}
+public sealed class LocalPlayer:WoWPlayer {public Map CurrentMap=new();public bool IsInParty,IsInRaid;public List<WoWPlayer> PartyMembers=new(),RaidMembers=new();}
+public sealed class Map {public bool IsDungeon,IsRaid;}
+public static class BotManager {public static Bot Current=new();}public sealed class Bot {public string Name="Combat Bot";}
+public static class GroupObservation {public static bool TryReadMemberGuids(LocalPlayer player,out ulong[] members){members=player.PartyMembers.Concat(player.RaidMembers).Select(member=>member.Guid).Append(player.Guid).Distinct().OrderBy(id=>id).ToArray();return true;}}
+public static class StyxWoW {public static LocalPlayer Me;}
+public static class ObjectManager {public static List<WoWUnit> Units=new();public static IEnumerable<T> GetObjectsOfType<T>(bool allowInheritance,bool includeMeIfFound)
+ =>Units.Where(u=>(includeMeIfFound||!ReferenceEquals(u,StyxWoW.Me))&&(allowInheritance?u is T:u.GetType()==typeof(T))).Cast<T>();}
 public static class Spell {public const float MeleeRange=5;public static bool Global,CooldownKnown=true;public static double Cooldown;public static bool IsGlobalCooldown()=>Global;public static TimeSpan GetSpellCooldown(string name){if(!CooldownKnown)throw new ObservationUnavailableException("spell-cooldown","controlled unknown");return TimeSpan.FromSeconds(Cooldown);}}
 public static class SpellManager {public static bool Learned=true;public static bool HasSpell(string name)=>Learned;}
 public sealed class WoWSpell {public string Name;public static WoWSpell FromId(int id)=>id==20924?new(){Name="Consecration"}:id==133?new(){Name="Fireball"}:null;}
@@ -52,7 +69,7 @@ public sealed class PaladinSettings {public int DivinePleaMana=30,ConsecrationCo
 public static class Cases {
  private sealed class Failure(string message):Exception(message){}
  public static int ReactionReads,EngagementReads;
- private static void Reset(bool instance){ReactionReads=EngagementReads=0;GroupCombatSafety.IsRestricted=instance;SpellManager.Learned=true;Spell.Global=false;Spell.Cooldown=0;Spell.CooldownKnown=true;SingularSettings.Instance=new();StyxWoW.Me=new(){Guid=1};
+ private static void Reset(bool instance){ReactionReads=EngagementReads=0;BotManager.Current=new();SpellManager.Learned=true;Spell.Global=false;Spell.Cooldown=0;Spell.CooldownKnown=true;SingularSettings.Instance=new();StyxWoW.Me=new(){Guid=1,Friendly=true,CurrentMap=new(){IsDungeon=instance}};
   var target=new WoWUnit{Guid=2,Location=new(5,0,0)};StyxWoW.Me.CurrentTarget=target;ObjectManager.Units=new(){target,new(){Guid=3,Location=new(4,1,0)},new(){Guid=4,Location=new(4,-1,0)}};}
  private static void Check(bool condition,string message){if(!condition)throw new Failure(message);}
  private static void Selected(){try{Check(Ret.Select()=="Consecration","safe in-range pack was rejected");}catch(ObservationUnavailableException e){throw new Failure("irrelevant observation suppressed Consecration: "+e.Message);}}
@@ -60,7 +77,7 @@ public static class Cases {
   void Case(bool instance,string name,System.Action test){total++;Reset(instance);try{test();passed++;}catch(Failure e){failures++;Console.Error.WriteLine($"FAIL Consecration area {(instance?"instance":"world")}: {name}: {e.Message}");}catch(Exception e){errors++;Console.Error.WriteLine("ERROR Consecration area: "+name+": "+e);}}
   foreach(bool instance in new[]{false,true}){
    Case(instance,"three engaged targets admit",Selected);
-   Case(instance,"far unknown participants cannot affect eight-yard coverage",()=>{for(int i=0;i<100;i++)ObjectManager.Units.Add(new(){Guid=(ulong)(100+i),Location=new(50+i,0,0),UnknownReaction=true});Selected();Check(ReactionReads<=9,"far participants consumed hostility queries");});
+   Case(instance,"far unknown participants cannot affect eight-yard coverage",()=>{Selected();int localReads=ReactionReads;Reset(instance);for(int i=0;i<100;i++)ObjectManager.Units.Add(new(){Guid=(ulong)(100+i),Location=new(50+i,0,0),UnknownReaction=true});Selected();Check(ReactionReads==localReads,"far participants consumed hostility queries");});
    Case(instance,"unknown at twelve yards is outside the effect",()=>{ObjectManager.Units.Add(new(){Guid=5,Location=new(12,0,0),UnknownReaction=true});Selected();});
    Case(instance,"unengaged mob beyond player radius but near selected target is irrelevant",()=>{ObjectManager.Units.Add(new(){Guid=5,Location=new(12,0,0),Engaged=false});Selected();});
    Case(instance,"relevant unknown remains unavailable",()=>{ObjectManager.Units[1].UnknownReaction=true;bool unknown=false;try{Ret.Select();}catch(ObservationUnavailableException){unknown=true;}Check(unknown,"nearby UNKNOWN authorized ground damage");});
@@ -90,6 +107,22 @@ public static class Cases {
    Case(instance,"irrelevant beneficial unknown aura stays irrelevant",()=>{ObjectManager.Units[1].Auras.Add(new(){IsHarmful=false});Selected();});
    Case(instance,"harmful unknown cannot prove an unprotected patch",()=>{ObjectManager.Units[1].Auras.Add(new(){IsHarmful=true});bool unknown=false;try{Ret.Select();}catch(ObservationUnavailableException){unknown=true;}Check(unknown,"unknown harmful control was treated as safe damage");});
    Case(instance,"missing raw control coverage remains unknown",()=>{ObjectManager.Units[1].RawUnknown=true;bool unknown=false;try{Ret.Select();}catch(ObservationUnavailableException){unknown=true;}Check(unknown,"missing aura coverage authorized ground damage");});
+   Case(instance,"actual tank threat authorizes all three mobs without player aggro",()=>{
+    var tank=new WoWPlayer{Guid=40,Friendly=true};StyxWoW.Me.PartyMembers.Add(tank);StyxWoW.Me.IsInParty=true;
+    foreach(var mob in ObjectManager.Units){mob.Aggro=false;mob.Combat=true;mob.Threats[tank.Guid]=10;}Selected();});
+   Case(instance,"tank-selected unrelated combat does not authorize the pack",()=>{
+    var tank=new WoWPlayer{Guid=40,Friendly=true,CurrentTarget=StyxWoW.Me.CurrentTarget};StyxWoW.Me.PartyMembers.Add(tank);StyxWoW.Me.IsInParty=true;
+    foreach(var mob in ObjectManager.Units){mob.Aggro=false;mob.Combat=true;}Check(Ret.Select()==null,"mere tank selection authorized unrelated enemy combat");});
+   Case(instance,"friendly group members do not change the hostile count",()=>{
+    var tank=new WoWPlayer{Guid=40,Friendly=true,Location=new(2,0,0)};StyxWoW.Me.PartyMembers.Add(tank);ObjectManager.Units.Add(tank);StyxWoW.Me.IsInParty=true;
+    Selected();ObjectManager.Units.RemoveAt(1);Check(Ret.Select()==null,"a nearby player was counted as a third hostile mob");});
+   Case(instance,"hostile controlled teammate is visible to the area scan",()=>{
+    var member=new WoWPlayer{Guid=40,Friendly=false,Location=new(2,0,0),OwnedByRoot=StyxWoW.Me.CurrentTarget};StyxWoW.Me.PartyMembers.Add(member);ObjectManager.Units.Add(member);StyxWoW.Me.IsInParty=true;
+    Check(Ret.Select()==null&&!Unit.IsCombatActionSafe("Consecration",StyxWoW.Me),"actual selector authorized damage around a controlled player");});
+   Case(instance,"party threat loss invalidates the actual cast selection",()=>{
+    var tank=new WoWPlayer{Guid=40,Friendly=true};StyxWoW.Me.PartyMembers.Add(tank);StyxWoW.Me.IsInParty=true;
+    foreach(var mob in ObjectManager.Units){mob.Aggro=false;mob.Combat=true;mob.Threats[tank.Guid]=10;}Selected();
+    StyxWoW.Me.PartyMembers.Clear();Check(Ret.Select()==null,"departed tank retained area permission");});
   }
   Console.WriteLine($"Integrated Consecration area: {passed}/{total}; assertions={failures}; unexpected={errors}; actual Ret selector and AoE readers; controlled original-client reaction/engagement leaves.");
   if(failures+errors!=0)throw new InvalidOperationException("Consecration area regressions");

@@ -177,7 +177,9 @@ public class QuestBot : BotBase
         CanRunDecoratorDelegate isMoving = context => StyxWoW.Me.IsMoving;
         CanRunDecoratorDelegate notInCombat = context => !StyxWoW.Me.Combat;
 
-        return (Composite)new Decorator(isMoving,
+        return new PrioritySelector(
+            CreateRequiredTargetingBehavior(),
+            (Composite)new Decorator(isMoving,
             (Composite)new Decorator(
                 context => !ShouldSuppressOpportunisticTargeting(
                     BotPoi.Current.Type, MountedCombatTransition.IsMountedOrFlying(StyxWoW.Me)),
@@ -185,7 +187,62 @@ public class QuestBot : BotBase
             (Composite)new DecoratorNeedToFindTarget(
                 new OwnedTargetHandoff(() => StyxWoW.Me != null && !MountedCombatTransition.IsMountedOrFlying(StyxWoW.Me)
                     && !StyxWoW.Me.Combat && !ShouldSuppressOpportunisticTargeting(BotPoi.Current.Type),
-                    clearNavigation: true)))));
+                    clearNavigation: true))))));
+    }
+
+    internal static bool HasRequiredCombatTarget()
+    {
+        var actor = StyxWoW.Me;
+        var targeting = Targeting.Instance;
+        var target = targeting?.FirstUnit;
+        var order = QuestState.Instance.Order;
+        var owner = order.CurrentBehavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
+        var objective = owner?.Objective;
+        var nodes = order.Nodes;
+        var node = order.CurrentNode;
+        var profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
+        var poi = BotPoi.Current;
+        if (actor == null || target == null || objective == null || !actor.IsValid || !actor.IsAlive
+            || !target.IsValid || !target.IsAlive || !target.CanSelect || !target.Attackable
+            || target.TaggedByOther || Blacklist.Contains(target.Guid)
+            || poi == null || poi.Type is not (PoiType.None or PoiType.Hotspot)
+            || actor.IsCasting || actor.ChanneledCastingSpellId != 0 || actor.OnTaxi || actor.IsOnTransport)
+            return false;
+        ulong actorGuid = actor.Guid, targetGuid = target.Guid;
+        uint actorAddress = actor.BaseAddress, targetAddress = target.BaseAddress, map = actor.MapId;
+        bool mounted = MountedCombatTransition.IsMountedOrFlying(actor);
+        if (LevelbotSettings.Instance.GroundMountFarmingMode && mounted || !mounted && actor.Combat)
+            return false;
+        double range = Targeting.PullDistance;
+        // This only selects an obligation. The shared ground transition still
+        // proves support, landing, dismount and full cast/pull range before damage.
+        double distance = mounted ? actor.Location.Distance2DSqr(target.Location) : actor.Location.DistanceSqr(target.Location);
+        if (!double.IsFinite(range) || range <= 0 || !double.IsFinite(distance) || distance > range * range
+            || !GroupCombatSafety.MayAttack(target) || !objective.IsRequiredCombatTarget(target)) return false;
+        return actorGuid != 0 && targetGuid != 0 && ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == actorGuid
+            && actor.BaseAddress == actorAddress && actor.MapId == map && target.IsValid && target.IsAlive
+            && target.Guid == targetGuid && target.BaseAddress == targetAddress
+            && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(targeting.FirstUnit, target)
+            && ReferenceEquals(order.Nodes, nodes) && ReferenceEquals(order.CurrentNode, node)
+            && ReferenceEquals(order.CurrentBehavior, owner) && ReferenceEquals(owner.Objective, objective)
+            && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, profile) && ReferenceEquals(BotPoi.Current, poi);
+    }
+
+    private static Composite CreateRequiredTargetingBehavior()
+    {
+        var order = QuestState.Instance.Order;
+        object owner = null, nodes = null, node = null, profile = null;
+        bool Current() => ReferenceEquals(order.CurrentBehavior, owner) && ReferenceEquals(order.Nodes, nodes)
+            && ReferenceEquals(order.CurrentNode, node) && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, profile)
+            && HasRequiredCombatTarget() && ReferenceEquals(order.CurrentBehavior, owner);
+        return new Decorator(_ => HasRequiredCombatTarget(), new Sequence(
+            new TreeSharp.Action(_ =>
+            {
+                owner = order.CurrentBehavior; nodes = order.Nodes; node = order.CurrentNode;
+                profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
+                return Current() ? RunStatus.Success : RunStatus.Failure;
+            }),
+            new OwnedTargetHandoff(Current, clearNavigation: true, requiredMountedTarget: true)));
     }
 
     private static PrioritySelector CreateQuestOrderBehavior()

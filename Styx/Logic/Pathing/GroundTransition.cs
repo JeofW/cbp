@@ -117,33 +117,85 @@ public sealed class GroundTransition : IDisposable
             && finalFlags == flags && finalTransport == transport && stamp.Current;
     }
 
-    /// <summary>Current grounded interaction range. NPCs also require sight to their origin.</summary>
+    /// <summary>Current grounded, stopped interaction admission. NPCs also require sight.</summary>
     public static bool CanInteractWith(WoWObject? subject, Func<bool>? admitted = null)
+        => TryObserveInteraction(subject, admitted, true, out _);
+
+    // A moving actor can reach a usable interaction region before its stop has
+    // been requested. This grants only final-approach preparation, never a native
+    // interaction. The owner stops once and waits for a later stopped observation.
+    internal static bool CanPrepareInteraction(WoWObject? subject, Func<bool>? admitted = null)
+        => TryObserveInteraction(subject, admitted, false, out _);
+
+    private sealed class InteractionObservation
     {
+        internal readonly GroundTransitionContext Context;
+        private readonly WoWPoint _actorPosition, _subjectPosition;
+        internal InteractionObservation(GroundTransitionContext context, WoWPoint actorPosition, WoWPoint subjectPosition)
+        { Context = context; _actorPosition = actorPosition; _subjectPosition = subjectPosition; }
+
+        internal bool Current(bool requireStopped)
+        {
+            var actor = Context.Actor;
+            var subject = Context.Subject!;
+            if (!Context.Current || !IsUnmountedActorCurrent(Context)) return false;
+            var position = actor.Location;
+            var destination = subject.Location;
+            // Walking changes a live NPC's endpoint without replacing its GUID,
+            // wrapper or work owner. Bound the sight sample to half a yard and
+            // recheck the actual current interaction range at entry. A distant
+            // move or teleport needs another observation. Fixed objects retain
+            // their exact geometry; the stopped actor also remains exact.
+            bool actorCurrent = requireStopped ? !actor.IsMoving && position.Equals(_actorPosition)
+                : position.DistanceSqr(_actorPosition) <= .25f;
+            bool subjectCurrent = subject is WoWUnit ? destination.DistanceSqr(_subjectPosition) <= .25f
+                : destination.Equals(_subjectPosition);
+            return actorCurrent && subjectCurrent && GroundApproachSearch.Finite(position)
+                && GroundApproachSearch.Finite(destination) && subject.WithinInteractRange
+                && (subject is not WoWGameObject gameObject || !gameObject.IsDisabled
+                    && !Styx.Logic.Blacklist.Contains(gameObject.Guid)
+                    && float.IsFinite(gameObject.InteractRange) && gameObject.InteractRange > 0)
+                && Context.Current;
+        }
+    }
+
+    private static bool TryObserveInteraction(WoWObject? subject, Func<bool>? admitted, bool requireStopped,
+        out InteractionObservation? observation)
+    {
+        observation = null;
         try
         {
             if (subject == null) return false;
-            WoWPoint destination = subject.Location;
-            var stamp = new GroundTransitionContext(subject, destination, true, admitted ?? (() => true));
+            bool walkingSubject = subject is WoWUnit;
+            var stamp = new GroundTransitionContext(subject, subject.Location, !walkingSubject,
+                admitted ?? (() => true), journeyRoute: walkingSubject);
             if (!stamp.Current || !CanActUnmounted(() => stamp.Current)) return false;
-            bool inRange = subject.WithinInteractRange;
-            if (!stamp.Current || !inRange) return false;
             var actor = stamp.Actor;
+            if (requireStopped && actor.IsMoving) return false;
+            // Vehicle/native admission can advance an otherwise unchanged NPC's
+            // patrol. Sample geometry after that query, not before it.
             WoWPoint position = actor.Location;
+            WoWPoint destination = subject.Location;
             if (!GroundApproachSearch.Finite(position) || !GroundApproachSearch.Finite(destination)) return false;
+            if (!subject.WithinInteractRange || !stamp.Current) return false;
+            var sampled = new InteractionObservation(stamp, position, destination);
             // A GameObject's model origin can be inside opaque geometry or below
             // its usable surface. The original GO-use contract is identity/range,
             // not a collision ray into that model. Native usability is observed
             // separately before interaction; landing still needs real support.
             if (subject is WoWGameObject gameObject)
-                return !gameObject.IsDisabled && !Styx.Logic.Blacklist.Contains(gameObject.Guid)
-                    && float.IsFinite(gameObject.InteractRange) && gameObject.InteractRange > 0
-                    && stamp.Current && actor.Location.Equals(position);
+            {
+                if (!sampled.Current(requireStopped)) return false;
+                observation = sampled;
+                return true;
+            }
             // Coincident finite points have no segment to trace. The native
             // collision contract deliberately rejects zero-length queries.
             bool sight = position.Equals(destination)
                 || WoWInternals.World.GameWorld.IsInLineOfSight(position.Add(0, 0, 1), destination.Add(0, 0, 1));
-            return sight && stamp.Current && actor.Location.Equals(position);
+            if (!sight || !sampled.Current(requireStopped)) return false;
+            observation = sampled;
+            return true;
         }
         catch (Exception error)
         {
@@ -162,22 +214,17 @@ public sealed class GroundTransition : IDisposable
     {
         try
         {
-            if (subject == null) return false;
-            var stamp = new GroundTransitionContext(subject, subject.Location, true, admitted ?? (() => true));
-            WoWPoint position = stamp.Actor.Location;
-            if (!CanInteractWith(subject, () => stamp.Current)) return false;
+            if (!TryObserveInteraction(subject, admitted, true, out var observation)) return false;
+            var sampled = observation!;
+            var stamp = sampled.Context;
             if (subject is WoWGameObject gameObject
                 && (!gameObject.CanUse() || !stamp.Current || !gameObject.CanUseNow() || !stamp.Current)) return false;
 
             // The native entry guard must not trace collision or execute Lua:
             // either would overwrite the interaction's prepared native command.
-            bool Current() => stamp.Current && stamp.Actor.Location.Equals(position)
-                && IsUnmountedActorCurrent(stamp) && subject.WithinInteractRange
-                && (subject is not WoWGameObject currentObject || !currentObject.IsDisabled
-                    && !Styx.Logic.Blacklist.Contains(currentObject.Guid))
-                && stamp.Actor.Location.Equals(position) && stamp.Current;
+            bool Current() => sampled.Current(true);
             if (!Current()) return false;
-            return subject.TryInteractOwned(Current, ignoreTimer);
+            return subject!.TryInteractOwned(Current, ignoreTimer);
         }
         catch (Exception error)
         {

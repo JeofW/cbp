@@ -125,6 +125,8 @@ namespace Styx.WoWInternals.WoWObjects
         public MapState CurrentMap { get; } = new();
         public bool IsInInstance => CurrentMap.IsInstance;
         public ulong Guid { get; set; }
+        public ulong DescriptorGuid => Guid;
+        public uint MapId { get; set; } = 530;
         public uint BaseAddress { get; set; } = 100;
         public uint Entry { get; set; } = 1;
         public string Name { get; set; } = "";
@@ -448,7 +450,14 @@ namespace Styx.Logic.Common
 
 namespace Styx.WoWInternals
 {
- public sealed class GroupMemory { public GroupExecutor Executor=new(); }
+ public sealed class GroupMemory {
+  public GroupExecutor Executor=new();
+  private sealed class Scope:IDisposable {public void Dispose(){}}
+  public IDisposable TemporaryCacheState(bool value)=>new Scope();
+  // These support fixtures use the actual Lua membership protocol. No raw
+  // process memory is provided; raw-only admission must remain UNKNOWN here.
+  public byte[] ReadBytes(uint address,int count)=>Array.Empty<byte>();
+ }
  public sealed class GroupExecutor { public uint FrameCount=1; public GroupMemory Memory => ObjectManager.Wow; }
  public static class ObjectManager
  {
