@@ -303,8 +303,10 @@ internal sealed class GroundApproachSearch
                 || Math.Abs(support[i].Point.Z - p.Z) > .55f || _queries.Forbidden(support[i].Point, .1f))
             { LastReason = "landing-footprint-not-supported"; return null; }
         RequireCurrent();
-        if (Trace(groundLines, GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2).Any(r => r.Hit))
-        { LastReason = "landing-footprint-intersects-liquid"; return null; }
+        GroundRay[] liquid = Trace(groundLines, GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2);
+        for (int i = 0; i < support.Length; i++)
+            if (!DrySupport(groundLines[i], support[i], liquid[i]))
+            { LastReason = "landing-footprint-intersects-liquid"; return null; }
         float approachHeight = progressOnly ? Math.Max(40, _origin.Z - p.Z) : Math.Max(4, _height + 1);
         var openColumn = new[] { new WorldLine(p.Add(0, 0, .25f), p.Add(0, 0, Math.Max(250, _origin.Z - p.Z + 20))) };
         bool open = !Trace(openColumn, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures)[0].Hit;
@@ -326,6 +328,18 @@ internal sealed class GroundApproachSearch
         }
         RequireCurrent();
         return new GroundApproachPlan(p, p.Add(0, 0, approachHeight), surface.Area, onward, open, source, progressOnly);
+    }
+
+    // Both rays use the same observed column. A liquid plane underneath a
+    // positively observed solid surface is occluded by that surface; exposed
+    // liquid at/above it (or an invalid hit) never grants dry-ground authority.
+    internal static bool DrySupport(WorldLine line, GroundRay solid, GroundRay liquid)
+    {
+        if (!solid.Hit || !OnVertical(line.Start, line.End, solid.Point)) return false;
+        if (!liquid.Hit) return true;
+        if (!OnVertical(line.Start, line.End, liquid.Point))
+            throw Unknown("liquid support hit is outside its observed column");
+        return liquid.Point.Z < solid.Point.Z - .05f;
     }
 
     internal static bool Usable(GroundPath path, WoWPoint from, WoWPoint to) => path.Complete

@@ -197,11 +197,11 @@ public static class FlightWaitCases {
    case "flight":World.Player.Mounted=true;World.Player.IsFlying=true;break;}
  }
  private static void Change(string change){switch(change){
-  case "replacement":World.Player=new LocalPlayer{Guid=789,Mounted=true};World.Mover=World.Player;break;
-  case "same-guid-replacement":World.Player=new LocalPlayer{Mounted=true};World.Mover=World.Player;break;
+  case "replacement":World.Player=new LocalPlayer{Guid=789,Mounted=true,IsFlying=World.Player.IsFlying};World.Mover=World.Player;break;
+  case "same-guid-replacement":World.Player=new LocalPlayer{Mounted=true,IsFlying=World.Player.IsFlying};World.Mover=World.Player;break;
   case "missing":World.Player=null;World.Mover=null;break;case "guid":World.Player.Guid++;break;
   case "memory":ObjectManager.Wow=new object();break;case "executor":ObjectManager.Executor=new object();break;case "address":World.Player.BaseAddress++;break;case "map":World.Player.MapId++;break;case "dead":World.Player.IsAlive=false;break;case "invalid":World.Player.IsValid=false;break;
-  case "mover":World.Mover=new WoWUnit{Guid=456};break;
+  case "mover":World.Mover=new WoWUnit{Guid=456,IsFlying=World.Mover.IsFlying};break;
   case "poi":BotPoi.Current=new BotPoi();BotPoi.CurrentGeneration++;BotPoi.CurrentWorkGeneration++;break;
   case "poi-generation":BotPoi.CurrentGeneration++;break;
   case "work-generation":BotPoi.CurrentGeneration++;BotPoi.CurrentWorkGeneration++;break;
@@ -221,6 +221,15 @@ public static class FlightWaitCases {
    Check(World.Commands.Exists(c=>c.StartsWith("cast:"))!=ids(32223),"known Crusader presence was lost or absent aura blocked eligible cast");}
  }
  public static void Run(){var tests=new List<(string Name,Action Body)>();
+  tests.Add(("unacknowledged takeoff never submits an airborne path as ground movement",()=>{
+   Configure("takeoff");
+   for(int pulse=0;pulse<6;pulse++)Move();
+   Check(World.Commands.Exists(c=>c.StartsWith("move-")),"grounded flying mount received no takeoff request");
+   Check(World.Destinations.Count==0&&World.PathBuilds==0&&!World.Commands.Exists(c=>c.StartsWith("ground:")),
+     "horizontal flight movement started before the client reported lift-off");
+   World.Player.IsFlying=true;Move();Move();
+   Check(World.Destinations.Count>0&&World.PathBuilds==1,"observed lift-off failed to release the pending flight route");
+  }));
   foreach(int reached in new[]{1,2,5}){int count=reached;
    tests.Add(("continuous flight skips "+count+" reached queue vertices in the same dispatch",()=>{
     Configure("flight");World.Player.Location=new WoWPoint(10,10,50);
@@ -248,6 +257,9 @@ public static class FlightWaitCases {
      if(boundary=="aura-readiness")World.CrusaderError=failure;
      if(boundary=="aura-submit")World.CrusaderSubmitError=failure;
      if(boundary=="aura-coverage")World.ReadId=id=>id==32223?throw failure:false;
+     // Native departure has a separate client acknowledgement even when this
+     // optional aura fails. The missing-acknowledgement case above stays pending.
+     if(route=="takeoff")World.OnBoundary=stage=>{if(stage=="sleep")World.Player.IsFlying=true;};
      Exception escaped=null;try{Move();}catch(Exception e){escaped=e;}
      Check(escaped==null&&World.Commands.Exists(c=>c.StartsWith("towards:"))&&World.PathBuilds==1,
        "optional travel aura stopped the actual mounted route before movement");

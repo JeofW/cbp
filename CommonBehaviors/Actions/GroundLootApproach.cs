@@ -15,9 +15,9 @@ using TreeSharp;
 namespace CommonBehaviors.Actions;
 
 /// <summary>
-/// Retains a selected GameObject while the shared GroundTransition owns motion.
+/// Retains a selected collection source while the shared GroundTransition owns motion.
 /// Existing loot/frame/slot owners perform the interaction and collection.
-/// Failure means "not a ground object" or "ready for the next owner"; handled
+/// Failure means "not collection work" or "ready for the next owner"; handled
 /// travel is never quest progress. Every pending state has a bounded deadline.
 /// </summary>
 public sealed class GroundLootApproach : TreeSharp.Action
@@ -26,7 +26,7 @@ public sealed class GroundLootApproach : TreeSharp.Action
     private readonly Func<WoWGameObject?>? _directSubject;
     private LocalPlayer? _actor;
     private WoWUnit? _mover;
-    private WoWGameObject? _subject;
+    private WoWObject? _subject;
     private BotPoi? _poi;
     private object? _provider;
     private object? _profile;
@@ -65,7 +65,8 @@ public sealed class GroundLootApproach : TreeSharp.Action
         var direct = _directSubject?.Invoke();
         var actor = ObjectManager.Me;
         var mover = WoWMovement.ActiveMover;
-        var subject = _directSubject == null ? poi?.AsObject as WoWGameObject : direct;
+        var subject = _directSubject == null ? poi?.AsObject : direct;
+        if (subject is not WoWGameObject && subject is not WoWUnit { IsAlive: false }) subject = null;
         var provider = Navigator.NavigationProvider;
         var profile = ProfileManager.CurrentProfileSnapshot;
         long generation = BotPoi.CurrentGeneration;
@@ -101,23 +102,35 @@ public sealed class GroundLootApproach : TreeSharp.Action
         && ReferenceEquals(ProfileManager.CurrentProfileSnapshot, _profile) && BotPoi.CurrentGeneration == _poiGeneration
         && _poi != null && ReferenceEquals(BotPoi.Current, _poi) && _poi.Type == _type
         && (_directSubject == null ? _poi.Guid == _guid && _poi.Entry == _entry
-            && (_type == PoiType.Loot || _type == PoiType.Harvest) && ReferenceEquals(_poi.AsObject, _subject)
+            && (_type == PoiType.Loot || _type == PoiType.Harvest || _type == PoiType.Skin) && ReferenceEquals(_poi.AsObject, _subject)
             : (_type == PoiType.None || _type == PoiType.Hotspot || _type == PoiType.Quest)
                 && ReferenceEquals(_directSubject(), _subject))
         && _subject != null && _guid != 0 && _entry != 0
-        && _subject.IsValid && !_subject.IsDisabled && _subject.Guid == _guid && _subject.Entry == _entry
+        && _subject.IsValid && (_subject is not WoWGameObject gameObject || !gameObject.IsDisabled)
+        && (_subject is not WoWUnit unit || !unit.IsAlive) && _subject.Guid == _guid && _subject.Entry == _entry
         && _subject.Location.Equals(_destination) && _admitted()
         && ReferenceEquals(ObjectManager.Me, _actor) && _actor.Guid == _actorGuid;
 
     protected override RunStatus Run(object context)
     {
-        if (_subject == null || _directSubject == null && _type != PoiType.Loot && _type != PoiType.Harvest)
+        if (_subject == null || _directSubject == null && _type != PoiType.Loot && _type != PoiType.Harvest && _type != PoiType.Skin)
             return RunStatus.Failure;
         try
         {
             if (!Current()) { ReleaseTransition(); return RunStatus.Success; }
             var actor = _actor!;
             var target = _subject!;
+            // A normal corpse reached on foot or while swimming needs no ground
+            // projection or navigation round trip. Its interaction owner still
+            // awaits a stopped observation and validates native entry. Mounted,
+            // airborne and uncertain movement retain this shared transition.
+            if (target is WoWUnit && !HasMountOrFlightForm(actor) && !actor.IsFlying && !actor.MovementInfo.IsDescending
+                && actor.TryGetMovementState(out uint corpseFlags, out ulong corpseTransport)
+                && corpseTransport == 0 && (corpseFlags & 0x02C03000u) == 0)
+            {
+                ReleaseTransition();
+                return Current() ? RunStatus.Failure : RunStatus.Success;
+            }
             DateTime now = DateTime.UtcNow;
             if ((now - _startedUtc).TotalSeconds >= 45) return Defer("ground-approach-deadline");
             if (!Finite(actor.Location) || !Finite(_destination)) return Pending("cannot-approach", "invalid-or-unknown-coordinates");
@@ -140,7 +153,9 @@ public sealed class GroundLootApproach : TreeSharp.Action
                 return Defer("no-approach-progress");
             }
             if (Blacklist.Contains(_guid)) return Defer("selected-object-is-blacklisted", alreadyBlacklisted: true);
-            if (_directSubject == null && !target.CanLoot) return Defer("object-not-currently-lootable-or-consumed");
+            bool collectible = target is WoWGameObject gameObject ? gameObject.CanLoot
+                : target is WoWUnit unit && !unit.IsAlive && (_type == PoiType.Skin ? unit.CanSkin : unit.CanLoot);
+            if (_directSubject == null && !collectible) return Defer("object-not-currently-lootable-or-consumed");
             if (!Current()) return RunStatus.Success;
             if (!actor.TryGetMovementState(out uint flags, out ulong transport) || transport != 0)
                 return Pending("cannot-approach", "movement-or-transport-observation-unavailable");

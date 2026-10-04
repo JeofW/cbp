@@ -18,22 +18,7 @@ internal static class LootLatencyRegressionTests
 
     private static void TestConfirmedLootReturnsWithoutPostClearAction()
     {
-        FieldInfo attachedField = typeof(LevelBot).GetField(
-            "_lootEventsAttached",
-            BindingFlags.Static | BindingFlags.NonPublic)
-            ?? throw new InvalidOperationException("LevelBot loot event guard was not found");
-        bool wasAttached = (bool)attachedField.GetValue(null)!;
-        attachedField.SetValue(null, true);
-
-        Composite lootBehavior;
-        try
-        {
-            lootBehavior = LevelBot.CreateLootBehavior();
-        }
-        finally
-        {
-            attachedField.SetValue(null, wasAttached);
-        }
+        Composite lootBehavior = LevelBot.CreateLootBehavior();
 
         FieldInfo reasonField = typeof(ActionClearPoi).GetField(
             "_reason",

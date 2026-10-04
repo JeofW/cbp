@@ -51,6 +51,7 @@ public class WoWGameObject:WoWObject
 }
 public class WoWUnit:WoWObject
 {
+    public bool CanLoot=true,CanSkin;
     public uint MapId=530;public bool IsAlive=true,IsMoving,IsFlying,Mounted,IsCasting,IsActuallyInCombat,PetInCombat,OnTaxi,IsOnTransport,IsGhost;
     public uint ChanneledCastingSpellId;public ShapeshiftForm Shapeshift;public readonly MovementObservation MovementInfo=new();
     public bool TryGetMovementState(out uint flags,out ulong transport){flags=World.MovementFlags;transport=World.Transport;return World.MovementKnown;}

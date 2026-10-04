@@ -21,6 +21,7 @@ internal static class World
     internal static bool PreferFlight, FlightMountObserved, FlightCostRequiresStop;
     internal static Exception? ObservationError;
     internal static float? FutureGeometryUnavailableAfterX;
+    internal static float LiquidSurfaceZ;
     internal static System.Action<string>? Callback;
     internal static Func<WorldLine, GameWorld.CGWorldFrameHitFlags, (bool Hit, WoWPoint Point)>? CollisionOverride;
     internal static Func<WoWPoint, WoWPoint, WoWPoint>? AerialGoal;
@@ -37,6 +38,7 @@ internal static class World
         RawFlights.Clear(); ExteriorFlights.Clear(); Walks.Clear(); Diagnostics.Clear(); Errors.Clear(); Rays.Clear(); Interactions.Clear();
         Dismounts = Descents = Stops = 0;
         Sight = true; MissingMesh = PartialPath = WrongFloor = Liquid = BlockedDoor = MissingSupport = PreferFlight = FlightMountObserved = FlightCostRequiresStop = false;
+        LiquidSurfaceZ=0;
         Door = new(205, 0, 0);
         Actor = new LocalPlayer { Guid = 1, BaseAddress = 100, Position = new(100, 10, 80), MountedValue = true, Flags = 0x02000000u };
         Target = new WoWUnit { Guid = 2, BaseAddress = 200, Entry = 70, Position = new(205, 15, 0), Outdoors = false };
@@ -67,7 +69,11 @@ internal static class World
             throw new Styx.Helpers.ObservationUnavailableException("future-flight-region", "controlled unavailable lookahead observation");
         bool liquid = (flags & (GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2)) != 0;
         bool hit = false; WoWPoint point = WoWPoint.Empty;
-        if (liquid) { hit = Liquid; point = line.End; }
+        if (liquid)
+        {
+            hit = Liquid && Math.Min(line.Start.Z,line.End.Z)<=LiquidSurfaceZ && Math.Max(line.Start.Z,line.End.Z)>=LiquidSurfaceZ;
+            point = new(line.Start.X,line.Start.Y,LiquidSurfaceZ);
+        }
         else if (line.Start.Distance2DSqr(line.End) <= .01f)
         {
             float high = Math.Max(line.Start.Z, line.End.Z), low = Math.Min(line.Start.Z, line.End.Z);

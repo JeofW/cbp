@@ -77,11 +77,30 @@ public static class ChaseCases {
   case "destination":Target.Location=Target.Location.Add(0,0,20);break;
   case "map":Player.MapId++;break;case "provider":Navigator.NavigationProvider=new object();break;
   case "casting":Player.IsCasting=true;break;case "channel":Player.ChanneledCastingSpellId=88;break;
+  case "flying":Player.Flags=0x02000000u;break;case "falling":Player.Flags=0x00001000u;break;
+  case "transport":Player.Transport=9;break;case "unknown-movement":Player.MovementKnown=false;break;
   default:throw new InvalidOperationException(mode);
  }}
  public static void Run(){
   var cases=new List<(string,System.Action)>();void Add(string name,System.Action test)=>cases.Add((name,()=>{Reset();test();}));
   Add("healthy chase",()=>{Check(Tick(new ActionMoveToTarget())==RunStatus.Success&&Moves.SequenceEqual(new[]{Target.Location})&&Paths==1,"healthy actual chase changed");});
+  foreach(string state in new[]{"flying","falling","transport","unknown-movement"})
+  {
+   string movement=state;
+   Add("unsupported "+movement+" cannot establish ground reachability or blacklist a mob",()=>{
+    Change(movement);PathMode="empty";Tick(new ActionMoveToTarget());
+    Check(Paths==0&&Moves.Count==0&&TargetClears==0&&!Blacklist.Contains(Target.Guid),"unsupported pursuit reached the ground pathfinder or blacklisted its target");
+   });
+   Add("ground path completion rechecks "+movement+" before movement or rejection",()=>{
+    PathMode="empty";OnPath=()=>Change(movement);Tick(new ActionMoveToTarget());
+    Check(Paths==1&&Moves.Count==0&&TargetClears==0&&!Blacklist.Contains(Target.Guid),"changed physical support borrowed an earlier ground query");
+   });
+  }
+  Add("flight transition cannot consume an old ground chase timeout",()=>{
+   var owner=new ActionMoveToTarget();Tick(owner);Expire(owner);Player.Flags=0x02000000u;Moves.Clear();
+   Tick(owner);Check(!Blacklist.Contains(Target.Guid)&&Moves.Count==0,"airborne interruption consumed a ground timeout");
+   Player.Flags=0;Check(Tick(owner)==RunStatus.Success&&Moves.Count==1&&!Blacklist.Contains(Target.Guid),"grounded successor inherited an expired aerial pause");
+  });
   foreach(string mode in new[]{"actor","actor-guid","target","target-guid","map","provider"}){string change=mode;
    Add("timeout budget belongs to "+change,()=>{var owner=new ActionMoveToTarget();Tick(owner);Moves.Clear();Expire(owner);Change(change);Check(Tick(owner)==RunStatus.Success&&Moves.Count==1&&!Blacklist.Contains(Targeting.Instance.FirstUnit.Guid)&&TargetClears==0,"new chase inherited old timeout/blacklist");});
   }
@@ -109,7 +128,7 @@ public static class ChaseCases {
  public class WoWObject{public ulong Guid;}
  public class WoWUnit:WoWObject{public bool IsValid=true,IsAlive=true;public string Name="controlled";public virtual WoWPoint Location{get;set;}public bool InLineOfSpellSight=true;public WoWObjectType Type=>WoWObjectType.Unit;public int Level=80,Race,Class;}
  public class WoWPlayer:WoWUnit{}
- public class LocalPlayer:WoWPlayer{public uint MapId;public bool IsCasting;public int ChanneledCastingSpellId;public WoWUnit CurrentTarget;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public void ClearTarget(){ChaseCases.TargetClears++;CurrentTarget=null;}}
+ public class LocalPlayer:WoWPlayer{public uint MapId,Flags;public ulong Transport;public bool MovementKnown=true;public bool TryGetMovementState(out uint flags,out ulong transport){flags=Flags;transport=Transport;return MovementKnown;}public bool IsCasting;public int ChanneledCastingSpellId;public WoWUnit CurrentTarget;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public void ClearTarget(){ChaseCases.TargetClears++;CurrentTarget=null;}}
 }
 /* Controlled world boundary. */ namespace Styx {public static class StyxWoW{public static LocalPlayer Me;}public static class BotEvents{public static class Player{public class MobKilledEventArgs{}public static event System.Action<MobKilledEventArgs> OnMobKilled;public static void Reset(){OnMobKilled=null;}}}}
 /* Controlled world boundary. */ namespace Styx.WoWInternals {public static class ObjectManager{public static LocalPlayer Me=>StyxWoW.Me;}}

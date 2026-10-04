@@ -149,7 +149,7 @@ namespace Styx.WoWInternals.WoWObjects
         public bool CanUse() { global::World.Event("can-use"); return !IsDisabled && global::World.ObjectUsable; }
         public bool CanUseNow() { global::World.Event("can-use-now"); return CanUse() && WithinInteractRange; }
     }
-    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat, IsQuestGiver; }
+    public class WoWUnit : WoWObject { public bool IsAlive = true, CanLoot = true, CanSkin, IsMoving, Combat, IsQuestGiver; }
     public sealed class Movement { public bool IsDescending; }
     public sealed class LocalPlayer : WoWUnit
     {

@@ -87,9 +87,9 @@ public sealed class PublishedQuestRoot : PrioritySelector
             behavior = order.CurrentBehavior;
             cycleChanged = false;
             bool allowed = HasCurrentPublication();
-            // Do not add an optional Lua round trip ahead of death/combat.
+            // Do not add an optional Lua round trip ahead of death/combat/loot.
             // Query once per eligible root tick, never from each executor gate.
-            if (allowed && ProtectivePriority() > 1)
+            if (allowed && ProtectivePriority() > 2)
                 ObserveAddonConflict();
             allowed = CanExecuteQuest();
             exclusive = ObserveExclusiveOwner(allowed);
@@ -240,7 +240,8 @@ public sealed class PublishedQuestRoot : PrioritySelector
         if (!MountedCombatTransition.IsMountedOrFlying(me) && (me.Combat || poi == PoiType.Kill)) return 1;
         var pet = me.Pet;
         if (!MountedCombatTransition.IsMountedOrFlying(me) && pet != null && pet.IsAlive && pet.Combat) return 1;
-        if (poi == PoiType.Loot || poi == PoiType.Skin || poi == PoiType.Harvest) return 2;
+        if (poi == PoiType.Loot || poi == PoiType.Skin || poi == PoiType.Harvest
+            || Bots.Grind.LevelBot.HasReadyLootWork()) return 2;
         if (!exclusive && QuestBot.HasRequiredCombatTarget() && CanExecuteQuest()) return 3;
         if (!exclusive && (poi == PoiType.Sell || poi == PoiType.Repair ||
             poi == PoiType.Buy || poi == PoiType.Mail || poi == PoiType.Train || poi == PoiType.Fly)) return 4;

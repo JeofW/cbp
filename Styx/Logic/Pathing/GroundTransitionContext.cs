@@ -34,7 +34,7 @@ internal sealed class GroundTransitionContext
     private readonly object _profile;
     private readonly bool _bindDestination, _combatRoute, _running, _transitRoute, _journeyRoute;
     private readonly bool? _subjectAlive;
-    private readonly bool _deadQuestRecipient;
+    private readonly bool _deadQuestRecipient, _corpseCollection;
     private readonly Func<bool> _admitted;
 
     internal GroundTransitionContext(WoWObject? subject, WoWPoint destination, bool bindDestination, Func<bool> admitted,
@@ -62,6 +62,9 @@ internal sealed class GroundTransitionContext
         _deadQuestRecipient = !combatRoute && (_poiType is PoiType.QuestPickUp or PoiType.QuestTurnIn)
             && _subjectAlive == false && subject is WoWUnit giver && giver.IsQuestGiver
             && _poiEntry == SubjectEntry && ReferenceEquals(Poi.AsObject, subject);
+        _corpseCollection = !combatRoute && (_poiType is PoiType.Loot or PoiType.Skin)
+            && _subjectAlive == false && _poiGuid == SubjectGuid && _poiEntry == SubjectEntry
+            && ReferenceEquals(Poi.AsObject, subject);
         if (!Current) throw Unknown("ground transition owner unavailable");
     }
 
@@ -98,7 +101,7 @@ internal sealed class GroundTransitionContext
         && (Subject == null || SubjectGuid != 0 && SubjectAddress != 0 && Subject.IsValid
             && Subject.Guid == SubjectGuid && Subject.BaseAddress == SubjectAddress && Subject.Entry == SubjectEntry
             && (Subject is not WoWUnit unit || unit.IsAlive == _subjectAlive
-                && (_subjectAlive == true || _deadQuestRecipient && unit.IsQuestGiver
+                && (_subjectAlive == true || (_corpseCollection || _deadQuestRecipient && unit.IsQuestGiver)
                     && ReferenceEquals(Poi.AsObject, Subject)))
             && (!_bindDestination || Subject.Location.Equals(Destination)));
 

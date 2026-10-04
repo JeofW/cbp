@@ -28,6 +28,24 @@ internal static class RequiredQuestCombatCases
         }
         foreach(bool flying in new[]{false,true}) foreach(bool aggro in new[]{false,true})
             Case("required mob preempts a running hotspot and lands before damage/"+flying+"/"+aggro,()=>Journey(flying,aggro));
+        foreach(string nesting in new[]{"If","While","If/While","While/If"})
+            Case("selected nested objective preempts airborne hotspot/"+nesting,()=>Journey(true,false,nesting));
+        foreach(string change in new[]{"node","leaf","ancestor","uninitialized"})
+            Case("nested target acknowledgement cannot borrow replaced "+change,()=>
+            {
+                var w=Arrange(true,false,"If");using var cleanup=new Cleanup(w.Root);
+                var rootOrder=QuestState.Instance.Order;
+                var wrapper=(ForcedIf)rootOrder.CurrentBehavior;
+                Control.OnTarget=_=>
+                {
+                    if(change=="node")rootOrder.Nodes=new OrderNodeCollection{new OrderNode()};
+                    if(change=="ancestor")rootOrder.CurrentBehavior=new ForcedIf{IfNode=wrapper.IfNode,ActiveOrder=wrapper.ActiveOrder};
+                    if(change=="leaf")wrapper.ActiveOrder.CurrentBehavior=new ForcedQuestObjective{Objective=new Bots.Quest.Objectives.GrindObjective{RequiredEntry=19349}};
+                    if(change=="uninitialized")wrapper.ActiveOrder=null;
+                };
+                Pulse(w.Root);Check(BotPoi.Current.Type!=PoiType.Kill&&Control.DismountSubmissions==0&&w.Damage.Ticks==0,
+                    "replaced conditional ancestry acquired the predecessor's combat target");
+            });
         foreach(string veto in new[]{"unrelated","complete","prerequisite","farming","service","player","range","dead","replacement"})
             Case("required handoff respects "+veto,()=>Veto(veto));
         Case("temporary target-list gap preserves an acknowledged required Kill",()=>
@@ -50,7 +68,7 @@ internal static class RequiredQuestCombatCases
     }
     private static void Check(bool condition,string message) {if(!condition)throw new InvalidOperationException(message);}
     private static Composite TargetingBranch()=>(Composite)typeof(QuestBot).GetMethod("CreateTargetingBehavior",BindingFlags.NonPublic|BindingFlags.Static)!.Invoke(null,null)!;
-    private static (LocalPlayer Actor,WoWUnit Target,ForcedQuestObjective Objective,PublishedQuestRoot Root,CountingLeaf Damage) Arrange(bool flying,bool combat)
+    private static (LocalPlayer Actor,WoWUnit Target,ForcedQuestObjective Objective,PublishedQuestRoot Root,CountingLeaf Damage) Arrange(bool flying,bool combat,string nesting="")
     {
         Control.Reset();
         var actor=new LocalPlayer{Guid=1,BaseAddress=100,MapId=530,IsAlive=true,Location=new(100,10,flying?70:0),Mounted=true,IsFlying=flying,ObservedMovementFlags=flying?0x02000000u:0,IsMoving=true,Combat=combat};
@@ -59,6 +77,21 @@ internal static class RequiredQuestCombatCases
         BotPoi.Current=new BotPoi(new WoWPoint(110,10,0),PoiType.Hotspot);
         var objective=new ForcedQuestObjective{Objective=new Bots.Quest.Objectives.GrindObjective{RequiredEntry=19349}};
         QuestState.Instance.Order.CurrentBehavior=objective;
+        foreach(string wrapper in nesting.Split('/',StringSplitOptions.RemoveEmptyEntries).Reverse())
+        {
+            var order=QuestState.Instance.Order;
+            var selected=new Bots.Quest.QuestOrder.QuestOrder{Nodes=order.Nodes,CurrentBehavior=order.CurrentBehavior};
+            if(wrapper=="If")
+            {
+                var node=new Styx.Logic.Profiles.Quest.IfNode();
+                order.Nodes=new OrderNodeCollection{node};order.CurrentBehavior=new ForcedIf{IfNode=node,ActiveOrder=selected};
+            }
+            else
+            {
+                var node=new Styx.Logic.Profiles.Quest.WhileNode();
+                order.Nodes=new OrderNodeCollection{node};order.CurrentBehavior=new ForcedWhile{WhileNode=node,ActiveOrder=selected};
+            }
+        }
         var damage=new CountingLeaf(RunStatus.Success);
         RoutineManager.Current=new CombatRoutine{RestBehavior=new CountingLeaf(RunStatus.Failure),PreCombatBuffBehavior=new CountingLeaf(RunStatus.Failure),
             PullBehavior=damage,HealBehavior=new CountingLeaf(RunStatus.Failure),CombatBuffBehavior=new CountingLeaf(RunStatus.Failure),CombatBehavior=damage,PullBuffBehavior=new CountingLeaf(RunStatus.Failure)};
@@ -72,9 +105,9 @@ internal static class RequiredQuestCombatCases
     }
     private static void Pulse(PublishedQuestRoot root)
     {if(root.LastStatus!=RunStatus.Running)root.Start(null);root.Tick(null);}
-    private static void Journey(bool flying,bool aggro)
+    private static void Journey(bool flying,bool aggro,string nesting="")
     {
-        var w=Arrange(flying,aggro);using var cleanup=new Cleanup(w.Root);
+        var w=Arrange(flying,aggro,nesting);using var cleanup=new Cleanup(w.Root);
         Pulse(w.Root);
         Check(BotPoi.Current.Type==PoiType.Kill&&ReferenceEquals(BotPoi.Current.AsObject,w.Target),"required mob never acquired the Kill POI from running hotspot travel");
         var committed=BotPoi.Current;

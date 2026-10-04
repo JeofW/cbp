@@ -39,6 +39,16 @@ namespace Levelbot.Actions.Combat
             _moveOwner = new object();
         }
 
+        internal static bool CanPursueOnGround(LocalPlayer actor)
+        {
+            // A ground path result says nothing about reachability from mid-air.
+            // Flight/landing owns that transition; neither its duration nor an
+            // unavailable movement observation can spend this chase's blacklist.
+            return actor != null && actor.IsValid && actor.IsAlive
+                && actor.TryGetMovementState(out uint flags, out ulong transport)
+                && (flags & 0x02C03000u) == 0 && transport == 0;
+        }
+
         protected override RunStatus Run(object context)
         {
             LocalPlayer actor = StyxWoW.Me;
@@ -46,7 +56,7 @@ namespace Levelbot.Actions.Combat
             ulong actorGuid = actor?.Guid ?? 0, targetGuid = target?.Guid ?? 0;
             if (actorGuid == 0 || targetGuid == 0 || actor == null || target == null
                 || !actor.IsValid || !actor.IsAlive || !target.IsValid || !target.IsAlive
-                || actor.IsCasting || actor.ChanneledCastingSpellId != 0)
+                || actor.IsCasting || actor.ChanneledCastingSpellId != 0 || !CanPursueOnGround(actor))
             {
                 // A paused/absent actor cannot spend another chase's timeout.
                 ResetChase();
@@ -70,7 +80,7 @@ namespace Levelbot.Actions.Combat
             ulong displayedGuid = displayed?.Guid ?? 0;
             bool Current() => ReferenceEquals(owner, _moveOwner) && ReferenceEquals(actor, StyxWoW.Me)
                 && actor.IsValid && actor.IsAlive && actor.Guid == actorGuid && actor.MapId == map
-                && !actor.IsCasting && actor.ChanneledCastingSpellId == 0
+                && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && CanPursueOnGround(actor)
                 && target.IsValid && target.IsAlive && target.Guid == targetGuid
                 && ReferenceEquals(Targeting.Instance.FirstUnit, target)
                 && ReferenceEquals(provider, Navigator.NavigationProvider)
