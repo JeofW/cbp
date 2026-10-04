@@ -22,6 +22,9 @@ internal static class RoamContinuationOwnershipRegressionTests
         for (var d = new DirectoryInfo(AppContext.BaseDirectory); d != null; d = d.Parent)
             if (File.Exists(Path.Combine(d.FullName, "CopilotBuddy.csproj"))) { root = d.FullName; break; }
         if (root == null) throw new InvalidOperationException("Tracked checkout required");
+        string groundAdmission = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,
+            "Bots/Grind/Levelbot/Actions/Combat/ActionMoveToTarget.cs"))).GetRoot().DescendantNodes()
+            .OfType<MethodDeclarationSyntax>().Single(method => method.Identifier.ValueText == "CanPursueOnGround").ToString();
         var parsed = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root, "Bots/Grind/LevelBot.cs"))).GetRoot();
         var names = new[] { "CreateRoamBehavior", "ShouldClearPoiForBetterTarget", "ShouldMoveToHotspot", "ShouldMoveCloserToTarget" };
         var methods = names.Select(name => parsed.DescendantNodes().OfType<MethodDeclarationSyntax>()
@@ -40,7 +43,7 @@ internal static class RoamContinuationOwnershipRegressionTests
         try
         {
             Styx.Helpers.Logging.FileLogging = false;
-            File.WriteAllText(Path.Combine(temp, "Probe.cs"), Prefix + string.Join("\n", methods.Concat(helpers)) + "\n" + guard + "}\n" + Boundary);
+            File.WriteAllText(Path.Combine(temp, "Probe.cs"), Prefix + string.Join("\n", methods.Concat(helpers)) + "\n" + guard + "}\n" + Boundary.Replace("/* ACTUAL_GROUND_CHASE_ADMISSION */", groundAdmission));
             foreach (string path in new[] {
                 "CommonBehaviors/Decorators/DecoratorIsPoiType.cs",
                 "CommonBehaviors/Decorators/DecoratorIsNotPoiType.cs",
@@ -167,6 +170,18 @@ public static class RoamCases {
   Case("selected distant mob is approached before the still-pending hotspot",()=>{
    Selected.ObservedDistance=40;ChaseReceipt=RunStatus.Success;var tree=RoamProbe.CreateRoamBehavior();tree.Start(null);
    try{Tick(tree);Check(Chases==1&&Moves==0&&FlightMoves==0,"known mob waited behind the unrelated hotspot endpoint");}finally{tree.Stop(null);}});
+  Case("airborne custom pursuit cannot compete with the active flight route",()=>{
+   Actor.Flags=0x02000000u;Actor.Mounted=true;CanFly=true;Selected.ObservedDistance=40;
+   var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+   var tree=RoamProbe.CreateRoamBehavior();tree.Start(null);try{
+    Tick(tree);Check(pending.Ticks==0&&Chases==0&&Moves==0&&FlightMoves==1&&Clears==0,
+     "custom ground pursuit superseded the airborne hotspot owner");}finally{tree.Stop(null);}});
+  Case("yielded custom pursuit retires when the actor leaves ground movement",()=>{
+   Selected.ObservedDistance=40;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+   var tree=Branch(2);tree.Start(null);try{
+    Check(Tick(tree)==RunStatus.Running&&pending.Ticks==1,"custom pursuit did not start");
+    Actor.Flags=0x02000000u;Tick(tree);Check(pending.Ticks==1&&pending.Stops==1&&Chases==0&&Clears==0,
+     "retained custom pursuit continued after flight began");}finally{tree.Stop(null);}});
   Case("running pursuit hands off to combat on the pulse that range becomes usable",()=>{
    Selected.ObservedDistance=40;StyxWoW.AreaManager.CurrentGrindArea.HotspotChanged=false;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
    var tree=RoamProbe.CreateRoamBehavior();tree.Start(null);try{
@@ -238,7 +253,7 @@ public static class RoamCases {
  public class WoWUnit {public ulong Guid;public uint Entry=200,FactionId=1;public int Level=80;public bool IsValid=true,IsAlive=true,Combat;public bool Dead=>!IsAlive;public WoWPoint Location;public WoWUnit CurrentTarget;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public double ObservedDistance=5;public double Distance{get{RoamCases.Event("distance");return ObservedDistance;}}public double DistanceSqr=>Distance*Distance;public bool InLineOfSpellSight{get{RoamCases.Event("sight");return true;}}
   public void Target(){RoamCases.Targets++;if(RoamCases.Acknowledge)Styx.StyxWoW.Me.CurrentTarget=this;}
  }
- public class LocalPlayer:WoWUnit {public uint MapId;public bool Mounted,IsCasting,IsOnTransport,OnTaxi;public int ChanneledCastingSpellId;public WoWUnit Pet;public bool GotAlivePet=>Pet?.IsAlive==true;}
+ public class LocalPlayer:WoWUnit {public uint MapId,Flags;public bool MovementKnown=true;public bool TryGetMovementState(out uint flags,out ulong transport){flags=Flags;transport=IsOnTransport?7UL:0UL;return MovementKnown;}public bool Mounted,IsCasting,IsOnTransport,OnTaxi;public int ChanneledCastingSpellId;public WoWUnit Pet;public bool GotAlivePet=>Pet?.IsAlive==true;}
 }
 /* Controlled world. */ namespace Styx {public static class StyxWoW {public static LocalPlayer Me;public static AreaManager AreaManager;public static void ResetAfk()=>RoamCases.Event("idle");}}
 /* Controlled registry. */ namespace Styx.WoWInternals {public static class ObjectManager {public static LocalPlayer Me=>StyxWoW.Me;}}
@@ -260,6 +275,6 @@ public static class RoamCases {
 /* Controlled status callback. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot {public static object RunIdentity=new();public static string StatusText {set{RoamCases.Event("status");}}}}
 /* Controlled navigation boundary. */ namespace Styx.Logic.Pathing {public static class Navigator {public static object NavigationProvider;public static MoveResult MoveTo(WoWPoint point){RoamCases.Moves++;RoamCases.Moved=point;return RoamCases.Movement;}public static RunStatus GetRunStatusFromMoveResult(MoveResult result)=>result==MoveResult.Moved||result==MoveResult.ReachedDestination?RunStatus.Success:RunStatus.Failure;}public static class Flightor{public static bool CanFly{get{RoamCases.Event("flight-query");return RoamCases.CanFly;}}public static void MoveTo(WoWPoint point){RoamCases.FlightMoves++;RoamCases.Moved=point;}}}
 /* Controlled external routine leaf. */ namespace Styx.Logic.Combat {public static class RoutineManager {public static Routine Current=new();}public class Routine {public Composite MoveToTargetBehavior;}}
-/* Controlled chase dispatch; the complete chase owner has separate real-owner tests. */ namespace Levelbot.Actions.Combat {public class ActionMoveToTarget:TreeSharp.Action {public ActionMoveToTarget():base(_=>{RoamCases.Chases++;RoamCases.Event("chase");return RoamCases.ChaseReceipt;}){}}}
+/* Controlled chase dispatch; actual shared admission is copied and the complete chase has separate real-owner tests. */ namespace Levelbot.Actions.Combat {public class ActionMoveToTarget:TreeSharp.Action {/* ACTUAL_GROUND_CHASE_ADMISSION */ public ActionMoveToTarget():base(_=>{RoamCases.Chases++;RoamCases.Event("chase");return RoamCases.ChaseReceipt;}){}}}
 """;
 }

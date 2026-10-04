@@ -37,8 +37,9 @@ internal static class QuestLootHandoffRegressionTests
             .OfType<MethodDeclarationSyntax>().Where(method => names.Contains(method.Identifier.ValueText)).Select(method => method.ToString()));
         string guard = level.DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c => c.Identifier.ValueText == "RoutineAdmissionGuard").ToString();
         string source = Prefix + "public static class LevelProbe {\n" + LevelLeaves +
-            Methods(level, "CreateLootBehavior", "CanLoot", "CreateOwnedLootSelection", "CanSelectLoot", "IsLootPoi", "CreateOwnedLootInteraction", "CanBeginLoot", "LootAllItems", "IsPlayerOrPetInCombat") + guard +
-            string.Join("\n", level.DescendantNodes().OfType<ClassDeclarationSyntax>().Where(c => c.Identifier.ValueText == "LootWorkObservation").Select(c => c.ToString())) + "}\n" +
+            Methods(level, "CreateLootBehavior", "CanLoot", "CreateOwnedLootSelection", "CanSelectLoot", "IsLootPoi", "CreateOwnedLootInteraction", "CanBeginLoot", "LootAllItems", "IsPlayerOrPetInCombat", "LootKind", "CanAttemptLoot", "SelectLootCandidate", "RecordLootAttempt", "ObserveLootCount", "TryLootFrameCommand") + guard +
+            string.Join("\n", level.DescendantNodes().OfType<FieldDeclarationSyntax>().Where(field => field.Declaration.Variables.Any(v => v.Identifier.ValueText == "_lootReceipts"))) +
+            string.Join("\n", level.DescendantNodes().OfType<ClassDeclarationSyntax>().Where(c => c.Identifier.ValueText is "LootWorkObservation" or "LootAttemptReceipt").Select(c => c.ToString())) + "}\n" +
             "public static class QuestProbe { public static Composite Build()=>CreateOpportunisticTargetingBehavior();\n" +
             Methods(quest, "CreateOpportunisticTargetingBehavior", "ShouldSuppressOpportunisticTargeting") + "}\n" +
             Boundary.Replace("/* ACTUAL_COMBAT_OBSERVATION */", combatObservation);
@@ -57,7 +58,8 @@ internal static class QuestLootHandoffRegressionTests
                 "CommonBehaviors/Actions/ActionClearPoi.cs", "CommonBehaviors/Actions/ActionIdle.cs",
                 "CommonBehaviors/Actions/ActionAlwaysSucceed.cs", "CommonBehaviors/Actions/ActionDebugString.cs",
                 "CommonBehaviors/Actions/DebugStringDelegate.cs", "CommonBehaviors/WaitLuaEvent.cs",
-                "CommonBehaviors/Actions/ActionMoveToPoi.cs", "CommonBehaviors/Actions/NavigationAction.cs", "CommonBehaviors/Actions/GetPointDelegate.cs" })
+                "CommonBehaviors/Actions/ActionMoveToPoi.cs", "CommonBehaviors/Actions/NavigationAction.cs", "CommonBehaviors/Actions/GetPointDelegate.cs",
+                "Styx/Helpers/ObservationUnavailableException.cs" })
                 File.Copy(Path.Combine(root, path), Path.Combine(temp, Path.GetFileName(path)));
             string shared = Path.Combine(root, "CommonBehaviors/Actions/OwnedTargetHandoff.cs");
             if (File.Exists(shared)) File.Copy(shared, Path.Combine(temp, "OwnedTargetHandoff.cs"));
@@ -92,16 +94,14 @@ using FrameLock=Styx.WoWInternals.FrameLock;
 using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Levelbot.Decorators.Combat;
 """;
     private const string LevelLeaves = """
- private static bool _lootEventsAttached=true;private static PoiType _lastLootPoiType;private static ulong _lastLootGuid;private static int _lootAttemptCount,_lootFailCount;
- private static void OnLootEvent(object sender,LuaEventArgs e){}
- private static void SleepForLag()=>HandoffCases.Event("lag");
+ private static void SleepForLag(){HandoffCases.LagSleeps++;HandoffCases.Event("lag");}
 """;
     private const string Boundary = """
 public static class HandoffCases {
  sealed class Failure(string why):Exception(why){}
  public static LocalPlayer Actor;public static WoWUnit Selected;public static WoWObject Loot;public static BotPoi Original;
  public static int Targets,Publications,Clears,NavClears;public static bool Ack=true;public static string Stage;public static System.Action Callback;
- public static int Interactions,Slots,Closes,Stats,Moves;public static ulong FrameGuid;public static bool AutoCloseFinalSlot;public static readonly List<ulong> Blacklisted=new();
+ public static int Interactions,Slots,Closes,Stats,Moves,LagSleeps,StopRequests;public static string CountReply="2";public static ulong FrameGuid;public static bool AutoCloseFinalSlot,StopAcknowledged=true;public static readonly List<ulong> Blacklisted=new();
  public static int Descents,DescendStops,Dismounts,GroundMoves,Collected;public static bool GroundMode,PreferFlight,SupportKnown=true,LineClear=true,CorridorClear=true;public static float FloorZ=10;
  public static System.Action<int> CollectionAcknowledged;public static bool TrackCollection;
  public static System.Action<int> CollectionBeforeAcknowledgement;public static Func<int,uint> CollectionEntry;
@@ -110,11 +110,12 @@ public static class HandoffCases {
  public static void Event(string stage){if(Stage==stage){var action=Callback;Stage=null;Callback=null;action?.Invoke();}}
  static void Reset(string owner){
   Stage=null;Callback=null;Targets=Publications=Clears=NavClears=0;Ack=true;
-  Interactions=Slots=Closes=Stats=Moves=0;FrameGuid=0;AutoCloseFinalSlot=false;Blacklisted.Clear();Lua.Events.Handlers.Clear();
+  Interactions=Slots=Closes=Stats=Moves=LagSleeps=StopRequests=0;CountReply="2";StopAcknowledged=true;FrameGuid=0;AutoCloseFinalSlot=false;Blacklisted.Clear();Lua.Events.Handlers.Clear();
   Descents=DescendStops=Dismounts=GroundMoves=Collected=0;PendingCollectionGuid=0;GroundMode=TrackCollection=PreferFlight=false;SupportKnown=LineClear=CorridorClear=true;FloorZ=10;GroundTransition.PendingRemoval.Clear();
   CharacterSettings.Instance=new CharacterSettings();
   StyxWoW.AreaManager.CurrentGrindArea=null;
-  foreach(string field in new[]{"_lastLootGuid","_lootAttemptCount","_lootFailCount"}){var f=typeof(LevelProbe).GetField(field,BindingFlags.Static|BindingFlags.NonPublic);f.SetValue(null,Activator.CreateInstance(f.FieldType));}
+  ((System.Collections.IDictionary)typeof(LevelProbe).GetField("_lootReceipts",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null)).Clear();
+  ObjectManager.Wow=new object();ObjectManager.Executor=new object();Styx.Logic.BehaviorTree.TreeRoot.RunIdentity=new object();
   Actor=new LocalPlayer{Guid=1,IsMoving=true};StyxWoW.Me=Actor;WoWMovement.ActiveMover=Actor;
   ObjectManager.CachedUnits.Clear();ObjectManager.CachedUnits.Add(new WoWUnit{Guid=80,Aggro=true});
   Selected=new WoWUnit{Guid=2};Targeting.Instance=new Targeting{FirstUnit=Selected};Targeting.PullDistance=30;Targeting.PullDistanceSqr=900;
@@ -336,6 +337,79 @@ public static class HandoffCases {
   Composite Begin(){var tree=LevelProbe.CreateLootBehavior();tree.Start(null);Check(Tick(tree)==RunStatus.Running&&Interactions==1,"loot did not submit one interaction and await an event");return tree;}
   void Open(){FrameGuid=Loot.Guid;Lua.Events.Fire("LOOT_OPENED");}
   Add("healthy observed event keeps final cleanup",()=>{var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Success&&Slots==2&&Closes==1&&Stats==1&&Clears==1&&BotPoi.Current.Type==PoiType.None,"healthy loot completion changed");}finally{tree.Stop(null);}});
+  Add("observed stop releases interaction without a fixed lag sleep",()=>{
+   Actor.IsMoving=true;var tree=Begin();try{Check(LagSleeps==0&&StopRequests==1,"acknowledged stop still paid an unconditional lag delay");}finally{tree.Stop(null);}
+  });
+  Add("unacknowledged stop yields without interacting or repeating stop",()=>{
+   Actor.IsMoving=true;StopAcknowledged=false;var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{
+    for(int pulse=0;pulse<4;pulse++)Check(Tick(tree)==RunStatus.Running,"unacknowledged stop did not retain its pending owner");
+    Check(Interactions==0&&StopRequests==1&&LagSleeps==0,"pending stop allowed interaction, a fixed sleep, or repeated stop requests");
+    Actor.IsMoving=false;Tick(tree);Check(Interactions==1&&StopRequests==1,"client stop acknowledgement did not release the owned interaction");
+   }finally{tree.Stop(null);}
+  });
+  Add("stop timeout cannot become interaction or loot success",()=>{
+   Actor.IsMoving=true;StopAcknowledged=false;var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{
+    Tick(tree);foreach(var wait in Walk(tree).OfType<Wait>())typeof(Wait).GetField("End",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(wait,DateTime.MinValue);
+    Tick(tree);Check(Interactions==0&&Slots==0&&Stats==0&&Blacklisted.Count==0,"unacknowledged stop timed out into a native attempt or progress");
+   }finally{tree.Stop(null);}
+  });
+  Add("completed corpse flag lag never reacquires the same loot POI",()=>{
+   var tree=Begin();try{Open();Tick(tree);}finally{tree.Stop(null);}
+   FrameGuid=0;int publications=Publications,clears=Clears;
+   for(int pulse=0;pulse<6;pulse++)Once(LevelProbe.CreateLootBehavior());
+   Check(Publications==publications&&Clears==clears&&Interactions==1&&Stats==1&&Blacklisted.Count==0,
+    "still-published lootability churned completed corpse POIs or started a duplicate attempt");
+  });
+  Add("a deferred first corpse does not hide a second available corpse",()=>{
+   var tree=Begin();try{Open();Tick(tree);}finally{tree.Stop(null);}
+   FrameGuid=0;var next=new WoWUnit{Guid=44,IsAlive=false};LootTargeting.Instance.SecondObject=next;
+   Once(LevelProbe.CreateLootBehavior());Check(BotPoi.Current.Guid==44&&Interactions==1&&Blacklisted.Count==0,
+    "completed first source blocked acquisition of the next available corpse");
+  });
+  foreach(string count in new[]{"missing","invalid","-1","19"}){
+   string reply=count;Add("unavailable or invalid slot count never becomes successful loot/"+reply,()=>{
+    var tree=Begin();try{Open();CountReply=reply;Tick(tree);Check(Slots==0&&Stats==0&&Blacklisted.Count==0,"invalid slot observation became empty-frame success or unbounded dispatch");}finally{tree.Stop(null);}
+   });
+  }
+  foreach(string boundary in new[]{"slot-prepare","close-prepare"})
+  foreach(string mutation in new[]{"actor","map","poi","frame","run"}){
+   string stage=boundary,change=mutation;Add("prepared frame effect retains exact owner/"+stage+"/"+change,()=>{
+    var tree=Begin();try{Open();bool fired=false;Stage=stage;Callback=()=>{fired=true;
+     if(change=="frame")FrameGuid=99;else if(change=="run")Styx.Logic.BehaviorTree.TreeRoot.RunIdentity=new object();else ChangeLoot(change);};
+     Tick(tree);Check(fired&&Slots==(stage=="slot-prepare"?0:2)&&Closes==0&&Stats==0&&Clears==0,
+      "prepared frame effect borrowed replacement ownership");}finally{tree.Stop(null);}
+   });
+  }
+  foreach(string mode in new[]{"actor","map","poi","provider","range","position","memory","executor","run"}){
+   string change=mode;Add("corpse native preparation rechecks "+change,()=>{
+    bool fired=false;Stage="native-entry";Callback=()=>{fired=true;
+     if(change=="range")((WoWUnit)Loot).WithinLootRange=false;
+     else if(change=="position")Actor.Location=new(30,30,30);
+     else if(change=="memory")ObjectManager.Wow=new object();else if(change=="executor")ObjectManager.Executor=new object();
+     else if(change=="run")Styx.Logic.BehaviorTree.TreeRoot.RunIdentity=new object();else ChangeLoot(change);};
+    Once(LevelProbe.CreateLootBehavior());Check(fired&&Interactions==0&&Slots==0&&Stats==0&&Clears==0&&Blacklisted.Count==0,
+     "prepared native corpse interaction borrowed a changed owner or physical observation");
+   });
+  }
+  Add("mounted corpse collection observes shared dismount before interacting",()=>{
+   GroundMode=true;Actor.Mounted=true;var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{
+    for(int pulse=0;pulse<3;pulse++)Check(Tick(tree)==RunStatus.Running,"mounted collection did not retain its ground transition");
+    Check(Dismounts==1&&Interactions==0,"mounted collection bypassed dismount or repeated its pending request");
+    Actor.Mounted=false;Tick(tree);Check(Interactions==1,"observed unmount did not release corpse collection");
+   }finally{tree.Stop(null);}
+  });
+  Add("airborne corpse approach cancels its owned descent on replacement",()=>{
+   GroundMode=true;Actor.Mounted=true;Actor.IsFlying=true;FloorZ=10;var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{
+    Check(Tick(tree)==RunStatus.Running&&Descents==1&&Interactions==0,"corpse approach did not enter the shared pending descent");
+    BotPoi.Current=new(PoiType.Fly);Tick(tree);Check(DescendStops==1&&Interactions==0&&Dismounts==0,"replaced corpse approach left descent held or consumed successor work");
+   }finally{tree.Stop(null);}
+  });
+  Add("falling corpse collection never submits a native interaction",()=>{
+   Actor.Falling=true;Once(LevelProbe.CreateLootBehavior());Check(Interactions==0&&Slots==0&&Stats==0,"falling actor borrowed a ground loot observation");
+  });
+  Add("stationary swimming corpse collection remains usable",()=>{
+   Actor.IsSwimming=true;var tree=Begin();try{Open();Tick(tree);Check(Interactions==1&&Stats==1,"ordinary submerged corpse collection was made ground-only");}finally{tree.Stop(null);}
+  });
   Add("client closing the exact frame after the final slot completes",()=>{AutoCloseFinalSlot=true;var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Success&&Slots==2&&Closes==0&&Stats==1&&Clears==1&&Blacklisted.Count==0,"normal final-slot closure was treated as a timeout or touched a closed frame");}finally{tree.Stop(null);}});
   Add("replacement frame after the final slot is never closed",()=>{var tree=Begin();try{Open();Stage="slot";Callback=()=>FrameGuid=99;Tick(tree);Check(Slots==1&&Closes==0&&Stats==0,"foreign frame inherited slot or close authority");}finally{tree.Stop(null);}});
   Add("timeout is not a looted mob",()=>{var tree=Begin();try{foreach(var waiter in Walk(tree).OfType<Wait>())typeof(Wait).GetField("End",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(waiter,DateTime.MinValue);Tick(tree);Check(Slots==0&&Closes==0&&Stats==0,"missing event became successful loot statistics/close");}finally{tree.Stop(null);}});
@@ -347,8 +421,18 @@ public static class HandoffCases {
   foreach(string stage in new[]{"loot-log","frame-lock","slot","close","stats"})foreach(string mode in new[]{"actor","map","poi","poi-type","loot-object"}){
    string boundary=stage,change=mode;Add(boundary+" callback revokes "+change,()=>{var tree=Begin();try{Open();bool fired=false;Stage=boundary;Callback=()=>{fired=true;ChangeLoot(change);};Tick(tree);Check(fired,"loot callback was not reached");int permittedSlots=boundary=="slot"?1:boundary=="close"||boundary=="stats"?2:0;Check(Slots==permittedSlots&&Closes==(boundary=="close"||boundary=="stats"?1:0)&&Stats==(boundary=="stats"?1:0)&&Clears==0&&Blacklisted.Count==0,"revoked synchronous loot continued across callback");}finally{tree.Stop(null);}});
   }
-  foreach(string stage in new[]{"stop","lag","interact"})foreach(string mode in new[]{"actor","map","poi","loot-object"}){
+  foreach(string stage in new[]{"stop","interact"})foreach(string mode in new[]{"actor","map","poi","loot-object"}){
    string boundary=stage,change=mode;Add(boundary+" setup revokes "+change,()=>{Actor.IsMoving=true;bool fired=false;Stage=boundary;Callback=()=>{fired=true;ChangeLoot(change);};Once(LevelProbe.CreateLootBehavior());Check(fired&&Interactions==(boundary=="interact"?1:0)&&Slots==0&&Closes==0&&Stats==0&&Clears==0&&Blacklisted.Count==0,"revoked setup dispatched later loot work");});
+  }
+  foreach(string mode in new[]{"actor","map","poi","loot-object","memory","executor","run"}){
+   string change=mode;Add("stop acknowledgement cannot resume replaced "+change,()=>{
+    Actor.IsMoving=true;StopAcknowledged=false;var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{
+     Tick(tree);Check(Interactions==0&&StopRequests==1,"stop wait was not pending");
+     if(change=="memory")ObjectManager.Wow=new object();else if(change=="executor")ObjectManager.Executor=new object();
+     else if(change=="run")Styx.Logic.BehaviorTree.TreeRoot.RunIdentity=new object();else ChangeLoot(change);
+     Actor.IsMoving=false;Tick(tree);Check(Interactions==0&&Slots==0&&Stats==0&&Clears==0,"stop acknowledgement borrowed replacement ownership");
+    }finally{tree.Stop(null);}
+   });
   }
   Add("range changes after stopping deny interaction",()=>{Actor.IsMoving=true;Stage="stop";Callback=()=>((WoWUnit)Loot).WithinLootRange=false;Once(LevelProbe.CreateLootBehavior());Check(Interactions==0&&Slots==0&&Stats==0&&Blacklisted.Count==0,"out-of-range corpse reached Interact after movement setup");});
  }
@@ -364,14 +448,16 @@ public static class HandoffCases {
   foreach(string mode in new[]{"dead","invalid","taxi","transport","cast","loot-invalid","loot-zero"}){string change=mode;Add("initial acquisition "+change,()=>{
    Original.Type=PoiType.None;if(change=="loot-invalid")Loot.IsValid=false;else if(change=="loot-zero")Loot.Guid=0;else ChangeLoot(change);Once(LevelProbe.CreateLootBehavior());Check(Publications==0,"unavailable candidate or actor acquired loot work");
   });}
-  foreach(string phase in new[]{"attempt-log","blacklist"})foreach(string mode in new[]{"actor","map","poi","poi-type","loot-object"}){
-   string boundary=phase,change=mode;Add("retry "+boundary+" revokes "+change,()=>{
-    typeof(LevelProbe).GetField("_lastLootGuid",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,Loot.Guid);
-    typeof(LevelProbe).GetField("_lastLootPoiType",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,PoiType.Loot);
-    typeof(LevelProbe).GetField("_lootAttemptCount",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,4);
-    typeof(LevelProbe).GetField("_lootFailCount",BindingFlags.Static|BindingFlags.NonPublic).SetValue(null,1);
-    bool fired=false;Stage=boundary;Callback=()=>{fired=true;ChangeLoot(change);};Once(LevelProbe.CreateLootBehavior());
-    Check(fired&&Blacklisted.Count==(boundary=="blacklist"?1:0)&&Clears==0&&Interactions==0,"revoked retry blacklisted/cleared replacement work");
+  foreach(string mode in new[]{"actor","map","provider","loot-object","memory","executor","run"}){
+   string change=mode;Add("completed-source deferral cannot suppress replacement "+change,()=>{
+    var tree=LevelProbe.CreateLootBehavior();tree.Start(null);try{Tick(tree);FrameGuid=Loot.Guid;Lua.Events.Fire("LOOT_OPENED");Tick(tree);}finally{tree.Stop(null);}
+    FrameGuid=0;int before=Publications;
+    if(change=="memory")ObjectManager.Wow=new object();else if(change=="executor")ObjectManager.Executor=new object();
+    else if(change=="run")Styx.Logic.BehaviorTree.TreeRoot.RunIdentity=new object();
+    else if(change=="loot-object"){Loot=new WoWUnit{Guid=3,IsAlive=false};LootTargeting.Instance.FirstObject=Loot;}
+    else {ChangeLoot(change);if(change=="actor")WoWMovement.ActiveMover=StyxWoW.Me;}
+    Once(LevelProbe.CreateLootBehavior());Check(Publications==before+1&&BotPoi.Current.Guid==Loot.Guid&&Blacklisted.Count==0,
+     "old completed-source deferral escaped its actor/source/run scope");
    });
   }
   foreach(string mode in new[]{"actor","map","poi","poi-type","reappeared"}){string change=mode;Add("missing-object log revokes "+change,()=>{
@@ -419,11 +505,12 @@ public static class HandoffCases {
   foreach(PoiType type in new[]{PoiType.Loot,PoiType.Skin,PoiType.Harvest}){
    var kind=type;Add("frame deadline "+kind,()=>{
     if(kind==PoiType.Harvest){Loot=new WoWGameObject{Guid=3,IsHerb=true};Original.AsObject=Loot;LootTargeting.Instance.FirstObject=Loot;}
+    if(kind==PoiType.Skin)((WoWUnit)Loot).CanSkin=true;
     Original.Type=kind;var tree=Begin();try{Check(Walk(tree).OfType<WaitLuaEvent>().Single().Timeout==TimeSpan.FromSeconds(kind==PoiType.Harvest?10:3),"wrong bounded frame wait");}finally{tree.Stop(null);}
    });
   }
   Add("skinning completion does not wait to skin the same corpse again",()=>{
-   Original.Type=PoiType.Skin;CharacterSettings.Instance.SkinMobs=true;var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Success&&Clears==1&&Stats==0&&Interactions==1,"completed skin operation entered a second post-loot skin wait");}finally{tree.Stop(null);}
+   Original.Type=PoiType.Skin;((WoWUnit)Loot).CanSkin=true;CharacterSettings.Instance.SkinMobs=true;var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Success&&Clears==1&&Stats==0&&Interactions==1,"completed skin operation entered a second post-loot skin wait");}finally{tree.Stop(null);}
   });
   Add("exact maximum skinnable level remains eligible",()=>{
    CharacterSettings.Instance.SkinMobs=true;((WoWUnit)Loot).Level=Actor.CanSkinLevel;var tree=Begin();try{
@@ -446,23 +533,36 @@ public static class HandoffCases {
 }
 public class ItemInfo {public int UniqueCount,BeginQuestId;}
 /* Controlled observed world. */ namespace Styx.WoWInternals.WoWObjects {
- public class WoWObject {public ulong Guid;public uint BaseAddress=4096,Entry=70;public bool IsValid=true,TimerReady=true,IsDisabled;public string Name="controlled";public WoWPoint Location=new(10,10,10);public float InteractRange=4;public bool WithinInteractRange=true;public WoWUnit ToUnit()=>this as WoWUnit;public WoWGameObject ToGameObject()=>this as WoWGameObject;public void Interact()=>Interact(false);public void Interact(bool ignoreTimer){if(!ignoreTimer&&!TimerReady)return;HandoffCases.Interactions++;HandoffCases.Event("interact");}}
+ public class WoWObject {public ulong Guid;public uint BaseAddress=4096,Entry=70;public bool IsValid=true,TimerReady=true,IsDisabled;public string Name="controlled";public WoWPoint Location=new(10,10,10);public float InteractRange=4;public bool WithinInteractRange=true;public WoWUnit ToUnit()=>this as WoWUnit;public WoWGameObject ToGameObject()=>this as WoWGameObject;public void Interact()=>Interact(false);public void Interact(bool ignoreTimer){if(!ignoreTimer&&!TimerReady)return;HandoffCases.Event("native-entry");HandoffCases.Interactions++;HandoffCases.Event("interact");}public bool TryInteractOwned(Func<bool> admitted,bool ignoreTimer=false){if(!ignoreTimer&&!TimerReady)return false;HandoffCases.Event("native-entry");if(!admitted())return false;HandoffCases.Interactions++;HandoffCases.Event("interact");return true;}}
  public class WoWUnit:WoWObject {public bool IsAlive=true,IsHostile=true,IsPlayer,IsMoving,Combat,CanSkin,CanLoot=true,Aggro;private bool withinLootRange=true;public bool WithinLootRange{get{bool observed=withinLootRange;HandoffCases.Event("loot-range");return observed;}set{withinLootRange=value;}}public bool Dead=>!IsAlive;public uint FactionId=1;public int Level=10,Race,Class;public WoWUnit OwnedByUnit,CurrentTarget;public double Range=5;public double Distance=>Range;public double DistanceSqr=>Range*Range;public double MyAggroRange=>15;public bool InLineOfSpellSight=true;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public WoWCreatureSkinType SkinType=>WoWCreatureSkinType.Leather;
   public void Target(){HandoffCases.Targets++;if(HandoffCases.Ack)StyxWoW.Me.CurrentTarget=this;HandoffCases.Event("target");}public void ClearTarget(){CurrentTarget=null;}
  }
  public class WoWGameObject:WoWObject {public bool IsHerb,IsMineral,CanLoot=true;public bool CanUse()=>!IsDisabled&&CanLoot;public bool CanUseNow(){HandoffCases.Event("object-usability");return CanUse()&&WithinInteractRange;}}
  public class WoWItem:WoWObject {public global::ItemInfo ItemInfo=new();}
- public class LocalPlayer:WoWUnit {public List<WoWItem> CarriedItems=new();public uint MapId,FreeBagSlots=100,FreeNormalBagSlots=100;public bool Mounted,IsCasting,IsOnTransport,OnTaxi,IsFlying,Falling,MovementKnown=true;public ShapeshiftForm Shapeshift;public int ChanneledCastingSpellId,CanSkinLevel=450;/* ACTUAL_COMBAT_OBSERVATION */ public WoWUnit Pet;public bool PetInCombat=>Pet?.Combat==true;public bool GotAlivePet=>Pet?.IsAlive==true;public MoveState MovementInfo=new();public bool TryGetMovementState(out uint flags,out ulong transport){flags=(IsFlying?0x02000000u:0u)|(Falling?0x2000u:0u);transport=IsOnTransport?5UL:0UL;return MovementKnown;}}
+ public class LocalPlayer:WoWUnit {public List<WoWItem> CarriedItems=new();public uint MapId,FreeBagSlots=100,FreeNormalBagSlots=100;public bool Mounted,IsCasting,IsOnTransport,OnTaxi,IsFlying,IsSwimming,Falling,MovementKnown=true;public ShapeshiftForm Shapeshift;public int ChanneledCastingSpellId,CanSkinLevel=450;/* ACTUAL_COMBAT_OBSERVATION */ public WoWUnit Pet;public bool PetInCombat=>Pet?.Combat==true;public bool GotAlivePet=>Pet?.IsAlive==true;public MoveState MovementInfo=new();public bool TryGetMovementState(out uint flags,out ulong transport){flags=(IsFlying?0x02000000u:0u)|(Falling?0x2000u:0u)|(IsSwimming?0x00200000u:0u);transport=IsOnTransport?5UL:0UL;return MovementKnown;}}
  public class MoveState{public bool IsDescending;}
 }
 /* Controlled runtime. */ namespace Styx {public enum ShapeshiftForm{Normal,FlightForm,EpicFlightForm}public static class StyxWoW{public static LocalPlayer Me;public static AreaManager AreaManager=new();public static void ResetAfk(){} }}
-/* Controlled runtime. */ namespace Styx.WoWInternals {public class LuaEventArgs:EventArgs{}public static class ObjectManager{public static LocalPlayer Me=>StyxWoW.Me;public static readonly List<WoWUnit> CachedUnits=new();}public sealed class FrameLock:IDisposable{public FrameLock(){HandoffCases.Event("frame-lock");}public void Dispose(){}}public static class Lua{public static void DoString(string code){if(code!="CloseLoot();")throw new InvalidOperationException("unexpected Lua");HandoffCases.Closes++;HandoffCases.Event("close");}public static class Events{public static readonly List<(string Name,System.Action<object,LuaEventArgs> Handler)> Handlers=new();public static void AttachEvent(string name,System.Action<object,LuaEventArgs> handler){Handlers.Add((name,handler));}public static void DetachEvent(string name,System.Action<object,LuaEventArgs> handler){Handlers.RemoveAll(value=>value.Name==name&&value.Handler==handler);}public static void Fire(string name){foreach(var item in Handlers.Where(value=>value.Name==name).ToArray())item.Handler(null,new LuaEventArgs());}}}public static class WoWMovement{public static WoWUnit ActiveMover;public enum MovementDirection{Descend}public static void Move(MovementDirection value){HandoffCases.Descents++;StyxWoW.Me.MovementInfo.IsDescending=true;HandoffCases.Event("descend");}public static void MoveStop(params MovementDirection[] value){if(StyxWoW.Me.MovementInfo.IsDescending){HandoffCases.DescendStops++;StyxWoW.Me.MovementInfo.IsDescending=false;}StyxWoW.Me.IsMoving=false;HandoffCases.Event("stop");}}}
+/* Controlled runtime. */ namespace Styx.WoWInternals {public class LuaEventArgs:EventArgs{}public static class ObjectManager{public static object Wow=new(),Executor=new();public static LocalPlayer Me=>StyxWoW.Me;public static readonly List<WoWUnit> CachedUnits=new();}public sealed class FrameLock:IDisposable{public FrameLock(){HandoffCases.Event("frame-lock");}public void Dispose(){}}public static partial class Lua{public static void DoString(string code){if(code!="CloseLoot();")throw new InvalidOperationException("unexpected Lua");HandoffCases.Event("close-prepare");HandoffCases.Closes++;HandoffCases.Event("close");}public static class Events{public static readonly List<(string Name,System.Action<object,LuaEventArgs> Handler)> Handlers=new();public static void AttachEvent(string name,System.Action<object,LuaEventArgs> handler){Handlers.Add((name,handler));}public static void DetachEvent(string name,System.Action<object,LuaEventArgs> handler){Handlers.RemoveAll(value=>value.Name==name&&value.Handler==handler);}public static void Fire(string name){foreach(var item in Handlers.Where(value=>value.Name==name).ToArray())item.Handler(null,new LuaEventArgs());}}}public static class WoWMovement{public static WoWUnit ActiveMover;public enum MovementDirection{Descend}public static void Move(MovementDirection value){HandoffCases.Descents++;StyxWoW.Me.MovementInfo.IsDescending=true;HandoffCases.Event("descend");}public static void MoveStop(params MovementDirection[] value){HandoffCases.StopRequests++;if(StyxWoW.Me.MovementInfo.IsDescending){HandoffCases.DescendStops++;StyxWoW.Me.MovementInfo.IsDescending=false;}if(HandoffCases.StopAcknowledged)StyxWoW.Me.IsMoving=false;HandoffCases.Event("stop");}}}
 /* Controlled admission observations. */ namespace Styx.Logic.AreaManagement {public class Hotspot{public WoWPoint Position;}public class GrindArea{public Hotspot CurrentHotSpot;public List<int> MobIDs=new(),Factions=new();public int TargetMinLevel,TargetMaxLevel=int.MaxValue;}public class AreaManager{public GrindArea CurrentGrindArea;}}
+/* Controlled strict Lua transport; complete native entry is exercised in the native Lua suites. */ namespace Styx.WoWInternals {public static partial class Lua{
+ public static List<string> GetObservedReturnValues(string script,Func<bool> admitted){
+  bool count=script=="return GetNumLootItems()",slot=script.StartsWith("LootSlot(");
+  if(!admitted())throw new Styx.Helpers.ObservationUnavailableException("loot","owner changed");
+  HandoffCases.Event(count?"count-prepare":slot?"slot-prepare":"close-prepare");
+  if(!admitted())throw new Styx.Helpers.ObservationUnavailableException("loot","prepared owner changed");
+  if(count)return HandoffCases.CountReply=="missing"?new():new(){HandoffCases.CountReply};
+  if(slot){int end=script.IndexOf(')');int index=int.Parse(script.Substring(9,end-9))-1;Styx.Logic.Inventory.Frames.LootFrame.LootFrame.Instance.DispatchSlot(index);}
+  else if(script=="CloseLoot();return 1"){HandoffCases.Closes++;HandoffCases.Event("close");}
+  else throw new InvalidOperationException("Unexpected owned Lua request: "+script);
+  return new(){"1"};
+ }
+}}
 /* Controlled profile. */ namespace Styx.Logic.Profiles {public class Profile{public int MinFreeBagSlots;public List<uint> Factions=new();}public static class ProfileManager{public static Profile CurrentProfile;public static Profile CurrentProfileSnapshot=>CurrentProfile;}}
-/* Controlled target registries. */ namespace Styx.Logic {public class Targeting{public static Targeting Instance=new();public WoWUnit FirstUnit;public bool KillBetweenHotspots;public static double PullDistance=30,PullDistanceSqr=900,CollectionRange=100;}public class LootTargeting{public static LootTargeting Instance=new();public WoWObject FirstObject;public static bool SkinMobs,HarvestHerbs,HarvestMinerals;}public static class Battlegrounds{public static bool IsInsideBattleground=>false;}public static class Blacklist{public static bool Contains(ulong guid)=>HandoffCases.Blacklisted.Contains(guid);public static void Add(ulong guid,TimeSpan duration){HandoffCases.Blacklisted.Add(guid);HandoffCases.Event("blacklist");}}public static class Mount{public static void Dismount(string reason){HandoffCases.Dismounts++;HandoffCases.Event("dismount");}}}
+/* Controlled target registries. */ namespace Styx.Logic {public class Targeting{public static Targeting Instance=new();public WoWUnit FirstUnit;public bool KillBetweenHotspots;public static double PullDistance=30,PullDistanceSqr=900,CollectionRange=100;}public class LootTargeting{public static LootTargeting Instance=new();public WoWObject FirstObject,SecondObject;public List<WoWObject> LootingList=>new[]{FirstObject,SecondObject}.Where(source=>source!=null).ToList();public static bool SkinMobs,HarvestHerbs,HarvestMinerals;}public static class Battlegrounds{public static bool IsInsideBattleground=>false;}public static class Blacklist{public static bool Contains(ulong guid)=>HandoffCases.Blacklisted.Contains(guid);public static void Add(ulong guid,TimeSpan duration){HandoffCases.Blacklisted.Add(guid);HandoffCases.Event("blacklist");}}public static class Mount{public static void Dismount(string reason){HandoffCases.Dismounts++;HandoffCases.Event("dismount");}}}
 /* Controlled POI effects. */ namespace Styx.Logic.POI {public enum PoiType{None,Kill,Loot,Skin,Harvest,Sell,Repair,Train,Buy,Mail,Fly,InnKeeper,Hotspot,Quest,QuestPickUp,QuestTurnIn}public class BotPoi{static BotPoi current;public static long CurrentGeneration;public static long CurrentWorkGeneration=>CurrentGeneration;public PoiType Type;public ulong Guid;public uint Entry;public WoWObject AsObject;public WoWPoint Location;public BotPoi(PoiType type){Type=type;}public BotPoi(WoWObject obj,PoiType type){Type=type;Guid=obj.Guid;Entry=obj.Entry;AsObject=obj;Location=obj.Location;HandoffCases.Event("build");}public static BotPoi Current{get=>current;set{current=value;CurrentGeneration++;HandoffCases.Publications++;HandoffCases.Event("publish");}}public static void Seed(BotPoi value)=>current=value;public static void Clear(string reason){HandoffCases.Clears++;current=new BotPoi(PoiType.None);CurrentGeneration++;}}}
 /* Controlled diagnostics/settings. */ namespace Styx.Helpers {public static class Logging{public static void Write(string text,params object[] args){if(text.StartsWith("Looting "))HandoffCases.Event("loot-log");else if(text.StartsWith("Blacklisting lootable to avoid"))HandoffCases.Event("attempt-log");else if(text.StartsWith("[LB] Loot object"))HandoffCases.Event("missing-log");}public static void WriteDebug(string text,params object[] args){}public static void WriteDiagnostic(string text,params object[] args){}}public class LevelbotSettings{public static LevelbotSettings Instance=new();public bool GroundMountFarmingMode;}public class CharacterSettings{public static CharacterSettings Instance=new();public bool SkinMobs,NinjaSkin;}}
-/* Controlled status. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot{public static string StatusText{set{HandoffCases.Event("status");}}}}
+/* Controlled status. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot{public static object RunIdentity=new();public static string StatusText{set{HandoffCases.Event("status");}}}}
 /* Controlled navigation. */ namespace Styx.Logic.Pathing {public static class Navigator{public static object NavigationProvider;public static void Clear(){HandoffCases.NavClears++;HandoffCases.Event("nav-clear");}public static MoveResult MoveTo(WoWPoint point){HandoffCases.GroundMoves++;HandoffCases.Event("ground-move");return MoveResult.Moved;}public static RunStatus GetRunStatusFromMoveResult(MoveResult value)=>RunStatus.Failure;}public static class Flightor{public static void MoveToGroundInteraction(WoWPoint point,Func<bool> admitted){if(admitted())MoveTo(point);}public static bool PreferFlightForGroundInteraction(WoWPoint point,float range)=>HandoffCases.PreferFlight;public static void MoveTo(WoWPoint point){HandoffCases.Moves++;HandoffCases.Event("move");}}}
 /* Controlled collision observations; the production owner interprets them. */ namespace Styx.WoWInternals.World {public static class GameWorld {public enum CGWorldFrameHitFlags{HitTestGroundAndStructures}public static bool TraceLine(WoWPoint from,WoWPoint to,CGWorldFrameHitFlags flags,out WoWPoint hit){HandoffCases.Event("ground-trace");hit=new WoWPoint(from.X,from.Y,HandoffCases.FloorZ);return HandoffCases.SupportKnown;}public static bool IsInLineOfSight(WoWPoint from,WoWPoint to){HandoffCases.Event("ground-los");return HandoffCases.LineClear;}}}
 /* Controlled statistics. */ namespace Styx.Logic.Combat {public static class GameStats{public static void LootedMob(){HandoffCases.Stats++;HandoffCases.Event("stats");}}}
@@ -506,6 +606,6 @@ public class ItemInfo {public int UniqueCount,BeginQuestId;}
   public void Cancel(){}
  }
 }
-/* Controlled frame observation and slot dispatch. */ namespace Styx.Logic.Inventory.Frames.LootFrame {public class LootFrame{public static readonly LootFrame Instance=new();public ulong LootingObjectGuid=>HandoffCases.FrameGuid;public bool IsVisible=>LootingObjectGuid!=0;public int LootItems=>2;public uint GetItemId(int slot)=>HandoffCases.GroundMode&&slot==0?28116u:(uint)(100+slot);public void Loot(int slot){if(HandoffCases.GroundMode&&slot==0&&LootingObjectGuid==HandoffCases.Loot.Guid&&!HandoffCases.Actor.Mounted&&!HandoffCases.Actor.IsFlying){if(HandoffCases.TrackCollection)HandoffCases.PendingCollectionGuid=LootingObjectGuid;else HandoffCases.Collected++;}HandoffCases.Slots++;HandoffCases.Event("slot");if(HandoffCases.AutoCloseFinalSlot&&(HandoffCases.GroundMode?slot==1:HandoffCases.Slots==2))HandoffCases.FrameGuid=0;}}}
+/* Controlled frame observation and slot dispatch. */ namespace Styx.Logic.Inventory.Frames.LootFrame {public class LootFrame{public static readonly LootFrame Instance=new();public ulong LootingObjectGuid=>HandoffCases.FrameGuid;public bool IsVisible=>LootingObjectGuid!=0;public int LootItems=>int.TryParse(HandoffCases.CountReply,out int value)?value:0;public uint GetItemId(int slot)=>HandoffCases.GroundMode&&slot==0?28116u:(uint)(100+slot);public void Loot(int slot){HandoffCases.Event("slot-prepare");DispatchSlot(slot);}public void DispatchSlot(int slot){if(HandoffCases.GroundMode&&slot==0&&LootingObjectGuid==HandoffCases.Loot.Guid&&!HandoffCases.Actor.Mounted&&!HandoffCases.Actor.IsFlying){if(HandoffCases.TrackCollection)HandoffCases.PendingCollectionGuid=LootingObjectGuid;else HandoffCases.Collected++;}HandoffCases.Slots++;HandoffCases.Event("slot");if(HandoffCases.AutoCloseFinalSlot&&(HandoffCases.GroundMode?slot==1:HandoffCases.Slots==2))HandoffCases.FrameGuid=0;}}}
 """;
 }

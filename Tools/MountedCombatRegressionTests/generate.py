@@ -83,6 +83,9 @@ quest_parts=[
     take("Bots/Quest/QuestBot.cs","internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType)"),
     take("Bots/Quest/QuestBot.cs","internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType, bool mounted)"),
 ]
+if "internal static bool HasReadyLootWork()" in text("Bots/Grind/LevelBot.cs"):
+    level_parts.extend([take("Bots/Grind/LevelBot.cs", "internal static bool HasReadyLootWork()"),
+                        take("Bots/Grind/LevelBot.cs", "private static bool CanLoot()")])
 for marker in ["internal static bool HasRequiredCombatTarget()", "private static Composite CreateRequiredTargetingBehavior()",
                "private static Composite CreateOpportunisticTargetingBehavior()", "internal static bool IsRequiredCombatObligation(WoWUnit target)"]:
     if marker in text("Bots/Quest/QuestBot.cs"):
@@ -98,6 +101,7 @@ singular_parts=[
 ]
 header="""#nullable disable
 using System;using System.Collections.Generic;using System.Linq;
+using Styx.Logic.Profiles;
 using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Levelbot.Decorators.Combat;
 using Singular.Dynamics;using Singular.Helpers;using Singular.Managers;using Singular.Settings;
 using Styx;using Styx.Combat.CombatRoutine;using Styx.Helpers;using Styx.Logic;using Styx.Logic.BehaviorTree;using Styx.Logic.Combat;using Styx.Logic.Pathing;using Styx.Logic.POI;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using TreeSharp;

@@ -164,6 +164,18 @@ internal sealed class GroundTransitionMachine
             return Progress("ground-travel", "owned-ground-travel; interaction-unobserved", observation, now);
         }
 
+        if (observation.Flying && observation.Supported && _plan is { ProgressOnly: false }
+            && (_descent || observation.Descending || _groundHandoff))
+        {
+            // Support can arrive before the client clears Flying. The actor may
+            // also drift outside the original narrow descent column on contact.
+            // Stop once and await the separate flight-flag acknowledgement; a
+            // landing footprint never authorizes climbing back to an air point.
+            _runtime.Hold();
+            _descent = false; _groundHandoff = true;
+            return Progress("landing-acknowledgement", "supported-contact; flight-flag-still-observed", observation, now);
+        }
+
         if (!observation.Flying && observation.Supported)
         {
             if (_descent || observation.Descending)
@@ -271,7 +283,8 @@ internal sealed class GroundTransitionMachine
         if (_plan.ProgressOnly)
         {
             if (CommandDue(now)) _runtime.Fly(_plan);
-            return Progress("flight-travel", "local-flight-leg; descent-not-authorized", observation, now);
+            return Progress(observation.Flying ? "flight-travel" : observation.Mounted ? "takeoff-pending" : "mount-pending",
+                observation.Flying ? "local-flight-leg; descent-not-authorized" : "selected-flight-departure; awaiting-client-acknowledgement", observation, now);
         }
         bool aboveLanding = observation.Position.Distance2DSqr(_plan.Landing) <= .5625f
             && observation.Position.Z >= _plan.Landing.Z - .25f

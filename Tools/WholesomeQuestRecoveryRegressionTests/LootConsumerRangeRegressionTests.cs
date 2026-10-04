@@ -72,23 +72,20 @@ internal static class LootConsumerRangeRegressionTests
     {
         private readonly IDisposable world;
         private readonly object source;
-        private readonly FieldInfo eventFlag=typeof(LevelBot).GetField("_lootEventsAttached",Hidden)!;
-        private readonly bool oldEventFlag;
         private readonly LocalPlayer player;
         private readonly Decorator gate;
         internal readonly WoWUnit Unit;
         internal Fixture()
         {
             source=Activator.CreateInstance(typeof(UnitUpstreamContractRegressionTests).GetNestedType("Fixture",BindingFlags.NonPublic)!,true)!;
-            world=(IDisposable)source;oldEventFlag=(bool)eventFlag.GetValue(null)!;
+            world=(IDisposable)source;
             try
             {
                 player=ObjectManager.Me!;
                 Unit=(WoWUnit)source.GetType().GetField("Unit",Hidden)!.GetValue(source)!;
                 Register(Unit);
-                // Skip only external hook installation while constructing the tree.
-                // The real predicate is neither copied nor replaced.
-                eventFlag.SetValue(null,true);
+                // The per-attempt event owner installs its listener only when
+                // interacting. Tree construction has no global event side effect.
                 Composite root=LevelBot.CreateLootBehavior();
                 gate=Walk(root).OfType<Decorator>().Single(d=>d.Children.Count==1 && d.DecoratedChild is ActionMoveToPoi);
                 Check(ObjectManager.Executor==null,"unexpected native executor");
@@ -122,7 +119,7 @@ internal static class LootConsumerRangeRegressionTests
             Check(actual==expected,$"expected move={expected}, observed {actual}");
             Check(ObjectManager.Executor==null && ReferenceEquals(ObjectManager.Me,player),"predicate changed native/world state");
         }
-        public void Dispose(){eventFlag.SetValue(null,oldEventFlag);world.Dispose();}
+        public void Dispose(){world.Dispose();}
     }
     private static IEnumerable<Composite> Walk(Composite root)
     {

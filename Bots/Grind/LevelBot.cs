@@ -51,11 +51,7 @@ namespace Bots.Grind
         public override bool RequiresProfile => true;
 
         // Loot tracking
-        private static PoiType _lastLootPoiType;
-        private static ulong _lastLootGuid;
-        private static bool _lootEventsAttached;
-        private static int _lootAttemptCount;
-        private static int _lootFailCount;
+        private static readonly Dictionary<(ulong Guid, PoiType Type), LootAttemptReceipt> _lootReceipts = new();
 
         // Death tracking  
         private static readonly CorpseRecoveryState _corpseRecovery = new();
@@ -80,7 +76,32 @@ namespace Bots.Grind
         // Root behavior cache
         private PrioritySelector _rootBehavior;
 
-        // HB 4.3.4 exact: LootAllItems helper
+        private static bool TryLootFrameCommand(string script, Func<bool> current)
+        {
+            try
+            {
+                var result = Lua.GetObservedReturnValues(script, current);
+                // This confirms local script return, never inventory/quest credit.
+                return result.Count == 1 && result[0] == "1";
+            }
+            catch (ObservationUnavailableException) { return false; }
+        }
+
+        private static int? ObserveLootCount(Func<bool> current)
+        {
+            try
+            {
+                var result = Lua.GetObservedReturnValues("return GetNumLootItems()", current);
+                // Build 12340 has eighteen fixed 32-byte loot-item records.
+                // A missing read must not masquerade as a valid empty frame.
+                return current() && result.Count == 1
+                    && int.TryParse(result[0], System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out int count)
+                    && count >= 0 && count <= 18 ? count : null;
+            }
+            catch (ObservationUnavailableException) { return null; }
+        }
+
         private static bool LootAllItems(Func<bool> current, ulong lootGuid)
         {
             bool Ready() => current() && lootGuid != 0 && LootFrame.Instance.LootingObjectGuid == lootGuid && current();
@@ -89,8 +110,9 @@ namespace Bots.Grind
             {
                 if (!Ready()) return false;
                 List<WoWItem> carriedItems = StyxWoW.Me.CarriedItems;
-                int slotCount = LootFrame.Instance.LootItems;
-                if (!Ready()) return false;
+                int? observedCount = ObserveLootCount(Ready);
+                if (!observedCount.HasValue || !Ready()) return false;
+                int slotCount = observedCount.Value;
                 for (int slot = 0; slot < slotCount; ++slot)
                 {
                     if (!Ready()) return false;
@@ -110,7 +132,7 @@ namespace Bots.Grind
                         }
                     }
                     if (!Ready()) return false;
-                    LootFrame.Instance.Loot(slot);
+                    if (!TryLootFrameCommand("LootSlot(" + (slot + 1).ToString(System.Globalization.CultureInfo.InvariantCulture) + ");return 1", Ready)) return false;
                 }
                 // A client can close the exact frame while processing our final
                 // slot. All observed slots were submitted; there is no frame left
@@ -118,17 +140,11 @@ namespace Bots.Grind
                 if (slotCount > 0 && current() && LootFrame.Instance.LootingObjectGuid == 0 && current())
                     return true;
                 if (!Ready()) return false;
-                Lua.DoString("CloseLoot();");
+                if (!TryLootFrameCommand("CloseLoot();return 1", Ready)) return false;
                 // The frame may disappear because of our own close request.
                 // Continue only for the same managed actor/object/work owner.
                 return current();
             }
-        }
-
-        private static void OnLootEvent(object sender, LuaEventArgs e)
-        {
-            _lootAttemptCount = 0;
-            _lootFailCount = 0;
         }
 
         #region BotBase Implementation
@@ -334,7 +350,7 @@ namespace Bots.Grind
                 }),
                 Guard(new PrioritySelector(
                     Guard(Routine.RestBehavior),
-                    Guard(Routine.PreCombatBuffBehavior),
+                    new RoutineAdmissionGuard(() => Current() && !HasReadyLootWork() && Current(), Routine.PreCombatBuffBehavior),
                     Guard(new DecoratorIsPoiType(PoiType.Kill, new PrioritySelector(
                         new Decorator(ctx => Current() && best != null && !ReferenceEquals(subject, best),
                             new Sequence(
@@ -923,13 +939,6 @@ namespace Bots.Grind
         public static Composite CreateLootBehavior()
         {
             LootWorkObservation movementOwner = null;
-            // Attach loot events once
-            if (!_lootEventsAttached)
-            {
-                Lua.Events.AttachEvent("CHAT_MSG_LOOT", OnLootEvent);
-                _lootEventsAttached = true;
-            }
-
             return new Decorator(
                 ctx => CanBeginLoot() && CanLoot(),
                 new PrioritySelector(
@@ -952,35 +961,16 @@ namespace Bots.Grind
                                     )
                                 ))
                             ),
-                            // Already looted check
+                            // A successful dispatch can precede the world's loot
+                            // flag update. Retire an obsolete selected POI once;
+                            // selection suppresses repeats during its timed lease.
                             new Decorator(
-                                ctx => _lastLootPoiType == BotPoi.Current.Type && _lastLootGuid == BotPoi.Current.Guid,
+                                ctx => BotPoi.Current.AsObject is { } source && !CanAttemptLoot(source, BotPoi.Current.Type),
                                 new TreeSharp.Action(ctx =>
                                 {
                                     var owner = new LootWorkObservation();
-                                    if (!owner.Current || owner.Type != _lastLootPoiType || owner.Guid != _lastLootGuid)
-                                        return RunStatus.Success; // End this revoked branch without more loot work.
-                                    if (++_lootAttemptCount >= 5)
-                                    {
-                                        if (++_lootFailCount >= 2)
-                                        {
-                                            Logging.Write("Blacklisting lootable to avoid useless POI spam, tried looting twice but we still can't loot.");
-                                            if (!owner.Current) return RunStatus.Success;
-                                            Blacklist.Add(owner.Guid, TimeSpan.FromMinutes(15.0));
-                                            if (!owner.Current) return RunStatus.Success;
-                                            _lootFailCount = 0;
-                                            BotPoi.Clear("Tried to loot more than 2 times");
-                                        }
-                                        else
-                                        {
-                                            _lastLootGuid = 0;
-                                            _lootAttemptCount = 0;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        BotPoi.Clear("Already looted");
-                                    }
+                                    if (owner.Current && owner.Subject != null && !CanAttemptLoot(owner.Subject, owner.Type) && owner.Current)
+                                        BotPoi.Clear("Loot source is depleted or awaiting its bounded retry");
                                     return RunStatus.Success;
                                 })
                             ),
@@ -1006,8 +996,8 @@ namespace Bots.Grind
                                     return RunStatus.Success;
                                 })
                             ),
-                            // GameObjects require a ground approach, confirmed
-                            // landing and dismount before ordinary loot can run.
+                            // GameObjects and mounted corpse collection share
+                            // approach, observed landing and dismount ownership.
                             // Keep this ahead of the generic out-of-range branch
                             // so aerial travel cannot starve the descent state.
                             new GroundLootApproach(() => CanBeginLoot() && CanLoot()),
@@ -1022,25 +1012,6 @@ namespace Bots.Grind
                                 },
                                 new ActionMoveToPoi(() => movementOwner != null && movementOwner.Current)
                             ),
-                            // Stop descending if flying
-                            new Decorator(
-                                ctx => StyxWoW.Me.IsFlying,
-                                new TreeSharp.Action(ctx =>
-                                {
-                                    if (movementOwner != null && movementOwner.Current)
-                                        WoWMovement.Move(WoWMovement.MovementDirection.Descend);
-                                    return RunStatus.Success;
-                                })
-                            ),
-                            new Decorator(
-                                ctx => StyxWoW.Me.MovementInfo.IsDescending,
-                                new TreeSharp.Action(ctx =>
-                                {
-                                    if (movementOwner != null && movementOwner.Current)
-                                        WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
-                                    return RunStatus.Success;
-                                })
-                            ),
                             CreateOwnedLootInteraction(() => movementOwner != null && movementOwner.Current)
                         )
                     ),
@@ -1052,6 +1023,72 @@ namespace Bots.Grind
             );
         }
 
+        // Scheduling observation only: this does not authorize an interaction or
+        // claim inventory progress. Recovery and actual combat retain priority.
+        internal static bool HasReadyLootWork()
+        {
+            var actor = StyxWoW.Me;
+            var poi = BotPoi.Current;
+            if (actor == null || !actor.IsValid || !actor.IsAlive || poi == null || !CanLoot()) return false;
+            if (poi.Type is PoiType.Loot or PoiType.Skin or PoiType.Harvest) return true;
+            if (poi.Type is not (PoiType.None or PoiType.Hotspot or PoiType.Quest)) return false;
+            var targeting = LootTargeting.Instance;
+            var source = SelectLootCandidate(targeting);
+            return source is WoWUnit { IsValid: true, IsAlive: false, CanLoot: true } corpse
+                && corpse.Guid != 0 && !Blacklist.Contains(corpse.Guid) && corpse.Distance <= LootTargeting.LootRadius
+                && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(BotPoi.Current, poi)
+                && ReferenceEquals(LootTargeting.Instance, targeting) && ReferenceEquals(SelectLootCandidate(targeting), source);
+        }
+
+        private static PoiType LootKind(WoWObject candidate) => candidate is WoWUnit unit
+            && LootTargeting.SkinMobs && unit.SkinType == WoWCreatureSkinType.Leather && unit.CanSkin ? PoiType.Skin
+            : candidate is WoWGameObject obj && ((obj.IsHerb && LootTargeting.HarvestHerbs) || (obj.IsMineral && LootTargeting.HarvestMinerals))
+                ? PoiType.Harvest : PoiType.Loot;
+
+        private static bool CanAttemptLoot(WoWObject candidate, PoiType type)
+        {
+            if (candidate == null || !candidate.IsValid || candidate.Guid == 0 || Blacklist.Contains(candidate.Guid)) return false;
+            bool available = candidate is WoWUnit unit ? !unit.IsAlive && (type == PoiType.Skin ? unit.CanSkin : unit.CanLoot)
+                : candidate is WoWGameObject obj && obj.CanLoot;
+            if (!available) return false;
+            return !_lootReceipts.TryGetValue((candidate.Guid, type), out var receipt)
+                || !receipt.Owner.SameSource(candidate) || Environment.TickCount64 >= receipt.RetryAfter;
+        }
+
+        private static WoWObject SelectLootCandidate(LootTargeting targeting)
+            => targeting?.LootingList.ToArray().FirstOrDefault(source => CanAttemptLoot(source, LootKind(source)));
+
+        private sealed class LootAttemptReceipt
+        {
+            internal readonly LootWorkObservation Owner;
+            internal readonly long RetryAfter, ForgetAfter;
+            internal readonly int Failures;
+            internal LootAttemptReceipt(LootWorkObservation owner, long now, bool dispatched, int failures)
+            {
+                Owner = owner; Failures = dispatched ? 0 : failures;
+                RetryAfter = now + (dispatched ? 2000 : failures >= 3 ? 15000 : failures * 500);
+                ForgetAfter = now + 60000;
+            }
+        }
+
+        private static void RecordLootAttempt(LootWorkObservation owner, bool dispatched)
+        {
+            if (!owner.Current || owner.Subject == null) return;
+            long now = Environment.TickCount64;
+            foreach (var entry in _lootReceipts.ToArray())
+                if ((now >= entry.Value.ForgetAfter || !entry.Value.Owner.SameSource(entry.Value.Owner.Subject))
+                    && _lootReceipts.TryGetValue(entry.Key, out var current) && ReferenceEquals(current, entry.Value))
+                    _lootReceipts.Remove(entry.Key);
+            var key = (owner.Guid, owner.Type);
+            int failures = _lootReceipts.TryGetValue(key, out var prior) && prior.Owner.SameSource(owner.Subject)
+                ? prior.Failures + 1 : 1;
+            if (!owner.Current) return;
+            if (_lootReceipts.Count >= 64 && !_lootReceipts.ContainsKey(key))
+                _lootReceipts.Remove(_lootReceipts.OrderBy(pair => pair.Value.ForgetAfter).First().Key);
+            _lootReceipts[key] = new LootAttemptReceipt(owner, now, dispatched, failures);
+            // A local dispatch or retry receipt is never item or quest credit.
+        }
+
         private static Composite CreateOwnedLootSelection() => new TreeSharp.Action(ctx =>
         {
             var actor = StyxWoW.Me; ulong actorGuid = actor?.Guid ?? 0; uint map = actor?.MapId ?? 0;
@@ -1059,19 +1096,16 @@ namespace Bots.Grind
             var provider = Navigator.NavigationProvider;
             var poi = BotPoi.Current; var priorType = poi?.Type ?? PoiType.None;
             ulong priorGuid = poi?.Guid ?? 0; uint priorEntry = poi?.Entry ?? 0;
-            var targeting = LootTargeting.Instance; var candidate = targeting?.FirstObject;
+            var targeting = LootTargeting.Instance; var candidate = SelectLootCandidate(targeting);
             ulong guid = candidate?.Guid ?? 0; bool? alive = candidate?.ToUnit()?.IsAlive;
-            PoiType Kind() => candidate is WoWUnit unit && LootTargeting.SkinMobs && unit.SkinType == WoWCreatureSkinType.Leather && unit.CanSkin ? PoiType.Skin
-                : candidate is WoWGameObject obj && ((obj.IsHerb && LootTargeting.HarvestHerbs) || (obj.IsMineral && LootTargeting.HarvestMinerals))
-                    ? PoiType.Harvest : PoiType.Loot;
-            PoiType type = Kind();
+            PoiType type = LootKind(candidate);
             bool InputsCurrent() => actor != null && actorGuid != 0 && ReferenceEquals(StyxWoW.Me, actor)
                 && actor.Guid == actorGuid && actor.MapId == map && CanBeginLoot() && CanLoot()
                 && mover != null && moverGuid != 0 && mover.IsValid && mover.Guid == moverGuid
                 && ReferenceEquals(WoWMovement.ActiveMover, mover) && ReferenceEquals(Navigator.NavigationProvider, provider)
                 && candidate != null && guid != 0 && candidate.IsValid && candidate.Guid == guid && candidate.ToUnit()?.IsAlive == alive
-                && ReferenceEquals(LootTargeting.Instance, targeting) && ReferenceEquals(targeting.FirstObject, candidate)
-                && Kind() == type && ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == actorGuid;
+                && ReferenceEquals(LootTargeting.Instance, targeting) && ReferenceEquals(SelectLootCandidate(targeting), candidate)
+                && LootKind(candidate) == type && ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == actorGuid;
             bool Current() => InputsCurrent() && poi != null && ReferenceEquals(BotPoi.Current, poi)
                 && poi.Type == priorType && poi.Guid == priorGuid && poi.Entry == priorEntry
                 && (priorType == PoiType.None || priorType == PoiType.Hotspot || priorType == PoiType.Quest);
@@ -1099,9 +1133,12 @@ namespace Bots.Grind
             internal readonly ulong Guid;
             internal readonly PoiType Type;
             private readonly ulong actorGuid, moverGuid;
-            private readonly uint map, entry;
+            private readonly uint map, entry, actorAddress, moverAddress, subjectAddress;
             private readonly WoWUnit mover = WoWMovement.ActiveMover;
             private readonly object provider = Navigator.NavigationProvider;
+            private readonly object memory = ObjectManager.Wow, executor = ObjectManager.Executor;
+            private readonly object run = TreeRoot.RunIdentity, profile = ProfileManager.CurrentProfileSnapshot;
+            private readonly long generation;
             private readonly bool? alive;
 
             internal LootWorkObservation()
@@ -1109,17 +1146,27 @@ namespace Bots.Grind
                 actorGuid = Actor?.Guid ?? 0; map = Actor?.MapId ?? 0; moverGuid = mover?.Guid ?? 0;
                 Guid = Poi?.Guid ?? 0; Type = Poi?.Type ?? PoiType.None; entry = Poi?.Entry ?? 0;
                 Subject = Poi?.AsObject; alive = Subject?.ToUnit()?.IsAlive;
+                actorAddress = Actor?.BaseAddress ?? 0; moverAddress = mover?.BaseAddress ?? 0; subjectAddress = Subject?.BaseAddress ?? 0;
+                generation = BotPoi.CurrentWorkGeneration;
             }
 
-            internal bool Current => Actor != null && actorGuid != 0 && Actor.IsValid && Actor.IsAlive
-                && ReferenceEquals(StyxWoW.Me, Actor) && Actor.Guid == actorGuid && Actor.MapId == map
-                && !IsPlayerOrPetInCombat() && !Actor.OnTaxi && !Actor.IsOnTransport
+            private bool ContextCurrent => Actor != null && actorGuid != 0 && actorAddress != 0 && Actor.IsValid && Actor.IsAlive
+                && ReferenceEquals(StyxWoW.Me, Actor) && Actor.Guid == actorGuid && Actor.BaseAddress == actorAddress && Actor.MapId == map
+                && memory != null && executor != null && ReferenceEquals(ObjectManager.Wow, memory) && ReferenceEquals(ObjectManager.Executor, executor)
+                && ReferenceEquals(TreeRoot.RunIdentity, run) && ReferenceEquals(ProfileManager.CurrentProfileSnapshot, profile)
                 && mover != null && moverGuid != 0 && mover.IsValid && mover.Guid == moverGuid
-                && ReferenceEquals(WoWMovement.ActiveMover, mover) && ReferenceEquals(Navigator.NavigationProvider, provider)
-                && Poi != null && ReferenceEquals(BotPoi.Current, Poi) && Poi.Type == Type && Poi.Guid == Guid && Poi.Entry == entry
+                && mover.BaseAddress == moverAddress && ReferenceEquals(WoWMovement.ActiveMover, mover) && ReferenceEquals(Navigator.NavigationProvider, provider);
+
+            internal bool SameSource(WoWObject source) => ContextCurrent && ReferenceEquals(source, Subject)
+                && source != null && source.IsValid && source.Guid == Guid && source.BaseAddress == subjectAddress
+                && source.ToUnit()?.IsAlive == alive;
+
+            internal bool Current => ContextCurrent && !IsPlayerOrPetInCombat() && !Actor.OnTaxi && !Actor.IsOnTransport
+                && Poi != null && ReferenceEquals(BotPoi.Current, Poi) && BotPoi.CurrentWorkGeneration == generation
+                && Poi.Type == Type && Poi.Guid == Guid && Poi.Entry == entry
                 && (Type == PoiType.Loot || Type == PoiType.Skin || Type == PoiType.Harvest)
                 && ReferenceEquals(Poi.AsObject, Subject)
-                && (Subject == null || Subject.IsValid && Subject.Guid == Guid && Subject.ToUnit()?.IsAlive == alive);
+                && (Subject == null || SameSource(Subject));
 
             internal bool InRange => Current && Subject != null && (Subject is WoWUnit unit
                 ? unit.WithinLootRange : Subject.WithinInteractRange) && Current;
@@ -1141,24 +1188,37 @@ namespace Bots.Grind
                     new Sequence(
                         Guard(new DecoratorContinue(ctx => owner.Actor.IsMoving, new Sequence(
                             Guard(new TreeSharp.Action(ctx => WoWMovement.MoveStop())),
-                            Guard(new TreeSharp.Action(ctx => SleepForLag()))))),
+                            Guard(new Wait(2, ctx => !owner.Actor.IsMoving, new ActionAlwaysSucceed()))))),
                         // A ground object's opening action can outlast the
                         // ordinary corpse wait. Keep the existing finite
                         // harvesting budget and subscribe before native dispatch.
                         Guard(new WaitLuaEvent("LOOT_OPENED", () => owner.Subject is WoWGameObject
                             || owner.Type == PoiType.Harvest ? 10 : 3, () =>
                         {
-                            if (!Current() || !owner.InRange || owner.Actor.IsFlying || owner.Actor.MovementInfo.IsDescending
+                            if (!Current() || !owner.InRange || owner.Actor.IsMoving || owner.Actor.IsFlying || owner.Actor.MovementInfo.IsDescending
                                 || owner.Actor.IsCasting || owner.Actor.ChanneledCastingSpellId != 0
                                 || LootFrame.Instance.IsVisible || !CanLoot()
                                 || !GroundLootApproach.CanInteractNow(owner.Subject, Current) || !Current()) return false;
-                            attempted = true;
                             GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-preparing", "awaiting-owned-native-entry");
                             if (owner.Subject is WoWGameObject)
                             {
                                 if (!GroundTransition.TryInteractWith(owner.Subject, Current, true)) return false;
                             }
-                            else owner.Subject.Interact(true);
+                            else
+                            {
+                                WoWPoint position = owner.Actor.Location;
+                                // Stationary water looting is valid on this client.
+                                // Native entry rechecks only physical and owner
+                                // observations; it must never trace or execute Lua.
+                                bool EntryCurrent() => Current() && owner.InRange && !owner.Actor.IsMoving
+                                    && owner.Actor.Location.Equals(position) && !owner.Actor.IsCasting && owner.Actor.ChanneledCastingSpellId == 0
+                                    && !MountedCombatTransition.IsMountedOrFlying(owner.Actor)
+                                    && owner.Actor.TryGetMovementState(out uint flags, out ulong transport)
+                                    && transport == 0 && (flags & 0x02C03000u) == 0 && !owner.Actor.MovementInfo.IsDescending
+                                    && Current();
+                                if (!EntryCurrent() || !owner.Subject.TryInteractOwned(EntryCurrent, ignoreTimer: true)) return false;
+                            }
+                            attempted = true;
                             if (Current()) GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-issued", "native-request-not-acknowledged");
                             return Current();
                         },
@@ -1190,19 +1250,28 @@ namespace Bots.Grind
                                 new ActionAlwaysSucceed())))),
                         Guard(new DecoratorContinue(ctx => owner.Type == PoiType.Loot && owner.Subject is WoWUnit,
                             Guard(new TreeSharp.Action(ctx => GameStats.LootedMob())))),
-                        Guard(new TreeSharp.Action(ctx => { _lastLootPoiType = owner.Type; _lastLootGuid = owner.Guid; })),
+                        Guard(new TreeSharp.Action(ctx => RecordLootAttempt(owner, true))),
                         // Keep cleanup last; no old work may run after its callbacks.
                         new Decorator(ctx => Current(), new ActionClearPoi("Waiting for loot flag"))),
                     new TreeSharp.Action(ctx =>
                     {
                         if (!attempted || !Current()) return RunStatus.Failure;
+                        if (observedEvent)
+                        {
+                            ulong frame = LootFrame.Instance.LootingObjectGuid;
+                            if (!Current() || frame != 0 && frame != owner.Guid) return RunStatus.Failure;
+                            // Retire only this operation's remaining frame before
+                            // a timed retry. A replaced or unreadable frame cannot
+                            // authorize close, successful loot, or POI cleanup.
+                            if (frame == owner.Guid && !TryLootFrameCommand("CloseLoot();return 1",
+                                () => Current() && LootFrame.Instance.LootingObjectGuid == owner.Guid && Current())) return RunStatus.Failure;
+                            if (!Current()) return RunStatus.Failure;
+                        }
                         GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-not-acknowledged", observedEvent
                             ? "loot-window-or-slot-ownership-changed" : "loot-window-timeout");
                         Logging.Write(observedEvent
                             ? "Loot frame or slot processing changed after LOOT_OPENED; deferring this lootable."
                             : "Loot window did not open before the bounded wait; deferring this lootable.");
-                        if (!Current()) return RunStatus.Failure;
-                        SleepForLag();
                         if (!Current()) return RunStatus.Failure;
                         bool canStillLoot = owner.Type switch
                         {
@@ -1211,10 +1280,9 @@ namespace Bots.Grind
                             _ => owner.Subject is WoWGameObject gameObject ? gameObject.CanLoot : owner.Subject.ToUnit()?.CanLoot == true
                         };
                         if (!Current()) return RunStatus.Failure;
-                        Logging.Write(canStillLoot ? "I can't tell if we looted, blacklisting it just to be safe." : "Lootable isn't lootable, blacklisting.");
+                        RecordLootAttempt(owner, false);
                         if (!Current()) return RunStatus.Failure;
-                        Blacklist.Add(owner.Guid, owner.Subject is WoWGameObject
-                            ? TimeSpan.FromSeconds(15) : TimeSpan.FromMinutes(canStillLoot ? 10 : 5));
+                        Logging.Write(canStillLoot ? "Loot source remains available; scheduling a bounded retry." : "Loot source is no longer available; awaiting the next observation.");
                         if (!Current()) return RunStatus.Failure;
                         BotPoi.Clear("Done looting");
                         return RunStatus.Success;
@@ -1870,6 +1938,7 @@ namespace Bots.Grind
                 && actor.Guid == actorGuid && actor.MapId == map
                 && !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true)
                 && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport
+                && ActionMoveToTarget.CanPursueOnGround(actor)
                 && target != null && targetGuid != 0 && target.IsValid && target.IsAlive && target.Guid == targetGuid
                 && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(Targeting.Instance.FirstUnit, target);
             bool Current() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, poi)

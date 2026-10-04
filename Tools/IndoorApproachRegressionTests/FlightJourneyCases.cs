@@ -24,6 +24,29 @@ internal static class FlightJourneyCases
             finally { Styx.BotEvents.Stop();GroundTransitionRuntime.MonotonicClockOverride=null; }
         }
 
+        Case("mount acknowledgement retains selected departure when ground speed changes its cost",()=>
+        {
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            Tick(owner);Check(World.ExteriorFlights.Count==1,"initial flight selection missing");
+            World.Actor.MountedValue=true;World.FlightMountObserved=true;
+            // This models the separate estimator's new observation after mount:
+            // the live run-speed comparison is now unfavorable, capability remains.
+            World.Actor.IsMoving=true;World.FlightCostRequiresStop=true;
+            for(int pulse=0;pulse<5;pulse++)Tick(owner);
+            Check(World.Walks.Count==0&&World.Dismounts==0&&World.ExteriorFlights.Count>1,
+                "acknowledged flight mount switched to ground CTM before observed takeoff");
+            World.Actor.Flags=0x02000000u;World.Actor.Position=new(100,10,5);
+            Tick(owner);Check(World.Walks.Count==0,"observed lift-off lost the same selected journey");
+        });
+        Case("retained departure still respects revoked flight capability",()=>
+        {
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            Tick(owner);int flights=World.ExteriorFlights.Count;
+            World.Actor.MountedValue=true;World.FlightMountObserved=true;World.PreferFlight=false;
+            Tick(owner);
+            Check(World.ExteriorFlights.Count==flights&&World.Walks.Count==1,
+                "departure retention overruled a no-longer-eligible flight capability");
+        });
         Case("local waypoint arrival never requests descent",()=>
         {
             using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);

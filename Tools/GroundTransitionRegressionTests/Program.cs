@@ -113,6 +113,19 @@ Case("descent then supported landing then unmount acknowledgement", (r, m) =>
     r.Motion = r.Motion with { Mounted = false }; r.Time += .3;
     Check(m.Tick() == GroundTransitionState.Ready, "owned mount removal never acquired combat");
 });
+Case("supported landing with a lagging flight flag never climbs back to its approach waypoint", (r, m) =>
+{
+    Air(r); Pending(m);
+    r.Motion=r.Motion with { Position=new(50,10,7) };r.Time=.3;Pending(m);
+    Check(r.Descents==1,"descent was not established");int flights=r.Flights;
+    // Observed support is authoritative about the footprint. The client may
+    // clear Flying one pulse later and drift beyond the original .75-yard column.
+    r.Motion=r.Motion with { Position=new(50.9f,10,-.3f),Supported=true,Descending=true };
+    for(int pulse=0;pulse<3;pulse++){r.Time+=.3;Pending(m);}
+    Check(r.Flights==flights&&r.Dismounts==0,"supported descent bounced upward or dismounted before the flight flag cleared");
+    r.Motion=r.Motion with { Flying=false,Descending=false };r.Time+=.3;Pending(m);
+    r.Time+=.3;Pending(m);Check(r.Dismounts==1,"observed landing never released its single dismount request");
+});
 Case("forced removal needs no duplicate request", (r, m) =>
 {
     Air(r); Pending(m); r.Motion = r.Motion with { Flying = false, Mounted = false, Supported = true, Position = new(50, 10, 0) };

@@ -609,6 +609,13 @@ namespace Styx.Logic.Pathing
                     StyxWoW.Sleep(100);
                     if (!CanContinue()) return;
                     WoWMovement.MoveStop(WoWMovement.MovementDirection.Forward | WoWMovement.MovementDirection.JumpAscend);
+                    if (!CanContinue()) return;
+                    // The ascent request is not proof that the mount left the
+                    // ground. Ground CTM toward an aerial waypoint can cancel
+                    // that very takeoff and strand the next support observation.
+                    // Keep the selected owner pending until the client reports
+                    // flight; the shared journey bounds failed departure progress.
+                    if ((!hasSeaLegs && !activeMover.IsFlying) || (hasSeaLegs && !activeMover.IsSwimming)) return;
                 }
                 if (!CanContinue()) return;
 

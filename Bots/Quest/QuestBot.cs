@@ -194,16 +194,14 @@ public class QuestBot : BotBase
     internal static bool HasRequiredCombatTarget()
     {
         var actor = StyxWoW.Me;
-        var order = QuestState.Instance.Order;
-        var owner = order.CurrentBehavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
+        var selection = QuestExecutionSelection.Capture();
+        var owner = selection?.Behavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
         var objective = owner?.Objective;
         // A moving NPC, gossip or scripted behavior has no ordinary pull
         // obligation. Do not query an unrelated/UNKNOWN targeting provider.
         if (objective == null) return false;
         var targeting = Targeting.Instance;
         var target = targeting?.FirstUnit;
-        var nodes = order.Nodes;
-        var node = order.CurrentNode;
         var profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
         var poi = BotPoi.Current;
         if (actor == null || target == null || objective == null || !actor.IsValid || !actor.IsAlive
@@ -227,23 +225,19 @@ public class QuestBot : BotBase
             && actor.BaseAddress == actorAddress && actor.MapId == map && target.IsValid && target.IsAlive
             && target.Guid == targetGuid && target.BaseAddress == targetAddress
             && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(targeting.FirstUnit, target)
-            && ReferenceEquals(order.Nodes, nodes) && ReferenceEquals(order.CurrentNode, node)
-            && ReferenceEquals(order.CurrentBehavior, owner) && ReferenceEquals(owner.Objective, objective)
+            && selection.Current && ReferenceEquals(owner.Objective, objective)
             && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, profile) && ReferenceEquals(BotPoi.Current, poi);
     }
 
     private static Composite CreateRequiredTargetingBehavior()
     {
-        var order = QuestState.Instance.Order;
-        object owner = null, nodes = null, node = null, profile = null;
-        bool Current() => ReferenceEquals(order.CurrentBehavior, owner) && ReferenceEquals(order.Nodes, nodes)
-            && ReferenceEquals(order.CurrentNode, node) && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, profile)
-            && HasRequiredCombatTarget() && ReferenceEquals(order.CurrentBehavior, owner);
+        QuestExecutionSelection selection = null;
+        bool Current() => selection != null && selection.Current
+            && HasRequiredCombatTarget() && selection.Current;
         return new Decorator(_ => HasRequiredCombatTarget(), new Sequence(
             new TreeSharp.Action(_ =>
             {
-                owner = order.CurrentBehavior; nodes = order.Nodes; node = order.CurrentNode;
-                profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
+                selection = QuestExecutionSelection.Capture();
                 return Current() ? RunStatus.Success : RunStatus.Failure;
             }),
             new OwnedTargetHandoff(Current, clearNavigation: true, requiredMountedTarget: true)));
@@ -251,12 +245,12 @@ public class QuestBot : BotBase
 
     internal static bool IsRequiredCombatObligation(WoWUnit target)
     {
-        var order = QuestState.Instance.Order;
-        var owner = order.CurrentBehavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
+        var selection = QuestExecutionSelection.Capture();
+        var owner = selection?.Behavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
         var objective = owner?.Objective;
         if (target == null || objective == null || !target.IsValid || !target.IsAlive) return false;
         var profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
-        return objective.IsRequiredCombatTarget(target) && ReferenceEquals(order.CurrentBehavior, owner)
+        return objective.IsRequiredCombatTarget(target) && selection.Current
             && ReferenceEquals(owner.Objective, objective)
             && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, profile);
     }

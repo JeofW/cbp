@@ -32,7 +32,9 @@ internal static class CombatTargetGapRegressionTests
         try
         {
             Styx.Helpers.Logging.FileLogging=false;
-            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using System.Collections.Generic;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.Combat;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;\n"+region+"\n}}");
+            // Collection is an observed scheduling input to this isolated combat
+            // region. The complete selector is linked in LootPriorityCases.
+            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using System.Collections.Generic;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.Combat;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;private static bool HasReadyLootWork()=>GapCases.ReadyLoot;\n"+region+"\n}}");
             File.WriteAllText(Path.Combine(temp,"IsolationBoundary.cs"),"using TreeSharp;namespace Levelbot.Actions.Combat{public static class PullIsolationCoordinator{public static Composite CreatePreCombatBehavior()=>new TreeSharp.Action(_=>RunStatus.Failure);public static Composite CreateRetreatBehavior()=>new TreeSharp.Action(_=>RunStatus.Failure);}}");
             File.Copy(Path.Combine(root,"CommonBehaviors","Decorators","DecoratorIsPoiType.cs"),Path.Combine(temp,"DecoratorIsPoiType.cs"));
             File.WriteAllText(Path.Combine(temp,"Boundary.cs"),Boundary);
@@ -77,6 +79,7 @@ public static class GapCases
     internal static readonly List<string> Trace=new();
     internal static readonly Dictionary<string,RunStatus> Results=new();
     internal static int Fallback,Targets,Dismounts;
+    internal static bool ReadyLoot;
     public static ulong NextGuid;
     public static string Stage;
     public static System.Action Callback;
@@ -135,6 +138,22 @@ public static class GapCases
         Add("idle player and idle pet retain normal rest",()=>{Me.Pet=new WoWUnit();Results["rest"]=RunStatus.Success;Tick(Build());Check(Trace.SequenceEqual(new[]{"rest"})&&Fallback==0,"idle rest was suppressed");});
         Add("dead pet combat flag does not block routine rest",()=>{Me.Pet=new WoWUnit{Combat=true,IsAlive=false};Results["rest"]=RunStatus.Success;Tick(Build());Check(Trace.SequenceEqual(new[]{"rest"}),"dead pet retained combat");});
         Add("no combat and no work retains gathering fallback",()=>{Tick(Build());Check(Fallback==1&&Trace.SequenceEqual(new[]{"rest","prebuff"}),"ordinary idle fallback changed");});
+        Add("ready loot yields optional prebuff but retains recovery",()=>{
+            ReadyLoot=true;Results["prebuff"]=RunStatus.Success;Tick(Build());
+            Check(Fallback==1&&Trace.SequenceEqual(new[]{"rest"}),"optional buff kept ready collection behind the combat branch");
+        });
+        Add("ready loot never removes needed rest priority",()=>{
+            ReadyLoot=true;Results["rest"]=RunStatus.Success;Tick(Build());
+            Check(Fallback==0&&Trace.SequenceEqual(new[]{"rest"}),"ready collection bypassed the recovery owner");
+        });
+        Add("new ready loot revokes a yielded optional buff",()=>{
+            Results["prebuff"]=RunStatus.Running;var tree=Build();tree.Start(null);
+            try{
+                Check(Step(tree)==RunStatus.Running&&Trace.Contains("prebuff"),"optional buff did not enter its continuing state");
+                ReadyLoot=true;Trace.Clear();Step(tree);
+                Check(!Trace.Contains("prebuff")&&Fallback==1,"yielded optional buff starved newly ready collection");
+            }finally{tree.Stop(null);}
+        });
         Add("existing mounted-travel suppression remains outside ground-combat ownership",()=>{Me.Mounted=true;Me.Combat=true;Tick(Build());Check(Fallback==1&&!Trace.Contains("heal")&&Dismounts==0,"ground policy forced combat while mounted travel is owned elsewhere");});
         Add("explicit dismount request keeps its priority",()=>{Me.Combat=true;Me.Mounted=true;Mount.DismountNeeded=true;Tick(Build());Check(Dismounts==1&&Fallback==0&&Trace.Count==0,"explicit dismount priority changed");});
         Add("empty Kill POI cleanup does not authorize same-tick gathering",()=>{Me.Combat=true;BotPoi.Current=new BotPoi(null,PoiType.Kill);Tick(Build());Check(BotPoi.Current.Type==PoiType.None&&Fallback==0,"POI cleanup fell into gathering");});
@@ -155,7 +174,7 @@ public static class GapCases
         if(assertions+unexpected!=0)throw new InvalidOperationException("Combat target-gap regressions");
     }
     private static Composite Build()=>new PrioritySelector(Bots.Grind.LevelBot.CreateCombatBehavior(),new TreeSharp.Action(_=>{Fallback++;return RunStatus.Success;}));
-    private static void Reset(){Stage=null;Callback=null;Trace.Clear();Results.Clear();SelectedTargets.Clear();NextGuid=0;Fallback=Targets=Dismounts=0;StyxWoW.Me=new LocalPlayer();Targeting.Instance.TargetList.Clear();BotPoi.Seed(new BotPoi(null,PoiType.None));Mount.DismountNeeded=false;Routine=new RoutineSet();}
+    private static void Reset(){Stage=null;Callback=null;ReadyLoot=false;Trace.Clear();Results.Clear();SelectedTargets.Clear();NextGuid=0;Fallback=Targets=Dismounts=0;StyxWoW.Me=new LocalPlayer();Targeting.Instance.TargetList.Clear();BotPoi.Seed(new BotPoi(null,PoiType.None));Mount.DismountNeeded=false;Routine=new RoutineSet();}
     private static void AddPrePullCases(List<(string,System.Action)> cases)
     {
         var changes=new[]{"actor","actor-guid","actor-invalid","actor-dead","map","poi","poi-type","poi-subject","best","best-dead","best-invalid","display","combat"};

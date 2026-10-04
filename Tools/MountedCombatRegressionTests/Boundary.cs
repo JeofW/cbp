@@ -29,6 +29,7 @@ namespace Harness
             Styx.WoWInternals.ObjectManager.Wow=memory;
             Styx.WoWInternals.ObjectManager.Executor=new GreenMagic.ExecutorRand{Memory=memory,IsOpen=true,IsInitialized=true};
             Styx.Logic.Targeting.Instance=new Styx.Logic.Targeting();
+            Styx.Logic.LootTargeting.Instance=new Styx.Logic.LootTargeting();
             Styx.Logic.POI.BotPoi.Current=new Styx.Logic.POI.BotPoi(Styx.Logic.POI.PoiType.None);
             Styx.Logic.Pathing.Navigator.NavigationProvider=new object();
             Styx.Logic.Pathing.Navigator.PlayerMover=new object();
@@ -154,11 +155,12 @@ namespace Styx
 namespace Styx.WoWInternals.WoWObjects
 {
     using Styx.Logic.Pathing;
-    public class WoWObject{public ulong Guid{get;set;}public uint Entry{get;set;}public uint BaseAddress{get;set;}=100;public bool IsValid{get;set;}=true;public bool CanSelect=true,Attackable=true;public virtual bool IsAlive{get;set;}=true;public WoWPoint Location{get;set;}public virtual WoWUnit ToUnit()=>this as WoWUnit;}
+    public class WoWObject{public ulong Guid{get;set;}public uint Entry{get;set;}public uint BaseAddress{get;set;}=100;public bool IsValid{get;set;}=true;public bool CanSelect=true,Attackable=true,CanLoot=true;public virtual bool IsAlive{get;set;}=true;public WoWPoint Location{get;set;}public virtual WoWUnit ToUnit()=>this as WoWUnit;}
     public class WoWUnit:WoWObject{public bool Dead{get=>!IsAlive;set=>IsAlive=!value;}public bool Combat{get;set;}public bool IsPlayer{get;set;}public bool IsPet{get;set;}public WoWUnit OwnedByUnit{get;set;}public bool TaggedByOther{get;set;}public bool TaggedByMe{get;set;}public bool InLineOfSpellSight{get;set;}=true;public string Name{get;set;}="controlled";public int Level{get;set;}=60;public int Race{get;set;}public Styx.WoWClass Class{get;set;}=Styx.WoWClass.Paladin;public uint FactionId{get;set;}public double Distance=>Location.Distance(Styx.StyxWoW.Me?.Location??WoWPoint.Zero);public double DistanceSqr=>Location.DistanceSqr(Styx.StyxWoW.Me?.Location??WoWPoint.Zero);public void Target(){if(Styx.StyxWoW.Me!=null)Styx.StyxWoW.Me.CurrentTarget=this;Harness.Control.OnTarget?.Invoke(this);}}
     public class WoWPlayer:WoWUnit{}
     public partial class LocalPlayer:WoWUnit
     {
+        public uint FreeBagSlots=100,FreeNormalBagSlots=100;
         public bool Mounted{get;set;}public bool IsFlying{get;set;}public bool IsGhost{get;set;}public uint MapId{get;set;}=1;public bool IsOnTransport{get;set;}public bool OnTaxi{get;set;}public bool InVehicle{get;set;}public bool Rooted{get;set;}public bool Stunned{get;set;}public double HealthPercent{get;set;}=100;public bool IsMoving{get;set;}public bool IsCasting{get;set;}public uint ChanneledCastingSpellId{get;set;}public WoWUnit Pet{get;set;}public bool GotAlivePet=>Pet!=null&&Pet.IsAlive;public WoWUnit CurrentTarget{get;set;}public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public bool IsInParty{get;set;}public bool IsInRaid{get;set;}public bool IsInInstance{get;set;}public Styx.ShapeshiftForm Shapeshift{get;set;}public bool MovementKnown{get;set;}=true;public uint ObservedMovementFlags{get;set;}public ulong ObservedTransportGuid{get;set;}
         public bool TryGetMovementState(out uint flags,out ulong transport){flags=ObservedMovementFlags;transport=ObservedTransportGuid;return MovementKnown;}public void ClearTarget()=>CurrentTarget=null;public bool HasPendingSpell(string name)=>false;
     }
@@ -174,7 +176,7 @@ namespace Styx.WoWInternals
 namespace Styx.Logic.POI
 {
     using Styx.Logic.Pathing;using Styx.WoWInternals.WoWObjects;
-    public enum PoiType{None,Kill,Loot,Skin,Harvest,Sell,Repair,Train,Buy,Mail,Fly,Hotspot,QuestPickUp,QuestTurnIn}
+    public enum PoiType{None,Kill,Loot,Skin,Harvest,Sell,Repair,Train,Buy,Mail,Fly,Hotspot,Quest,QuestPickUp,QuestTurnIn}
     public class BotPoi
     {
         private static BotPoi current=new(PoiType.None);private static long generation,workGeneration;private PoiType type;private ulong guid;private uint entry;private WoWPoint location;
@@ -189,6 +191,7 @@ namespace Styx.Logic
 {
     using Styx.WoWInternals.WoWObjects;
     public sealed class Targeting{public static Targeting Instance{get;set;}=new();public static double PullDistance{get;set;}=30;public static double PullDistanceSqr=>PullDistance*PullDistance;public static double CollectionRange{get;set;}=100;public List<WoWUnit> TargetList{get;}=new();public WoWUnit FirstUnit{get;set;}public bool KillBetweenHotspots{get;set;}}
+    public sealed class LootTargeting{public static LootTargeting Instance=new();public WoWObject FirstObject;public static double LootRadius=50;public static bool HarvestHerbs,HarvestMinerals;}
     public static class Battlegrounds{public static bool IsInsideBattleground{get;set;}}
 }
 
@@ -199,7 +202,7 @@ namespace Styx.Logic.AreaManagement
 
 namespace Styx.Logic.Profiles
 {
-    public sealed class Profile{public HashSet<uint> Factions{get;}=new();}public static class ProfileManager{public static Profile CurrentProfile{get;set;}=new();public static object CurrentProfileSnapshot{get;set;}=new();}
+    public sealed class Profile{public int MinFreeBagSlots;public HashSet<uint> Factions{get;}=new();}public static class ProfileManager{public static Profile CurrentProfile{get;set;}=new();public static object CurrentProfileSnapshot{get;set;}=new();}
 }
 namespace Styx.Logic.Profiles.Quest { }
 

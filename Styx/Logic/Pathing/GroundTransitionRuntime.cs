@@ -234,7 +234,12 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             // A blocked takeoff is still the same preferred flight. Retain its
             // foot departure briefly while seeking open ground; do not insert a
             // different mount between the departure and its flight.
-            bool retainedDeparture = RetainsPreferredDeparture(now);
+            // Mount acknowledgement changes RunSpeed and the zero-cast-cost
+            // estimate. Neither observation cancels a flight already selected
+            // and admitted by this journey's geometry. Capability is still
+            // checked by PreferFlightForGroundInteraction on every departure.
+            bool retainedDeparture = !_groundTravelSelected && _search?.Plan != null
+                || RetainsPreferredDeparture(now);
             bool eligible = outdoors && Flightor.PreferFlightForGroundInteraction(_context.Destination, 3f, retainedDeparture);
             RequireCurrent();
             _actorOutdoors = outdoors;
@@ -280,7 +285,8 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             for (int i = 0; i < 2; i++)
                 RecordRay(new("support", line.Start, line.End, (uint)flags[i], hits[i], hits[i] ? points[i] : null));
             WoWPoint support = points[0];
-            return hits[0] && !hits[1] && GroundApproachSearch.Finite(support) && support.Distance2DSqr(position) <= .01f
+            return GroundApproachSearch.DrySupport(line, new GroundRay(hits[0], support), new GroundRay(hits[1], points[1]))
+                && GroundApproachSearch.Finite(support) && support.Distance2DSqr(position) <= .01f
                 && Math.Abs(support.Z - position.Z) <= .7f;
         }
         catch (ObservationUnavailableException)
