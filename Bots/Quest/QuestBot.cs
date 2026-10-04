@@ -164,6 +164,9 @@ public class QuestBot : BotBase
     public override void Pulse() => Navigator.PathPrecision = this.GetPathPrecision();
 
     private static Composite CreateTargetingBehavior()
+        => new PrioritySelector(CreateRequiredTargetingBehavior(), CreateOpportunisticTargetingBehavior());
+
+    private static Composite CreateOpportunisticTargetingBehavior()
     {
         // Honorbuddy 4.3.4 semantics (clean, readable):
         // - Only run while moving
@@ -177,9 +180,7 @@ public class QuestBot : BotBase
         CanRunDecoratorDelegate isMoving = context => StyxWoW.Me.IsMoving;
         CanRunDecoratorDelegate notInCombat = context => !StyxWoW.Me.Combat;
 
-        return new PrioritySelector(
-            CreateRequiredTargetingBehavior(),
-            (Composite)new Decorator(isMoving,
+        return (Composite)new Decorator(isMoving,
             (Composite)new Decorator(
                 context => !ShouldSuppressOpportunisticTargeting(
                     BotPoi.Current.Type, MountedCombatTransition.IsMountedOrFlying(StyxWoW.Me)),
@@ -187,17 +188,20 @@ public class QuestBot : BotBase
             (Composite)new DecoratorNeedToFindTarget(
                 new OwnedTargetHandoff(() => StyxWoW.Me != null && !MountedCombatTransition.IsMountedOrFlying(StyxWoW.Me)
                     && !StyxWoW.Me.Combat && !ShouldSuppressOpportunisticTargeting(BotPoi.Current.Type),
-                    clearNavigation: true))))));
+                    clearNavigation: true)))));
     }
 
     internal static bool HasRequiredCombatTarget()
     {
         var actor = StyxWoW.Me;
-        var targeting = Targeting.Instance;
-        var target = targeting?.FirstUnit;
         var order = QuestState.Instance.Order;
         var owner = order.CurrentBehavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
         var objective = owner?.Objective;
+        // A moving NPC, gossip or scripted behavior has no ordinary pull
+        // obligation. Do not query an unrelated/UNKNOWN targeting provider.
+        if (objective == null) return false;
+        var targeting = Targeting.Instance;
+        var target = targeting?.FirstUnit;
         var nodes = order.Nodes;
         var node = order.CurrentNode;
         var profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
@@ -243,6 +247,18 @@ public class QuestBot : BotBase
                 return Current() ? RunStatus.Success : RunStatus.Failure;
             }),
             new OwnedTargetHandoff(Current, clearNavigation: true, requiredMountedTarget: true)));
+    }
+
+    internal static bool IsRequiredCombatObligation(WoWUnit target)
+    {
+        var order = QuestState.Instance.Order;
+        var owner = order.CurrentBehavior as Bots.Quest.QuestOrder.ForcedQuestObjective;
+        var objective = owner?.Objective;
+        if (target == null || objective == null || !target.IsValid || !target.IsAlive) return false;
+        var profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile;
+        return objective.IsRequiredCombatTarget(target) && ReferenceEquals(order.CurrentBehavior, owner)
+            && ReferenceEquals(owner.Objective, objective)
+            && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, profile);
     }
 
     private static PrioritySelector CreateQuestOrderBehavior()

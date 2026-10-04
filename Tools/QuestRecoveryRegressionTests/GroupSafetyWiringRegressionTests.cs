@@ -89,7 +89,7 @@ internal static class GroupSafetyWiringRegressionTests
         // The start-only owner now uses Lua.StartAttack instead of the legacy
         // toggle. Keep the compiled ordering assertion for the actual dispatch;
         // the Lua behavioral fixture checks its exact script and denied path.
-        string attackDispatch = NestedActions(auto, "DoString").Length != 0 ? "DoString" : "ToggleAttack";
+        string attackDispatch = "TryStartAttack";
         foreach (string dispatch in new[] { attackDispatch, "CastPetAction" })
         {
             string effect = dispatch;

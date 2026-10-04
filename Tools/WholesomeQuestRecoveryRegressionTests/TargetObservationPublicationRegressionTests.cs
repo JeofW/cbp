@@ -21,8 +21,8 @@ internal static class TargetObservationPublicationRegressionTests
         if (root == null) throw new InvalidOperationException("Tracked checkout required");
         var type = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root.FullName, "Styx/Logic/Targeting.cs")))
             .GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c => c.Identifier.ValueText == "Targeting");
-        var methods = new[] { "Pulse", "InvokeFilterDelegate", "Clear", "MarkObservationUnavailable", "InitializeFilters", "CreateTargetPriority", "GetScore", "GetObject", "ToWoWUnit" };
-        var properties = new[] { "ObjectList", "FirstUnit", "TargetList", "MaxTargets", "DisplayTargetingExceptions" };
+        var methods = new[] { "Pulse", "InvokeFilterDelegate", "Clear", "MarkObservationUnavailable", "InitializeFilters", "CreateTargetPriority", "GetScore", "GetObject", "ToWoWUnit", "IsAllowedCombatCandidate" };
+        var properties = new[] { "ObjectList", "FirstUnit", "TargetList", "MaxTargets", "DisplayTargetingExceptions", "SelectsCombatTargets" };
         string members = string.Join("\n", type.Members.Where(member =>
             member is FieldDeclarationSyntax or ConstructorDeclarationSyntax or EventDeclarationSyntax ||
             member is ClassDeclarationSyntax nested && nested.Identifier.ValueText == "TargetPriority" ||
@@ -73,10 +73,12 @@ public class Targeting {
  protected virtual void DefaultIncludeTargetsFilter(List<WoWObject> incoming,HashSet<WoWObject> outgoing){outgoing.UnionWith(incoming);if(Cases.Phase=="include")throw Cases.Fault;}
  protected virtual void DefaultTargetWeight(List<TargetPriority> targets){foreach(var target in targets)target.Score=100-target.Object.Id;if(Cases.Phase=="weigh")throw Cases.Fault;}
 }
-public class WoWObject {public int Id;public string Name=>"candidate-"+Id;public float Distance=>Id;public WoWUnit ToUnit()=>this as WoWUnit;}
-public class WoWUnit:WoWObject{}
+public class WoWObject {public int Id;public ulong Guid=>(ulong)Id;public ulong DescriptorGuid=>Guid;public bool IsValid=true;public string Name=>"candidate-"+Id;public float Distance=>Id;public WoWUnit ToUnit()=>this as WoWUnit;}
+public class WoWUnit:WoWObject{public bool IsAlive=true,IsPlayer;}
 public static class StyxWoW {public static object Me=new();public static bool IsInGame=true;public static Memory Memory=new();}
-public class Memory {public IDisposable AcquireFrame()=>new Frame();private class Frame:IDisposable{public void Dispose(){}}}
+public class Memory {public IDisposable AcquireFrame()=>new Frame();public IDisposable TemporaryCacheState(bool value)=>new Frame();private class Frame:IDisposable{public void Dispose(){}}}
+public static class ObjectManager {public static Memory Wow=>StyxWoW.Memory;}
+public static class GroupCombatSafety {public static bool IsProtectedPlayer(WoWUnit unit)=>unit.IsPlayer;}
 /* Controlled diagnostics sink only. */ namespace Styx.Helpers {
  public enum LogLevel{Diagnostic}
  public static class Logging {public static bool FileLogging;public static void WriteException(Exception error)=>Cases.Messages.Add(error.Message);public static void WriteDiagnostic(string text)=>Cases.Messages.Add(text);public static void WriteToFileSync(LogLevel level,string text)=>Cases.Messages.Add(text);}

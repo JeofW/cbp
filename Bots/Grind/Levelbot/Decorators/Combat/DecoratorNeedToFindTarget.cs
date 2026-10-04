@@ -15,9 +15,12 @@ namespace Levelbot.Decorators.Combat
         }
 
         protected override bool CanRun(object context)
-        {
-            WoWUnit firstUnit = Targeting.Instance.FirstUnit;
+            => CanAcquireTarget(Targeting.Instance.FirstUnit);
 
+        // Shared by the ordinary acquisition branch and its continuing-movement
+        // preemption. Both must use the same profile/range/mount intent.
+        internal static bool CanAcquireTarget(WoWUnit firstUnit)
+        {
             if (firstUnit == null)
                 return false;
 

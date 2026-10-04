@@ -241,7 +241,7 @@ public sealed class PublishedQuestRoot : PrioritySelector
         var pet = me.Pet;
         if (!MountedCombatTransition.IsMountedOrFlying(me) && pet != null && pet.IsAlive && pet.Combat) return 1;
         if (poi == PoiType.Loot || poi == PoiType.Skin || poi == PoiType.Harvest) return 2;
-        if (!exclusive && CanExecuteQuest() && QuestBot.HasRequiredCombatTarget()) return 3;
+        if (!exclusive && QuestBot.HasRequiredCombatTarget() && CanExecuteQuest()) return 3;
         if (!exclusive && (poi == PoiType.Sell || poi == PoiType.Repair ||
             poi == PoiType.Buy || poi == PoiType.Mail || poi == PoiType.Train || poi == PoiType.Fly)) return 4;
         return int.MaxValue;

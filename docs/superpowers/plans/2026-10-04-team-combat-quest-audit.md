@@ -31,8 +31,8 @@
 
 - [x] Verify clean isolated source, merged/deployed receipts and applicable instructions.
 - [x] Snapshot and index every October 3/4 production log, preserving hashes and full lines.
-- [ ] Correlate the Mahuram interval, hotspot/combat transitions, repeated observation failures and scheduler stalls with actual code and test coverage.
-- [ ] Run baseline GroupEngagementRegressionTests, ConsecrationStudyFocusedTests and CombatPoiTransitionRegressionTests under x86 and retain receipts.
+- [x] Correlate the Mahuram interval, hotspot/combat transitions, repeated observation failures and scheduler stalls with actual code and test coverage.
+- [x] Run baseline GroupEngagementRegressionTests, ConsecrationStudyFocusedTests and CombatPoiTransitionRegressionTests under x86 and retain receipts.
 
 ## Task 2: Team-aware area decisions and protected combat recipients
 
@@ -40,9 +40,9 @@
 
 **Interfaces:** Retain MayAttack(WoWUnit), IsEngagedWithGroup(WoWUnit), IsCombatActionSafe and existing action ownership. Add one shared protected-recipient predicate only where its callers need to distinguish friendly support from harmful combat.
 
-- [ ] Add causal cases for charmed party/raid players, all instance bot modes, raid-only map flags, hostile area recipients with owner fields, target replacement, and friendly healing controls.
-- [ ] Link actual engagement policy to actual area enumeration/Consecration selection and prove that group-threat mobs count without player aggro.
-- [ ] Capture failing assertions, repair the shared selection/submission and area gates, and run adjacent target/autoattack/rotation suites.
+- [x] Add causal cases for charmed party/raid players, all instance bot modes, raid-only map flags, hostile area recipients with owner fields, target replacement, and friendly healing controls.
+- [x] Link actual engagement policy to actual area enumeration/Consecration selection and prove that group-threat mobs count without player aggro.
+- [x] Capture failing assertions, repair the shared selection/submission and area gates, and run adjacent target/autoattack/rotation suites.
 
 ## Task 3: Moving NPC pursuit through actual interaction
 
@@ -50,9 +50,9 @@
 
 **Interfaces:** Retain GroundTransition.Tick, CanInteractWith and TryInteractWith. Preparation may stop only an owned final approach with observed usable range; submission still requires fresh range/sight, exact recipient and grounded state.
 
-- [ ] Reproduce moving actor/NPC positions during native queries, assert bounded pursuit-to-interaction and no distant/intermediate stops.
-- [ ] Cover pickup, turn-in and service consumers, absent LOS, lost range, vertical displacement, replacement wrappers and delayed native/UI acknowledgement.
-- [ ] Capture causal red, repair the readiness/preparation deadlock, and verify flight continuity, ground ownership and interaction suites.
+- [x] Reproduce moving actor/NPC positions during native queries, assert bounded pursuit-to-interaction and no distant/intermediate stops.
+- [x] Cover pickup, turn-in and service consumers, absent LOS, lost range, vertical displacement, replacement wrappers and delayed native/UI acknowledgement.
+- [x] Capture causal red, repair the readiness/preparation deadlock, and verify flight continuity, ground ownership and interaction suites.
 
 ## Task 4: Mounted quest obligations and broader execution families
 
@@ -60,14 +60,28 @@
 
 **Interfaces:** Use MountedCombatTransition.TickCurrent/TickExplicit and existing semantic Kill POI ownership. Required objectives preempt hotspot transit; incidental mounted aggro retains travel policy.
 
-- [ ] Reproduce required mobs becoming available during running hotspot travel, including airborne and ground-mounted actors; assert a retained Kill obligation, safe landing/unmount, attack only after acknowledgement, and travel recovery afterward.
-- [ ] Audit all 4,335 source contracts and execution families, retaining an exclusive per-quest ledger and unresolved obligations.
-- [ ] Add causal regressions for each substantiated systemic quest or log defect and repair shared paths rather than quest-specific exceptions.
+- [x] Reproduce required mobs becoming available during running hotspot travel, including airborne and ground-mounted actors; assert a retained Kill obligation, safe landing/unmount, attack only after acknowledgement, and travel recovery afterward.
+- [x] Audit all 4,335 source contracts and execution families, retaining an exclusive per-quest ledger and unresolved obligations.
+- [x] Add causal regressions for each substantiated systemic quest or log defect and repair shared paths rather than quest-specific exceptions.
 
 ## Task 5: Integrated verification and delivery
 
-- [ ] Review the complete diff against every user scenario and test limitations.
+- [x] Review the complete diff against every user scenario and test limitations.
 - [ ] Commit a clean candidate; run complete canonical Windows/x86 integration, source/catalogue/strategy closure and applicable native replay.
 - [ ] Complete authorized GitHub integration and prepare/verify deployment with rollback only while the production installation is idle.
 - [ ] Use session_finish only after implementation is complete and final verification is underway; finish any new work before reporting.
 - [ ] Record exact source/build/evidence identities, tested totals, remaining source/live limits and actual delivery status.
+
+## Extension: responsive travel and safe flight corridors
+
+The user added immediate interruption of hotspot movement for admitted combat, Naladu's unwanted ground-mount choice, Zurai's midflight stall and opposing-base avoidance. These extend the same audit and authorization.
+
+**Observed causes:** The expanded production log shows that flight was preferred for Naladu before a blocked takeoff column switched to ground travel. A later review discarded that departure intent and allowed Black Hawkstrider. Zurai continued after mesh tile 530_33_21 loaded, then repeatedly failed the next local flight-leg search at (22.376114, 4930.0576, 136.09196). The current local-leg search requires a walkable landing footprint even though a progress-only flight leg never authorizes descent.
+
+**Design:** Preserve the current semantic travel owner, but separate three decisions: admitted combat can replace travel immediately; a preferred flight departure can walk to open space without selecting an unrelated mount; an already-airborne actor may traverse a positively observed body-clear corridor without claiming ground support. Final landing, dismount and interaction retain the existing independent support/onward-route checks. Aerial route exclusions apply to the whole flown segment, including smoothing and fallback rays, and use pinned original-client/core settlement evidence. Failed paths never become direct travel through an exclusion.
+
+- [x] Reproduce and verify immediate target acquisition while the travel child is still Running in quest and ordinary grind paths, retaining exact target/POI/native ownership and recovery after combat.
+- [x] Add actual-runtime red cases for clear airborne corridors over unavailable landing geometry, blocked/UNKNOWN air corridors, replacement owners and final landing refusal.
+- [x] Add the blocked-departure / optional-review sequence that must preserve flight intent and avoid an intervening ground-mount request.
+- [x] Derive opposing settlement exclusion geometry from pinned 3.3.5 data; test map/faction changes, path failure, segment shortcuts and current threat boundaries.
+- [ ] Run adjacent flight, movement, quest, combat and full integration gates against the final integrated source.

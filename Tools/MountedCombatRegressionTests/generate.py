@@ -14,8 +14,16 @@ def member(rel: str, marker: str) -> str:
     src = text(rel)
     if src.count(marker) != 1:
         raise RuntimeError(f"ambiguous member marker {rel}: {marker!r}")
-    start = src.index(marker); brace = src.index("{", start)
-    depth = 0; i = brace; state = "code"
+    start = src.index(marker)
+    # Begin at the member's body, not the next member's first brace. An
+    # expression-bodied composition otherwise includes its following method and
+    # silently duplicates that separate extracted owner.
+    body = start + len(marker)
+    while body < len(src) and src[body].isspace(): body += 1
+    expression = src.startswith("=>", body)
+    # Class markers intentionally omit their base types. Their first body brace
+    # is still the same class, whereas an expression member ends at its semicolon.
+    depth = 0; i = body if expression else src.index("{", body); state = "code"
     while i < len(src):
         ch = src[i]; nxt = src[i+1] if i+1 < len(src) else ""
         if state == "code":
@@ -24,9 +32,10 @@ def member(rel: str, marker: str) -> str:
             elif ch == "/" and nxt == "/": state = "line"; i += 1
             elif ch == "/" and nxt == "*": state = "block"; i += 1
             elif ch == "{": depth += 1
+            elif ch == ";" and expression and depth == 0: return src[start:i+1]
             elif ch == "}":
                 depth -= 1
-                if depth == 0: return src[start:i+1]
+                if depth == 0 and not expression: return src[start:i+1]
         elif state == "string":
             if ch == "\\": i += 1
             elif ch == '"': state = "code"
@@ -74,7 +83,8 @@ quest_parts=[
     take("Bots/Quest/QuestBot.cs","internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType)"),
     take("Bots/Quest/QuestBot.cs","internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType, bool mounted)"),
 ]
-for marker in ["internal static bool HasRequiredCombatTarget()", "private static Composite CreateRequiredTargetingBehavior()"]:
+for marker in ["internal static bool HasRequiredCombatTarget()", "private static Composite CreateRequiredTargetingBehavior()",
+               "private static Composite CreateOpportunisticTargetingBehavior()", "internal static bool IsRequiredCombatObligation(WoWUnit target)"]:
     if marker in text("Bots/Quest/QuestBot.cs"):
         quest_parts.append(take("Bots/Quest/QuestBot.cs", marker))
 required_objective = "public override bool IsRequiredCombatTarget(WoWUnit unit)"

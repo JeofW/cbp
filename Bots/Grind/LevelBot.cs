@@ -226,7 +226,8 @@ namespace Bots.Grind
                             // self-heal/combat branch reachable while selection recovers.
                             ctx => Targeting.Instance.TargetList.Count == 0
                                 && (BotPoi.Current.AsObject is not WoWUnit { IsValid: true, IsAlive: true } retained
-                                    || Blacklist.Contains(retained.Guid) || !GroupCombatSafety.MayAttack(retained)),
+                                    || Blacklist.Contains(retained.Guid) || !GroupCombatSafety.MayAttack(retained)
+                                    || !IsPlayerOrPetInCombat() && !Bots.Quest.QuestBot.IsRequiredCombatObligation(retained)),
                             new ActionClearPoi("No targets in target list - POI.Kill Sanity Checks")
                         ),
                         new Decorator(
@@ -1674,6 +1675,60 @@ namespace Bots.Grind
 
         #region Roam Behavior
 
+        private sealed class RoamPrioritySelector : PrioritySelector
+        {
+            private long activation;
+            private bool active;
+            internal RoamPrioritySelector(params Composite[] children) : base(children) { }
+            public override void Start(object context)
+            {
+                activation++; active = true;
+                base.Start(context);
+            }
+            public override void Stop(object context)
+            {
+                activation++; active = false;
+                base.Stop(context);
+            }
+            public override RunStatus Tick(object context)
+            {
+                if (!active) return LastStatus ?? RunStatus.Failure;
+                long lifetime = activation;
+                var actor = StyxWoW.Me; ulong guid = actor?.Guid ?? 0; uint map = actor?.MapId ?? 0;
+                var poi = BotPoi.Current; var profile = ProfileManager.CurrentProfile;
+                var provider = Navigator.NavigationProvider; var run = TreeRoot.RunIdentity;
+                bool Current() => active && lifetime == activation && actor != null && guid != 0
+                    && ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == guid && actor.MapId == map
+                    && ReferenceEquals(BotPoi.Current, poi) && ReferenceEquals(ProfileManager.CurrentProfile, profile)
+                    && ReferenceEquals(Navigator.NavigationProvider, provider) && ReferenceEquals(TreeRoot.RunIdentity, run);
+                if (LastStatus == RunStatus.Running && Selection != null && Selection != Children[0]
+                    && HasReadyRoamTarget())
+                {
+                    if (!Current()) return RunStatus.Failure;
+                    // Release the old movement lifetime before starting target
+                    // acquisition. Cleanup may revoke this run or publish service
+                    // work; neither grants permission to restart its predecessor.
+                    base.Stop(context);
+                    if (!Current()) return RunStatus.Failure;
+                    base.Start(context);
+                }
+                return Current() ? base.Tick(context) : RunStatus.Failure;
+            }
+        }
+
+        private static bool HasReadyRoamTarget()
+        {
+            var actor = StyxWoW.Me;
+            var poi = BotPoi.Current;
+            if (actor == null || !actor.IsValid || !actor.IsAlive || poi == null
+                || poi.Type != PoiType.None && poi.Type != PoiType.Hotspot) return false;
+            var targeting = Targeting.Instance;
+            var target = targeting.FirstUnit;
+            return DecoratorNeedToFindTarget.CanAcquireTarget(target)
+                && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(BotPoi.Current, poi)
+                && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(targeting.FirstUnit, target);
+        }
+
         /// <summary>
         /// HB 4.3.4 CreateRoamBehavior - handles movement between hotspots
         /// </summary>
@@ -1699,7 +1754,7 @@ namespace Bots.Grind
             bool Acknowledged() => SelectionCurrent() && ReferenceEquals(selectingActor.CurrentTarget, selected)
                 && selectingActor.CurrentTargetGuid == selectedGuid && SelectionCurrent();
 
-            return new PrioritySelector(
+            return new RoamPrioritySelector(
                 // Find target if not looting/killing/vendoring
                 // HB 6.2.3 fix: also exclude Sell/Repair/Train/Buy/Mail to prevent
                 // pulling mobs during vendor runs (overwrites Sell POI with Kill)
@@ -1738,6 +1793,9 @@ namespace Bots.Grind
                                     ? RunStatus.Success : RunStatus.Failure;
                             }))))
                 ),
+                // A known admitted target is useful work now. Do not finish an
+                // unrelated patrol endpoint before closing its remaining range.
+                CreateOwnedRoamChaseBehavior(),
                 // Move to hotspot if needed
                 new DecoratorIsNotPoiType(new[] { PoiType.Kill, PoiType.Sell, PoiType.Repair,
                     PoiType.Train, PoiType.Buy, PoiType.Mail, PoiType.Fly }, new Decorator(
@@ -1792,9 +1850,7 @@ namespace Bots.Grind
                         MoveResult movement = Navigator.MoveTo(hotspot);
                         return Current() ? Navigator.GetRunStatusFromMoveResult(movement) : RunStatus.Failure;
                     })
-                )),
-                // Move closer to target or clear POI if better target
-                CreateOwnedRoamChaseBehavior()
+                ))
             );
         }
 
@@ -1818,7 +1874,7 @@ namespace Bots.Grind
                 && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(Targeting.Instance.FirstUnit, target);
             bool Current() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, poi)
                 && poi != null && poi.Type == type && poi.Guid == poiGuid && poi.Entry == entry
-                && (type == PoiType.None || type == PoiType.Kill)
+                && (type == PoiType.None || type == PoiType.Hotspot || type == PoiType.Kill)
                 && ReferenceEquals(actor.CurrentTarget, displayed) && actor.CurrentTargetGuid == displayedGuid
                 && ReferenceEquals(Navigator.NavigationProvider, provider)
                 && ReferenceEquals(ProfileManager.CurrentProfile, profile)

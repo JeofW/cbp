@@ -93,6 +93,16 @@ namespace Styx
     }
     public static partial class StyxWoW { public static Player Me { get; set; } = new(); }
 }
+namespace Styx.Logic.Combat
+{
+    // Native dispatch is controlled by the decision fixture; actual managed and
+    // original-Lua recipient admission run in CombatProtectionFocusedTests.
+    public static class CombatAttackSafety
+    {
+        public static bool TryStartAttack(Styx.UnitState target)
+        { Styx.WoWInternals.Lua.DoString("StartAttack()"); return true; }
+    }
+}
 namespace Styx.Helpers
 {
     public static partial class Logging { public static void WriteException(Exception error) => Fixture.Exceptions.Add(error); }

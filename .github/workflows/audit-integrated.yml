@@ -80,6 +80,8 @@ jobs:
             @{project='NavigationOwnerRegressionTests'; suite='NavigationOwnerRegressionTests'},
             @{project='GroundOwnerRegressionTests'; suite='GroundOwnerRegressionTests'},
             @{project='FlightOwnerRegressionTests'; suite='FlightOwnerRegressionTests'},
+            @{project='AerialRouteRegressionTests'; suite='AerialRouteRegressionTests'},
+            @{project='RoamPriorityRegressionTests'; suite='RoamPriorityRegressionTests'},
             @{project='ObjectReacquisitionRegressionTests'; suite='ObjectReacquisitionRegressionTests'},
             @{project='RestObservationRegressionTests'; suite='RestObservationRegressionTests'},
             @{project='GroundTransitionRegressionTests'; suite='GroundTransitionRegressionTests'},

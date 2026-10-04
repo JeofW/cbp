@@ -15,8 +15,8 @@ internal static class IntegratedQuestTargetAcquisitionTests
             "Styx/Logic/Targeting.cs"))).GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>()
             .Single(type => type.Identifier.ValueText == "Targeting");
         string[] methods = { "Pulse", "InvokeFilterDelegate", "Clear", "MarkObservationUnavailable", "InitializeFilters",
-            "CreateTargetPriority", "GetScore", "GetObject", "ToWoWUnit" };
-        string[] properties = { "ObjectList", "FirstUnit", "TargetList", "MaxTargets", "DisplayTargetingExceptions" };
+            "CreateTargetPriority", "GetScore", "GetObject", "ToWoWUnit", "IsAllowedCombatCandidate" };
+        string[] properties = { "ObjectList", "FirstUnit", "TargetList", "MaxTargets", "DisplayTargetingExceptions", "SelectsCombatTargets" };
         string members = string.Join("\n", targeting.Members.Where(member =>
             member is FieldDeclarationSyntax or ConstructorDeclarationSyntax or EventDeclarationSyntax
             || member is ClassDeclarationSyntax nested && nested.Identifier.ValueText == "TargetPriority"
@@ -61,14 +61,14 @@ public readonly record struct WoWPoint(float X,float Y,float Z){
  public float Distance2D(WoWPoint other)=>MathF.Sqrt((X-other.X)*(X-other.X)+(Y-other.Y)*(Y-other.Y));
 }
 public class WoWObject {
- public ulong Guid;public uint Entry;public WoWPoint Location;
+ public ulong Guid;public ulong DescriptorGuid=>Guid;public bool IsValid=true;public uint Entry;public WoWPoint Location;
  public string Name=>"unit-"+Entry;public float Distance=>MathF.Sqrt(Location.X*Location.X+Location.Y*Location.Y+Location.Z*Location.Z);
  public WoWUnit ToUnit()=>this as WoWUnit;
 }
 public enum DifficultyColor {Gray,Green,Yellow,Orange,Red}
 public enum WoWUnitReaction {Hostile=2,Neutral=4,Friendly=5}
 public class WoWUnit:WoWObject {
- public bool Dead,IsPlayer,IsFlightMaster,IsCritter,TaggedByOther,Combat,Mounted,IsActuallyInCombat;
+ public bool Dead,IsPlayer,IsFlightMaster,IsCritter,TaggedByOther,Combat,Mounted,IsActuallyInCombat;public bool IsAlive=>!Dead;
  public int Level=62;public uint FactionId=14;public ulong CurrentTargetGuid;
  public WoWUnit OwnedByRoot;public DifficultyColor Difficulty=DifficultyColor.Yellow;public bool InLineOfSpellSight=true;
  public WoWUnitReaction MyReaction {get {if(Cases.ReactionUnknown)throw new ObservationUnavailableException("reaction","unknown relevant hostility");return WoWUnitReaction.Hostile;}}
@@ -83,7 +83,9 @@ public sealed class GrindArea {public List<int> MobIDs=new(),Factions=new();publ
 public static class ProfileManager {public static Profile CurrentProfile=new();}
 public sealed class Areas {public GrindArea CurrentGrindArea=new();}
 public static class StyxWoW {public static WoWUnit Me=new();public static Areas AreaManager=new();public static bool IsInGame=true;public static Memory Memory=new();}
-public sealed class Memory {public IDisposable AcquireFrame()=>new Frame();private sealed class Frame:IDisposable{public void Dispose(){}}}
+public sealed class Memory {public IDisposable AcquireFrame()=>new Frame();public IDisposable TemporaryCacheState(bool value)=>new Frame();private sealed class Frame:IDisposable{public void Dispose(){}}}
+public static class ObjectManager {public static Memory Wow=>StyxWoW.Memory;}
+public static class GroupCombatSafety {public static bool IsProtectedPlayer(WoWUnit unit)=>unit.IsPlayer;}
 public enum PoiType {None,Kill,Buy,Mail,Repair,Sell}
 public sealed class BotPoi {public static BotPoi Current=new();public PoiType Type;}
 public static class Navigator {public static object NavigationProvider=new MeshNavigator();}

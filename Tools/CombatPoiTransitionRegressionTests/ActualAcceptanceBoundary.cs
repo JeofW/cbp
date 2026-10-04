@@ -319,6 +319,8 @@ namespace Styx.Logic.Pathing
     internal sealed class FlightPath { }
     public static partial class Flightor
     {
+        public static WoWPoint GetFlightRouteWaypoint(WoWPoint from, WoWPoint to) => to;
+        public static bool CanFollowFlightSegment(WoWPoint from, WoWPoint to) => true;
         public static bool CanFly => World.PreferFlight;
         public static class MountHelper { public static bool Mounted => (World.Actor.Flags & 0x02000000u) != 0; }
         private static LocalPlayer? _antiStuckPlayer;
@@ -365,7 +367,7 @@ namespace Styx.Logic.Pathing
             _pathMemory = Styx.WoWInternals.ObjectManager.Wow; _pathExecutor = Styx.WoWInternals.ObjectManager.Executor;
         }
         public static void MoveTo(WoWPoint point) { World.RawFlights.Add(point); World.Event("raw-flight"); }
-        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range) => World.PreferFlight;
+        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range, bool retainDeparture = false) => World.PreferFlight;
         public static bool ReleaseOwned(object expected, Func<bool> admitted, System.Action<object> registered)
         {
             if (!ReferenceEquals(expected, RequestIdentity) || !admitted()) return false;

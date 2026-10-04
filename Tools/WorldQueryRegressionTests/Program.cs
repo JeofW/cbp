@@ -45,13 +45,14 @@ string mountObservation = string.Join("\n", unit.Members.Where(member =>
     member is PropertyDeclarationSyntax property && property.Identifier.ValueText is "Flags" or "Mounted" or "MountDisplayId" or "Bytes2" or "Shapeshift" or "OnTaxi"
     || member is MethodDeclarationSyntax method && method.Identifier.ValueText is "GetDescriptor" or "HasUnitFlag"));
 string groundMembers = string.Join("\n", ground.Members.OfType<MethodDeclarationSyntax>()
-    .Where(method => method.Modifiers.Any(SyntaxKind.StaticKeyword)));
+    .Where(method => method.Modifiers.Any(SyntaxKind.StaticKeyword)))
+    + string.Join("\n", ground.Members.OfType<ClassDeclarationSyntax>().Where(type=>type.Identifier.ValueText=="InteractionObservation"));
 string interactionMembers = string.Join("\n", obj.Members.Where(member =>
     member is MethodDeclarationSyntax method && method.Identifier.ValueText is "Interact" or "TryInteractCore" or "TryInteractOwned"
     || member is FieldDeclarationSyntax field && field.Declaration.Variables.Any(v => v.Identifier.ValueText is "InteractVtableOffset" or "_interactTimer")));
 string source = Boundary.Prefix + "namespace Styx.WoWInternals.WoWObjects { public class WoWObject {"
     + Boundary.ObjectLeaves + GroundNativeProbe.ObjectLeaves + objectProperty + descriptorObservation + interactionMembers + "public bool SubmitInteraction()=>TryInteractCore(false);"
-    + "} public class WoWUnit:WoWObject { public bool Dead,IsHostile=true;public float MyAggroRange=20; } public class LocalPlayer:WoWUnit {public uint MapId=530;public WoWPoint CorpsePoint;" + playerProperty + vehicleProperty + GroundNativeProbe.PlayerLeaves + movementObservation + mountObservation + "}}\n"
+    + "} public class WoWUnit:WoWObject { public bool Dead,IsMoving,IsHostile=true;public float MyAggroRange=20; } public class LocalPlayer:WoWUnit {public uint MapId=530;public WoWPoint CorpsePoint;" + playerProperty + vehicleProperty + GroundNativeProbe.PlayerLeaves + movementObservation + mountObservation + "}}\n"
     + "namespace Styx.WoWInternals.World { public static class GameWorld {" + flags + ray + batch + batchWrappers + Boundary.BatchFallback
     + " public static bool ReadRay(WoWPoint from,WoWPoint to,out WoWPoint hit)=>TraceLine(from,to,1f,CGWorldFrameHitFlags.HitTestGroundAndStructures,out hit); public static bool IsInLineOfSight(WoWPoint from,WoWPoint to)=>GroundSight.Clear; }}\n"
     + "namespace Styx.Logic.Pathing { public static class GroundTransition {" + groundMembers + "}}\n"
