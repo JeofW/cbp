@@ -98,7 +98,7 @@ internal static class TravelTimeEstimator
                 && ReferenceEquals(CharacterSettings.Instance, settings) && settings.UseMount
                 && settings.MountName == groundName && settings.FlyingMountName == flightName
                 && actor.IsAlive && !actor.IsGhost && !actor.Combat && !actor.IsOnTransport && !actor.OnTaxi
-                && actor.Location.Equals(origin) && actor.MovementInfo.RunSpeed == speed && nativeOwner();
+                && (flight || actor.Location.Equals(origin)) && actor.MovementInfo.RunSpeed == speed && nativeOwner();
             if (!Current() || !Finite(origin) || !double.IsFinite(speed) || speed <= 0) return false;
             double mountedSpeed = MountedSpeed(spell, flight);
             double cast = alreadyMounted ? 0 : spell.CastTime / 1000.0;
@@ -107,9 +107,22 @@ internal static class TravelTimeEstimator
             if (!double.IsFinite(mountedSpeed) || mountedSpeed <= 0 || !double.IsFinite(cast)
                 || cast < 0 || cast == 0 && !alreadyMounted && spell.Id is not (33943 or 40120)
                 || !Current()) return false;
-            double direct = origin.Distance(destination);
             double? meshLength = GroundLength(actor, origin, destination, memory, executor, profile, provider, poi, work, nativeOwner);
             if (!Current()) return false;
+            WoWPoint currentOrigin = actor.Location;
+            if (!Finite(currentOrigin)) return false;
+            // This is an optional cost estimate, not a movement admission. When
+            // the same actor moves during a flight comparison, discard the old
+            // ground path length and use the current straight-line lower bound.
+            // The actual mount/takeoff owner still observes its stationary state
+            // and complete geometry before issuing an effect.
+            if (!origin.Equals(currentOrigin))
+            {
+                if (!flight) return false;
+                meshLength = null;
+                origin = currentOrigin;
+            }
+            double direct = origin.Distance(destination);
             // Missing ground geometry supplies only a straight-line lower bound
             // for flight. It never establishes a complete ground mount route.
             if (!flight && !meshLength.HasValue) return false;

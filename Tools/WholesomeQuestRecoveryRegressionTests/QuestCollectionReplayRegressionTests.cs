@@ -122,7 +122,11 @@ internal static class QuestCollectionReplayRegressionTests
                         TargetType = QuestStrategyTargetType.Creature, TargetId = 2164,
                         TargetState = QuestStrategyTargetState.Alive, Range = 5, RequireLos = true,
                         MaxAttempts = 3, GossipOptionIndex = 1,
-                        SuccessEvidence = QuestStrategySuccessEvidence.ObjectiveProgress
+                        // This fixture tests the surrounding inventory guard.
+                        // Its source declares whole-quest completion, matching
+                        // the executable strategy admission; an unbound gossip
+                        // counter is rejected by the separate policy cases.
+                        SuccessEvidence = QuestStrategySuccessEvidence.QuestComplete
                     }
                 }
             };

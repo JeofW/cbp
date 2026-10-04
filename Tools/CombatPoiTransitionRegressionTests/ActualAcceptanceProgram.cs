@@ -188,6 +188,35 @@ foreach (string replacement in new[] { "poi", "target-base", "provider" })
             replacement + " inherited the old production landing owner");
     });
 
+foreach(PoiType type in new[]{PoiType.QuestPickUp,PoiType.QuestTurnIn,PoiType.Repair,PoiType.Sell,PoiType.Train,PoiType.Buy})
+    foreach(bool flying in new[]{false,true})
+        Case("same moving NPC retains continuous "+type+" journey, flying="+flying,()=>
+        {
+            double clock=0;GroundTransitionRuntime.MonotonicClockOverride=()=>clock;
+            try
+            {
+                World.Actor.Position=new(100,10,flying?40:0);World.Actor.Flags=flying?0x02000000u:0;
+                World.Actor.MountedValue=true;World.Actor.IsMoving=true;
+                World.Target.Position=new(700,10,0);World.Target.IsMoving=true;World.Target.Outdoors=true;
+                BotPoi.Current=new BotPoi(World.Target,type);var poi=BotPoi.Current;
+                using var journey=new GroundTransition(GroundTransitionPurpose.Interaction);
+                GroundTransitionState Tick(){clock+=.3;return journey.Tick(BotPoi.Current.Location,World.Target,()=>ReferenceEquals(BotPoi.Current,poi));}
+                Check(Tick()==GroundTransitionState.Pending,"initial moving-NPC travel was not admitted");
+                int stops=World.Stops;int commands=World.Walks.Count+World.ExteriorFlights.Count;
+                for(int pulse=0;pulse<6;pulse++)
+                {
+                    MoveTarget(0,-.75f);_=BotPoi.Current.Location;
+                    Check(Tick()==GroundTransitionState.Pending,"same observed NPC coordinate update revoked its journey");
+                }
+                Check(World.Stops==stops,"coordinate-only NPC update stopped the owned journey");
+                Check(World.Walks.Count+World.ExteriorFlights.Count>commands,"moving NPC stopped receiving updated movement");
+                Check(World.Dismounts==0&&World.Descents==0,"distant moving NPC triggered premature landing/removal");
+                World.Target.BaseAddress++;
+                Check(Tick()==GroundTransitionState.Revoked,"semantic target replacement retained old travel authority");
+            }
+            finally { GroundTransitionRuntime.MonotonicClockOverride=null; }
+        });
+
 Console.WriteLine($"Actual combat-POI acceptance: {passed}/{total}; failures={failures.Count}; production BotPoi+MCT+GroundTransition/Context/Runtime/Machine+Mesh request observation; exact extracted Navigator/Flightor/Mesh invalidators; controlled native/movement leaves.");
 foreach (string failure in failures) Console.WriteLine("  " + failure);
 return failures.Count == 0 ? 0 : 1;

@@ -58,6 +58,27 @@ namespace Bots.Quest.QuestOrder
         /// </summary>
         public ForcedBehavior CurrentBehavior { get; set; }
 
+        /// <summary>Retire the selected lifetime without adopting callback-published work.</summary>
+        internal void RetireCurrentBehavior()
+        {
+            var retiring = CurrentBehavior;
+            if (retiring == null) return;
+            // Detach before callbacks so nested reload/Stop cannot dispose this
+            // lifetime twice, or have its successor erased by the predecessor.
+            CurrentBehavior = null;
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo failure = null;
+            try { retiring.ExistingBranch?.Stop(null); }
+            catch (Exception error) { failure = System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error); }
+            try { retiring.Dispose(); }
+            catch (Exception error)
+            {
+                if (failure == null || error is OperationCanceledException or System.Threading.ThreadInterruptedException
+                    && failure.SourceException is not (OperationCanceledException or System.Threading.ThreadInterruptedException))
+                    failure = System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(error);
+            }
+            failure?.Throw();
+        }
+
         /// <summary>
         /// Effective NavType for the current movement node.
         /// Priority: ForcedBehavior.NavType → Flightor.CanFly auto-detect.

@@ -379,6 +379,7 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
         JsonNode pack = JsonNode.Parse(File.ReadAllText(packPath))!;
         pack["Recipes"]![0]!["RequireLos"] = false;
         File.WriteAllText(packPath, pack.ToJsonString());
+        ControlledExecutionCatalogFixture.Prepare(Path.Combine(directory, "quest_data.json"));
         var loader = new DataLoader(Path.Combine(directory, "quest_data.json"));
         loader.Load();
         string output = Path.Combine(directory, "matching-recipient.xml");

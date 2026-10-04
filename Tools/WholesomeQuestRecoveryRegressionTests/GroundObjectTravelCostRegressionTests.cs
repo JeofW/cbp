@@ -60,8 +60,15 @@ public static class Cases{
  StyxWoW.Me.MovementInfo.RunSpeed=0;Check(!Flightor.PreferFlightForGroundInteraction(far,5),"unknown speed supplied permission");StyxWoW.Me.MovementInfo.RunSpeed=7;
  World.Spell=null;Check(!Flightor.PreferFlightForGroundInteraction(far,5),"unavailable mount supplied permission");
  Check(!Flightor.IsFlightTravelCheaper(100,99,7,26.6,3),"shorter-than-direct path accepted");
- Check(!Flightor.IsFlightTravelCheaper(double.NaN,300,7,26.6,3),"nonfinite route accepted");
- Console.WriteLine($"Ground object travel cost: {passed}/12; actual decision methods, controlled capability/geometry; no flight-route proof.");
+  Check(!Flightor.IsFlightTravelCheaper(double.NaN,300,7,26.6,3),"nonfinite route accepted");
+ World.Reset();World.Flight=true;World.Actor.Location=new WoWPoint(10,10,10);World.Spell.SpellEffects=new[]{new SpellEffect{AuraType=(WoWApplyAuraType)207,BasePoints=159,DieSides=1}};
+ bool moved=false;World.During=()=>{moved=true;World.Actor.Location=new WoWPoint(11,10,10);};
+ Check(Flightor.PreferFlightForGroundInteraction(new WoWPoint(800,10,10),3)&&moved,
+   "ordinary motion invalidated every flight-cost review despite a favorable current-distance lower bound");
+ World.Reset();World.Flight=true;World.Spell.SpellEffects=new[]{new SpellEffect{AuraType=(WoWApplyAuraType)207,BasePoints=159,DieSides=1}};
+ World.During=()=>World.Actor=new();
+ Check(!Flightor.PreferFlightForGroundInteraction(new WoWPoint(800,10,10),3),"moving-cost tolerance admitted a replaced actor");
+ Console.WriteLine($"Ground object travel cost: {passed}/14; actual decision methods, controlled capability/geometry; no flight-route proof.");
  }
 }
 """;

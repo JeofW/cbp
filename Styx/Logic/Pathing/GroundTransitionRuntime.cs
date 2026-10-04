@@ -63,8 +63,6 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     private bool _flightDepartureBlocked;
     private WoWPoint _groundReviewPosition;
     private double _nextFlightReview;
-    private bool _flightReviewStopPending;
-    private double _flightReviewStarted = double.NaN;
     private string _travelModeReason = "not-evaluated";
     private readonly GroundTravelMount _groundMount = new();
     private float _radius, _height;
@@ -92,17 +90,15 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     internal GroundTransitionRuntime(GroundTransitionPurpose purpose, WoWPoint destination, WoWObject? subject, Func<bool> admitted)
     {
         _purpose = purpose;
-        // Only a grounded chase can follow a live NPC's moving coordinate.
-        // Airborne approach geometry remains bound to the sampled endpoint.
-        bool groundChase = subject is WoWUnit && ObjectManager.Me != null
-            && ObjectManager.Me.TryGetMovementState(out uint initialFlags, out ulong initialTransport)
-            && initialTransport == 0 && (initialFlags & 0x02003000u) == 0;
-        _context = new GroundTransitionContext(subject, destination, purpose == GroundTransitionPurpose.Interaction && !groundChase,
-            admitted, purpose == GroundTransitionPurpose.Combat, purpose == GroundTransitionPurpose.Transit);
-        // The route invalidators ask whether semantic combat work survives a
+        // The exact selected NPC remains one journey while its position changes.
+        // Landing plans retain their separately observed geometry; neither this
+        // route lease nor a new coordinate acknowledges arrival or interaction.
+        _context = new GroundTransitionContext(subject, destination, purpose == GroundTransitionPurpose.Interaction && subject is not WoWUnit,
+            admitted, purpose == GroundTransitionPurpose.Combat, purpose == GroundTransitionPurpose.Transit, journeyRoute: true);
+        // The route invalidators ask whether semantic work survives a
         // coordinate-only POI refresh. Do not use Runtime.Current here: that
         // also depends on the very route tokens the invalidators are deciding.
-        _routeLease = purpose == GroundTransitionPurpose.Combat ? () => _context.Current : null;
+        _routeLease = () => _context.Current;
         _mesh = _context.Provider as MeshNavigator;
         _flightToken = Flightor.RequestIdentity;
         _meshToken = _mesh?.RequestIdentity;
@@ -139,8 +135,14 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         // A live NPC remains the same work while walking its patrol. Re-target
         // the owned mesh leg, rather than cancel/stop/recreate on every position
         // update. Flight landing plans retain their geometry until ground handoff.
-        if (subject is WoWUnit)
-            return !_groundTravelSelected || _context.RefreshGroundDestination(destination);
+        if (subject is WoWUnit && GroundApproachSearch.Finite(destination))
+        {
+            // Retire the old endpoint's predicate without stopping its already
+            // owned movement. The next mesh request reads the new destination;
+            // an active flight/landing plan remains a fixed geometry observation.
+            if (_mesh != null && !_mesh.ReleaseOwned(_meshToken!, () => Current, token => _meshToken = token)) return false;
+            return Current && _context.RefreshGroundDestination(destination);
+        }
         return false;
     }
 
@@ -209,7 +211,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             || _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 12
                 && (_groundTravelSelected || !preferFlight);
         return new GroundMotion(position, mounted, flying, falling, swimming, onTransport, immobile, supported,
-            actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel, _flightReviewStopPending);
+            actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel);
     }
 
     private bool ReviewFlight(WoWPoint position, bool flying, bool onTransport, bool swimming, bool immobile)
@@ -218,38 +220,15 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         if (_purpose == GroundTransitionPurpose.Combat || flying || position.Distance(_context.Destination) <= 60
             || onTransport || swimming || immobile || actor.Combat
             || _groundTravelSelected && _search?.Plan is { ProgressOnly: false })
-        {
-            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
             return false;
-        }
         bool reviewingGround = _groundTravelSelected;
         double now = Now;
-        if (_flightReviewStopPending && now - _flightReviewStarted >= 3)
-        {
-            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
-            _groundTravelSelected = true; _groundReviewPosition = position; _nextFlightReview = now + 3;
-            _travelModeReason = "flight-decision-stop-unobserved; ground-owner-retained";
-            return false;
-        }
         float reviewDistance = _flightDepartureBlocked ? 4 : 16;
-        if (reviewingGround && !_flightReviewStopPending
-            && (now < _nextFlightReview || position.Distance2DSqr(_groundReviewPosition) < reviewDistance * reviewDistance))
+        if (reviewingGround && (now < _nextFlightReview || position.Distance2DSqr(_groundReviewPosition) < reviewDistance * reviewDistance))
             return false;
         try
         {
             bool outdoors = actor.IsOutdoors;
-            if (outdoors && actor.IsMoving && Flightor.CanFly)
-            {
-                RequireCurrent();
-                // Travel cost owns an exact origin. A moving actor can invalidate
-                // that optional snapshot before it returns; observe a bounded
-                // stop before choosing a different travel owner.
-                if (!_flightReviewStopPending) _flightReviewStarted = now;
-                _flightReviewStopPending = true;
-                _travelModeReason = "flight-capable; decision-awaits-observed-stop";
-                return false;
-            }
-            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
             bool eligible = outdoors && Flightor.PreferFlightForGroundInteraction(_context.Destination, 3f);
             RequireCurrent();
             _actorOutdoors = outdoors;
@@ -263,12 +242,11 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             }
             return eligible;
         }
-        catch (ObservationUnavailableException) when (reviewingGround && Current)
+        catch (ObservationUnavailableException) when (Current)
         {
             // An optional mode review cannot park an already-authorized ground
             // journey. UNKNOWN does not authorize a new flight or mount action.
             _groundReviewPosition = position; _nextFlightReview = now + 3;
-            _flightReviewStopPending = false; _flightReviewStarted = double.NaN;
             _travelModeReason = "optional-flight-review-unknown; ground-owner-retained";
             return false;
         }
@@ -364,8 +342,43 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         }
         return _search.Step();
     }
+    private GroundApproachSearch? _nextFlightSearch;
+
+    public GroundApproachPlan? PrepareNextFlightLeg(GroundApproachPlan active)
+    {
+        RequireCurrent();
+        if (!active.ProgressOnly || _queries == null || !_context.Actor.IsFlying) return null;
+        if (_nextFlightSearch == null)
+        {
+            var gameObject = _context.Subject as WoWGameObject;
+            float range = gameObject?.InteractRange ?? 0;
+            if (gameObject != null && (!float.IsFinite(range) || range <= 0))
+                throw Unknown("selected object's interaction range unavailable");
+            _nextFlightSearch = new GroundApproachSearch(_context.Actor.Location, _context.Destination,
+                _radius, _height, true, false, _queries,
+                () => Current && (gameObject == null || gameObject.InteractRange == range), range);
+        }
+        try
+        {
+            var candidate = _nextFlightSearch.Step();
+            RequireCurrent();
+            if (candidate == null || !_nextFlightSearch.Revalidate(candidate)) return null;
+            RequireCurrent();
+            _search = _nextFlightSearch; _nextFlightSearch = null;
+            return candidate;
+        }
+        catch (ObservationUnavailableException) when (Current)
+        {
+            // The current leg was independently revalidated before lookahead.
+            // An unavailable future query cannot authorize a successor, but it
+            // need not revoke movement that is still bounded by that old leg.
+            _travelModeReason = "future-flight-region-unobserved; current-endpoint-retained";
+            return null;
+        }
+    }
+
     public bool Validate(GroundApproachPlan plan) { RequireCurrent(); return _search?.Revalidate(plan) == true && Current; }
-    public void ResetSearch() { RequireCurrent(); _search = null; _groundTravelSelected = false; }
+    public void ResetSearch() { RequireCurrent(); _search = null; _nextFlightSearch = null; _groundTravelSelected = false; }
 
     public void Hold()
     {

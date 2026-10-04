@@ -979,16 +979,13 @@ namespace WholesomeAQ
             var allEndpoints = new List<QuestEndpointCandidate>();
             foreach (QuestObjective objective in quest.Objectives.OrderBy(value => value.Index))
             {
-                QuestStrategyRecipe[] strategies = strategyPack?.Recipes
-                    ?.Where(recipe => recipe != null && recipe.QuestId == quest.Id &&
-                        recipe.ObjectiveIndex == objective.Index)
-                    .Take(2).ToArray() ?? Array.Empty<QuestStrategyRecipe>();
+                QuestStrategyRecipe[] strategies = QuestExecutionPolicy.Strategies(quest, objective, strategyPack);
                 bool hasDeclaredStrategy = strategies.Length != 0;
 
                 // Dataset indexes do not establish packed-counter slots. A declared
                 // recipe may use independent carried-item completion, but cannot
                 // borrow an unrelated raw count before its action is admitted.
-                bool typedStrategy = strategies.Length == 1 && strategyPack.SchemaVersion == 2 &&
+                bool typedStrategy = strategies.Length == 1 && strategies[0].CreditId > 0 &&
                     strategies[0].SuccessEvidence == QuestStrategySuccessEvidence.ObjectiveProgress &&
                     CanScheduleWholeQuestStrategy(quest, objective, strategyPack, strategies[0]) &&
                     acceptedQuest?.NormalObjectiveIds?.Count == 4 && acceptedQuest.NormalObjectiveRequiredCounts?.Count == 4;
@@ -1599,35 +1596,7 @@ namespace WholesomeAQ
             QuestObjective objective,
             QuestStrategyPack pack,
             QuestStrategyRecipe recipe)
-        {
-            // V1 indexes remain display/dataset ordinals, not physical counters.
-            // V2 separately binds the typed credit identity and required count.
-            bool typedCredit = pack.SchemaVersion == 2 && recipe.Kind == QuestStrategyKind.UseItemOn &&
-                recipe.SuccessEvidence == QuestStrategySuccessEvidence.ObjectiveProgress &&
-                objective.Type == ObjectiveType.KillMob && recipe.CreditId == objective.MobId &&
-                recipe.CreditCount == objective.KillCount && recipe.CreditCount > 0 && recipe.CreditCount <= ushort.MaxValue &&
-                recipe.WaitTime >= 0 && recipe.WaitTime <= 60000;
-            if (pack.Status != QuestStrategyPackStatus.DeclaredAndBound || pack.ClientBuild != 12340 ||
-                recipe.QuestId != quest.Id || recipe.ObjectiveIndex != objective.Index ||
-                (recipe.SuccessEvidence != QuestStrategySuccessEvidence.QuestComplete && !typedCredit) ||
-                recipe.TargetType != QuestStrategyTargetType.Creature || recipe.TargetId <= 0 ||
-                recipe.TargetId != objective.MobId ||
-                (objective.Type != ObjectiveType.KillMob && objective.Type != ObjectiveType.CollectItem) ||
-                double.IsNaN(recipe.Range) || double.IsInfinity(recipe.Range) ||
-                recipe.Range <= 0 || recipe.Range > 100 || recipe.MaxAttempts < 1 || recipe.MaxAttempts > 20)
-                return false;
-
-            // Match the implemented materializers; do not enable an unsupported
-            // action only to abort publication of other valid objective work later.
-            if (recipe.Kind == QuestStrategyKind.UseItemOn)
-                return recipe.ItemId > 0 &&
-                    (recipe.TargetState == QuestStrategyTargetState.Alive ||
-                     recipe.TargetState == QuestStrategyTargetState.Dead ||
-                     recipe.TargetState == QuestStrategyTargetState.DontCare);
-            if (recipe.Kind == QuestStrategyKind.GossipEvent)
-                return recipe.GossipOptionIndex >= 0 && recipe.GossipOptionIndex <= 64;
-            return false;
-        }
+            => QuestExecutionPolicy.CanExecuteStrategy(quest, objective, pack, recipe);
 
         private static bool Supported(QuestEntry quest) =>
             quest.Objectives.Count > 0 && quest.Objectives.All(objective => Supported(quest, objective));
@@ -1642,8 +1611,7 @@ namespace WholesomeAQ
             bool hasWholeQuestStrategy = false;
             foreach (QuestObjective objective in quest.Objectives)
             {
-                var recipes = pack?.Recipes?.Where(recipe => recipe != null && recipe.QuestId == quest.Id &&
-                    recipe.ObjectiveIndex == objective.Index).Take(2).ToArray() ?? Array.Empty<QuestStrategyRecipe>();
+                var recipes = QuestExecutionPolicy.Strategies(quest, objective, pack);
                 // The accepted objective owner gives a declared recipe precedence.
                 // Pickup must agree, including an explicitly unsupported recipe.
                 if (recipes.Length == 0)
@@ -1659,12 +1627,7 @@ namespace WholesomeAQ
         }
 
         private static bool Supported(QuestEntry quest, QuestObjective objective) =>
-            Supported(objective) &&
-            // Both TrinityCore 3.3.5 and AzerothCore use SpecialFlags 0x20
-            // for cast credit, not a kill. No item/interaction recipe is implied.
-            // Keep the imported row intact; unsupported work is reported by its
-            // existing objective owner, after satisfied counters are considered.
-            (objective.Type != ObjectiveType.KillMob || (quest.SpecialFlags & 0x20) == 0);
+            QuestExecutionPolicy.CanExecutePrimitive(quest, objective);
 
         private static bool Supported(QuestObjective objective) =>
             (objective.Type == ObjectiveType.KillMob && objective.MobId > 0) ||

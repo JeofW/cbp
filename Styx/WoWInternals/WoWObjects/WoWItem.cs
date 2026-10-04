@@ -737,7 +737,7 @@ namespace Styx.WoWInternals.WoWObjects
             }
         }
 
-        private static bool IsContainerLocationCurrent(
+        internal static bool IsContainerLocationCurrent(
             LocalPlayer me,
             int luaBag,
             int luaSlot,

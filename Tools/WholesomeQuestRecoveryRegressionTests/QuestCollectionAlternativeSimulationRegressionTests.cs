@@ -42,6 +42,7 @@ internal static class QuestCollectionAlternativeSimulationRegressionTests
         var options=new JsonSerializerOptions{Converters={new JsonStringEnumConverter()}};
         string dataset=Path.Combine(temp,"quest_data.json"),observations=Path.Combine(temp,"observations.jsonl"),output=Path.Combine(temp,"results.jsonl");
         byte[] bytes=JsonSerializer.SerializeToUtf8Bytes(db,options);File.WriteAllBytes(dataset,bytes);
+        ControlledExecutionCatalogFixture.Prepare(dataset);
         string hash=Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
         File.WriteAllLines(observations,db.Quests.Select(q=>JsonSerializer.Serialize(new {
             quest_id=q.Id,dataset_sha256=hash,structural_classification="CONTROLLED-FIXTURE",reference_found=true,

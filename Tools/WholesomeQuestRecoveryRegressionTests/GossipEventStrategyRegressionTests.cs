@@ -120,7 +120,7 @@ internal static class GossipEventStrategyRegressionTests
                     && xml.Contains("Range=\"5\"",StringComparison.Ordinal)
                     && xml.Contains("RequireLos=\"true\"",StringComparison.Ordinal)
                     && xml.Contains("MaxAttempts=\"3\"",StringComparison.Ordinal)
-                    && xml.Contains("SuccessEvidence=\"ObjectiveProgress\"",StringComparison.Ordinal),
+                    && xml.Contains("SuccessEvidence=\"QuestComplete\"",StringComparison.Ordinal),
                     "generated GossipEvent lost source-bound action facts");
                 Check(!xml.Contains("Type=\"KillMob\"",StringComparison.Ordinal),
                     "generic objective remained executable beside GossipEvent owner");
@@ -147,6 +147,12 @@ internal static class GossipEventStrategyRegressionTests
                 var s=Scenario(QuestStrategyKind.Escort);
                 Throws<InvalidDataException>(()=>Build(s.Builder,s.Plan,s.Database,s.Pack),
                     "declared unimplemented Escort silently became an ordinary objective");
+            }),
+            ("materializer and scheduler both reject an unbound gossip counter", () =>
+            {
+                var s=Scenario(QuestStrategyKind.GossipEvent, evidence:QuestStrategySuccessEvidence.ObjectiveProgress);
+                Throws<InvalidDataException>(()=>Build(s.Builder,s.Plan,s.Database,s.Pack),
+                    "materializer accepted a counter contract that the scheduler cannot execute");
             })
         };
 
@@ -210,7 +216,8 @@ internal static class GossipEventStrategyRegressionTests
     private static StrategyScenario Scenario(
         QuestStrategyKind kind,
         int objectiveMobId=2164,
-        int targetId=2164)
+        int targetId=2164,
+        QuestStrategySuccessEvidence evidence=QuestStrategySuccessEvidence.QuestComplete)
     {
         var quest=new QuestEntry{
             Id=2118,Name="Controlled",
@@ -225,7 +232,7 @@ internal static class GossipEventStrategyRegressionTests
             QuestId=2118,ObjectiveIndex=0,Kind=kind,SourceRef="controlled://gossip/2118/0",
             TargetType=QuestStrategyTargetType.Creature,TargetId=targetId,
             Range=5,RequireLos=true,MaxAttempts=3,GossipOptionIndex=1,
-            SuccessEvidence=QuestStrategySuccessEvidence.ObjectiveProgress
+            SuccessEvidence=evidence
         };
         var pack=new QuestStrategyPack{
             Status=QuestStrategyPackStatus.DeclaredAndBound,ClientBuild=12340,

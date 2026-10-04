@@ -152,9 +152,12 @@ internal static class QuestStrategyExecutionRegressionTests
                 fixture.WritePlanningInput(includeEscort:true, castCredit:false);
                 QuestDatabase db = fixture.Loader.Load();
                 QuestScheduleResult schedule = Schedule(db);
-                Check(schedule.Plan.Count == 1, "controlled ordinary-shaped objective did not reach materialization");
+                Check(schedule.Plan.Count == 0, "a declared strategy without its executor fell back to ordinary scheduler work");
+                var explicitlyRequested = new[] { new QuestPlanEntry {
+                    Quest=db.Quests.Single(), Stage=QuestWorkStage.Objective, ObjectiveIndex=0,
+                    Hotspots=db.CreatureSpawns["2164"] } };
                 Throws<InvalidDataException>(() => new ProfileBuilder().BuildProfileXml(
-                    schedule.Plan, db, "zone", "player", 20, null, fixture.Loader.StrategyPack),
+                    explicitlyRequested, db, "zone", "player", 20, null, fixture.Loader.StrategyPack),
                     "the actual loader/scheduler/materializer pipeline produced ordinary work for declared Escort");
             }),
             ("real no-pack scheduler and XML retain ordinary work", () =>
@@ -177,6 +180,15 @@ internal static class QuestStrategyExecutionRegressionTests
                 QuestDatabase db = fixture.Loader.Load();
                 Check(Schedule(db).Plan.Count == 0,
                     "unsupported cast-credit objective became ordinary killing");
+            }),
+            ("unmapped legacy item counter cannot bypass the shared execution policy", () =>
+            {
+                var scenario=Scenario(QuestStrategyKind.UseItemOn, QuestStrategyTargetType.Creature);
+                var legacy=new QuestStrategyPack {
+                    SchemaVersion=1, Status=QuestStrategyPackStatus.DeclaredAndBound, ClientBuild=12340,
+                    Recipes=scenario.Pack.Recipes };
+                Throws<InvalidDataException>(()=>BuildWithStrategies(scenario.Builder,scenario.Plan,scenario.Database,legacy),
+                    "legacy dataset index was accepted as typed normal-credit authority");
             })
         };
 
@@ -244,7 +256,7 @@ internal static class QuestStrategyExecutionRegressionTests
                 new SpawnPoint { Map = 1, X = 10, Y = 20, Z = 30, IsKnownReachable = true, IsKnownSafe = true }
             };
             File.WriteAllText(DataPath, JsonSerializer.Serialize(scenario.Database), Encoding.UTF8);
-            if (!includeEscort) return;
+            if (!includeEscort) { ControlledExecutionCatalogFixture.Prepare(DataPath); return; }
             string sha = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(DataPath))).ToLowerInvariant();
             File.WriteAllText(StrategyPath, JsonSerializer.Serialize(new
             {
@@ -256,6 +268,7 @@ internal static class QuestStrategyExecutionRegressionTests
                     MaxAttempts = 3, SuccessEvidence = "QuestComplete"
                 } }
             }), Encoding.UTF8);
+            ControlledExecutionCatalogFixture.Prepare(DataPath);
         }
 
         public void Dispose()
@@ -307,10 +320,13 @@ internal static class QuestStrategyExecutionRegressionTests
             RequireLos=true,
             MaxAttempts=3,
             GossipOptionIndex=1,
-            SuccessEvidence=QuestStrategySuccessEvidence.ObjectiveProgress
+            SuccessEvidence=QuestStrategySuccessEvidence.ObjectiveProgress,
+            CreditId=2164,
+            CreditCount=1
         };
         var pack=new QuestStrategyPack
         {
+            SchemaVersion=2,
             Status=QuestStrategyPackStatus.DeclaredAndBound,
             ClientBuild=12340,
             QuestDataSha256=new string('a',64),
@@ -336,7 +352,10 @@ internal static class QuestStrategyExecutionRegressionTests
             RequireLos=value.RequireLos,
             MaxAttempts=value.MaxAttempts,
             GossipOptionIndex=value.GossipOptionIndex,
-            SuccessEvidence=value.SuccessEvidence
+            SuccessEvidence=value.SuccessEvidence,
+            CreditId=value.CreditId,
+            CreditCount=value.CreditCount,
+            WaitTime=value.WaitTime
         };
 
     private static string BuildWithStrategies(

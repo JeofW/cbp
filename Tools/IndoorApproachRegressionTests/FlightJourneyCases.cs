@@ -32,7 +32,85 @@ internal static class FlightJourneyCases
             Check(Tick(owner)==GroundTransitionState.Pending&&World.Descents==0&&World.Dismounts==0,
                 "intermediate flight waypoint was treated as final landing authority");
             Tick(owner);
-            Check(World.ExteriorFlights.Count==2&&World.Descents==0,"arrival did not renew the next local flight leg");
+            Check(World.ExteriorFlights.Count>=2&&World.ExteriorFlights[^1].X>World.ExteriorFlights[0].X&&World.Descents==0,"arrival did not renew the next local flight leg");
+        });
+        Case("safe flight renews before reaching the current local waypoint without stopping",()=>
+        {
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            Tick(owner);var previous=World.ExteriorFlights[^1];int stops=World.Stops;
+            World.Actor.Position=previous.Add(-20,0,0);World.Actor.MountedValue=true;World.Actor.Flags=0x02000000u;World.Actor.IsMoving=true;
+            Tick(owner);
+            Check(World.ExteriorFlights[^1].X>previous.X+10,"local flight did not prepare forward movement before its CTM endpoint");
+            Check(World.Stops==stops&&World.Descents==0&&World.Dismounts==0,"local renewal stopped or landed a continuing journey");
+        });
+        Case("observed intermediate arrival dispatches its safe successor without an idle pulse",()=>
+        {
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            Tick(owner);int stops=World.Stops;var previous=World.ExteriorFlights[^1];ObserveFlightArrival();
+            Tick(owner);
+            Check(World.Stops==stops&&World.ExteriorFlights.Count==2&&World.ExteriorFlights[^1].X>previous.X,
+                "an intermediate arrival introduced a stop or required an extra planning pulse");
+        });
+        Case("time-stepped flight crosses multiple local regions without intermediate idle",()=>
+        {
+            World.Actor.Flags=0x02000000u;World.Actor.MountedValue=true;World.Actor.Position=new(100,10,40);
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            bool input=false;WoWPoint destination=default;int idle=0;
+            World.Callback=stage=>
+            {
+                if(stage=="stop")input=false;
+                if(stage=="exterior-flight"){destination=World.ExteriorFlights[^1];input=true;}
+            };
+            Tick(owner);int stops=World.Stops;float start=World.Actor.Position.X;
+            for(int frame=0;frame<120;frame++)
+            {
+                const float step=18.2f*.2f;
+                float distance=World.Actor.Position.Distance(destination);
+                if(input&&distance>0)
+                {
+                    float fraction=Math.Min(1,step/distance);
+                    var position=World.Actor.Position;
+                    World.Actor.Position=new(position.X+(destination.X-position.X)*fraction,
+                        position.Y+(destination.Y-position.Y)*fraction,position.Z+(destination.Z-position.Z)*fraction);
+                    if(fraction==1)input=false;
+                }
+                if(!input)idle++;
+                World.Actor.IsMoving=input;
+                Tick(owner,.2);
+            }
+            Check(World.Actor.Position.X>start+400,"simulated flight failed to make sustained progress");
+            Check(idle==0&&World.Stops==stops,"continuous flight introduced "+idle+" idle frames and "+(World.Stops-stops)+" stop commands");
+            Check(World.Dismounts==0&&World.Descents==0,"intermediate progress acquired final landing authority");
+        });
+        Case("optional flight-cost review never stops useful mounted ground travel",()=>
+        {
+            World.Actor.IsMoving=true;World.Actor.MountedValue=true;World.FlightCostRequiresStop=true;
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            for(int pulse=0;pulse<8;pulse++)
+            {
+                World.Actor.Position=new(100+pulse*20,10,0);Tick(owner,4);
+            }
+            Check(World.Stops==0&&World.Walks.Count==8,"a mount-choice observation repeatedly paused established ground travel");
+            Check(World.ExteriorFlights.Count==0&&World.Dismounts==0,"unavailable flight cost authorized a mount switch");
+        });
+        Case("unavailable lookahead does not stop the still-valid current flight leg",()=>
+        {
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            Tick(owner);var previous=World.ExteriorFlights[^1];int stops=World.Stops;
+            World.Actor.Position=previous.Add(-20,0,0);World.Actor.MountedValue=true;World.Actor.Flags=0x02000000u;
+            World.FutureGeometryUnavailableAfterX=previous.X+1;
+            Tick(owner);
+            Check(World.Stops==stops,"an unavailable future region stopped the currently validated route");
+            Check(World.ExteriorFlights[^1].Equals(previous)&&World.Descents==0,"missing future geometry authorized a new endpoint or descent");
+        });
+        Case("semantic replacement during lookahead never dispatches a successor",()=>
+        {
+            using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
+            Tick(owner);var previous=World.ExteriorFlights[^1];int commands=World.ExteriorFlights.Count;
+            World.Actor.Position=previous.Add(-20,0,0);World.Actor.MountedValue=true;World.Actor.Flags=0x02000000u;
+            World.Callback=stage=>{if(stage=="tiles")World.Target.Guid++;};
+            Check(Tick(owner)==GroundTransitionState.Revoked,"replacement while preparing future geometry retained the old journey");
+            Check(World.ExteriorFlights.Count==commands&&World.Descents==0&&World.Dismounts==0,"lookahead dispatched input after semantic replacement");
         });
         Case("an outdoor-reported roof requires ground departure",()=>
         {
@@ -89,18 +167,18 @@ internal static class FlightJourneyCases
                 "flight review disrupted useful mounted ground movement");
         });
         Case("long flight renews local progress and retains final landing acknowledgements",LongFlight);
-        Case("moving departure waits for a stopped flight decision",()=>
+        Case("selected flight preparation waits for an observed stop",()=>
         {
-            World.FlightCostRequiresStop=true;World.Actor.IsMoving=true;
+            World.Actor.IsMoving=true;
             using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
             Tick(owner);
             Check(World.Stops>0&&World.Walks.Count==0&&World.ExteriorFlights.Count==0,"moving cost rejection silently selected ground travel");
             World.Actor.IsMoving=false;Tick(owner);
             Check(World.ExteriorFlights.Count==1,"observed stop did not release the flight decision");
         });
-        Case("moving ground fallback can acquire a stopped flight decision",()=>
+        Case("moving ground fallback stops only after flight is selected",()=>
         {
-            World.PreferFlight=false;World.FlightCostRequiresStop=true;World.Actor.IsMoving=true;
+            World.PreferFlight=false;World.Actor.IsMoving=true;
             using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
             Tick(owner);Check(World.Walks.Count==1,"unavailable flight interrupted initial ground travel");
             World.PreferFlight=true;World.Actor.Position=new(150,10,0);now+=4;Tick(owner);
@@ -108,17 +186,17 @@ internal static class FlightJourneyCases
             World.Actor.IsMoving=false;Tick(owner);
             Check(World.ExteriorFlights.Count==1,"stopped review remained pinned to its old ground decision");
         });
-        Case("an unacknowledged review stop yields ground progress",()=>
+        Case("an unacknowledged selected-flight preparation stop yields ground progress",()=>
         {
-            World.FlightCostRequiresStop=true;World.Actor.IsMoving=true;
+            World.Actor.IsMoving=true;
             using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
             Tick(owner);Check(World.Stops>0&&World.Walks.Count==0,"initial review stop was not attempted");
             for(int pulse=0;pulse<5;pulse++)Tick(owner,1);
             Check(World.Walks.Count>0&&World.ExteriorFlights.Count==0&&World.Dismounts==0,"failed review stop parked travel or fabricated flight");
         });
-        Case("incidental aggro revokes an optional review stop",()=>
+        Case("incidental aggro revokes a selected-flight preparation stop",()=>
         {
-            World.FlightCostRequiresStop=true;World.Actor.IsMoving=true;World.Actor.MountedValue=true;
+            World.Actor.IsMoving=true;World.Actor.MountedValue=true;
             using var owner=new GroundTransition(GroundTransitionPurpose.Interaction);
             Tick(owner);Check(World.Stops>0&&World.Walks.Count==0,"initial review stop was not attempted");
             World.Actor.Combat=true;Tick(owner);

@@ -43,7 +43,7 @@ static void TestCompletedPickupDisposalRetiresOnlyItsOwnPoi()
 {
     var location = new WoWPoint(20, 30, 40);
     var pickup = new ForcedQuestPickUp(876, "A Final Blow", 123, "Giver", location, QuestObjectType.Npc);
-    var owned = new BotPoi(new PickUpNode(location, 123, "Giver", QuestObjectType.Npc, 876, "A Final Blow"));
+    var owned = ProfileRetirementTests.PublishFromFactory(pickup);
     BotPoi.Current = owned;
 
     pickup.Dispose();

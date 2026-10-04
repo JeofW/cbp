@@ -1,0 +1,25 @@
+{
+  "schema": "source-execution-closure-review-335-v1",
+  "source_candidate_base": "300d811bf326398b83737659a0ee2d4f0f070233",
+  "diagnostic_source_modified": true,
+  "diagnostic_source_stable": true,
+  "observations_unchanged": true,
+  "legacy_ledger_unchanged": true,
+  "changed_quests": 506,
+  "source_held_quests_changed": 505,
+  "built_in_strategy_quests_changed": [
+    9472
+  ],
+  "unexplained_pipeline_losses": [],
+  "new_release_accepted": false,
+  "live_completion_proven": false,
+  "files": {
+    "case-delta-summary.json": "44466cdbffa11aa3d737f98eff66908890866a695b57de4e57985a63ccdd06c6",
+    "closure-fixture-manifest.json": "9df672805a9f6c38bb179e1372fddfe32367a944b1425806d81e3b6a4e367163",
+    "per-quest-case-delta.json.gz": "33ca552fba6826aff914a824772886c788340a1b3e40f28fce11dec86a7504d6",
+    "quest-ledger.jsonl.gz": "ad3429b7046a98cb5e5058a23f4e5ea72e0f85c1732fa887d30e071fc3749aca",
+    "simulation-observations.jsonl.gz": "71bc95112123fb23fff1426410d12df83999881240de0eee3e585dc49e577e3a",
+    "simulation-results.jsonl.gz": "5a0c8d32dc95e0eb01281ee2121a4b9528701dc6729c808af9cd61e3cf7169d6",
+    "strategy-results.jsonl.gz": "704201871f353a90743c32ee7266c14a63b9f5c91ffd8ae0f9a998b80d0a14a2"
+  }
+}

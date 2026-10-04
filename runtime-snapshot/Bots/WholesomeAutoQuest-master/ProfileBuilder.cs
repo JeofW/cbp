@@ -57,6 +57,9 @@ namespace WholesomeAQ
             );
 
             XElement root = doc.Root;
+            if (plan.Any(entry => entry?.Quest?.Id == 9472))
+                root.Add(new XElement("ProtectedItems", new XElement("Item", new XAttribute("Entry", 29112)),
+                    new XElement("Item", new XAttribute("Entry", 23693))));
             XElement questOrder = new XElement("QuestOrder");
             var questDefinitions = new Dictionary<int, XElement>();
 
@@ -104,8 +107,10 @@ namespace WholesomeAQ
                     if (entry.Hotspots == null || entry.Hotspots.Count == 0)
                         continue;
 
-                    QuestStrategyRecipe strategy = FindStrategy(
-                        strategyPack, entry.Quest.Id, entry.ObjectiveIndex);
+                    string rejection = QuestExecutionPolicy.Rejection(entry.Quest, objective, strategyPack);
+                    if (rejection != null)
+                        throw new InvalidDataException($"Quest {entry.Quest.Id}/{objective.Index} has no admitted source execution: {rejection}.");
+                    QuestStrategyRecipe strategy = QuestExecutionPolicy.Strategies(entry.Quest, objective, strategyPack).SingleOrDefault();
                     if (strategy != null)
                     {
                         XElement strategyGuard;
@@ -116,6 +121,12 @@ namespace WholesomeAQ
                                 break;
                             case QuestStrategyKind.GossipEvent:
                                 strategyGuard = BuildGossipEventStrategyGuard(entry, strategy);
+                                break;
+                            case QuestStrategyKind.ArelionsMistress:
+                                strategyGuard = new XElement("If",
+                                    new XAttribute("Condition", BuildObjectiveAdmissionCondition(entry)),
+                                    new XElement("CustomBehavior", new XAttribute("File", "ArelionsMistress"),
+                                        new XAttribute("QuestId", 9472)));
                                 break;
                             default:
                                 throw new InvalidDataException(
@@ -166,29 +177,6 @@ namespace WholesomeAQ
                         new XAttribute("GiverId", entry.Giver.GiverId),
                         new XAttribute("GiverType", ProfileRelationType(entry.Giver.GiverType)),
                         LocationAttributes(point))));
-
-        private static QuestStrategyRecipe FindStrategy(
-            QuestStrategyPack strategyPack,
-            int questId,
-            int objectiveIndex)
-        {
-            if (strategyPack == null ||
-                strategyPack.Status != QuestStrategyPackStatus.DeclaredAndBound ||
-                strategyPack.Recipes == null)
-                return null;
-
-            // Resolve ownership before choosing an executor. A declared but
-            // unsupported kind is not permission to perform ordinary killing.
-            QuestStrategyRecipe[] matches = strategyPack.Recipes
-                .Where(recipe => recipe != null
-                    && recipe.QuestId == questId
-                    && recipe.ObjectiveIndex == objectiveIndex)
-                .ToArray();
-            if (matches.Length > 1)
-                throw new InvalidDataException(
-                    $"Multiple strategies own quest {questId} objective {objectiveIndex}.");
-            return matches.SingleOrDefault();
-        }
 
         private static XElement BuildUseItemOnStrategyGuard(
             QuestPlanEntry entry,

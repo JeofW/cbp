@@ -98,7 +98,7 @@ internal static class QuestTurnInExecutionRegressionTests
                     "#nullable disable\nusing Styx.WoWInternals.WoWObjects;\nnamespace Styx.Logic.Combat {public static class MountedCombatTransition {"
                     + mounted.ToFullString() + "}}");
                 var pickup = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(_root,"Bots/Quest/QuestOrder/ForcedQuestPickUp.cs"))).GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c=>c.Identifier.ValueText=="ForcedQuestPickUp");
-                string pickupMembers=string.Join("\n",pickup.Members.Where(m=>m is FieldDeclarationSyntax || m is MethodDeclarationSyntax method && (method.Identifier.ValueText is "HandleQuestFrame" or "ResetMismatchTracking" or "RecordPickupDecision" or "CreateBehavior" or "InteractWithQuestGiver" or "BeginInteractionCycle" || method.Identifier.ValueText.StartsWith("CompleteObserved"))).Select(m=>m.ToString()));
+                string pickupMembers=string.Join("\n",pickup.Members.Where(m=>m is FieldDeclarationSyntax || m is MethodDeclarationSyntax method && (method.Identifier.ValueText is "HandleQuestFrame" or "ResetMismatchTracking" or "RecordPickupDecision" or "CreateBehavior" or "CreatePickupPoi" or "InteractWithQuestGiver" or "BeginInteractionCycle" || method.Identifier.ValueText.StartsWith("CompleteObserved"))).Select(m=>m.ToString()));
                 // Keep the production run/session namespace: extracted reward
                 // members must use the same controlled TreeRoot as the full
                 // TurnIn owner and the reentrant replacement cases below.
