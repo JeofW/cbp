@@ -3229,7 +3229,9 @@ void TestSchedulerFiltersKnownNavigationUnsafePointsBeforeCap()
 
 void TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment()
 {
-    var path = Path.Combine(Path.GetTempPath(), $"wholesome-live-nav-{Guid.NewGuid():N}.json");
+    var directory = Path.Combine(Path.GetTempPath(), $"wholesome-live-nav-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(directory);
+    var path = Path.Combine(directory, "quest_data.json");
     File.WriteAllText(path, """
         {
           "Quests": [{
@@ -3265,6 +3267,7 @@ void TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment()
     });
     try
     {
+        ControlledExecutionCatalogFixture.Prepare(path);
         var loader = new DataLoader(path);
         var db = loader.Load();
         Assert(db != null && db.CreatureSpawns["2000"].All(point =>
@@ -3310,6 +3313,8 @@ void TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment()
     {
         Navigator.NavigationProvider = previousProvider;
         File.Delete(path);
+        File.Delete(Path.Combine(directory, "quest_execution_contracts.json"));
+        Directory.Delete(directory);
     }
 }
 

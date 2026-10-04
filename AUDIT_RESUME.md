@@ -1,3 +1,11 @@
+# PR99 resumed integration — source freeze pending (4 October 2026)
+
+Existing branch `audit/next-fluid-travel-special-quests-20261004`, initial candidate `300d811bf326398b83737659a0ee2d4f0f070233`, draft PR99. Recovered actual full-gate failures rather than assuming work was lost. Corrected the four legacy fixture assumptions without relaxing source/UNKNOWN guards; the complete Wholesome aggregate passed. Added seven causal actual-runtime Arelion admission cases and repaired stale hidden quest-dialog metadata, changed parent quest state and disappeared recipient handling. Source workflow:49 controller/Lua cases and28 complete adapter cases.
+
+All4335 effective quest entries passed252571 observation checks; declared item strategies passed39/39. Every conditional-case change is reviewed in `docs/audit/2026-10-04/fluid-travel-special-quests/closure/`. Original source observations and historical ledger are unchanged. Mechanism accounting remains3729 primitive candidates,3 implemented-strategy quests and603 explicit handler/source holds, not all quests executable. Evidence root: `D:/Dev/CopilotBuddy-Evidence/fluid-travel-special-quests-20261004`; latest diagnostic `resume-dataset-diagnostic1`. Local/hosted acceptance and production replacement require new final-commit receipts; never reuse300d811b's failed release as green.
+
+## Preserved initial PR99 checkpoint
+
 # Current: continuous travel and special quest source execution — 4 October 2026
 
 Continue `D:/Dev/CB-RegressionAudit-20261003`, branch `audit/next-fluid-travel-special-quests-20261004`, based on merged PR98 `b5e735a0b12ca4160497000e4bb8256625844a65`. Read `docs/audit/2026-10-04/fluid-travel-special-quests/REPORT.md` and `D:/Dev/CopilotBuddy-Evidence/fluid-travel-special-quests-20261004`. The user's live log0842exposed PR98's intermediate flight Hold, reached-vertex reissue, coordinate-only moving-NPC owner loss, optional mount-review stops and an undisposed nested pickup retaining Carinda's POI. These are reproduced and repaired with continuous/time-stepped and actual profile-retirement tests.

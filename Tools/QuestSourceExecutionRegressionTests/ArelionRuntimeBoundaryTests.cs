@@ -44,9 +44,11 @@ using Styx.Logic.Pathing;using Styx.Logic.Questing;using Styx.WoWInternals.WoWOb
 public static class AdapterWorld {
  public static Action ResetLua=null!;public static Func<string,string[]> Query=null!;
  public static Action<string>? BeforeLua,BeforeNative;public static bool Prepared,Current=true,Facing=true,ContainerCurrent=true,GroundReady=true;
- public static int NativeTargets,NativeClears,TransitCalls,InteractionMoves;public static uint ShownQuest;
+ public static int NativeTargets,NativeClears,TransitCalls,InteractionMoves,QuestVersion;public static uint ShownQuest;
+ public static bool ParentAccepted=true,ParentKnown=true,ParentFailed,ParentCompleted,RecipientPresent=true;
  public static LocalPlayer Actor=null!;public static WoWUnit Viera=null!,Vendor=null!;
  public static void Reset(){ResetLua();BeforeLua=BeforeNative=null;Prepared=false;Current=Facing=ContainerCurrent=GroundReady=true;NativeTargets=NativeClears=TransitCalls=InteractionMoves=0;ShownQuest=0;
+  QuestVersion=0;ParentAccepted=ParentKnown=RecipientPresent=true;ParentFailed=ParentCompleted=false;
   Actor=new(){Guid=1,BaseAddress=100,Location=new(-720.839f,4162.23f,50.8059f)};
   Viera=new(){Guid=2,BaseAddress=200,Entry=17226,Location=Actor.Location,NpcFlags=0};
   Vendor=new(){Guid=3,BaseAddress=300,Entry=18907,Location=new(-174.478f,5529.21f,29.4909f)};
@@ -82,7 +84,7 @@ namespace Styx.Logic.Pathing {
  }
 }
 namespace Styx.WoWInternals {
- public static class ObjectManager{public static List<T> GetObjectsOfType<T>() where T:WoWUnit=>new WoWUnit[]{AdapterWorld.Viera,AdapterWorld.Vendor}.OfType<T>().ToList();}
+ public static class ObjectManager{public static List<T> GetObjectsOfType<T>() where T:WoWUnit=>(AdapterWorld.RecipientPresent?new WoWUnit[]{AdapterWorld.Viera,AdapterWorld.Vendor}:new WoWUnit[]{AdapterWorld.Vendor}).OfType<T>().ToList();}
  public static class Lua {
   public static List<string> GetObservedReturnValues(string code,Func<bool> admitted){if(AdapterWorld.Prepared)throw new InvalidOperationException("query overwrote prepared native command");
    AdapterWorld.BeforeLua?.Invoke(code);AdapterWorld.Prepared=true;try{if(!admitted())throw new Styx.Helpers.ObservationUnavailableException("lua","late admission revoked");return AdapterWorld.Query(code).ToList();}finally{AdapterWorld.Prepared=false;}}
@@ -109,9 +111,12 @@ namespace Styx.WoWInternals.World {
  public static class WorldQueryObservation{public readonly record struct State(bool Mounted,bool OnTaxi,bool Rooted,bool Stunned);public static State ReadGroundUnitState(LocalPlayer actor)=>new(actor.Mounted,actor.OnTaxi,actor.Rooted,actor.Stunned);}
 }
 namespace Styx.Logic.Questing {
- public sealed class QuestLogSnapshot{public bool IsIdentityComplete=true;public uint[] AcceptedQuestIds=new uint[]{9472};}
+ public sealed class QuestLogSnapshot{public int Version=AdapterWorld.QuestVersion;public bool IsIdentityComplete=AdapterWorld.ParentKnown;
+  public uint[] AcceptedQuestIds=AdapterWorld.ParentAccepted?new uint[]{9472}:Array.Empty<uint>();
+  public uint[] FailedQuestIds=AdapterWorld.ParentFailed?new uint[]{9472}:Array.Empty<uint>();
+  public uint[] ReadyQuestIds=AdapterWorld.ParentCompleted?new uint[]{9472}:Array.Empty<uint>();}
  public sealed class PlayerQuest{}
- public sealed class QuestLog{public QuestLogSnapshot CaptureSnapshot()=>new();public bool IsSnapshotCurrent(QuestLogSnapshot s)=>true;public PlayerQuest GetQuestById(uint id)=>new();}
+ public sealed class QuestLog{public QuestLogSnapshot CaptureSnapshot()=>new();public bool IsSnapshotCurrent(QuestLogSnapshot s)=>s.Version==AdapterWorld.QuestVersion&&AdapterWorld.ParentKnown;public PlayerQuest GetQuestById(uint id)=>new();}
  public static class QuestObjectiveCompletion{public static bool TryReadTypedNormalObjectiveProgress(PlayerQuest? quest,int id,int count,out int value){value=0;return true;}}
 }
 namespace Styx.Logic.Inventory.Frames.Gossip {
@@ -130,6 +135,17 @@ public static class ActualAdapterCases {
  public static void Run(){int passed=0,total=0;var failures=new List<string>();
   void Case(string name,Action test){total++;AdapterWorld.Reset();try{test();passed++;Console.WriteLine("PASS actual lure adapter: "+name);}catch(Exception error){failures.Add(name+": "+error);Console.Error.WriteLine("FAIL actual lure adapter: "+failures.Last());}}
   Case("full adapter reads stock and lured state then uses the carried scroll",()=>{using var runtime=Ready();var observed=runtime.Observe();Check(observed.Accepted==true&&observed.Credit==0&&observed.Wine==0&&observed.Scroll==1&&observed.AtLureEndpoint,"actual adapter observations disagree");runtime.MoveViera(true);Check(runtime.UseScroll()==QuestWorkflowReceipt.Submitted&&AdapterWorld.Count("scrollUses")==1,"actual carried item path did not submit once");});
+  Case("hidden stale quest id does not block a grounded scroll action",()=>{using var runtime=Ready();AdapterWorld.ShownQuest=123;
+   Check(runtime.UseScroll()==QuestWorkflowReceipt.Submitted&&AdapterWorld.Count("scrollUses")==1,"a hidden old quest frame id blocked the source action");});
+  Case("visible foreign quest dialog is neither closed nor used",()=>{using var runtime=Ready();AdapterWorld.ShownQuest=123;AdapterWorld.Code("quest=true");
+   var receipt=runtime.UseScroll();Check(receipt==QuestWorkflowReceipt.Rejected&&AdapterWorld.Query("return quest and 1 or 0")[0]=="1"&&AdapterWorld.Count("scrollUses")==0,"foreign quest dialog was altered or blocked with an exception");});
+  foreach(string parent in new[]{"removed","failed","completed","unknown"}){string change=parent;
+   Case("native scroll entry rejects parent quest "+change,()=>{using var runtime=Ready();AdapterWorld.BeforeLua=code=>{if(!code.Contains("UseContainerItem(0,1)"))return;AdapterWorld.QuestVersion++;
+    if(change=="removed")AdapterWorld.ParentAccepted=false;else if(change=="failed")AdapterWorld.ParentFailed=true;else if(change=="completed")AdapterWorld.ParentCompleted=true;else AdapterWorld.ParentKnown=false;};
+    try{runtime.UseScroll();}catch(Styx.Helpers.ObservationUnavailableException){}Check(AdapterWorld.Count("scrollUses")==0,"parent quest state changed but its prepared item action still ran");});
+  }
+  Case("late removal of the exact recipient cannot use its stale wrapper",()=>{using var runtime=Ready();AdapterWorld.BeforeLua=code=>{if(code.Contains("UseContainerItem(0,1)"))AdapterWorld.RecipientPresent=false;};
+   try{runtime.UseScroll();}catch(Styx.Helpers.ObservationUnavailableException){}Check(AdapterWorld.Count("scrollUses")==0,"removed object retained item recipient authority");});
   Case("no positive ground-ready observation means no item use",()=>{using var runtime=new ArelionLureRuntime(()=>true);runtime.Observe();Check(runtime.UseScroll()==QuestWorkflowReceipt.Rejected&&AdapterWorld.Count("scrollUses")==0,"missing ground-ready receipt authorized use");});
   foreach(string mutation in new[]{"actor","base","target","target-base","movement","ground-support-owner","flight-owner","bag","combat","quest-context"}){string mode=mutation;
    Case("native entry rejects late "+mode,()=>{using var runtime=Ready();AdapterWorld.BeforeLua=code=>{if(!code.Contains("UseContainerItem(0,1)"))return;AdapterWorld.BeforeLua=null;

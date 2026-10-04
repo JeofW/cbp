@@ -29,6 +29,7 @@ public sealed class ArelionLureRuntime : IArelionLureRuntime, IDisposable
     private long? _wine;
     private double _nextInteraction;
     private ReadyObservation? _ready;
+    private QuestLogSnapshot? _parentObservation;
 
     private sealed record Recipient(WoWUnit Unit, ulong Guid, uint Address, uint Entry)
     {
@@ -52,6 +53,7 @@ public sealed class ArelionLureRuntime : IArelionLureRuntime, IDisposable
     public ArelionObservation Observe()
     {
         RequireCurrent();
+        _parentObservation = null;
         var snapshot = Actor.QuestLog.CaptureSnapshot();
         bool? accepted = snapshot.IsIdentityComplete && Actor.QuestLog.IsSnapshotCurrent(snapshot)
             ? snapshot.AcceptedQuestIds.Contains(9472u) : null;
@@ -97,6 +99,9 @@ public sealed class ArelionLureRuntime : IArelionLureRuntime, IDisposable
             else if (view.Skip(1).Any(value => value == "1")) ui = ArelionUi.Other;
         }
         RequireCurrent();
+        if (accepted == true && credit == 0 && !snapshot.FailedQuestIds.Contains(9472u)
+            && !snapshot.ReadyQuestIds.Contains(9472u) && Actor.QuestLog.IsSnapshotCurrent(snapshot))
+            _parentObservation = snapshot;
         return new(accepted, credit, wine, scroll, canTravel, canAct, _viera, endpoint, moving, ui, lured);
     }
 
@@ -142,6 +147,8 @@ public sealed class ArelionLureRuntime : IArelionLureRuntime, IDisposable
     {
         var ready = _ready;
         if (target == null || ready == null || !ReferenceEquals(target, ready.Target) || !Current || !target.Current
+            || _parentObservation == null || !Actor.QuestLog.IsSnapshotCurrent(_parentObservation)
+            || !ObjectManager.GetObjectsOfType<WoWUnit>().Any(unit => ReferenceEquals(unit, target.Unit))
             || !Actor.Location.Equals(ready.ActorPosition) || !target.Unit.Location.Equals(ready.TargetPosition)
             || !ReferenceEquals(Flightor.RequestIdentity, ready.FlightOwner)
             || !ReferenceEquals((Navigator.NavigationProvider as MeshNavigator)?.RequestIdentity, ready.MeshOwner)
@@ -213,8 +220,7 @@ public sealed class ArelionLureRuntime : IArelionLureRuntime, IDisposable
         var target = _viera;
         if (!Ready(target) || target!.Unit.IsMoving || target.Unit.Location.DistanceSqr(LureEndpoint) > 64
             || (target.Unit.NpcFlags & 3u) != 0) return QuestWorkflowReceipt.Rejected;
-        CloseOwnedLureDialog(target);
-        if (!Ready(target)) return QuestWorkflowReceipt.Rejected;
+        if (!CloseOwnedLureDialog(target) || !Ready(target)) return QuestWorkflowReceipt.Rejected;
         if (Actor.CurrentTargetGuid != target.Guid) { TargetOwned(target); return QuestWorkflowReceipt.Rejected; }
         if (!Actor.IsSafelyFacing(target.Unit, 45))
         { if (Ready(target)) Actor.SetFacing(target.Unit); return QuestWorkflowReceipt.Rejected; }
@@ -258,12 +264,27 @@ public sealed class ArelionLureRuntime : IArelionLureRuntime, IDisposable
         Lua.GetObservedReturnValues("if type(UnitGUID)=='function' and type(GetItemCount)=='function' and type(CloseMerchant)=='function' and string.upper(UnitGUID('npc') or '')=='" + guid
             + "' and GetItemCount(29112,false)>=1 and MerchantFrame and MerchantFrame:IsVisible() then CloseMerchant() end return 'observed'", () => Current && vendor.Current);
     }
-    private void CloseOwnedLureDialog(Recipient viera)
+    private bool CloseOwnedLureDialog(Recipient viera)
     {
+        if (!Ready(viera)) return false;
+        const string observe = "local function shown(x) return x and x:IsVisible() and 1 or 0 end " +
+            "local npc=UnitGUID('npc') or '';local quest=shown(QuestFrame);local gossip=shown(GossipFrame); ";
+        var view = Lua.GetObservedReturnValues(observe + "return npc,quest,gossip", () => Ready(viera));
+        if (view.Count != 3 || view.Skip(1).Any(value => value is not ("0" or "1"))) return false;
+        // The client's last shown quest ID can remain populated after its frame
+        // closes. A hidden old ID neither owns a dialog nor blocks item use.
+        if (view[1] == "0" && view[2] == "0") return Ready(viera);
+        bool questVisible = view[1] == "1";
+        if (!GuidMatches(view[0], viera) || questVisible && QuestFrame.Instance.CurrentShownQuestId != 9483)
+            return false;
         string guid = "0X" + viera.Guid.ToString("X16", CultureInfo.InvariantCulture);
-        Lua.GetObservedReturnValues("if string.upper(UnitGUID('npc') or '')=='" + guid
-            + "' then if QuestFrame and QuestFrame:IsVisible() then CloseQuest() elseif GossipFrame and GossipFrame:IsVisible() then CloseGossip() end end return 'observed'",
-            () => Ready(viera) && (viera.Unit.NpcFlags & 3u) == 0 && (QuestFrame.Instance.CurrentShownQuestId == 9483 || QuestFrame.Instance.CurrentShownQuestId == 0));
+        Lua.GetObservedReturnValues(observe + "if string.upper(npc)~='" + guid + "' or quest~=" + view[1]
+            + " or gossip~=" + view[2] + " then return 'rejected' end "
+            + (questVisible ? "CloseQuest();" : "CloseGossip();") + "return 'closed'",
+            () => Ready(viera) && (viera.Unit.NpcFlags & 3u) == 0 && (!questVisible || QuestFrame.Instance.CurrentShownQuestId == 9483));
+        // Closing is only preparation. Observe the hidden frames on a later
+        // pulse before using the scroll, even when the close call returned.
+        return false;
     }
     public void RetireMovement()
     {

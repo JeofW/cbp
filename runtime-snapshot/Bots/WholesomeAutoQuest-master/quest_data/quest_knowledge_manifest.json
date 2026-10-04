@@ -22,7 +22,7 @@
   "realm_equivalence_proven": false,
   "live_completion_proven": false,
   "production_replaced": false,
-  "closure_evidence_directory": "docs/audit/2026-10-01/required-stock",
+  "closure_evidence_directory": "docs/audit/2026-10-04/fluid-travel-special-quests/closure",
   "source_execution_catalog": {
     "schema_version": 1,
     "quest_count": 4335,
@@ -39,6 +39,8 @@
       "ArelionsMistress": 1
     },
     "full_execution_certification": false,
-    "live_completion_proven": false
+    "live_completion_proven": false,
+    "source_audit": "docs/audit/2026-10-04/fluid-travel-special-quests/all-4335-execution-requirements.json.gz",
+    "reviewed_closure_delta": "docs/audit/2026-10-04/fluid-travel-special-quests/closure/case-delta-summary.json"
   }
 }

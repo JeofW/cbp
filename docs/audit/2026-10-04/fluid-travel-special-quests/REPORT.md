@@ -76,7 +76,7 @@ Focused groups include:
 | Combat and moving-NPC POI ownership |24|
 | Real profile/nested-stage retirement |8|
 | Compound9472controller and actual scripts in stock Lua5.1 |49|
-| Complete9472runtime adapter with late boundary mutations |21|
+| Complete9472runtime adapter with late boundary mutations |28|
 | Full catalogue, scheduler/materializer and atomic rejection groups |15|
 
 The time-stepped flight case advances at18.2yards/second over120frames and requires more than400yards of progress with **zero intermediate stop commands and zero idle frames**. Original ground-transition, mounted-combat, collection, dismount recovery, accepted-quest and cancellation suites remain active. All931held objective rows are checked against primitive/strategy admission; source-held materialization cannot silently emit a kill.
@@ -86,5 +86,15 @@ The initial aggregate failures included fixtures with absent mechanism catalogue
 Final commit/tree, complete local Windows/x86 gate, hosted results, native replay, staging and installed-payload status are recorded by the subsequent immutable release receipts in the evidence directory. A clean-source complete gate is required; focused results alone do not authorize deployment. No future commit identity or deployment is claimed by this precommit report.
 
 ## Remaining limits
+
+### Resumed integration review
+
+The initial clean candidate300d811b did not pass the complete gate. Its failed receipts are retained: two older positive item-strategy fixtures used unmapped version1 normal counters, another expected unsupported Escort to reach generic scheduling, and a navigation fixture omitted the newly required source mechanism observation. Corrected fixtures supply explicit typed version2 credit or a labelled, bounded synthetic source catalog; unsupported mechanisms remain rejected. An additional version1 negative test preserves the counter-admission refusal.
+
+The complete aggregate passed in `resume-aggregate-integration1`. Further review reproduced seven actual adapter failures: hidden stale native quest-dialog metadata blocking the scroll, a foreign visible dialog causing an unnecessary observation error, four parent-quest changes surviving prepared action admission, and a disappeared recipient retaining a stale usable wrapper. `resume-lure-admission-red` records the failures; `resume-lure-admission-green` records the repair. Final action admission now requires the same raw quest snapshot and current object population. Hidden dialogs do not own UI, and an owned visible dialog must be observed closed on a later pulse before scroll use.
+
+The all4335-member diagnostic passed252571 checks; both declared strategy workflows passed39/39. Compared with the preceding261306-case observation fixture, only505 source-held quests and9472 changed their conditional cases. Every previously passing primitive pipeline that became blocked has an explicit source-mechanism obligation; there are no unexplained pipeline losses. The old source observations and historical ledger remain byte-identical. These test counts are not real-client action counts.
+
+The new strict comparison fixture is in `closure/`. It binds the added catalog and current knowledge manifest, retains the complete per-quest case delta, and requires a clean candidate to reproduce all four output digests locally and on hosted Windows/x86. The historical six-category ledger is preserved, not relabelled as a full-execution certificate.
 
 No game or bot was launched or stopped for these tests. The live post-update route, merchant interaction, lure timing and realm quest acceptance remain to be observed. Deterministic supplied client/server observations and native mesh connectivity do not prove every live route or all quest scripts. The603explicit handler/source obligations are retained for further work; they are not described as solved. Installation must be idle before replacement, and every changed runtime/knowledge file must match the accepted release while preserving settings, logs, original client, navigation engine and rollback.

@@ -50,4 +50,21 @@ class ShippedCatalogTests(unittest.TestCase):
         self.assertIn('non-death-credit-trigger',quest['Objectives'][0]['Reasons'])
         self.assertFalse(self.audit['live_completion_proven'])
 
+    def test_reviewed_closure_keeps_every_member_and_all_knowledge_bindings(self):
+        manifest=json.loads((KNOWLEDGE/'quest_knowledge_manifest.json').read_text())
+        folder=ROOT/manifest['closure_evidence_directory']
+        fixture=json.loads((folder/'closure-fixture-manifest.json').read_text())
+        self.assertIn('quest_execution_contracts.json',fixture['knowledge_sha256'])
+        self.assertIn('quest_knowledge_manifest.json',fixture['knowledge_sha256'])
+        for name,expected in fixture['knowledge_sha256'].items():
+            self.assertEqual(hashlib.sha256((KNOWLEDGE/name).read_bytes()).hexdigest(),expected)
+        old=ROOT/fixture['previous_fixture_path']
+        self.assertEqual(hashlib.sha256(old.read_bytes()).hexdigest(),fixture['previous_fixture_sha256'])
+        review=json.loads((folder/'case-delta-summary.json').read_text())
+        self.assertEqual(review['unexplained_pipeline_losses'],[])
+        self.assertEqual(review['changed_statuses'],{'HandlerOrSourceRequired':505,'ImplementedStrategy':1})
+        self.assertEqual(review['current_checks'],fixture['simulation_checks'])
+        self.assertEqual((folder/'simulation-observations.jsonl.gz').read_bytes(),(old.parent/'simulation-observations.jsonl.gz').read_bytes())
+        self.assertEqual((folder/'quest-ledger.jsonl.gz').read_bytes(),(old.parent/'quest-ledger.jsonl.gz').read_bytes())
+
 if __name__=='__main__':unittest.main()
