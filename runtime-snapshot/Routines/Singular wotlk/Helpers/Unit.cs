@@ -41,7 +41,7 @@ namespace Singular.Helpers
         /// <value>The nearby unfriendly units.</value>
         public static IEnumerable<WoWUnit> NearbyUnfriendlyUnits
         {
-            get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p)).ToList(); }
+            get { return ObjectManager.GetObjectsOfType<WoWUnit>(true, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p)).ToList(); }
         }
 
         // Evaluate the requested area before querying reaction/engagement. An
@@ -51,13 +51,13 @@ namespace Singular.Helpers
             if (!float.IsFinite(distance) || distance < 0)
                 throw new ArgumentOutOfRangeException(nameof(distance));
             float distanceSqr = distance * distance;
-            return ObjectManager.GetObjectsOfType<WoWUnit>(false, false)
+            return ObjectManager.GetObjectsOfType<WoWUnit>(true, false)
                 .Where(p => p != null && p.DistanceSqr <= distanceSqr && ValidUnit(p)).ToList();
         }
 
         public static IEnumerable<WoWUnit> NearbyUnitsInCombatWithMe
         {
-            get { return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p) && p.Combat && p.TaggedByMe).ToList(); }
+            get { return ObjectManager.GetObjectsOfType<WoWUnit>(true, false).Where(p => p != null && p.DistanceSqr <= 40 * 40 && ValidUnit(p) && p.Combat && p.TaggedByMe).ToList(); }
         }
 
 
@@ -69,7 +69,6 @@ namespace Singular.Helpers
         // remains possible without a hostile target; self-centered AoE is still checked.
         public static bool IsCombatActionSafe(string spellName, WoWUnit target)
         {
-            if (!IsDungeonCombatBotTargetingRestricted) return IsAreaEffectSafe(spellName, target);
             return target != null
                 && (target.IsMe || target.IsFriendly || target.IsEligibleDungeonCombatTarget())
                 && IsAreaEffectSafe(spellName, target);
@@ -85,38 +84,42 @@ namespace Singular.Helpers
         {
             float radius;
             bool groundPatch = string.Equals(spellName, "Consecration", StringComparison.OrdinalIgnoreCase);
-            bool restricted = IsDungeonCombatBotTargetingRestricted || groundPatch;
-            if (!restricted || !DungeonEngagementPolicy.TryGetAreaEffectRadius(spellName, out radius))
+            bool observedEngagement = groundPatch || GroupCombatSafety.IsInInstance;
+            if (!DungeonEngagementPolicy.TryGetAreaEffectRadius(spellName, out radius))
                 return true;
 
-            bool hasUnengagedEnemy = HasUnengagedEnemyNear(StyxWoW.Me.Location, radius, groundPatch);
+            bool hasUnengagedEnemy = HasUnengagedEnemyNear(StyxWoW.Me.Location, radius, observedEngagement);
             bool centeredOnActor = string.Equals(spellName, "Consecration", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(spellName, "Divine Storm", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(spellName, "Holy Wrath", StringComparison.OrdinalIgnoreCase);
             if (!hasUnengagedEnemy && !centeredOnActor && target != null && !target.IsMe)
-                hasUnengagedEnemy = HasUnengagedEnemyNear(target.Location, radius);
+                hasUnengagedEnemy = HasUnengagedEnemyNear(target.Location, radius, observedEngagement);
 
-            return DungeonEngagementPolicy.ShouldAllowAreaEffect(restricted, hasUnengagedEnemy);
+            return !hasUnengagedEnemy;
         }
 
         public static bool IsAreaEffectSafe(string spellName, WoWPoint location)
         {
             float radius;
             bool groundPatch = string.Equals(spellName, "Consecration", StringComparison.OrdinalIgnoreCase);
-            bool restricted = IsDungeonCombatBotTargetingRestricted || groundPatch;
-            if (!restricted || !DungeonEngagementPolicy.TryGetAreaEffectRadius(spellName, out radius))
+            bool observedEngagement = groundPatch || GroupCombatSafety.IsInInstance;
+            if (!DungeonEngagementPolicy.TryGetAreaEffectRadius(spellName, out radius))
                 return true;
 
-            return DungeonEngagementPolicy.ShouldAllowAreaEffect(
-                restricted,
-                HasUnengagedEnemyNear(location, radius, groundPatch));
+            return !HasUnengagedEnemyNear(location, radius, observedEngagement);
         }
 
         private static bool HasUnengagedEnemyNear(WoWPoint location, float radius, bool requireObservedEngagement = false)
         {
             float radiusSqr = radius * radius;
-            return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Any(unit =>
+            // WoWPlayer derives from WoWUnit. Exact-type enumeration silently
+            // omits every player, including a hostile controlled group member.
+            return ObjectManager.GetObjectsOfType<WoWUnit>(true, false).Any(unit =>
                 unit != null && unit.Location.DistanceSqr(location) <= radiusSqr &&
+                // Controlled players may acquire an owner or pet-like flags.
+                // They remain potential damage recipients and must be considered
+                // before ordinary NPC candidate exclusions.
+                (GroupCombatSafety.IsProtectedPlayer(unit) ? !unit.Dead && !unit.IsFriendly :
                 IsBasicHostileUnit(unit) &&
                 // A persistent ground patch can pull an untouched pack in the
                 // open world too. A selected/attackable unit is not observed
@@ -126,7 +129,7 @@ namespace Singular.Helpers
                         WoWSpellMechanic.Asleep, WoWSpellMechanic.Shackled, WoWSpellMechanic.Incapacitated,
                         WoWSpellMechanic.Disoriented, WoWSpellMechanic.Fleeing, WoWSpellMechanic.Turned,
                         WoWSpellMechanic.Banished, WoWSpellMechanic.Frozen)
-                    : !unit.IsEligibleDungeonCombatTarget()));
+                    : IsDungeonCombatBotTargetingRestricted && !unit.IsEligibleDungeonCombatTarget())));
         }
 
         private static bool IsBasicHostileUnit(WoWUnit unit)
@@ -184,7 +187,7 @@ namespace Singular.Helpers
                 return Enumerable.Empty<WoWUnit>();
             var dist = distance*distance;
             var curTarLocation = StyxWoW.Me.CurrentTarget.Location;
-            return ObjectManager.GetObjectsOfType<WoWUnit>(false, false).Where(
+            return ObjectManager.GetObjectsOfType<WoWUnit>(true, false).Where(
                         p => p != null && p.Location.DistanceSqr(curTarLocation) <= dist && ValidUnit(p)).ToList();
         }
 

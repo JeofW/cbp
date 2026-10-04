@@ -9,6 +9,12 @@ namespace Styx.Logic
  public static class BotManager { public static Bot Current { get; set; } = new(); }
  public static class RaFHelper { public static Styx.WoWInternals.WoWObjects.WoWUnit? Leader { get; set; } }
  public static class Blacklist { public static bool Contains(ulong _) => false; }
+ public static class GroupObservation
+ {
+  public static bool Unavailable;
+  public static bool TryReadMemberGuids(Styx.WoWInternals.WoWObjects.LocalPlayer player, out ulong[] members)
+  { members = player.PartyMembers.Concat(player.RaidMembers).Select(member => member.Guid).Append(player.Guid).Distinct().OrderBy(id => id).ToArray(); return !Unavailable; }
+ }
 }
 namespace Styx.Helpers { public static class Marker { } }
 namespace Styx.Logic.Pathing
@@ -29,7 +35,9 @@ namespace Styx.WoWInternals
  public static class ObjectManager
  {
   public static readonly List<WoWObjects.WoWUnit> Objects = new();
-  public static IEnumerable<T> GetObjectsOfType<T>(bool _ = false, bool __ = false) => Objects.OfType<T>();
+  public static IEnumerable<T> GetObjectsOfType<T>(bool allowInheritance = false, bool includeMeIfFound = false)
+   => Objects.Where(unit => (includeMeIfFound || !ReferenceEquals(unit, Styx.StyxWoW.Me))
+       && (allowInheritance ? unit is T : unit.GetType() == typeof(T))).Cast<T>();
  }
 }
 namespace Styx.WoWInternals.WoWObjects
@@ -43,6 +51,9 @@ namespace Styx.WoWInternals.WoWObjects
   public uint Entry { get; set; } = 1;
   public bool IsValid { get; set; } = true;
   public bool IsAlive { get; set; } = true;
+  public bool IsPlayer => this is WoWPlayer;
+  public bool IsInMyPartyOrRaid => IsMe || Styx.StyxWoW.Me.PartyMembers.Any(p => p.Guid == Guid)
+    || Styx.StyxWoW.Me.RaidMembers.Any(p => p.Guid == Guid);
   public bool Dead => !IsAlive;
   public bool IsFriendly { get; set; }
   public bool IsMe => ReferenceEquals(this, Styx.StyxWoW.Me);
@@ -70,7 +81,7 @@ namespace Styx.WoWInternals.WoWObjects
   public Dictionary<ulong,uint> Threats { get; } = new();
   public UnitThreatInfo GetThreatInfoFor(WoWUnit p) => new() { ThreatValue = Threats.GetValueOrDefault(p.Guid) };
  }
- public class WoWPlayer : WoWUnit { public bool IsInMyPartyOrRaid = true; }
+ public class WoWPlayer : WoWUnit { }
  public sealed class LocalPlayer : WoWPlayer
  {
   public Map CurrentMap { get; set; } = new();

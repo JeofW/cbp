@@ -39,8 +39,8 @@ internal static class QuestLootHandoffRegressionTests
         string source = Prefix + "public static class LevelProbe {\n" + LevelLeaves +
             Methods(level, "CreateLootBehavior", "CanLoot", "CreateOwnedLootSelection", "CanSelectLoot", "IsLootPoi", "CreateOwnedLootInteraction", "CanBeginLoot", "LootAllItems", "IsPlayerOrPetInCombat") + guard +
             string.Join("\n", level.DescendantNodes().OfType<ClassDeclarationSyntax>().Where(c => c.Identifier.ValueText == "LootWorkObservation").Select(c => c.ToString())) + "}\n" +
-            "public static class QuestProbe { public static Composite Build()=>CreateTargetingBehavior();\n" +
-            Methods(quest, "CreateTargetingBehavior", "ShouldSuppressOpportunisticTargeting") + "}\n" +
+            "public static class QuestProbe { public static Composite Build()=>CreateOpportunisticTargetingBehavior();\n" +
+            Methods(quest, "CreateOpportunisticTargetingBehavior", "ShouldSuppressOpportunisticTargeting") + "}\n" +
             Boundary.Replace("/* ACTUAL_COMBAT_OBSERVATION */", combatObservation);
         string temp = Path.Combine(Path.GetTempPath(), "cb-quest-loot-handoff-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);

@@ -30,6 +30,10 @@ namespace Styx.Logic.Pathing.FlightorNavigation
             new Dictionary<Tuple<uint, WoWFactionGroup>, List<Vector2[]>>();
 
         private static bool _initialized;
+        private static long _revision;
+        internal static long Revision { get { EnsureInitialized(); return _revision; } }
+        internal static WoWFactionGroup CurrentFaction => PlayerFaction;
+        internal static string ContextKey => StyxWoW.Me.MapId + ":" + PlayerFaction + ":" + Revision;
 
         /// <summary>Current player faction derived from race.</summary>
         private static WoWFactionGroup PlayerFaction
@@ -68,6 +72,8 @@ namespace Styx.Logic.Pathing.FlightorNavigation
                 if (faction != WoWFactionGroup.Neutral && _blackspots.TryGetValue(factionKey, out var factioned))
                     result.AddRange(factioned);
 
+                result.AddRange(AerialSettlementData.For(mapId, faction));
+
                 return result;
             }
         }
@@ -77,6 +83,126 @@ namespace Styx.Logic.Pathing.FlightorNavigation
         {
             var v = new Vector2(point.X, point.Y);
             return Blackspots.Any(poly => PointInPolygon(v, poly));
+        }
+
+        /// <summary>Validate the complete flight segment, including altitude-independent exclusions.</summary>
+        public static bool IsSegmentAllowed(WoWPoint from, WoWPoint to)
+        {
+            if (!float.IsFinite(from.X) || !float.IsFinite(from.Y) || !float.IsFinite(from.Z)
+                || !float.IsFinite(to.X) || !float.IsFinite(to.Y) || !float.IsFinite(to.Z)) return false;
+            var a = new Vector2(from.X, from.Y); var b = new Vector2(to.X, to.Y);
+            foreach (var polygon in Blackspots)
+            {
+                if (polygon == null || polygon.Length < 3) return false;
+                bool leaving = StrictlyInside(a, polygon);
+                if (StrictlyInside(b, polygon))
+                {
+                    // Existing presence permits movement toward the boundary,
+                    // never a new flight deeper into the protected footprint.
+                    if (!leaving || BoundaryDistanceSquared(b, polygon) >= BoundaryDistanceSquared(a, polygon)) return false;
+                }
+                var cuts = new List<float> { 0, 1 };
+                float dx = b.X - a.X, dy = b.Y - a.Y;
+                for (int i = 0; i < polygon.Length; i++)
+                {
+                    var c = polygon[i]; var d = polygon[(i + 1) % polygon.Length];
+                    float ex = d.X - c.X, ey = d.Y - c.Y;
+                    float denominator = dx * ey - dy * ex;
+                    if (Math.Abs(denominator) < .00001f) continue;
+                    float t = ((c.X - a.X) * ey - (c.Y - a.Y) * ex) / denominator;
+                    float u = ((c.X - a.X) * dy - (c.Y - a.Y) * dx) / denominator;
+                    if (t > 0 && t < 1 && u >= 0 && u <= 1) cuts.Add(t);
+                }
+                cuts.Sort();
+                bool exited = !leaving;
+                for (int i = 1; i < cuts.Count; i++)
+                {
+                    float t = (cuts[i - 1] + cuts[i]) / 2;
+                    bool inside = StrictlyInside(new Vector2(a.X + dx * t, a.Y + dy * t), polygon);
+                    if (inside && exited) return false;
+                    if (!inside) exited = true;
+                }
+            }
+            return true;
+        }
+
+        private static bool StrictlyInside(Vector2 point, Vector2[] polygon)
+            => PointInPolygon(point, polygon) && BoundaryDistanceSquared(point, polygon) > .0001f;
+
+        public static bool IsRecoveryRegionClear(WoWPoint point, float radius)
+        {
+            if (!float.IsFinite(point.X) || !float.IsFinite(point.Y) || !float.IsFinite(point.Z)
+                || !float.IsFinite(radius) || radius <= 0) return false;
+            var center = new Vector2(point.X, point.Y);
+            return !Blackspots.Any(polygon => PointInPolygon(center, polygon)
+                || BoundaryDistanceSquared(center, polygon) <= radius * radius);
+        }
+
+        private static float BoundaryDistanceSquared(Vector2 point, Vector2[] polygon)
+        {
+            float minimum = float.PositiveInfinity;
+            for (int i = 0; i < polygon.Length; i++)
+            {
+                var a = polygon[i]; var b = polygon[(i + 1) % polygon.Length];
+                float dx = b.X - a.X, dy = b.Y - a.Y, length = dx * dx + dy * dy;
+                float t = length <= .0001f ? 0 : Math.Clamp(((point.X - a.X) * dx + (point.Y - a.Y) * dy) / length, 0, 1);
+                float x = point.X - a.X - t * dx, y = point.Y - a.Y - t * dy;
+                minimum = Math.Min(minimum, x * x + y * y);
+            }
+            return minimum;
+        }
+
+        // Planning clearance keeps route vertices outside protected footprints.
+        // Rectangles conservatively enclose custom shapes; the final segment
+        // admission always evaluates the actual supplied polygon.
+        internal static IEnumerable<Vector2[]> RoutingBlackspots
+        {
+            get
+            {
+                const float clearance = 6;
+                var boxes = Blackspots.Select(polygon => (MinX: polygon.Min(point => point.X) - clearance,
+                    MinY: polygon.Min(point => point.Y) - clearance, MaxX: polygon.Max(point => point.X) + clearance,
+                    MaxY: polygon.Max(point => point.Y) + clearance)).ToList();
+                // PolyNav holes are independent simple polygons. Unite touching
+                // footprints before building its graph so overlapping legacy,
+                // generated or user regions cannot cancel each other's interior.
+                bool changed = true;
+                while (changed)
+                {
+                    changed = false;
+                    for (int i = 0; i < boxes.Count && !changed; i++)
+                        for (int j = i + 1; j < boxes.Count; j++)
+                        {
+                            var a = boxes[i]; var b = boxes[j];
+                            if (a.MinX > b.MaxX || b.MinX > a.MaxX || a.MinY > b.MaxY || b.MinY > a.MaxY) continue;
+                            boxes[i] = (Math.Min(a.MinX, b.MinX), Math.Min(a.MinY, b.MinY), Math.Max(a.MaxX, b.MaxX), Math.Max(a.MaxY, b.MaxY));
+                            boxes.RemoveAt(j); changed = true; break;
+                        }
+                }
+                return boxes.Select(box => new[] { new Vector2(box.MinX, box.MinY), new Vector2(box.MaxX, box.MinY),
+                    new Vector2(box.MaxX, box.MaxY), new Vector2(box.MinX, box.MaxY) }).ToArray();
+            }
+        }
+
+        internal static bool TryGetFlightExit(Vector2 from, out Vector2 exit)
+        {
+            var boxes = RoutingBlackspots.ToArray();
+            var candidates = new List<Vector2>();
+            foreach (var box in boxes)
+            {
+                if (!PointInPolygon(from, box)) continue;
+                candidates.Add(new Vector2(box[0].X - 4, from.Y));
+                candidates.Add(new Vector2(box[1].X + 4, from.Y));
+                candidates.Add(new Vector2(from.X, box[0].Y - 4));
+                candidates.Add(new Vector2(from.X, box[2].Y + 4));
+            }
+            foreach (var candidate in candidates.OrderBy(point => (point.X - from.X) * (point.X - from.X)
+                + (point.Y - from.Y) * (point.Y - from.Y)))
+                if (!boxes.Any(box => PointInPolygon(candidate, box))
+                    && IsSegmentAllowed(new WoWPoint(from.X, from.Y, 0), new WoWPoint(candidate.X, candidate.Y, 0)))
+                { exit = candidate; return true; }
+            exit = default;
+            return false;
         }
 
         // ── Public add/remove API ──────────────────────────────────────────────
@@ -92,6 +218,7 @@ namespace Styx.Logic.Pathing.FlightorNavigation
             if (!list.Contains(polygon))
             {
                 list.Add(polygon);
+                _revision++;
                 Flightor.Clear(); // invalidate cached PolyNav
             }
         }
@@ -105,8 +232,11 @@ namespace Styx.Logic.Pathing.FlightorNavigation
         public static void RemoveBlackspot(uint mapId, WoWFactionGroup faction, Vector2[] polygon)
         {
             var key = Tuple.Create(mapId, faction);
-            if (_blackspots.TryGetValue(key, out var list))
-                list.Remove(polygon);
+            if (_blackspots.TryGetValue(key, out var list) && list.Remove(polygon))
+            {
+                _revision++;
+                Flightor.Clear();
+            }
         }
 
         public static void RemoveBlackspots(uint mapId, WoWFactionGroup faction, IEnumerable<Vector2[]> polygons)

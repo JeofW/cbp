@@ -29,7 +29,8 @@ internal sealed class GroundPath
 }
 
 internal sealed record GroundApproachPlan(WoWPoint Landing, WoWPoint AirWaypoint, AreaType Area,
-    GroundPath? OnwardPath, bool OpenColumn, string Source, bool ProgressOnly = false);
+    GroundPath? OnwardPath, bool OpenColumn, string Source, bool ProgressOnly = false,
+    WoWPoint? AirOrigin = null);
 
 /// <summary>
 /// Collision and mesh queries have separate authority. Implementations throw
@@ -42,6 +43,8 @@ internal interface IGroundApproachQueries
     GroundSurface? Snap(WoWPoint point);
     GroundPath Path(WoWPoint from, WoWPoint to);
     bool Forbidden(WoWPoint point, float radius);
+    WoWPoint FlightGoal(WoWPoint from, WoWPoint destination) => destination;
+    bool FlightSegmentAllowed(WoWPoint from, WoWPoint destination) => true;
 }
 
 /// <summary>
@@ -63,6 +66,7 @@ internal sealed class GroundApproachSearch
     private readonly bool _requireOnward, _allowCoveredBelowActor, _progressLeg;
     private readonly IGroundApproachQueries _queries;
     private readonly Func<bool> _current;
+    private readonly Func<WoWPoint>? _airPosition;
     private IEnumerator<(WoWPoint Point, string Source)>? _seeds;
     private readonly HashSet<(int X, int Y, int Z)> _visited = new();
     internal int Attempts { get; private set; }
@@ -73,7 +77,7 @@ internal sealed class GroundApproachSearch
 
     internal GroundApproachSearch(WoWPoint origin, WoWPoint destination, float radius, float height,
         bool requireOnward, bool allowCoveredBelowActor, IGroundApproachQueries queries, Func<bool> current,
-        float interactionRange = 0)
+        float interactionRange = 0, Func<WoWPoint>? airPosition = null)
     {
         if (!Finite(origin) || !Finite(destination) || !float.IsFinite(radius) || radius <= 0 || radius > 8
             || !float.IsFinite(height) || height <= 0 || height > 24
@@ -84,6 +88,7 @@ internal sealed class GroundApproachSearch
         _allowCoveredBelowActor = allowCoveredBelowActor; _queries = queries; _current = current;
         _interactionRange = interactionRange;
         _progressLeg = requireOnward && origin.Distance2DSqr(destination) > 120f * 120f;
+        _airPosition = _progressLeg ? airPosition : null;
     }
 
     internal GroundApproachPlan? Step(int candidateBudget = 4)
@@ -98,6 +103,15 @@ internal sealed class GroundApproachSearch
             var seed = _seeds.Current;
             if (!_visited.Add(((int)MathF.Round(seed.Point.X * 2), (int)MathF.Round(seed.Point.Y * 2), (int)MathF.Round(seed.Point.Z)))) continue;
             Attempts++; n++;
+            if (_airPosition != null)
+            {
+                var corridor = AirCorridor(seed.Point);
+                RequireCurrent();
+                if (corridor == null) continue;
+                Plan = corridor;
+                LastReason = "observed-air-corridor; landing-unobserved";
+                return Plan;
+            }
             var landing = Project(seed.Point);
             RequireCurrent();
             if (landing == null) continue;
@@ -115,6 +129,9 @@ internal sealed class GroundApproachSearch
     internal bool Revalidate(GroundApproachPlan plan)
     {
         RequireCurrent();
+        if (plan.AirOrigin.HasValue)
+            return _airPosition != null && plan.ProgressOnly && plan.Landing.Equals(WoWPoint.Empty)
+                && AirCorridor(plan.AirWaypoint) != null && _current();
         var surface = _queries.Snap(plan.Landing);
         RequireCurrent();
         return surface != null && surface.Value.Position.DistanceSqr(plan.Landing) <= .25f
@@ -127,15 +144,23 @@ internal sealed class GroundApproachSearch
         {
             // The client's collision world is local. Remote misses cannot prove
             // a destination landing or justify downgrading an entire journey.
-            // These bounded local seeds still need positive support, matching
-            // mesh and open-body clearance; they carry no arrival authority.
-            double bearing = Math.Atan2(_destination.Y - _origin.Y, _destination.X - _origin.X);
+            // Already-airborne seeds need an observed swept air corridor. A
+            // grounded departure still requires supported mesh and takeoff
+            // clearance. Neither kind supplies final arrival authority.
+            // Local collision planning follows the exclusion-aware route. A
+            // necessary detour may initially increase distance to the NPC.
+            WoWPoint goal = _queries.FlightGoal(_origin, _destination);
+            RequireCurrent();
+            if (!Finite(goal)) throw Unknown("aerial route has no finite next waypoint");
+            double bearing = Math.Atan2(goal.Y - _origin.Y, goal.X - _origin.X);
+            float goalDistance = MathF.Sqrt(_origin.Distance2DSqr(goal));
             foreach (float distance in new[] { 64f, 48f, 32f })
                 foreach (double offset in new[] { 0d, -Math.PI / 8, Math.PI / 8, -Math.PI / 4, Math.PI / 4 })
                 {
-                    var point = _origin.Add(distance * (float)Math.Cos(bearing + offset),
-                        distance * (float)Math.Sin(bearing + offset), 0);
-                    if (point.Distance2DSqr(_destination) < _origin.Distance2DSqr(_destination))
+                    float leg = Math.Min(distance, goalDistance);
+                    var point = _origin.Add(leg * (float)Math.Cos(bearing + offset),
+                        leg * (float)Math.Sin(bearing + offset), 0);
+                    if (point.Distance2DSqr(goal) < _origin.Distance2DSqr(goal))
                         yield return (point, "local-flight-leg");
                 }
             yield break;
@@ -215,6 +240,52 @@ internal sealed class GroundApproachSearch
             || Math.Abs(surface.Value.Position.Z - ray.Point.Z) > .65f || !LandingArea(surface.Value.Area))
         { LastReason = "support-has-no-matching-safe-mesh-surface"; return null; }
         return surface;
+    }
+
+    private GroundApproachPlan? AirCorridor(WoWPoint destination)
+    {
+        // Passage through air and ground arrival have independent evidence. A
+        // flying actor may cross water, roofs and unavailable ground mesh when
+        // its local body corridor is clear. This plan makes no landing claim.
+        RequireCurrent();
+        WoWPoint origin = _airPosition!();
+        if (!Finite(origin) || !Finite(destination) || origin.DistanceSqr(destination) > 100f * 100f)
+        { LastReason = "air-corridor-outside-local-observation"; return null; }
+        if (!_queries.FlightSegmentAllowed(origin, destination))
+        { LastReason = "air-corridor-crosses-exclusion"; return null; }
+        RequireCurrent();
+        float padding = _radius + 1f;
+        var offsets = new[] { (0f, 0f), (padding, 0f), (-padding, 0f), (0f, padding), (0f, -padding),
+            (padding * .7071068f, padding * .7071068f), (-padding * .7071068f, padding * .7071068f),
+            (padding * .7071068f, -padding * .7071068f), (-padding * .7071068f, -padding * .7071068f) };
+        int samples = Math.Max(1, (int)Math.Ceiling(origin.Distance(destination) / 4f));
+        for (int i = 0; i <= samples; i++)
+        {
+            if (_queries.Forbidden(Interpolate(origin, destination, (float)i / samples), padding))
+            { LastReason = "air-corridor-crosses-exclusion"; return null; }
+            RequireCurrent();
+        }
+        if (origin.DistanceSqr(destination) > .01f)
+        {
+            var lines = offsets.SelectMany(offset => new[] { .25f, _height / 2, _height }
+                .Select(z => new WorldLine(origin.Add(offset.Item1, offset.Item2, z),
+                    destination.Add(offset.Item1, offset.Item2, z)))).ToArray();
+            if (Trace(lines, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures).Any(ray => ray.Hit))
+            { LastReason = "air-body-corridor-blocked"; return null; }
+        }
+        WoWPoint currentPosition = _airPosition();
+        RequireCurrent();
+        // Forward movement within the measured corridor is still covered by
+        // these rays. The extra clearance bounds lateral drift; unrelated motion
+        // needs a new observation instead of borrowing this corridor.
+        WoWPoint delta = new(destination.X - origin.X, destination.Y - origin.Y, destination.Z - origin.Z);
+        float lengthSquared = origin.DistanceSqr(destination);
+        float along = lengthSquared <= .01f ? 0 : Math.Clamp(((currentPosition.X - origin.X) * delta.X
+            + (currentPosition.Y - origin.Y) * delta.Y + (currentPosition.Z - origin.Z) * delta.Z) / lengthSquared, 0, 1);
+        if (!Finite(currentPosition) || currentPosition.DistanceSqr(Interpolate(origin, destination, along)) > 1f)
+        { LastReason = "actor-left-observed-air-corridor"; return null; }
+        return new GroundApproachPlan(WoWPoint.Empty, destination, (AreaType)0, null, false,
+            "observed-air-corridor", true, origin);
     }
 
     private GroundApproachPlan? Validate(GroundSurface surface, string source)

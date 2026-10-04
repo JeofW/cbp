@@ -9,7 +9,8 @@ internal enum GroundDismountState { Rejected, Pending, Submitted, Expired }
 
 internal readonly record struct GroundMotion(WoWPoint Position, bool Mounted, bool Flying,
     bool Falling, bool Swimming, bool OnTransport, bool Immobilized, bool Supported,
-    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false);
+    bool Descending, bool InteractionReady, bool PreferFlight, bool GroundTravel = false,
+    bool InteractionApproachReady = false);
 
 internal interface IGroundTransitionRuntime
 {
@@ -47,6 +48,7 @@ internal sealed class GroundTransitionMachine
     private int _replans;
     private int _flightSearchBatches;
     private double _flightSearchStarted = double.NaN;
+    private double _interactionStopStarted = double.NaN;
     private bool _dismountPending, _descent, _groundHandoff, _unavailable;
     internal string Phase { get; private set; } = "unobserved";
 
@@ -91,19 +93,48 @@ internal sealed class GroundTransitionMachine
         // no-progress watchdog still bounds walls and rejected movement.
         if (_purpose != GroundTransitionPurpose.Combat
             && (observation.GroundTravel && !observation.Flying && observation.Supported
+                || observation.Swimming && !observation.Flying && !observation.Mounted
                 || _plan?.ProgressOnly == true && observation.Flying)
             && !observation.Falling && !observation.OnTransport
-            && !observation.Swimming && !observation.Immobilized
+            && !observation.Immobilized
             && now == _lastProgress)
             _started = now;
         if (now - _started >= 120)
             return Unavailable("ground-transition-deadline", observation, now);
-        if (observation.OnTransport || observation.Swimming)
+        if (observation.OnTransport)
             return Wait("unresolved", "transport-or-liquid-requires-separate-owner", observation, stop: true);
         if (observation.Falling)
             return Wait("landing", "falling-is-not-grounded-acknowledgement", observation, stop: true);
         if (observation.Immobilized)
             return Wait("blocked", "root-or-stun-prevents-owned-transition", observation, stop: true);
+
+        if (observation.Swimming)
+        {
+            if (_purpose == GroundTransitionPurpose.Combat || observation.Flying || observation.Mounted)
+                return Wait("unresolved", "transport-or-liquid-requires-separate-owner", observation, stop: true);
+            // A selected land destination still needs a route out of water.
+            // Reuse the mesh navigator's existing water-aware path pipeline;
+            // this request supplies neither dry support nor interaction proof.
+            if (_plan != null || _descent)
+            {
+                _runtime.Hold();
+                if (!_runtime.Current) return GroundTransitionState.Revoked;
+                _runtime.ResetSearch(); _plan = null; _descent = false;
+            }
+            _groundHandoff = true;
+            if (CommandDue(now)) _runtime.Walk();
+            return Progress("water-mesh", "owned-water-route; ground-and-interaction-unobserved", observation, now);
+        }
+
+        if (_purpose == GroundTransitionPurpose.Interaction && observation.InteractionApproachReady
+            && !observation.Flying && !observation.Mounted && observation.Supported)
+        {
+            if (double.IsNaN(_interactionStopStarted)) _interactionStopStarted = now;
+            if (now - _interactionStopStarted >= 5)
+                return Unavailable("interaction-stop-acknowledgement-timeout", observation, now);
+            return Wait("interaction-stop", "usable-range-and-sight; awaiting-observed-stop", observation, stop: true);
+        }
+        _interactionStopStarted = double.NaN;
 
         // A useful ground departure can expose a new flight opportunity. The
         // runtime bounds these reviews by time and observed displacement; this
@@ -322,6 +353,7 @@ internal sealed class GroundTransitionMachine
         _descent = _groundHandoff = _dismountPending = _unavailable = false;
         _replans = 0;
         _flightSearchBatches = 0; _flightSearchStarted = double.NaN;
+        _interactionStopStarted = double.NaN;
         _started = _lastProgress = now;
         _lastCommand = double.NegativeInfinity;
         _progressOrigin = observation.Position;

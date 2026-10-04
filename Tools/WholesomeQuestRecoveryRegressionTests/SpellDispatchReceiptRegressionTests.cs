@@ -91,6 +91,9 @@ using Action = TreeSharp.Action;
 using WoWPoint = Point;
 
 public delegate Point LocationRetriever(object context);
+// Recipient eligibility is a controlled leaf in this receipt/cooldown suite;
+// the actual admission and native boundary run in CombatProtectionFocusedTests.
+public static class CombatRecipientSafety {public static Func<bool> PrepareSpell(int id,ulong guid)=>()=>true;}
 public delegate bool SimpleBooleanDelegate(object context);
 public struct Point
 {

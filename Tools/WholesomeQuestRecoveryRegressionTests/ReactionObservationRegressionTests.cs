@@ -28,24 +28,24 @@ internal static class ReactionObservationRegressionTests
  private const string Prefix="""
 #nullable disable
 using System;using System.Linq;using System.Collections.Generic;using System.Reflection;using System.Threading;using Styx;using Styx.Helpers;using Styx.Logic.Combat;
-public static class State{public static uint Value;public static int Calls,Bytes=4;public static Exception Error;public static Action During,DuringRead;public static List<string> Lines=new();}
+public static class State{public static uint Value;public static int Calls,Bytes=4;public static bool CacheEnabled;public static Exception Error;public static Action During,DuringRead;public static List<string> Lines=new();}
 public static class ObjectManager{public static Memory Wow;public static ExecutorRand Executor;public static WoWPlayer Me;}
 public static class StyxWoW{public static WoWPlayer Me=>ObjectManager.Me;public static Memory Memory=>ObjectManager.Wow;}
-public sealed class Memory{public IntPtr ProcessHandle=new(1);public byte[] ReadBytes(uint address,int count){var bytes=BitConverter.GetBytes(State.Value).Take(State.Bytes).ToArray();var callback=State.DuringRead;State.DuringRead=null;callback?.Invoke();return bytes;}public T Read<T>(uint address)=>(T)(object)State.Value;public IDisposable TemporaryCacheState(bool state)=>new Scope();}
-public sealed class Scope:IDisposable{public void Dispose(){}}
+public sealed class Memory{public IntPtr ProcessHandle=new(1);public byte[] ReadBytes(uint address,int count){var bytes=BitConverter.GetBytes(State.Value).Take(State.Bytes).ToArray();var callback=State.DuringRead;State.DuringRead=null;callback?.Invoke();return bytes;}public T Read<T>(uint address)=>(T)(object)State.Value;public IDisposable TemporaryCacheState(bool state)=>new Scope(state);}
+public sealed class Scope:IDisposable{private readonly bool previous;public Scope(bool state){previous=State.CacheEnabled;State.CacheEnabled=state;}public void Dispose(){State.CacheEnabled=previous;}}
 public sealed class ExecutorRand{public bool IsOpen=true,IsInitialized=true;public Memory Memory;public uint FrameCount=1,ReturnPointer=8192;public long ExecutionGeneration;public object AssemblyLock=new();public void Clear(){State.Lines.Clear();}public void AddLine(string value)=>State.Lines.Add(value);public void Execute(){ExecutionGeneration++;State.Calls++;if(State.Error!=null)throw State.Error;var callback=State.During;State.During=null;callback?.Invoke();}}
 public sealed class InjectionSEHException:Exception{public uint ExceptionCode=0xC0000005;}
 public static class Logging{public static void WriteDebug(string value){}public static void WriteException(Exception error){}}
 public class WoWPlayer:WoWUnit{}
 """;
  private const string Leaves="""
- public uint BaseAddress=4096,Entry,FactionId,DuelTeam;public ulong Guid=1,DuelArbiterGuid;public bool IsValid=true,PlayerControlled,IsHorde,IsMe,InMyPartyOrRaid;public string Name="Fixture";public WoWPlayer ControllingPlayer;
+ public uint BaseAddress=4096,Entry,DuelTeam,Type=3;private uint faction;public uint FactionId{get=>State.CacheEnabled?0:faction;set=>faction=value;}public ulong Guid=1,DuelArbiterGuid,CharmedByGuid,SummonedByGuid;public ulong? DescriptorOverride;public ulong DescriptorGuid=>DescriptorOverride??Guid;public bool IsValid=true,PlayerControlled,IsHorde,IsMe,InMyPartyOrRaid;public string Name="Fixture";public WoWPlayer ControllingPlayer;
 """;
  private const string Cases="""
 public static class ReactionCases{
  private sealed class Failure(string reason):Exception(reason){}
  private static WoWUnit receiver,other;
- private static void Reset(){ObjectManager.Wow=new();ObjectManager.Executor=new(){Memory=ObjectManager.Wow};ObjectManager.Me=new(){Guid=1};receiver=new(){Guid=2,BaseAddress=12288};other=new(){Guid=3,BaseAddress=16384,Entry=100};State.Value=1;State.Calls=0;State.Bytes=4;State.Error=null;State.During=State.DuringRead=null;}
+ private static void Reset(){ObjectManager.Wow=new();ObjectManager.Executor=new(){Memory=ObjectManager.Wow};ObjectManager.Me=new(){Guid=1};receiver=new(){Guid=2,BaseAddress=12288};other=new(){Guid=3,BaseAddress=16384,Entry=100};State.Value=1;State.Calls=0;State.Bytes=4;State.CacheEnabled=false;State.Error=null;State.During=State.DuringRead=null;}
  private static WoWUnitReaction Read()=>receiver.GetReactionTowards(other);
  private static void Check(bool ok,string why){if(!ok)throw new Failure(why);}
  private static void Unknown(){bool unknown=false;try{_=Read();}catch(ObservationUnavailableException){unknown=true;}Check(unknown,"unavailable reaction became an ordinary faction value");}
@@ -80,6 +80,26 @@ public static class ReactionCases{
  Case("zero return pointer remains UNKNOWN",()=>{ObjectManager.Executor.ReturnPointer=0;Unknown();});
  foreach(bool uninitialized in new[]{false,true})Case("closed or uninitialized executor remains fatal/"+uninitialized,()=>{if(uninitialized)ObjectManager.Executor.IsInitialized=false;else ObjectManager.Executor.IsOpen=false;bool fatal=false;try{_=Read();}catch(InvalidExecutorException){fatal=true;}Check(fatal&&State.Calls==0,"unusable executor invoked native or became optional unknown");});
  Case("closed process remains fatal",()=>{ObjectManager.Wow.ProcessHandle=IntPtr.Zero;bool fatal=false;try{_=Read();}catch(InvalidProcessException){fatal=true;}Check(fatal,"closed process became neutral/optional unknown");});
+ foreach(string participant in new[]{"actor","receiver","other"})
+ foreach(string field in new[]{"faction","charmer","summoner","controlled","type"}){
+  void Change(){var unit=participant=="actor"?ObjectManager.Me:participant=="receiver"?receiver:other;
+   switch(field){case "faction":unit.FactionId++;break;case "charmer":unit.CharmedByGuid=50;break;case "summoner":unit.SummonedByGuid=50;break;case "controlled":unit.PlayerControlled=!unit.PlayerControlled;break;case "type":unit.Type=4;break;}}
+  Case("same-frame relation change invalidates cached reaction/"+participant+"/"+field,()=>{
+   _=Read();Change();State.Value=4;Check(Read()==WoWUnitReaction.Friendly&&State.Calls==2,"changed faction/control borrowed a cached reaction");});
+  Case("relation change during native observation is UNKNOWN/"+participant+"/"+field,()=>{State.During=Change;Unknown();});
+ }
+ foreach(string participant in new[]{"actor","receiver","other"})
+  Case("reused native descriptor cannot impersonate cached GUID/"+participant,()=>{
+   var unit=participant=="actor"?ObjectManager.Me:participant=="receiver"?receiver:other;unit.DescriptorOverride=99;
+   Unknown();Check(State.Calls==0,"reused native address was queried as its cached predecessor");});
+ foreach(string participant in new[]{"actor","receiver","other"}){
+  Case("outer descriptor cache cannot lend old faction/"+participant,()=>{State.CacheEnabled=true;_=Read();
+   var unit=participant=="actor"?ObjectManager.Me:participant=="receiver"?receiver:other;unit.FactionId=9;State.Value=4;
+   Check(Read()==WoWUnitReaction.Friendly&&State.Calls==2,"outer memory cache hid a native faction change");Check(State.CacheEnabled,"read changed caller cache state");});
+  Case("cached descriptors cannot hide mid-observation faction changes/"+participant,()=>{State.CacheEnabled=true;
+   var unit=participant=="actor"?ObjectManager.Me:participant=="receiver"?receiver:other;State.During=()=>unit.FactionId=9;
+   Unknown();Check(State.CacheEnabled,"failed observation changed caller cache state");});
+ }
  Console.WriteLine($"Reaction observation: {passed}/{total}; failures={failed}; actual selector/cache/native adapter; controlled executor and memory leaves; no native game call.");if(failed!=0)throw new InvalidOperationException("reaction regressions");
  }
 }

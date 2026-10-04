@@ -61,8 +61,11 @@ namespace Styx.Logic.Pathing
         private static long _pathPoiGeneration;
         private static Func<bool>? _pathRouteLease;
         private static object _pathProfile, _pathProvider, _pathInput, _flightRequestOwner, _pathMemory, _pathExecutor;
+        private static string? _pathAerialContext;
         private static PolyNav _polyNav;
         private static uint? _polyNavMapId;
+        private static WoWFactionGroup? _polyNavFaction;
+        private static long _polyNavRevision;
         private static WoWPoint _lastFlightWaypoint = WoWPoint.Empty;
         internal static object RequestIdentity => _flightRequestOwner;
         internal static WoWPoint LastFlightWaypoint => _lastFlightWaypoint;
@@ -236,10 +239,11 @@ namespace Styx.Logic.Pathing
             return !TravelTimeEstimator.PreferFlight(destination, stopRange, MountHelper.FlyingMount, alreadyMounted: false);
         }
 
-        internal static bool PreferFlightForGroundInteraction(WoWPoint destination, float interactionRange)
+        internal static bool PreferFlightForGroundInteraction(WoWPoint destination, float interactionRange, bool retainDeparture = false)
         {
-            return CanFly && TravelTimeEstimator.PreferFlight(destination, interactionRange,
-                MountHelper.FlyingMount, MountHelper.Mounted);
+            return CanFly && !Navigator.IsInNoFlyZone && !Navigator.IsRidingElevator
+                && (retainDeparture || TravelTimeEstimator.PreferFlight(destination, interactionRange,
+                    MountHelper.FlyingMount, MountHelper.Mounted));
         }
 
         internal static bool IsFlightTravelCheaper(double distance, double groundDistance,
@@ -300,6 +304,7 @@ namespace Styx.Logic.Pathing
             var profile = ProfileManager.CurrentProfileSnapshot;
             var provider = Navigator.NavigationProvider;
             var playerMover = Navigator.PlayerMover;
+            string? aerialContext = null;
             LocalPlayer me = StyxWoW.Me;
             if (me == null)
             {
@@ -326,7 +331,8 @@ namespace Styx.Logic.Pathing
                     && ReferenceEquals(_flightRequestOwner, requestOwner)
                     && PoiCurrent()
                     && ReferenceEquals(ProfileManager.CurrentProfileSnapshot, profile)
-                    && ReferenceEquals(Navigator.NavigationProvider, provider) && ReferenceEquals(Navigator.PlayerMover, playerMover);
+                    && ReferenceEquals(Navigator.NavigationProvider, provider) && ReferenceEquals(Navigator.PlayerMover, playerMover)
+                    && (aerialContext == null || aerialContext == Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.ContextKey);
                 bool valid = OwnsContext() && (admitted == null || admitted()) && OwnsContext();
                 // Even if the same wrapper returns later, an observed ownership
                 // gap invalidates the earlier route and takeoff observations.
@@ -558,6 +564,14 @@ namespace Styx.Logic.Pathing
             {
                 // Already mounted — process flight using PolyNav path queue.
                 // Ported from WoD smethod_10 (Flightor.cs, HB 6.2.3).
+                aerialContext = Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.ContextKey;
+                if (!CanContinue()) return;
+                if (_pathAerialContext != aerialContext)
+                {
+                    _flightPath = null;
+                    _lastDestination = WoWPoint.Empty;
+                    _pathAerialContext = aerialContext;
+                }
 
                 // Travel support is optional. It must not prevent an already
                 // mounted route from taking off when aura/readiness data is
@@ -601,7 +615,8 @@ namespace Styx.Logic.Pathing
                 // Step 2: CTM early return — already making progress toward same destination
                 WoWMovement.ClickToMoveInfoStruct ctm = WoWMovement.ClickToMoveInfo;
                 if (activeMover.IsMoving && _lastDestination == destination &&
-                    ctm.IsClickMoving && ctm.ClickPos.DistanceSqr(activeMover.Location) > 900f)
+                    ctm.IsClickMoving && ctm.ClickPos.DistanceSqr(activeMover.Location) > 900f
+                    && CanFollowFlightSegment(activeMover.Location, ctm.ClickPos) && CanContinue())
                     return;
 
                 // Step 3: Destination change → discard cached path
@@ -620,6 +635,15 @@ namespace Styx.Logic.Pathing
                 }
                 if (!CanContinue()) return;
 
+                if (_flightPath.Waypoints.Count == 0)
+                {
+                    // Stop this route's old input rather than following an
+                    // empty avoidance plan or dereferencing its missing head.
+                    _flightPath = null;
+                    if (CanContinue()) playerMover.MoveStop();
+                    return;
+                }
+
                 // Consumed vertices are not new movement destinations. Advance
                 // the finite queue in this dispatch and select its next point;
                 // retain the final vertex for the exact destination below.
@@ -628,8 +652,12 @@ namespace Styx.Logic.Pathing
                     Vector2 reached = _flightPath.Waypoints.Peek();
                     if (myLocation.Distance2DSqr(new WoWPoint(reached.X, reached.Y, 0)) > 900f)
                         break;
+                    Vector2 following = _flightPath.Waypoints.ElementAt(1);
+                    if (!CanFollowFlightSegment(myLocation, new WoWPoint(following.X, following.Y, myLocation.Z)))
+                        break;
                     _flightPath.Waypoints.Dequeue();
                 }
+                if (!CanContinue()) return;
                 Vector2 waypointVec = _flightPath.Waypoints.Peek();
 
                 // Step 6: Smart Z + dispatch by remaining queue depth
@@ -650,6 +678,14 @@ namespace Styx.Logic.Pathing
                 if (!CanContinue()) return;
                 if (flightPoint != WoWPoint.Empty)
                 {
+                    bool safeSegment = CanFollowFlightSegment(me.Location, flightPoint);
+                    if (!CanContinue()) return;
+                    if (!safeSegment)
+                    {
+                        _flightPath = null;
+                        playerMover.MoveStop();
+                        return;
+                    }
                     // Only re-issue CTM if not already moving to the exact same point
                     if (!activeMover.IsMoving || ctm.ClickPos != flightPoint || !ctm.IsClickMoving)
                     {
@@ -667,7 +703,7 @@ namespace Styx.Logic.Pathing
                         StyxWoW.Sleep(100);
                         if (!CanContinue()) return;
                         WoWMovement.MoveStop(WoWMovement.MovementDirection.Forward | WoWMovement.MovementDirection.JumpAscend);
-                        if (!CanContinue()) return;
+                        if (!CanFollowFlightSegment(me.Location, flightPoint) || !CanContinue()) return;
                         Navigator.PlayerMover.MoveTowards(flightPoint);
                         return;
                     }
@@ -754,6 +790,7 @@ namespace Styx.Logic.Pathing
             // HB 4.3.4 used HitTestLOS = 0x100121 which includes HitTestGround — same intent.
             if (destination.Z != 0.0 &&
                 traceLinePos.DistanceSqr(destination) < 40000.0 &&
+                CanFollowFlightSegment(myLocation, destination) &&
                 !GameWorld.TraceLine(traceLinePos, destination.Add(0.0f, 0.0f, 2f),
                     GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures))
             {
@@ -805,7 +842,8 @@ namespace Styx.Logic.Pathing
             WoWPoint targetPoint = GetPointInDirection(traceLinePos, rayLength, neededFacing, pitch);
 
             // Check if direct path is clear
-            if (!GameWorld.TraceLine(traceLinePos, targetPoint, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures))
+            if (CanFollowFlightSegment(myLocation, targetPoint)
+                && !GameWorld.TraceLine(traceLinePos, targetPoint, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures))
                 return targetPoint;
 
             // First pass: standard-length rays
@@ -814,7 +852,7 @@ namespace Styx.Logic.Pathing
             GameWorld.MassTraceLine(linesArray, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures, out bool[] hitResults);
             for (int i = 0; i < hitResults.Length; ++i)
             {
-                if (!hitResults[i])
+                if (!hitResults[i] && CanFollowFlightSegment(myLocation, linesArray[i].End))
                     return linesArray[i].End;
             }
 
@@ -824,7 +862,7 @@ namespace Styx.Logic.Pathing
             GameWorld.MassTraceLine(shortArray, GameWorld.CGWorldFrameHitFlags.HitTestGroundAndStructures, out bool[] shortHits);
             for (int j = 0; j < shortHits.Length; j++)
             {
-                if (!shortHits[j])
+                if (!shortHits[j] && CanFollowFlightSegment(myLocation, shortArray[j].End))
                     return shortArray[j].End;
             }
 
@@ -840,8 +878,10 @@ namespace Styx.Logic.Pathing
         private static FlightPath BuildPath(Vector2 from, Vector2 to)
         {
             uint mapId = StyxWoW.Me.MapId;
+            var faction = Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.CurrentFaction;
+            long revision = Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.Revision;
 
-            if (_polyNav == null || _polyNavMapId != mapId)
+            if (_polyNav == null || _polyNavMapId != mapId || _polyNavFaction != faction || _polyNavRevision != revision)
             {
                 if (!Areas.ContinentAreas.TryGetValue(mapId, out Vector2[] area))
                 {
@@ -855,17 +895,44 @@ namespace Styx.Logic.Pathing
                     };
                 }
                 _polyNavMapId = mapId;
-                _polyNav = new PolyNav(area, Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.Blackspots);
+                _polyNavFaction = faction;
+                _polyNavRevision = revision;
+                _polyNav = new PolyNav(area, Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.RoutingBlackspots);
             }
 
-            Vector2[] rawPath = _polyNav.FindPath(from, to);
-            var queue = new Queue<Vector2>(rawPath.Length > 0 ? rawPath : new[] { to });
+            Vector2 routedFrom = from;
+            if (!_polyNav.ContainsPoint(from)
+                && !Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.TryGetFlightExit(from, out routedFrom))
+                return new FlightPath { StartPoint = from, EndPoint = to, Waypoints = new Queue<Vector2>() };
+            Vector2[] rawPath = _polyNav.FindPath(routedFrom, to);
+            if (routedFrom != from && rawPath.Length > 0) rawPath = new[] { from }.Concat(rawPath).ToArray();
+            // Failed/partial avoidance never grants direct travel through the
+            // very region the route was unable to avoid.
+            bool complete = rawPath.Length > 0 && rawPath[^1] == to;
+            for (int i = 1; complete && i < rawPath.Length; i++)
+                complete = CanFollowFlightSegment(new WoWPoint(rawPath[i - 1].X, rawPath[i - 1].Y, 0),
+                    new WoWPoint(rawPath[i].X, rawPath[i].Y, 0));
+            var queue = new Queue<Vector2>(complete ? rawPath : Array.Empty<Vector2>());
 
             // Skip the start point — bot is already there (WoD smethod_14 port)
             if (queue.Count > 1)
                 queue.Dequeue();
 
             return new FlightPath { StartPoint = from, EndPoint = to, Waypoints = queue };
+        }
+
+        internal static bool CanFollowFlightSegment(WoWPoint from, WoWPoint to)
+            => Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.IsSegmentAllowed(from, to);
+
+        internal static WoWPoint GetFlightRouteWaypoint(WoWPoint from, WoWPoint destination)
+        {
+            if (!Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.IsInBlackspot(from)
+                && CanFollowFlightSegment(from, destination)) return destination;
+            var path = BuildPath(new Vector2(from.X, from.Y), new Vector2(destination.X, destination.Y));
+            if (path.Waypoints.Count == 0)
+                throw new ObservationUnavailableException("flight-route", "No complete route avoids the current aerial exclusions.");
+            var next = path.Waypoints.Peek();
+            return new WoWPoint(next.X, next.Y, from.Z);
         }
 
         /// <summary>
@@ -1129,7 +1196,8 @@ namespace Styx.Logic.Pathing
             if (!_asAscended)
             {
                 Logging.WriteDiagnostic("[Stuck] Trying to ascend.");
-                if (!CanContinue()) return;
+                if (!Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.IsRecoveryRegionClear(player.Location, 40)
+                    || !CanContinue()) return;
                 WoWMovement.Move(WoWMovement.MovementDirection.JumpAscend);
                 StyxWoW.Sleep(200);
                 if (!CanContinue()) return;
@@ -1142,7 +1210,8 @@ namespace Styx.Logic.Pathing
             if (!_asStrafedLeft)
             {
                 Logging.WriteDiagnostic("[Stuck] Trying strafing left.");
-                if (!CanContinue()) return;
+                if (!Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.IsRecoveryRegionClear(player.Location, 40)
+                    || !CanContinue()) return;
                 WoWMovement.Move(WoWMovement.MovementDirection.StrafeLeft);
                 StyxWoW.Sleep(300);
                 if (!CanContinue()) return;
@@ -1155,7 +1224,8 @@ namespace Styx.Logic.Pathing
             if (!_asStrafedRight)
             {
                 Logging.WriteDiagnostic("[Stuck] Trying strafing right.");
-                if (!CanContinue()) return;
+                if (!Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.IsRecoveryRegionClear(player.Location, 40)
+                    || !CanContinue()) return;
                 WoWMovement.Move(WoWMovement.MovementDirection.StrafeRight);
                 StyxWoW.Sleep(300);
                 if (!CanContinue()) return;
@@ -1168,7 +1238,8 @@ namespace Styx.Logic.Pathing
 
             // Final step: reverse
             Logging.WriteDiagnostic("[Stuck] Trying to backup.");
-            if (!CanContinue()) return;
+            if (!Styx.Logic.Pathing.FlightorNavigation.BlackspotManager.IsRecoveryRegionClear(player.Location, 40)
+                || !CanContinue()) return;
             WoWMovement.Move(WoWMovement.MovementDirection.Backwards);
             StyxWoW.Sleep(500);
             if (!CanContinue()) return;

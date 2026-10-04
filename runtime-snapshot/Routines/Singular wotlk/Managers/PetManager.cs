@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -115,7 +115,7 @@ namespace Singular.Managers
                 return;
 
             Logger.Write(string.Format("[Pet] Casting {0}", action));
-            Lua.DoString("CastPetAction({0})", spell.ActionBarIndex + 1);
+            CombatAttackSafety.TryPetAction(StyxWoW.Me.CurrentTarget, spell.ActionBarIndex + 1, spell.Spell?.Id ?? 0);
         }
 
         public static void CastPetAction(string action, WoWUnit on)
@@ -126,7 +126,7 @@ namespace Singular.Managers
 
             Logger.Write(string.Format("[Pet] Casting {0} on {1}", action, on.SafeName()));
             StyxWoW.Me.SetFocus(on);
-            Lua.DoString("CastPetAction({0}, 'focus')", spell.ActionBarIndex + 1);
+            CombatAttackSafety.TryPetAction(on, spell.ActionBarIndex + 1, spell.Spell?.Id ?? 0, useFocus: true);
             StyxWoW.Me.SetFocus(0);
         }
 

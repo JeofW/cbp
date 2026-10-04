@@ -94,6 +94,8 @@ internal static class SpellCooldownObservationRegressionTests
     private const string Prefix = """
 #nullable disable
 using System;using System.Collections.Generic;using System.Globalization;using System.Linq;using System.Reflection;using Styx.Helpers;using Patchables=Styx.Patchables;
+// Recipient admission is controlled here; actual protection has its own native-entry fixture.
+public static class CombatRecipientSafety {public static Func<bool> PrepareSpell(int id,ulong guid)=>()=>true;}
 public static class Environment {public static long TickCount64=1000000;}
 public static class ObjectManager {public static ExecutorRand Executor;public static object Wow=new object();}
 public sealed class Actor {public bool IsValid=true;public ulong Guid=1;public uint BaseAddress=4096,MapId=530;}

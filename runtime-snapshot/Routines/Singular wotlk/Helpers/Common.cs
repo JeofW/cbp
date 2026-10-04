@@ -35,7 +35,7 @@ namespace Singular.Helpers
                             if (!GroupCombatSafety.MayAttackCurrentTarget()) return RunStatus.Failure;
                             // Startup may follow a stale inactive observation.
                             // Build12340 StartAttack checks live state; AttackTarget toggles it.
-                            Lua.DoString("StartAttack()");
+                            CombatAttackSafety.TryStartAttack(StyxWoW.Me.CurrentTarget);
                             return RunStatus.Failure;
                         })),
                 new Decorator(

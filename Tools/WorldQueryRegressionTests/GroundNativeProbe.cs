@@ -5,12 +5,13 @@ internal static class GroundNativeProbe
     internal const string ObjectLeaves = "public uint Entry=70; public WoWPoint Position;public WoWPoint Location=>Position;public bool WithinInteractRange=>ObjectManager.Me.Location.DistanceSqr(Location)<=25;";
     internal const string PlayerLeaves = """
 public uint MovementFlags;public ulong Transport;public bool MovementKnown=true;
+public bool IsSwimming=>(MovementFlags&0x00200000u)!=0;
 """;
     internal const string Leaves = """
 namespace Styx.Logic.Profiles{public static class ProfileManager{public static object CurrentProfileSnapshot=new();}}
 namespace Styx.Logic.POI{
- public enum PoiType{None,QuestPickUp,Kill}
- public sealed class BotPoi{public static BotPoi Current=new();public static long CurrentGeneration;public static long CurrentWorkGeneration=>CurrentGeneration;public bool IsWorldSubjectBlacklisted;public PoiType Type;public ulong Guid;public uint Entry;}
+ public enum PoiType{None,QuestPickUp,QuestTurnIn,Kill}
+ public sealed class BotPoi{public static BotPoi Current=new();public static long CurrentGeneration;public static long CurrentWorkGeneration=>CurrentGeneration;public bool IsWorldSubjectBlacklisted;public PoiType Type;public ulong Guid;public uint Entry;public WoWObject AsObject;}
 }
 namespace Styx.WoWInternals{public static class WoWMovement{public static WoWUnit ActiveMover;}}
 namespace Styx.Logic{public static class Blacklist{public static readonly HashSet<ulong> Items=new();public static bool Contains(ulong guid)=>Items.Contains(guid);}}
@@ -44,7 +45,7 @@ public static class GroundProbe{
   MountDisplay=RawForm=UnitFlagsValue=0;DescriptorPointer=0x60000;DescriptorFailure=null;DescriptorError=null;DescriptorRead=null;DescriptorGuid=null;
   Probe.Instructions.Clear();WoWMovement.ActiveMover=actor;actor.Position=new(10,10,0);subject.Position=new(11,10,0);
   Styx.Logic.Profiles.ProfileManager.CurrentProfileSnapshot=new();
-  Styx.Logic.POI.BotPoi.Current=new(){Type=Styx.Logic.POI.PoiType.QuestPickUp,Guid=subject.Guid,Entry=subject.Entry};
+  Styx.Logic.POI.BotPoi.Current=new(){Type=Styx.Logic.POI.PoiType.QuestPickUp,Guid=subject.Guid,Entry=subject.Entry,AsObject=subject};
   Styx.Logic.POI.BotPoi.CurrentGeneration++;Navigator.NavigationProvider=new();Navigator.PlayerMover=new PlayerMover();GroundSight.Clear=true;
  }
  public static void PrepareUsability(){
@@ -226,6 +227,28 @@ public static class GroundNativeCases{
    var captured=signal;test("ground descriptors preserve "+captured.GetType().Name,()=>{
     GroundProbe.DescriptorError=captured;Exception observed=null;try{_=GroundTransition.CanActUnmounted();}catch(Exception e){observed=e;}
     check(ReferenceEquals(observed,captured)&&GroundProbe.Interactions==0,"descriptor read swallowed its actual control signal");
+   });
+  }
+  foreach(string stage in new[]{"preflight","afk","instruction"}){
+   string boundary=stage;test("actual native interaction rejects swimming/"+boundary,()=>{
+    if(boundary=="preflight")ObjectManager.Me.MovementFlags=0x00200000u;
+    else {Probe.Stage=boundary;Probe.StageAction=()=>ObjectManager.Me.MovementFlags=0x00200000u;}
+    check(!GroundTransition.TryInteractWith(GroundProbe.Subject)&&GroundProbe.Interactions==0,
+     "wet actor reached native ground interaction at "+boundary);
+   });
+  }
+  test("underwater unmounted combat admission is preserved",()=>{
+   ObjectManager.Me.MovementFlags=0x00200000u;
+   check(GroundTransition.CanActUnmounted(),"dry interaction rule blocked the separate aquatic combat admission");
+  });
+  foreach(var kind in new[]{Styx.Logic.POI.PoiType.QuestPickUp,Styx.Logic.POI.PoiType.QuestTurnIn}){
+   var type=kind;test("actual native dead questgiver interaction/"+type,()=>{
+    var original=GroundProbe.Subject;
+    var unit=new WoWUnit{Guid=original.Guid,BaseAddress=original.BaseAddress,Entry=original.Entry,IsAlive=false,IsQuestGiver=true};
+    GroundProbe.Reset(ObjectManager.Me,unit);
+    Styx.Logic.POI.BotPoi.Current.Type=type;
+    check(GroundTransition.TryInteractWith(unit)&&GroundProbe.Interactions==1&&GroundProbe.LuaDuringPreparedInteraction==0,
+     "source-selected dead questgiver failed actual native submission or executed a nested query");
    });
   }
   foreach(string change in new[]{"airborne","transport"}){

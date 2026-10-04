@@ -32,6 +32,11 @@ namespace Tripper.Navigation
 
 namespace Styx.Logic.Pathing
 {
+    public static class Flightor
+    {
+        public static WoWPoint GetFlightRouteWaypoint(WoWPoint from, WoWPoint to) => to;
+        public static bool CanFollowFlightSegment(WoWPoint from, WoWPoint to) => true;
+    }
     public struct WoWPoint : IEquatable<WoWPoint>
     {
         public float X, Y, Z;

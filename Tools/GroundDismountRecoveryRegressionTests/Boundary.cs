@@ -139,7 +139,7 @@ namespace Styx.WoWInternals.WoWObjects
             return true;
         }
     }
-    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat; }
+    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat, IsQuestGiver; }
     // Object identity participates in the shared runtime's interaction-volume
     // selection. This dismount suite continues to exercise actual unit targets.
     public sealed class WoWGameObject : WoWObject { }
@@ -224,11 +224,13 @@ namespace Styx.Logic.Pathing
     }
     public static class Flightor
     {
+        public static WoWPoint GetFlightRouteWaypoint(WoWPoint from, WoWPoint to) => to;
+        public static bool CanFollowFlightSegment(WoWPoint from, WoWPoint to) => true;
         public static bool CanFly => World.PreferFlight;
         public static class MountHelper { public static bool Mounted => (World.Actor.Flags & 0x02000000u) != 0; }
         public static object RequestIdentity = new(); public static WoWPoint LastFlightWaypoint;
         public static void MoveTo(WoWPoint point) { World.RawFlights.Add(point); World.Event("raw-flight"); }
-        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range)
+        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range, bool retainDeparture = false)
         { World.FlightCostQueries++; World.Event("flight-cost"); return World.PreferFlight; }
         public static bool ReleaseOwned(object expected, Func<bool> admitted, System.Action<object> registered)
         {
@@ -246,6 +248,8 @@ namespace Styx.Logic.Pathing
     {
         public static bool CanInteractWith(WoWObject? subject, Func<bool>? admitted = null)
             => subject != null && subject.WithinInteractRange && admitted?.Invoke() != false;
+        public static bool CanPrepareInteraction(WoWObject? subject, Func<bool>? admitted = null)
+            => CanInteractWith(subject, admitted);
         public static bool CanActUnmounted(Func<bool>? admitted = null)
         { World.VehicleQueries++; return !World.Actor.MountedValue && admitted?.Invoke() != false; }
     }

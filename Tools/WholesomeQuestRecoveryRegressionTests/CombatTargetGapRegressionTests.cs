@@ -459,6 +459,10 @@ public static class GapCases
     }
     private static void Check(bool ok,string why){if(!ok)throw new Failure(why);}
 }
+// This suite controls ordinary combat without an active typed quest. Required
+// obligations run through the actual root and objective in RequiredQuestCombatCases.
+/* Controlled fixture boundary, not the initializer namespace. */ namespace Bots.Quest {public static class QuestBot {public static bool IsRequiredCombatObligation(WoWUnit target)=>false;}}
+/* Controlled fixture boundary, not the initializer namespace. */ namespace Styx.Logic.Combat {public static class GroupCombatSafety {public static bool MayAttack(WoWUnit target)=>target!=null&&target.IsAlive;}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx {public static class StyxWoW{public static LocalPlayer Me=new();}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.WoWInternals.WoWObjects
 {

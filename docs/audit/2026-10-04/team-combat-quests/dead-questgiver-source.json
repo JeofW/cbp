@@ -1,0 +1,426 @@
+{
+  "client_build": 12340,
+  "primary_tables_reverified": 43,
+  "core": "TrinityCore/TrinityCore@8fda442f6c30ca21a622638063ab8b28376f1b25",
+  "script_path": "src/server/scripts/Spells/spell_generic.cpp",
+  "script_sha256": "b0d63ebd1ea53003ab10f6e6bcb6a2e5b12fd3a19058884a2fcc303d378bb005",
+  "script_lines": [
+    1747,
+    1788
+  ],
+  "reviewed_dataset_ids": 4335,
+  "source_visible_dead_questgiver_count": 19,
+  "affected_dataset_quests": 35,
+  "recipients": [
+    {
+      "entry": 16852,
+      "name": "Sedai's Corpse",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1112,
+      "relations": [
+        {
+          "QuestId": 9423,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 9390,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 17062,
+      "name": "Fel Orc Corpse",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1112,
+      "relations": [
+        {
+          "QuestId": 9401,
+          "stage": "Pickup",
+          "source_line": 996
+        }
+      ]
+    },
+    {
+      "entry": 17508,
+      "name": "Galaen's Corpse",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1112,
+      "relations": [
+        {
+          "QuestId": 9579,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 9578,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 17600,
+      "name": "Draenei Cartographer",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1112,
+      "relations": [
+        {
+          "QuestId": 9628,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 9620,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 17849,
+      "name": "Slain Outrunner",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1112,
+      "relations": [
+        {
+          "QuestId": 9705,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 9704,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 18035,
+      "name": "Scout Jyoba",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1112,
+      "relations": [
+        {
+          "QuestId": 9772,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 9771,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 21962,
+      "name": "Udalo",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1112,
+      "relations": [
+        {
+          "QuestId": 10706,
+          "stage": "Pickup",
+          "source_line": 996
+        }
+      ]
+    },
+    {
+      "entry": 24122,
+      "name": "Pulroy the Archaeologist",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 11274,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 11273,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 24145,
+      "name": "Zedd",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 11276,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 11274,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 25328,
+      "name": "Shadowstalker Luther",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 11615,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 11614,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 25385,
+      "name": "William Allerton",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 11600,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 11599,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 25984,
+      "name": "Crashed Recon Pilot",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 11887,
+          "stage": "Pickup",
+          "source_line": 996
+        }
+      ]
+    },
+    {
+      "entry": 26514,
+      "name": "Surveyor Orlond",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 12014,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 12010,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 26873,
+      "name": "Mage-Commander Evenstar",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 12107,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 12110,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 12098,
+          "stage": "TurnIn",
+          "source_line": 946
+        },
+        {
+          "QuestId": 12106,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 26896,
+      "name": "Nozzlerust Supply Runner",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        31261
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 12469,
+          "stage": "Pickup",
+          "source_line": 996
+        }
+      ]
+    },
+    {
+      "entry": 27412,
+      "name": "Slinkin the Demo-gnome",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1113,
+      "relations": [
+        {
+          "QuestId": 12277,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 12276,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 27828,
+      "name": "Plunderbeard",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1114,
+      "relations": [
+        {
+          "QuestId": 12465,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 12463,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 28464,
+      "name": "Cultist Corpse",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1114,
+      "relations": [
+        {
+          "QuestId": 12608,
+          "stage": "Pickup",
+          "source_line": 996
+        },
+        {
+          "QuestId": 12612,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    },
+    {
+      "entry": 31868,
+      "name": "Wrecked Demolisher",
+      "npcflag": 2,
+      "dynamicflags": 0,
+      "dead_script_auras": [
+        29266
+      ],
+      "source_line": 1114,
+      "relations": [
+        {
+          "QuestId": 13304,
+          "stage": "TurnIn",
+          "source_line": 946
+        },
+        {
+          "QuestId": 13393,
+          "stage": "TurnIn",
+          "source_line": 946
+        }
+      ]
+    }
+  ],
+  "scope": "Source-visible template flags and permanent feign-death scripts; dynamic realm changes and spawn-specific overrides are not asserted complete.",
+  "runtime_policy": "A dead questgiver may own only its exact source-selected pickup/turn-in POI, with observed questgiver flag and stable recipient life/identity. Ordinary corpses, combat targets and service recipients are denied."
+}

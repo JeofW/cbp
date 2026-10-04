@@ -217,6 +217,74 @@ foreach(PoiType type in new[]{PoiType.QuestPickUp,PoiType.QuestTurnIn,PoiType.Re
             finally { GroundTransitionRuntime.MonotonicClockOverride=null; }
         });
 
+foreach (PoiType type in new[] { PoiType.QuestPickUp, PoiType.QuestTurnIn, PoiType.Repair, PoiType.Sell, PoiType.Train, PoiType.Buy })
+    foreach (string moving in new[] { "actor", "npc", "both" })
+        Case("moving final approach submits the same NPC: " + type + "/" + moving, () =>
+        {
+            double clock = 0;
+            GroundTransitionRuntime.MonotonicClockOverride = () => clock;
+            try
+            {
+                World.Actor.Position = new(100, 10, 0);
+                World.Actor.Flags = 0;
+                World.Actor.MountedValue = false;
+                World.Actor.IsMoving = moving != "npc";
+                World.Target.Position = new(100, 13, 0);
+                World.Target.IsMoving = moving != "actor";
+                World.Target.Outdoors = true;
+                BotPoi.Current = new BotPoi(World.Target, type);
+                var poi = BotPoi.Current;
+                var subject = World.Target;
+                int observations = 0;
+                // Position changes occur inside native observation/dispatch boundaries,
+                // rather than only between ticks. A stop acknowledgement is supplied
+                // explicitly by the controlled client; the request alone is not proof.
+                World.Callback = stage =>
+                {
+                    if (stage == "stop") World.Actor.IsMoving = false;
+                    if (stage is not ("vehicle" or "sight" or "trace" or "interaction-prepare")) return;
+                    observations++;
+                    if (World.Actor.IsMoving) World.Actor.Position = World.Actor.Position.Add(0, .02f, 0);
+                    if (World.Target.IsMoving) World.Target.Position = World.Target.Position.Add(0, .02f, 0);
+                };
+                bool Current() => ReferenceEquals(BotPoi.Current, poi) && ReferenceEquals(BotPoi.Current.AsObject, subject);
+                using var journey = new GroundTransition(GroundTransitionPurpose.Interaction);
+                GroundTransitionState state = GroundTransitionState.Pending;
+                for (int pulse = 0; pulse < 8 && state != GroundTransitionState.Ready; pulse++)
+                {
+                    clock += .3;
+                    state = journey.Tick(BotPoi.Current.Location, subject, Current);
+                }
+                Check(observations > 0, "motion fixture did not reach a native observation");
+                Check(state == GroundTransitionState.Ready, "in-range walking NPC never reached interaction readiness: " + state);
+                Check(!World.Actor.IsMoving, "interaction readiness preceded observed stop acknowledgement");
+                Check(GroundTransition.TryInteractWith(subject, Current), "walking NPC lost final native interaction admission");
+                Check(World.Interactions.SequenceEqual(new[] { subject.Guid }), "interaction missed or changed its captured NPC recipient");
+                Check(World.Stops <= 1 && World.Dismounts == 0, "final approach oscillated stops or issued unnecessary removal");
+            }
+            finally { World.Callback = null; GroundTransitionRuntime.MonotonicClockOverride = null; }
+        });
+
+foreach (string change in new[] { "range", "sight", "target-base", "poi", "moving-actor" })
+    Case("final NPC interaction rejects changed native admission: " + change, () =>
+    {
+        World.Actor.Position = new(100, 10, 0); World.Actor.Flags = 0; World.Actor.MountedValue = false;
+        World.Target.Position = new(100, 13, 0); World.Target.Outdoors = true;
+        var subject = World.Target; var poi = BotPoi.Current;
+        bool Current() => ReferenceEquals(BotPoi.Current, poi) && ReferenceEquals(BotPoi.Current.AsObject, subject);
+        if (change == "sight") World.Sight = false;
+        if (change == "moving-actor") World.Actor.IsMoving = true;
+        World.Callback = stage =>
+        {
+            if (stage != "interaction-prepare") return;
+            if (change == "range") subject.Position = new(100, 40, 0);
+            if (change == "target-base") subject.BaseAddress++;
+            if (change == "poi") BotPoi.Current = new BotPoi(subject, PoiType.QuestTurnIn);
+        };
+        Check(!GroundTransition.TryInteractWith(subject, Current) && World.Interactions.Count == 0,
+            "changed interaction admission dispatched to the NPC: " + change);
+    });
+
 Console.WriteLine($"Actual combat-POI acceptance: {passed}/{total}; failures={failures.Count}; production BotPoi+MCT+GroundTransition/Context/Runtime/Machine+Mesh request observation; exact extracted Navigator/Flightor/Mesh invalidators; controlled native/movement leaves.");
 foreach (string failure in failures) Console.WriteLine("  " + failure);
 return failures.Count == 0 ? 0 : 1;

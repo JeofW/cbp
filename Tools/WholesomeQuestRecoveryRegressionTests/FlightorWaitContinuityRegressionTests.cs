@@ -66,7 +66,7 @@ internal static class FlightorWaitContinuityRegressionTests
     }
     private const string Prefix = """
 #nullable disable
-using System;using System.Collections.Generic;using Styx.Helpers;
+using System;using System.Collections.Generic;using System.Linq;using Styx.Helpers;
 public enum WoWClass {Paladin,Druid}
 public enum NavigationType {Fly,Run}
 public enum WoWSkill {Riding}
@@ -125,6 +125,7 @@ public static class WoWMovement {
  public static void MoveStop(MovementDirection flags){World.Record("stop-"+flags);World.Hit("stop");}
 }
 public static class World {
+ public static Func<WoWPoint,WoWPoint,bool> FlightSegment;public static string AerialContext="initial";
  public static LocalPlayer Player;public static WoWUnit Mover;public static bool SeaLegs,Walk,EmptyPoint,FormSurface;public static int PathBuilds;
  public static Func<string,bool> ReadName;public static Func<int,bool> ReadId;public static bool TestCrusader;
  public static Exception CrusaderError,CrusaderSubmitError;public static int CrusaderReads,Deferrals;
@@ -136,9 +137,14 @@ public static class World {
 }
 public class BotPoi {public static BotPoi Current=new BotPoi();public static long CurrentGeneration,CurrentWorkGeneration;public bool IsWorldSubjectBlacklisted;}
 public static class ProfileManager {public static object CurrentProfileSnapshot=new object();}
+// Bind the controlled coordinate explicitly. When the complete host is loaded,
+// the enclosing production namespace also contains its own WoWPoint type.
+/* Controlled aerial context. */ namespace Styx.Logic.Pathing.FlightorNavigation {public static class BlackspotManager {public static string ContextKey=>World.AerialContext;public static bool IsRecoveryRegionClear(global::WoWPoint point,float radius)=>World.FlightSegment?.Invoke(point,point.Add(radius,0,0))??true;}}
 """;
     private const string Controls = """
 private static bool HasSeaLegs(LocalPlayer player)=>World.SeaLegs;
+private static string _pathAerialContext;
+private static bool CanFollowFlightSegment(WoWPoint from,WoWPoint to)=>World.FlightSegment?.Invoke(from,to)??true;
 private static WoWPoint _takeoffSpot,_takeoffDestination,_lastDestination,_lastFlightWaypoint,_antiStuckStartPos;
 private static int _pulseCount;private static bool _asAscended,_asStrafedLeft,_asStrafedRight;
 private static LocalPlayer _antiStuckPlayer;private static WoWUnit _antiStuckOwner;
@@ -171,6 +177,7 @@ private static class MountHelper {
  public static void MountUp()=>MountUpInternal(false);
 }
 public static void Reset(int phase){_pulseCount=1;_flightPath=null;_takeoffSpot=_takeoffDestination=_lastDestination=_lastFlightWaypoint=_antiStuckStartPos=WoWPoint.Empty;
+ World.FlightSegment=null;World.AerialContext="initial";_pathAerialContext=null;
  _asAscended=phase>0;_asStrafedLeft=phase>1;_asStrafedRight=phase>2;
  _pathPlayer=null;_pathMover=null;_pathRouteLease=null;_antiStuckRouteLease=null;_pathPlayerGuid=_pathMoverGuid=0;_pathMap=0;_pathAlive=_pathGhost=false;
  _antiStuckMemory=ObjectManager.Wow;_antiStuckExecutor=ObjectManager.Executor;_antiStuckPlayerAddress=World.Player.BaseAddress;_antiStuckOwnerAddress=World.Mover.BaseAddress;_antiStuckPlayer=World.Player;_antiStuckOwner=World.Mover;_antiStuckPlayerGuid=World.Player.Guid;_antiStuckOwnerGuid=World.Mover.Guid;_antiStuckMap=World.Player.MapId;_antiStuckAlive=World.Player.IsAlive;_antiStuckGhost=World.Player.IsGhost;
@@ -355,6 +362,21 @@ public static class FlightWaitCases {
    tests.Add(("changed life context resets recovery step/"+changed,()=>{World.Reset();FlightOwner.Reset(0);Recover();World.Commands.Clear();
     if(changed=="alive")World.Player.IsAlive=false;else World.Player.IsGhost=true;Recover();
     Check(World.Commands.Exists(c=>c.StartsWith("move-JumpAscend:"))&&!World.Commands.Exists(c=>c.StartsWith("move-StrafeLeft:")),"recovery step survived a changed life context");}));}
+  tests.Add(("nearby route corner cannot be skipped across an excluded segment",()=>{
+   Configure("flight");World.PathPoints=new[]{new Vector2(20,10),new Vector2(100,100)};World.FlightSegment=(a,b)=>b.Y<=10;
+   Move();Check(World.Destinations.Count==1&&World.Destinations[0].X==20&&World.Destinations[0].Y==10,"thirty-yard corner smoothing cut across its protected region");}));
+  tests.Add(("final flight movement revalidates excluded segments after point selection",()=>{
+   Configure("flight");World.OnBoundary=stage=>{if(stage=="point")World.FlightSegment=(a,b)=>false;};
+   Move();Check(World.Destinations.Count==0,"newly forbidden flight point reached native movement");}));
+  tests.Add(("changed aerial context discards a previously admitted traversal",()=>{
+   Configure("flight");Move();World.AerialContext="opposing-faction-or-new-exclusion";Move();Move();
+   Check(World.PathBuilds==2,"changed aerial ownership reused the earlier traversal");}));
+  tests.Add(("empty avoidance route defers without dereferencing its queue",()=>{
+   Configure("flight");World.PathPoints=Array.Empty<Vector2>();try{Move();}catch(InvalidOperationException){throw new Failure("empty exclusion-aware route threw at waypoint selection");}
+   Check(World.Destinations.Count==0,"empty path dispatched a destination");}));
+  tests.Add(("failed safe flight point cannot trigger blind movement across an exclusion",()=>{
+   Configure("flight");World.EmptyPoint=true;World.FlightSegment=(a,b)=>false;Move();
+   Check(!World.Commands.Exists(command=>command.StartsWith("move-")),"blocked aerial route fell through to blind recovery input");}));
   int passed=0,assertions=0,unexpected=0;foreach(var test in tests){try{test.Body();passed++;Console.WriteLine("PASS Flightor wait: "+test.Name);}
    catch(Failure error){assertions++;Console.Error.WriteLine("FAIL Flightor wait: "+test.Name+": "+error.Message);}
    catch(Exception error){unexpected++;Console.Error.WriteLine("ERROR Flightor wait: "+test.Name+": "+error);}}

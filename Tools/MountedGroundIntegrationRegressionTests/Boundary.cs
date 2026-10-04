@@ -149,7 +149,7 @@ namespace Styx.WoWInternals.WoWObjects
         public bool CanUse() { global::World.Event("can-use"); return !IsDisabled && global::World.ObjectUsable; }
         public bool CanUseNow() { global::World.Event("can-use-now"); return CanUse() && WithinInteractRange; }
     }
-    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat; }
+    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, Combat, IsQuestGiver; }
     public sealed class Movement { public bool IsDescending; }
     public sealed class LocalPlayer : WoWUnit
     {
@@ -236,11 +236,13 @@ namespace Styx.Logic.Pathing
     }
     public static class Flightor
     {
+        public static WoWPoint GetFlightRouteWaypoint(WoWPoint from, WoWPoint to) => to;
+        public static bool CanFollowFlightSegment(WoWPoint from, WoWPoint to) => true;
         public static bool CanFly => World.PreferFlight;
         public static class MountHelper { public static bool Mounted => (World.Actor.Flags & 0x02000000u) != 0; }
         public static object RequestIdentity = new(); public static WoWPoint LastFlightWaypoint;
         public static void MoveTo(WoWPoint point) { World.RawFlights.Add(point); World.Event("raw-flight"); }
-        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range) => World.PreferFlight;
+        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range, bool retainDeparture = false) => World.PreferFlight;
         public static void MoveToGroundInteraction(WoWPoint destination, Func<bool> admitted) { if(admitted())MoveTo(destination); }
         public static bool ReleaseOwned(object expected, Func<bool> admitted, System.Action<object> registered)
         {

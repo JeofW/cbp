@@ -22,12 +22,17 @@ internal static class World
     internal static Exception? ObservationError;
     internal static float? FutureGeometryUnavailableAfterX;
     internal static System.Action<string>? Callback;
+    internal static Func<WorldLine, GameWorld.CGWorldFrameHitFlags, (bool Hit, WoWPoint Point)>? CollisionOverride;
+    internal static Func<WoWPoint, WoWPoint, WoWPoint>? AerialGoal;
+    internal static Func<WoWPoint, WoWPoint, bool>? AerialSegment;
     internal static WoWPoint Door = new(205, 0, 0);
 
     internal static void Event(string stage) => Callback?.Invoke(stage);
     internal static void Reset()
     {
-        Callback = null; ObservationError = null; FutureGeometryUnavailableAfterX = null;
+        Callback = null; CollisionOverride = null; ObservationError = null; FutureGeometryUnavailableAfterX = null;
+        GroundTravelMount.Waiter = null;
+        AerialGoal = null; AerialSegment = null;
         Styx.BotEvents.Stop();
         RawFlights.Clear(); ExteriorFlights.Clear(); Walks.Clear(); Diagnostics.Clear(); Errors.Clear(); Rays.Clear(); Interactions.Clear();
         Dismounts = Descents = Stops = 0;
@@ -52,7 +57,13 @@ internal static class World
     internal static (bool Hit, WoWPoint Point) Trace(WorldLine line, GameWorld.CGWorldFrameHitFlags flags)
     {
         Event("trace"); if (ObservationError != null) throw ObservationError;
-        if (FutureGeometryUnavailableAfterX is float frontier && line.Start.X > frontier)
+        if (CollisionOverride != null)
+        {
+            var observed = CollisionOverride(line, flags);
+            Rays.Add((line, flags, observed.Hit, observed.Point));
+            return observed;
+        }
+        if (FutureGeometryUnavailableAfterX is float frontier && Math.Max(line.Start.X, line.End.X) > frontier)
             throw new Styx.Helpers.ObservationUnavailableException("future-flight-region", "controlled unavailable lookahead observation");
         bool liquid = (flags & (GameWorld.CGWorldFrameHitFlags.HitTestLiquid | GameWorld.CGWorldFrameHitFlags.HitTestLiquid2)) != 0;
         bool hit = false; WoWPoint point = WoWPoint.Empty;
@@ -136,7 +147,7 @@ namespace Styx.WoWInternals.WoWObjects
             return true;
         }
     }
-    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving; }
+    public class WoWUnit : WoWObject { public bool IsAlive = true, IsMoving, IsQuestGiver; }
     // This suite exercises NPC approaches; GO effects have a separate actual
     // collection integration suite and must not be silently simulated here.
     public sealed class WoWGameObject : WoWObject
@@ -204,7 +215,7 @@ namespace Styx.Logic.Pathing
         public void MoveToOwned(WoWPoint target, float precision, string reason, Func<bool> admitted, System.Action<object> registered, Func<bool>? routeLease = null)
         {
             if (!admitted()) return;
-            RequestIdentity = new(); registered(RequestIdentity); if (!admitted()) return;
+            RequestIdentity = new(); registered(RequestIdentity); World.Event("mesh-prepare"); if (!admitted()) return;
             World.Walks.Add(target); World.Event("walk");
         }
     }
@@ -224,6 +235,8 @@ namespace Styx.Logic.Pathing
     }
     public static class Flightor
     {
+        public static WoWPoint GetFlightRouteWaypoint(WoWPoint from, WoWPoint to) => World.AerialGoal?.Invoke(from, to) ?? to;
+        public static bool CanFollowFlightSegment(WoWPoint from, WoWPoint to) => World.AerialSegment?.Invoke(from, to) ?? true;
         public static bool CanFly => World.PreferFlight;
         public static class MountHelper
         {
@@ -234,8 +247,8 @@ namespace Styx.Logic.Pathing
         }
         public static object RequestIdentity = new(); public static WoWPoint LastFlightWaypoint;
         public static void MoveTo(WoWPoint point) { World.RawFlights.Add(point); World.Event("raw-flight"); }
-        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range)
-            => World.PreferFlight && (!World.FlightCostRequiresStop || !World.Actor.IsMoving);
+        public static bool PreferFlightForGroundInteraction(WoWPoint destination, float range, bool retainDeparture = false)
+            => World.PreferFlight && (retainDeparture || !World.FlightCostRequiresStop || !World.Actor.IsMoving);
         public static bool ReleaseOwned(object expected, Func<bool> admitted, System.Action<object> registered)
         {
             if (!ReferenceEquals(expected, RequestIdentity) || !admitted()) return false;

@@ -29,9 +29,11 @@ internal static class RoamContinuationOwnershipRegressionTests
         // Include complete owner helpers when present; the pre-repair source has
         // no tail owner, so it must still compile for a meaningful behavioral red.
         var helpers = parsed.DescendantNodes().OfType<MethodDeclarationSyntax>()
-            .Where(m => m.Identifier.ValueText == "CreateOwnedRoamChaseBehavior").Select(m => m.ToString());
+            .Where(m => m.Identifier.ValueText is "CreateOwnedRoamChaseBehavior" or "HasReadyRoamTarget").Select(m => m.ToString());
         string guard = parsed.DescendantNodes().OfType<ClassDeclarationSyntax>()
             .Single(c => c.Identifier.ValueText == "RoutineAdmissionGuard").ToString();
+        guard += string.Join("\n", parsed.DescendantNodes().OfType<ClassDeclarationSyntax>()
+            .Where(c => c.Identifier.ValueText == "RoamPrioritySelector"));
         string temp = Path.Combine(Path.GetTempPath(), "cb-roam-ownership-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);
         bool logging = Styx.Helpers.Logging.FileLogging;
@@ -103,7 +105,7 @@ public static class RoamCases {
   StyxWoW.AreaManager=new AreaManager{CurrentGrindArea=new GrindArea{CurrentHotSpot=new Hotspot{Position=new WoWPoint(40,10,10)},HotspotChanged=true}};
   ProfileManager.CurrentProfile=new Profile();LevelbotSettings.Instance.GroundMountFarmingMode=false;
  }
- static Composite Branch(int index)=>RoamProbe.CreateRoamBehavior().Children[index];
+ static Composite Branch(int index){var tree=RoamProbe.CreateRoamBehavior();return tree.Children[tree.GetType().Name=="RoamPrioritySelector"&&index>0?3-index:index];}
  static RunStatus Tick(Composite tree){try{return tree.Tick(null);}catch(NullReferenceException){throw new Failure("unavailable participant escaped as a null dereference");}}
  static RunStatus Once(int index){var tree=Branch(index);tree.Start(null);try{return Tick(tree);}finally{tree.Stop(null);}}
  static void Expire(Composite tree){
@@ -162,6 +164,23 @@ public static class RoamCases {
   foreach(WoWPoint invalid in new[]{WoWPoint.Empty,new WoWPoint(float.PositiveInfinity,10,10),new WoWPoint(10,float.NaN,10),new WoWPoint(10,10,float.NegativeInfinity)}){var point=invalid;Case("invalid hotspot "+point,()=>{StyxWoW.AreaManager.CurrentGrindArea.CurrentHotSpot.Position=point;Check(Once(1)==RunStatus.Failure&&Moves==0&&Mounts==0,"invalid point admitted");});}
   Case("new activation can select its new actor",()=>{Check(Once(0)==RunStatus.Success,"initial selection failed");Reset();Actor.Guid=9;Check(Once(0)==RunStatus.Success&&Targets==1&&BotPoi.Current.Guid==2,"new activation was permanently revoked");});
   AddTailCases(Case);
+  Case("selected distant mob is approached before the still-pending hotspot",()=>{
+   Selected.ObservedDistance=40;ChaseReceipt=RunStatus.Success;var tree=RoamProbe.CreateRoamBehavior();tree.Start(null);
+   try{Tick(tree);Check(Chases==1&&Moves==0&&FlightMoves==0,"known mob waited behind the unrelated hotspot endpoint");}finally{tree.Stop(null);}});
+  Case("running pursuit hands off to combat on the pulse that range becomes usable",()=>{
+   Selected.ObservedDistance=40;StyxWoW.AreaManager.CurrentGrindArea.HotspotChanged=false;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+   var tree=RoamProbe.CreateRoamBehavior();tree.Start(null);try{
+    Check(Tick(tree)==RunStatus.Running&&pending.Ticks==1,"controlled pursuit did not start");Selected.ObservedDistance=5;
+    Tick(tree);Check(pending.Stops==1&&pending.Ticks==1&&Targets==1&&Publications==1&&BotPoi.Current.Type==PoiType.Kill,
+     "usable mob remained queued behind the active movement child");}finally{tree.Stop(null);}});
+  Case("pursuit preemption never overwrites cleanup-created service work",()=>{
+   Selected.ObservedDistance=40;StyxWoW.AreaManager.CurrentGrindArea.HotspotChanged=false;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+   var tree=RoamProbe.CreateRoamBehavior();tree.Start(null);try{Check(Tick(tree)==RunStatus.Running,"pursuit missing");
+    pending.OnStop=()=>BotPoi.Seed(new BotPoi(PoiType.Repair));Selected.ObservedDistance=5;Tick(tree);
+    Check(pending.Stops==1&&Targets==0&&Publications==0&&BotPoi.Current.Type==PoiType.Repair,"preemption borrowed a replacement work owner");}finally{tree.Stop(null);}});
+  Case("unchanged running pursuit remains fluid",()=>{
+   Selected.ObservedDistance=40;StyxWoW.AreaManager.CurrentGrindArea.HotspotChanged=false;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+   var tree=RoamProbe.CreateRoamBehavior();tree.Start(null);try{for(int n=0;n<5;n++)Tick(tree);Check(pending.Ticks==5&&pending.Stops==0&&Targets==0,"unchanged movement was repeatedly restarted");}finally{tree.Stop(null);}});
   Console.WriteLine($"Roam ownership scenarios: {pass}/{total}; assertions={assertions}; unexpected={unexpected}; complete tracked factory/predicates/admission/POI action and real TreeSharp; controlled world/mount/navigation; no native atomicity or physical-route acceptance.");
   if(assertions+unexpected!=0)throw new InvalidOperationException("Roam ownership regression");
  }
@@ -232,13 +251,13 @@ public static class RoamCases {
  public static class Mount {public static bool ShouldMount(WoWPoint point){RoamCases.Event("mount-query");return RoamCases.ShouldMount;}public static void MountUp(LocationRetriever point){RoamCases.Mounts++;RoamCases.Event("mount");RoamCases.Supplied=point();}}
 }
 /* Controlled POI publication, no replacement policy. */ namespace Styx.Logic.POI {
- public enum PoiType {None,Kill,Loot,Skin,Harvest,Sell,Repair,Train,Buy,Mail,Fly}
+ public enum PoiType {None,Kill,Loot,Skin,Harvest,Sell,Repair,Train,Buy,Mail,Fly,Hotspot}
  public class BotPoi {static BotPoi current;public PoiType Type;public ulong Guid;public uint Entry;public BotPoi(PoiType type){Type=type;}public BotPoi(WoWUnit target,PoiType type){Type=type;Guid=target.Guid;Entry=target.Entry;}
   public static BotPoi Current {get=>current;set{RoamCases.Publications++;current=value;}}public static void Seed(BotPoi value)=>current=value;public static void Clear(string reason){RoamCases.Clears++;current=new BotPoi(PoiType.None);}
  }
 }
 /* Controlled external diagnostics/settings. */ namespace Styx.Helpers {public static class Logging {public static void Write(string text,params object[] values){}public static void WriteDebug(string text,params object[] values){}}public class LevelbotSettings {public static LevelbotSettings Instance=new();public bool GroundMountFarmingMode;}}
-/* Controlled status callback. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot {public static string StatusText {set{RoamCases.Event("status");}}}}
+/* Controlled status callback. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot {public static object RunIdentity=new();public static string StatusText {set{RoamCases.Event("status");}}}}
 /* Controlled navigation boundary. */ namespace Styx.Logic.Pathing {public static class Navigator {public static object NavigationProvider;public static MoveResult MoveTo(WoWPoint point){RoamCases.Moves++;RoamCases.Moved=point;return RoamCases.Movement;}public static RunStatus GetRunStatusFromMoveResult(MoveResult result)=>result==MoveResult.Moved||result==MoveResult.ReachedDestination?RunStatus.Success:RunStatus.Failure;}public static class Flightor{public static bool CanFly{get{RoamCases.Event("flight-query");return RoamCases.CanFly;}}public static void MoveTo(WoWPoint point){RoamCases.FlightMoves++;RoamCases.Moved=point;}}}
 /* Controlled external routine leaf. */ namespace Styx.Logic.Combat {public static class RoutineManager {public static Routine Current=new();}public class Routine {public Composite MoveToTargetBehavior;}}
 /* Controlled chase dispatch; the complete chase owner has separate real-owner tests. */ namespace Levelbot.Actions.Combat {public class ActionMoveToTarget:TreeSharp.Action {public ActionMoveToTarget():base(_=>{RoamCases.Chases++;RoamCases.Event("chase");return RoamCases.ChaseReceipt;}){}}}

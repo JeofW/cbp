@@ -33,6 +33,8 @@ internal sealed class GroundTransitionContext
     private readonly PoiType _poiType;
     private readonly object _profile;
     private readonly bool _bindDestination, _combatRoute, _running, _transitRoute, _journeyRoute;
+    private readonly bool? _subjectAlive;
+    private readonly bool _deadQuestRecipient;
     private readonly Func<bool> _admitted;
 
     internal GroundTransitionContext(WoWObject? subject, WoWPoint destination, bool bindDestination, Func<bool> admitted,
@@ -53,6 +55,13 @@ internal sealed class GroundTransitionContext
         _profile = ProfileManager.CurrentProfileSnapshot;
         Poi = BotPoi.Current; PoiGeneration = BotPoi.CurrentGeneration; PoiWorkGeneration = BotPoi.CurrentWorkGeneration;
         _poiGuid = Poi.Guid; _poiEntry = Poi.Entry; _poiType = Poi.Type;
+        _subjectAlive = (subject as WoWUnit)?.IsAlive;
+        // Feign-dead/corpse questgivers remain legitimate quest endpoints. This
+        // narrow admission belongs to the source-selected quest POI, never a
+        // combat or vendor target, and must retain its observed life state.
+        _deadQuestRecipient = !combatRoute && (_poiType is PoiType.QuestPickUp or PoiType.QuestTurnIn)
+            && _subjectAlive == false && subject is WoWUnit giver && giver.IsQuestGiver
+            && _poiEntry == SubjectEntry && ReferenceEquals(Poi.AsObject, subject);
         if (!Current) throw Unknown("ground transition owner unavailable");
     }
 
@@ -88,7 +97,9 @@ internal sealed class GroundTransitionContext
         && Poi.Type == _poiType && Poi.Guid == _poiGuid && Poi.Entry == _poiEntry
         && (Subject == null || SubjectGuid != 0 && SubjectAddress != 0 && Subject.IsValid
             && Subject.Guid == SubjectGuid && Subject.BaseAddress == SubjectAddress && Subject.Entry == SubjectEntry
-            && (Subject is not WoWUnit unit || unit.IsAlive)
+            && (Subject is not WoWUnit unit || unit.IsAlive == _subjectAlive
+                && (_subjectAlive == true || _deadQuestRecipient && unit.IsQuestGiver
+                    && ReferenceEquals(Poi.AsObject, Subject)))
             && (!_bindDestination || Subject.Location.Equals(Destination)));
 
     internal bool Current => WorldCurrent && _admitted() && WorldCurrent;

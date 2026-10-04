@@ -107,6 +107,9 @@ using Styx.Combat.CombatRoutine;
 using Action = TreeSharp.Action;
 using HunterTrapOwner = Common;
 public delegate WoWUnit UnitSelectionDelegate(object context);
+// This trap scheduler controls recipient admission; actual protection executes
+// unchanged in CombatProtectionFocusedTests, including unknown and late changes.
+public static class CombatRecipientSafety {public static Func<bool> PrepareSpell(int id,ulong guid)=>()=>true;}
 public delegate bool SimpleBooleanDelegate(object context);
 public class WoWUnit
 {

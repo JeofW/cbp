@@ -107,4 +107,8 @@ internal sealed class GroundApproachQueries : IGroundApproachQueries
     });
 
     public bool Forbidden(WoWPoint point, float radius) => Observe(() => BlackspotManager.IsBlackspotted(point, radius));
+    public WoWPoint FlightGoal(WoWPoint from, WoWPoint destination)
+        => Observe(() => Flightor.GetFlightRouteWaypoint(from, destination));
+    public bool FlightSegmentAllowed(WoWPoint from, WoWPoint destination)
+        => Observe(() => Flightor.CanFollowFlightSegment(from, destination));
 }

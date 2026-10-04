@@ -61,6 +61,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     private GroundApproachQueries? _queries;
     private bool _held, _cancelled, _groundTravelSelected;
     private bool _flightDepartureBlocked;
+    private double _flightDepartureStarted = double.NaN;
     private WoWPoint _groundReviewPosition;
     private double _nextFlightReview;
     private string _travelModeReason = "not-evaluated";
@@ -180,17 +181,18 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         // route. Repeating them can park walking behind unused client work.
         _outdoors = _groundTravelSelected ? null : _context.Subject?.IsOutdoors;
         RequireCurrent();
-        WoWPoint interactionPosition = actor.Location;
-        bool interactionReady = _purpose == GroundTransitionPurpose.Interaction && !mounted && !flying && !falling
-            && (_context.Subject != null
-                ? GroundTransition.CanInteractWith(_context.Subject, () => Current)
-                : interactionPosition.Distance2DSqr(_context.Destination) <= 2.25f && Math.Abs(interactionPosition.Z - _context.Destination.Z) <= .9f);
         bool preferFlight = ReviewFlight(position, flying, onTransport, swimming, immobile);
         RequireCurrent();
         // Sample after optional Lua/travel observations. Sampling before them
         // makes ordinary forward motion stale the footprint on every tick.
         position = actor.Location;
         bool supported = !onTransport && !swimming && SupportedAt(position);
+        RequireCurrent();
+        WoWPoint interactionPosition = actor.Location;
+        bool interactionApproachReady = _purpose == GroundTransitionPurpose.Interaction && !mounted && !flying && !falling
+            && (_context.Subject != null
+                ? GroundTransition.CanPrepareInteraction(_context.Subject, () => Current)
+                : interactionPosition.Distance2DSqr(_context.Destination) <= 2.25f && Math.Abs(interactionPosition.Z - _context.Destination.Z) <= .9f);
         RequireCurrent();
         if (!actor.TryGetMovementState(out uint finalFlags, out ulong finalTransport)
             || ((finalFlags ^ flags) & 0x02003000u) != 0 || finalTransport != transport
@@ -200,7 +202,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         WoWPoint currentPosition = actor.Location;
         if (!GroundApproachSearch.Finite(currentPosition)) throw Unknown("actor position became unavailable during observation");
         if (currentPosition.DistanceSqr(position) > .25f) supported = false;
-        interactionReady &= currentPosition.Equals(interactionPosition);
+        bool interactionReady = interactionApproachReady && !actor.IsMoving;
         position = currentPosition;
         _displacement = _progressPosition?.Distance(position);
         if (_progressPosition == null || _displacement >= .5)
@@ -211,7 +213,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             || _purpose == GroundTransitionPurpose.Interaction && position.Distance(_context.Destination) > 12
                 && (_groundTravelSelected || !preferFlight);
         return new GroundMotion(position, mounted, flying, falling, swimming, onTransport, immobile, supported,
-            actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel);
+            actor.MovementInfo.IsDescending, interactionReady, preferFlight, groundTravel, interactionApproachReady);
     }
 
     private bool ReviewFlight(WoWPoint position, bool flying, bool onTransport, bool swimming, bool immobile)
@@ -229,16 +231,26 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         try
         {
             bool outdoors = actor.IsOutdoors;
-            bool eligible = outdoors && Flightor.PreferFlightForGroundInteraction(_context.Destination, 3f);
+            // A blocked takeoff is still the same preferred flight. Retain its
+            // foot departure briefly while seeking open ground; do not insert a
+            // different mount between the departure and its flight.
+            bool retainedDeparture = RetainsPreferredDeparture(now);
+            bool eligible = outdoors && Flightor.PreferFlightForGroundInteraction(_context.Destination, 3f, retainedDeparture);
             RequireCurrent();
             _actorOutdoors = outdoors;
             _travelModeReason = eligible ? "eligible-flight-awaiting-local-geometry"
                 : outdoors ? "flight-unavailable-or-uneconomical" : "indoor-ground-departure";
-            if (!eligible) _flightDepartureBlocked = false;
+            if (!eligible && !retainedDeparture) { _flightDepartureBlocked = false; _flightDepartureStarted = double.NaN; }
             if (reviewingGround)
             {
                 _groundReviewPosition = position; _nextFlightReview = now + (_flightDepartureBlocked ? 1 : 3);
-                if (eligible) _groundTravelSelected = false;
+                if (eligible)
+                {
+                    _groundTravelSelected = false;
+                    // The old obstruction belongs to the previous footprint.
+                    // Await a stopped observation before testing this new one.
+                    _flightDepartureBlocked = false;
+                }
             }
             return eligible;
         }
@@ -324,6 +336,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
                 _flightDepartureBlocked = overhead.Any(ray => ray.Hit);
                 if (_flightDepartureBlocked)
                 {
+                    if (double.IsNaN(_flightDepartureStarted)) _flightDepartureStarted = Now;
                     _travelModeReason = "takeoff-column-blocked; walk-to-open-ground";
                     return null;
                 }
@@ -338,7 +351,8 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
                 throw Unknown("selected object's interaction range unavailable");
             _search = new GroundApproachSearch(position, _context.Destination, _radius, _height,
                 _purpose != GroundTransitionPurpose.Combat, covered, _queries,
-                () => Current && (gameObject == null || gameObject.InteractRange == objectRange), objectRange);
+                () => Current && (gameObject == null || gameObject.InteractRange == objectRange), objectRange,
+                _purpose != GroundTransitionPurpose.Combat && _context.Actor.IsFlying ? ReadAirPosition : null);
         }
         return _search.Step();
     }
@@ -356,7 +370,7 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
                 throw Unknown("selected object's interaction range unavailable");
             _nextFlightSearch = new GroundApproachSearch(_context.Actor.Location, _context.Destination,
                 _radius, _height, true, false, _queries,
-                () => Current && (gameObject == null || gameObject.InteractRange == range), range);
+                () => Current && (gameObject == null || gameObject.InteractRange == range), range, ReadAirPosition);
         }
         try
         {
@@ -378,6 +392,19 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
     }
 
     public bool Validate(GroundApproachPlan plan) { RequireCurrent(); return _search?.Revalidate(plan) == true && Current; }
+
+    private WoWPoint ReadAirPosition()
+    {
+        RequireCurrent();
+        var actor = _context.Actor;
+        if (!actor.TryGetMovementState(out uint flags, out ulong transport) || transport != 0
+            || (flags & 0x02000000u) == 0 || (flags & 0x00003000u) != 0 || actor.IsSwimming
+            || actor.OnTaxi || actor.IsOnTransport || !WorldQueryObservation.ReadGroundUnitState(actor).Mounted)
+            throw Unknown("air-corridor owner is not an observed flying mounted actor");
+        var position = actor.Location;
+        RequireCurrent();
+        return position;
+    }
     public void ResetSearch() { RequireCurrent(); _search = null; _nextFlightSearch = null; _groundTravelSelected = false; }
 
     public void Hold()
@@ -429,7 +456,8 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         RequireCurrent();
         var actor = _context.Actor;
         var position = actor.Location;
-        if (!Validate(plan) || position.Distance2DSqr(plan.Landing) > .5625f || position.Z < plan.Landing.Z)
+        if (plan.ProgressOnly || plan.AirOrigin.HasValue || !Validate(plan)
+            || position.Distance2DSqr(plan.Landing) > .5625f || position.Z < plan.Landing.Z)
             throw Unknown("descent is no longer above the validated landing footprint");
         var offsets = new[] { (0f, 0f), (_radius, 0f), (-_radius, 0f), (0f, _radius), (0f, -_radius) };
         var lines = offsets.Select(offset => new WorldLine(position.Add(offset.Item1, offset.Item2, .35f),
@@ -549,6 +577,9 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
         _recovery = new RecoveryLease(_context, now, now + RecoveryCooldownSeconds);
     }
 
+    private bool RetainsPreferredDeparture(double now) => !double.IsNaN(_flightDepartureStarted)
+        && now >= _flightDepartureStarted && now - _flightDepartureStarted < 15;
+
     public void Walk()
     {
         RequireCurrent();
@@ -559,17 +590,20 @@ internal sealed class GroundTransitionRuntime : IGroundTransitionRuntime
             _nextFlightReview = Now + (_flightDepartureBlocked ? 1 : 3);
         }
         _groundTravelSelected = true;
-        if (!_flightDepartureBlocked && _purpose != GroundTransitionPurpose.Combat && _context.Actor.Location.Distance(_context.Destination) > 12
+        if (!_context.Actor.IsSwimming && !_flightDepartureBlocked && !RetainsPreferredDeparture(Now) && _purpose != GroundTransitionPurpose.Combat
+            && _context.Actor.Location.Distance(_context.Destination) > 12
             && _groundMount.Wait(_context, Now, () => Current, Hold)) return;
         var actor = _context.Actor;
         if (actor.IsCasting || actor.ChanneledCastingSpellId != 0) return;
         if (WorldQueryObservation.ReadLocalVehicle(actor)) throw Unknown("ground route belongs to a vehicle");
         var state = WorldQueryObservation.ReadGroundUnitState(actor);
+        bool swimming = actor.IsSwimming;
         WoWPoint travelDestination = _context.Destination;
         // One complete preflight, then pure memory/identity predicates. Calling
         // CanActUnmounted in every route predicate repeated Lua dozens of times
         // and could overwrite a prepared native movement command.
         bool Admitted() => Current && _context.Destination.Equals(travelDestination) && !actor.IsCasting && actor.ChanneledCastingSpellId == 0
+            && actor.IsSwimming == swimming && (!swimming || !state.Mounted)
             && (!state.Mounted || _purpose == GroundTransitionPurpose.Transit
                 || _purpose == GroundTransitionPurpose.Interaction && actor.Location.Distance(_context.Destination) > 12)
             && actor.TryGetMovementState(out uint flags, out ulong transport) && transport == 0
