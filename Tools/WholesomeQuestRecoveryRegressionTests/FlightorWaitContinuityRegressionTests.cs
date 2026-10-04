@@ -139,7 +139,7 @@ public class BotPoi {public static BotPoi Current=new BotPoi();public static lon
 public static class ProfileManager {public static object CurrentProfileSnapshot=new object();}
 // Bind the controlled coordinate explicitly. When the complete host is loaded,
 // the enclosing production namespace also contains its own WoWPoint type.
-namespace Styx.Logic.Pathing.FlightorNavigation {public static class BlackspotManager {public static string ContextKey=>World.AerialContext;public static bool IsRecoveryRegionClear(global::WoWPoint point,float radius)=>World.FlightSegment?.Invoke(point,point.Add(radius,0,0))??true;}}
+/* Controlled aerial context. */ namespace Styx.Logic.Pathing.FlightorNavigation {public static class BlackspotManager {public static string ContextKey=>World.AerialContext;public static bool IsRecoveryRegionClear(global::WoWPoint point,float radius)=>World.FlightSegment?.Invoke(point,point.Add(radius,0,0))??true;}}
 """;
     private const string Controls = """
 private static bool HasSeaLegs(LocalPlayer player)=>World.SeaLegs;
